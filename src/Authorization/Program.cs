@@ -70,7 +70,7 @@ app.Run();
 
 void ConfigureSetupLogging()
 {
-    // Setup logging for the web host creation !!
+    // Setup logging for the web host creation
     var logFactory = LoggerFactory.Create(builder =>
     {
         builder
