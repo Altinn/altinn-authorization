@@ -1115,15 +1115,15 @@ namespace Altinn.Platform.Authorization.IntegrationTests
         private static List<Rule> GetExpectedRulesForUser()
         {
             List<Rule> list = new List<Rule>();
-            list.Add(TestDataHelper.GetRuleModel(20001337, 50001337, "20001336", AltinnXacmlConstants.MatchAttributeIdentifiers.UserAttribute, "read", "SKD", "TaxReport", ruleType: RuleType.DirectlyDelegated));
-            list.Add(TestDataHelper.GetRuleModel(20001337, 50001337, "20001336", AltinnXacmlConstants.MatchAttributeIdentifiers.UserAttribute, "write", "SKD", "TaxReport", ruleType: RuleType.DirectlyDelegated));
+            list.Add(TestDataHelper.GetRuleModel(20001337, 50001337, "20001336", AltinnXacmlConstants.MatchAttributeIdentifiers.UserAttribute, "read", "skd", "taxreport", ruleType: RuleType.DirectlyDelegated));
+            list.Add(TestDataHelper.GetRuleModel(20001337, 50001337, "20001336", AltinnXacmlConstants.MatchAttributeIdentifiers.UserAttribute, "write", "skd", "taxreport", ruleType: RuleType.DirectlyDelegated));
             return list;
         }
 
         private static List<Rule> GetExpectedRulesForParty()
         {
             List<Rule> list = new List<Rule>();
-            list.Add(TestDataHelper.GetRuleModel(20001337, 50001337, "50001336", AltinnXacmlConstants.MatchAttributeIdentifiers.PartyAttribute, "sign", "SKD", "TaxReport", ruleType: RuleType.InheritedViaKeyRole));
+            list.Add(TestDataHelper.GetRuleModel(20001337, 50001337, "50001336", AltinnXacmlConstants.MatchAttributeIdentifiers.PartyAttribute, "sign", "skd", "taxreport", ruleType: RuleType.InheritedViaKeyRole));
             return list;
         }
 

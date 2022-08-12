@@ -8,11 +8,11 @@
     [
         {
           "id": "urn:altinn:org",
-          "value": "SKD"
+          "value": "skd"
         },
 	{
 	"id": "urn:altinn:app",
-	"value": "TaxReport"
+	"value": "taxreport"
 	}
     ]
   ],
