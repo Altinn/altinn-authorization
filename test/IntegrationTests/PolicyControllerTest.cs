@@ -271,8 +271,8 @@ namespace Altinn.Platform.Authorization.IntegrationTests
                {
                    AppId = new List<AttributeMatch>
                    {
-                      new AttributeMatch { Id = XacmlRequestAttribute.OrgAttribute, Value = "SKD" },
-                      new AttributeMatch { Id = XacmlRequestAttribute.AppAttribute, Value = "TaxReport2" },
+                      new AttributeMatch { Id = XacmlRequestAttribute.OrgAttribute, Value = "skd" },
+                      new AttributeMatch { Id = XacmlRequestAttribute.AppAttribute, Value = "taxreport2" },
                    },
                    ResourcePolicies = GetResourcePoliciesForSKDTaxReport(),
                    MinimumAuthenticationLevel = 2
@@ -410,7 +410,7 @@ namespace Altinn.Platform.Authorization.IntegrationTests
                {
                    AppId = new List<AttributeMatch>
                    {
-                      new AttributeMatch { Id = XacmlRequestAttribute.OrgAttribute, Value = "SKD" },
+                      new AttributeMatch { Id = XacmlRequestAttribute.OrgAttribute, Value = "skd" },
                       new AttributeMatch { Id = XacmlRequestAttribute.AppAttribute, Value = "undefined" },
                    },
                    ResourcePolicies = new List<ResourcePolicy>(),
