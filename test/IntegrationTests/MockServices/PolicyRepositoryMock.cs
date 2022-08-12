@@ -95,7 +95,7 @@ namespace Altinn.Platform.Authorization.IntegrationTests.MockServices
 
         private static async Task<Response<BlobContentInfo>> WriteStreamToTestDataFolder(string filepath, Stream fileStream)
         {
-            string dataPath = GetDataOutputBlobPath() + filepath;
+            string dataPath = Path.Combine(GetDataOutputBlobPath(), filepath);
 
             if (!Directory.Exists(Path.GetDirectoryName(dataPath)))
             {
