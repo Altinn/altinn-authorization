@@ -29,8 +29,8 @@ namespace Altinn.Authorization.ABAC.UnitTests
 
         private string GetAltinnAppsPath()
         {
-            string unitTestFolder = Path.GetDirectoryName(new Uri(typeof(Xacml30ParserTests).Assembly.CodeBase).LocalPath);
-            return Path.Combine(unitTestFolder, @"..\..\..\Data\Xacml\3.0\AltinnApps");
+            string unitTestFolder = Path.GetDirectoryName(new Uri(typeof(Xacml30ParserTests).Assembly.Location).LocalPath);
+            return Path.Combine(unitTestFolder, "..", "..", "..", "Data", "Xacml", "3.0", "AltinnApps");
         }
     }
 }
