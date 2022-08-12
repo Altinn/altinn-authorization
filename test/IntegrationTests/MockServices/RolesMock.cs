@@ -27,8 +27,8 @@ namespace Altinn.Platform.Authorization.IntegrationTests.MockServices
 
         private static string GetRolesPath(int coveredByUserId, int offeredByPartyId)
         {
-            string unitTestFolder = Path.GetDirectoryName(new Uri(typeof(RolesMock).Assembly.CodeBase).LocalPath);
-            return Path.Combine(unitTestFolder, $"../../../Data/Roles/user_{coveredByUserId}/party_{offeredByPartyId}/roles.json");
+            string unitTestFolder = Path.GetDirectoryName(new Uri(typeof(RolesMock).Assembly.Location).LocalPath);
+            return Path.Combine(unitTestFolder, "..", "..", "..", "Data", "Roles", $"user_{coveredByUserId}", $"party_{offeredByPartyId}", "roles.json");
         }
     }
 }

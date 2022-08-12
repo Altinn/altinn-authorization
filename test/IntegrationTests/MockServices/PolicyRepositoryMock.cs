@@ -71,13 +71,13 @@ namespace Altinn.Platform.Authorization.IntegrationTests.MockServices
         private static string GetDataOutputBlobPath()
         {
             string unitTestFolder = Path.GetDirectoryName(new Uri(typeof(PolicyRepositoryMock).Assembly.Location).LocalPath);
-            return Path.Combine(unitTestFolder, "../../../data/blobs/output/");
+            return Path.Combine(unitTestFolder, "..", "..", "..", "data", "blobs", "output");
         }
 
         private static string GetDataInputBlobPath()
         {
             string unitTestFolder = Path.GetDirectoryName(new Uri(typeof(PolicyRepositoryMock).Assembly.Location).LocalPath);
-            return Path.Combine(unitTestFolder, "../../../data/blobs/input/");
+            return Path.Combine(unitTestFolder, "..", "..", "..", "data", "blobs", "input");
         }
 
         private static Stream GetTestDataStream(string filepath)
