@@ -12,7 +12,7 @@ EXPOSE 5030
 WORKDIR /app
 COPY --from=build /app_output .
 
-COPY /Authorization/Migration ./Migration
+COPY src/Authorization/Migration ./Migration
 
 # setup the user and group
 # the user will have no password, using shell /bin/false and using the group dotnet
