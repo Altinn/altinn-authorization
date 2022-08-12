@@ -165,38 +165,38 @@ namespace Altinn.Platform.Authorization.IntegrationTests.Util
 
         private static string GetDataBlobPath()
         {
-            string unitTestFolder = Path.GetDirectoryName(new Uri(typeof(PolicyRetrievalPointTest).Assembly.CodeBase).LocalPath);
-            return Path.Combine(unitTestFolder, "../../../data/blobs/");
+            string unitTestFolder = Path.GetDirectoryName(new Uri(typeof(PolicyRetrievalPointTest).Assembly.Location).LocalPath);
+            return Path.Combine(unitTestFolder, "..", "..", "..", "data", "blobs");
         }
 
         private static string GetAltinnAppsPath()
         {
-            string unitTestFolder = Path.GetDirectoryName(new Uri(typeof(AltinnApps_DecisionTests).Assembly.CodeBase).LocalPath);
-            return Path.Combine(unitTestFolder, "../../../Data/Xacml/3.0/AltinnApps");
+            string unitTestFolder = Path.GetDirectoryName(new Uri(typeof(AltinnApps_DecisionTests).Assembly.Location).LocalPath);
+            return Path.Combine(unitTestFolder, "..", "..", "..", "Data", "Xacml", "3.0", "AltinnApps");
         }
 
         private static string GetConformancePath()
         {
-            string unitTestFolder = Path.GetDirectoryName(new Uri(typeof(AltinnApps_DecisionTests).Assembly.CodeBase).LocalPath);
-            return Path.Combine(unitTestFolder, "../../../Data/Xacml/3.0/ConformanceTests");
+            string unitTestFolder = Path.GetDirectoryName(new Uri(typeof(AltinnApps_DecisionTests).Assembly.Location).LocalPath);
+            return Path.Combine(unitTestFolder, "..", "..", "..", "Data", "Xacml", "3.0", "ConformanceTests");
         }
 
         public static string GetInstancePath()
         {
-            string unitTestFolder = Path.GetDirectoryName(new Uri(typeof(PolicyInformationRepositoryTest).Assembly.CodeBase).LocalPath);
-            return Path.Combine(unitTestFolder, "../../../Data/Instances");
+            string unitTestFolder = Path.GetDirectoryName(new Uri(typeof(PolicyInformationRepositoryTest).Assembly.Location).LocalPath);
+            return Path.Combine(unitTestFolder, "..", "..", "..", "Data", "Instances");
         }
 
         public static string GetApplicationPath()
         {
-            string unitTestFolder = Path.GetDirectoryName(new Uri(typeof(PolicyInformationRepositoryTest).Assembly.CodeBase).LocalPath);
-            return Path.Combine(unitTestFolder, "../../../Data/Applications");
+            string unitTestFolder = Path.GetDirectoryName(new Uri(typeof(PolicyInformationRepositoryTest).Assembly.Location).LocalPath);
+            return Path.Combine(unitTestFolder, "..", "..", "..", "Data", "Applications");
         }
 
         private static string GetRolesPath(int coveredByUserId, int offeredByPartyId)
         {
-            string unitTestFolder = Path.GetDirectoryName(new Uri(typeof(ContextHandlerTest).Assembly.CodeBase).LocalPath);
-            return Path.Combine(unitTestFolder, $"../../../Data/Roles/User_{coveredByUserId}/party_{offeredByPartyId}/roles.json");
+            string unitTestFolder = Path.GetDirectoryName(new Uri(typeof(ContextHandlerTest).Assembly.Location).LocalPath);
+            return Path.Combine(unitTestFolder, "..", "..", "..", "Data", "Roles", $"User_{coveredByUserId}", $"party_{offeredByPartyId}", "roles.json");
         }
     }
 }
