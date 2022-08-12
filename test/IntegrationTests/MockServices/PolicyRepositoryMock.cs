@@ -65,6 +65,8 @@ namespace Altinn.Platform.Authorization.IntegrationTests.MockServices
                 return Task.FromResult(true);
             }
 
+            Console.WriteLine("POLICY NOT FOUND rtl " + fullpath);
+
             return Task.FromResult(false);
         }
 
