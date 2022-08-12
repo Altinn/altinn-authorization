@@ -6,12 +6,20 @@ using System.Threading.Tasks;
 using Altinn.Platform.Authorization.Repositories.Interface;
 using Azure;
 using Azure.Storage.Blobs.Models;
+using Microsoft.Extensions.Logging;
 using Moq;
 
 namespace Altinn.Platform.Authorization.IntegrationTests.MockServices
 {
     public class PolicyRepositoryMock : IPolicyRepository
     {
+        private readonly ILogger<PolicyRepositoryMock> _logger;
+
+        public PolicyRepositoryMock(ILogger<PolicyRepositoryMock> logger)
+        {
+            _logger = logger;
+        }
+
         public Task<Stream> GetPolicyAsync(string filepath)
         {
             return Task.FromResult(GetTestDataStream(filepath));
@@ -65,19 +73,21 @@ namespace Altinn.Platform.Authorization.IntegrationTests.MockServices
                 return Task.FromResult(true);
             }
 
+            _logger.LogWarning("Policy not found for full path" + fullpath);
+
             return Task.FromResult(false);
         }
 
         private static string GetDataOutputBlobPath()
         {
             string unitTestFolder = Path.GetDirectoryName(new Uri(typeof(PolicyRepositoryMock).Assembly.Location).LocalPath);
-            return Path.Combine(unitTestFolder, "../../../data/blobs/output/");
+            return Path.Combine(unitTestFolder, "..", "..", "..", "Data", "blobs", "output");
         }
 
         private static string GetDataInputBlobPath()
         {
             string unitTestFolder = Path.GetDirectoryName(new Uri(typeof(PolicyRepositoryMock).Assembly.Location).LocalPath);
-            return Path.Combine(unitTestFolder, "../../../data/blobs/input/");
+            return Path.Combine(unitTestFolder, "..", "..", "..", "Data", "blobs", "input");
         }
 
         private static Stream GetTestDataStream(string filepath)
@@ -95,7 +105,7 @@ namespace Altinn.Platform.Authorization.IntegrationTests.MockServices
 
         private static async Task<Response<BlobContentInfo>> WriteStreamToTestDataFolder(string filepath, Stream fileStream)
         {
-            string dataPath = GetDataOutputBlobPath() + filepath;
+            string dataPath = Path.Combine(GetDataOutputBlobPath(), filepath);
 
             if (!Directory.Exists(Path.GetDirectoryName(dataPath)))
             {

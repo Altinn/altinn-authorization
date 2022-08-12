@@ -163,8 +163,8 @@ namespace Altinn.Authorization.ABAC.UnitTest.ConformanceTests
 
         private string GetConformanceTestPath()
         {
-            string unitTestFolder = Path.GetDirectoryName(new Uri(typeof(ConformancePolicyReadTests).Assembly.CodeBase).LocalPath);
-            return Path.Combine(unitTestFolder, @"..\..\..\Data\Xacml\3.0\ConformanceTests");
+            string unitTestFolder = Path.GetDirectoryName(new Uri(typeof(ConformancePolicyReadTests).Assembly.Location).LocalPath);
+            return Path.Combine(unitTestFolder, "..", "..", "..", "Data", "Xacml", "3.0", "ConformanceTests");
         }
     }
 }

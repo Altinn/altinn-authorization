@@ -41,8 +41,8 @@ namespace Altinn.Authorization.ABAC.UnitTest.SpecExamplesTests
                
         private string GetSpecExamplesTestPath()
         {
-            string unitTestFolder = Path.GetDirectoryName(new Uri(typeof(SpecExamplesPolicyReadTests).Assembly.CodeBase).LocalPath);
-            return Path.Combine(unitTestFolder, @"..\..\..\Data\Xacml\3.0\SpecExamples");
+            string unitTestFolder = Path.GetDirectoryName(new Uri(typeof(SpecExamplesPolicyReadTests).Assembly.Location).LocalPath);
+            return Path.Combine(unitTestFolder, "..", "..", "..", "Data", "Xacml", "3.0", "SpecExamples");
         }
     }
 }

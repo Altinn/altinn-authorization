@@ -9,6 +9,7 @@ using Altinn.Authorization.ABAC.Xacml;
 using Altinn.Platform.Authorization.Services.Interface;
 using Azure;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Logging;
 
 namespace Altinn.Platform.Authorization.IntegrationTests.MockServices
 {
@@ -16,13 +17,16 @@ namespace Altinn.Platform.Authorization.IntegrationTests.MockServices
     {
         private readonly IHttpContextAccessor _httpContextAccessor;
 
+        private readonly ILogger<PolicyRetrievalPointMock> _logger;   
+
         private readonly string _orgAttributeId = "urn:altinn:org";
 
         private readonly string _appAttributeId = "urn:altinn:app";
 
-        public PolicyRetrievalPointMock(IHttpContextAccessor httpContextAccessor)
+        public PolicyRetrievalPointMock(IHttpContextAccessor httpContextAccessor, ILogger<PolicyRetrievalPointMock> logger)
         {
             _httpContextAccessor = httpContextAccessor;
+            _logger = logger;
         }
 
         public async Task<XacmlPolicy> GetPolicyAsync(XacmlContextRequest request)
@@ -60,6 +64,8 @@ namespace Altinn.Platform.Authorization.IntegrationTests.MockServices
             {
                 return await Task.FromResult(ParsePolicy(string.Empty, path));
             }
+
+            _logger.LogWarning("Polcy Version did not found policy " + path);
 
             return null;
         }
@@ -101,13 +107,13 @@ namespace Altinn.Platform.Authorization.IntegrationTests.MockServices
         private string GetAltinnAppsPolicyPath(string org, string app)
         {
             string unitTestFolder = Path.GetDirectoryName(new Uri(typeof(AltinnApps_DecisionTests).Assembly.Location).LocalPath);
-            return Path.Combine(unitTestFolder, $"../../../Data/Xacml/3.0/AltinnApps/{org}/{app}/");
+            return Path.Combine(unitTestFolder, "..", "..", "..", "Data", "Xacml", "3.0", "AltinnApps", org, app);
         }
 
         private static string GetAltinnAppsDelegationPolicyPath(string policyPath)
         {
             string unitTestFolder = Path.GetDirectoryName(new Uri(typeof(AltinnApps_DecisionTests).Assembly.Location).LocalPath);
-            return Path.Combine(unitTestFolder, $"../../../Data/blobs/input/{policyPath}");
+            return Path.Combine(unitTestFolder, "..", "..", "..", "Data", "blobs", "input", policyPath);
         }
 
         private string GetTestId(HttpContext context)
@@ -118,13 +124,13 @@ namespace Altinn.Platform.Authorization.IntegrationTests.MockServices
         private string GetAltinnAppsPath()
         {
             string unitTestFolder = Path.GetDirectoryName(new Uri(typeof(AltinnApps_DecisionTests).Assembly.Location).LocalPath);
-            return Path.Combine(unitTestFolder, "../../../Data/Xacml/3.0/AltinnApps");
+            return Path.Combine(unitTestFolder, "..", "..", "..", "Data", "Xacml", "3.0", "AltinnApps");
         }
 
         private string GetConformancePath()
         {
             string unitTestFolder = Path.GetDirectoryName(new Uri(typeof(AltinnApps_DecisionTests).Assembly.Location).LocalPath);
-            return Path.Combine(unitTestFolder, "../../../Data/Xacml/3.0/ConformanceTests");
+            return Path.Combine(unitTestFolder, "..", "..", "..", "Data", "Xacml", "3.0", "ConformanceTests");
         }
 
         public static XacmlPolicy ParsePolicy(string policyDocumentTitle, string policyPath)
