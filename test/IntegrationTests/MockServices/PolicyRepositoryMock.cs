@@ -6,12 +6,21 @@ using System.Threading.Tasks;
 using Altinn.Platform.Authorization.Repositories.Interface;
 using Azure;
 using Azure.Storage.Blobs.Models;
+using Microsoft.Extensions.Logging;
 using Moq;
 
 namespace Altinn.Platform.Authorization.IntegrationTests.MockServices
 {
     public class PolicyRepositoryMock : IPolicyRepository
     {
+        private readonly ILogger<PolicyRepositoryMock> _logger;
+
+        public PolicyRepositoryMock(ILogger<PolicyRepositoryMock> logger)
+        {
+            _logger = logger;
+        }
+
+
         public Task<Stream> GetPolicyAsync(string filepath)
         {
             return Task.FromResult(GetTestDataStream(filepath));
@@ -65,7 +74,7 @@ namespace Altinn.Platform.Authorization.IntegrationTests.MockServices
                 return Task.FromResult(true);
             }
 
-            Console.WriteLine("POLICY NOT FOUND rtl " + fullpath);
+            _logger.LogWarning("Policy not found for full path" + fullpath);
 
             return Task.FromResult(false);
         }
