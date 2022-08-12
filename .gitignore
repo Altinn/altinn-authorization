@@ -38,3 +38,7 @@ msbuild.wrn
 
 #Test
 TestResults
+
+
+######### Testdata created by testrun #########
+src/test/IntegrationTests/Data/blobs/output/
