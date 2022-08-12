@@ -1,4 +1,4 @@
-name: Authentication Scan
+name: Authorization Scan
 
 on:
   schedule:
