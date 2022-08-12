@@ -8,6 +8,8 @@ using Altinn.Platform.Authorization.IntegrationTests.Util;
 using Altinn.Platform.Authorization.Models;
 using Altinn.Platform.Authorization.Services.Implementation;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Logging;
+using Moq;
 using Xunit;
 
 namespace Altinn.Platform.Authorization.IntegrationTests
@@ -17,7 +19,7 @@ namespace Altinn.Platform.Authorization.IntegrationTests
     /// </summary>
     public class DelegationHelperTest 
     {
-        private PolicyRetrievalPointMock _prpMock = new PolicyRetrievalPointMock(new HttpContextAccessor());
+        private PolicyRetrievalPointMock _prpMock = new PolicyRetrievalPointMock(new HttpContextAccessor(), new Mock<ILogger<PolicyRetrievalPointMock>>().Object);
 
         public DelegationHelperTest()
         {
