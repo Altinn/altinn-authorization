@@ -68,7 +68,7 @@ Configure();
 
 app.Run();
 
-logger.LogWarning("HELLO");
+logger.LogWarning("HELLO. YOU ARE THE BE");
 
 void ConfigureSetupLogging()
 {
