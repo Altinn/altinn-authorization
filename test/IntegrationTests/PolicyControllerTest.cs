@@ -60,7 +60,7 @@ namespace Altinn.Platform.Authorization.IntegrationTests
             TestSetupUtil.DeleteAppBlobData("org", "app");
 
             // Assert
-            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+            Assert.Equal(HttpStatusCode.Conflict, response.StatusCode);
         }
 
         /// <summary>

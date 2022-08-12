@@ -68,6 +68,8 @@ Configure();
 
 app.Run();
 
+logger.LogWarning("HELLO");
+
 void ConfigureSetupLogging()
 {
     // Setup logging for the web host creation
