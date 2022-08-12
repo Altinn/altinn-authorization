@@ -15,8 +15,9 @@ using Altinn.Platform.Authorization.Services.Interface;
 using Azure;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-
+using Moq;
 using Xunit;
 
 namespace Altinn.Platform.Authorization.IntegrationTests
@@ -38,7 +39,7 @@ namespace Altinn.Platform.Authorization.IntegrationTests
             IMemoryCache memoryCache = serviceProvider.GetService<IMemoryCache>();
 
             _prp = new PolicyRetrievalPoint(
-                new PolicyRepositoryMock(),
+                new PolicyRepositoryMock(new Mock<ILogger<PolicyRepositoryMock>>().Object),
                 memoryCache,
                 Options.Create(new GeneralSettings { PolicyCacheTimeout = 1 }));
         }

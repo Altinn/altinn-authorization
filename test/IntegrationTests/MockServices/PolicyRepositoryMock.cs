@@ -20,7 +20,6 @@ namespace Altinn.Platform.Authorization.IntegrationTests.MockServices
             _logger = logger;
         }
 
-
         public Task<Stream> GetPolicyAsync(string filepath)
         {
             return Task.FromResult(GetTestDataStream(filepath));
