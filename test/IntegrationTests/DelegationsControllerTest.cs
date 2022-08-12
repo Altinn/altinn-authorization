@@ -984,6 +984,7 @@ namespace Altinn.Platform.Authorization.IntegrationTests
         public async Task GetRules_RuleType_Is_InheritedAsSubunitViaKeyrole()
         {
             // Arrange
+            Assert.True(File.Exists("Data/Json/GetRules/GetRules_RuleTypeInheritedAsSubunitViaKeyroleRequest.json"));
             Stream dataStream = File.OpenRead("Data/Json/GetRules/GetRules_RuleTypeInheritedAsSubunitViaKeyroleRequest.json");
             StreamContent content = new StreamContent(dataStream);
             content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
