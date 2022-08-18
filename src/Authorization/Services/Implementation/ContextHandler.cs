@@ -7,6 +7,7 @@ using Altinn.Authorization.ABAC.Interface;
 using Altinn.Authorization.ABAC.Xacml;
 using Altinn.Platform.Authorization.Configuration;
 using Altinn.Platform.Authorization.Constants;
+using Altinn.Platform.Authorization.Helpers;
 using Altinn.Platform.Authorization.Models;
 using Altinn.Platform.Authorization.Repositories.Interface;
 using Altinn.Platform.Authorization.Services.Interface;
@@ -33,6 +34,7 @@ namespace Altinn.Platform.Authorization.Services.Implementation
         private readonly IParties _partiesWrapper;
         private readonly IMemoryCache _memoryCache;
         private readonly GeneralSettings _generalSettings;
+        private readonly IPolicyRetrievalPoint _prp;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ContextHandler"/> class
@@ -42,14 +44,16 @@ namespace Altinn.Platform.Authorization.Services.Implementation
         /// <param name="partiesWrapper">the party information handler</param>
         /// <param name="memoryCache">The cache handler </param>
         /// <param name="settings">The app settings</param>
+        /// <param name="policyRetrievalPoint">The policy Retrieval point</param>
         public ContextHandler(
-            IInstanceMetadataRepository policyInformationRepository, IRoles rolesWrapper, IParties partiesWrapper, IMemoryCache memoryCache, IOptions<GeneralSettings> settings)
+            IInstanceMetadataRepository policyInformationRepository, IRoles rolesWrapper, IParties partiesWrapper, IMemoryCache memoryCache, IOptions<GeneralSettings> settings, IPolicyRetrievalPoint policyRetrievalPoint)
         {
             _policyInformationRepository = policyInformationRepository;
             _rolesWrapper = rolesWrapper;
             _partiesWrapper = partiesWrapper;
             _memoryCache = memoryCache;
             _generalSettings = settings.Value;
+            _prp = policyRetrievalPoint;
         }
 
         /// <summary>
@@ -238,9 +242,15 @@ namespace Altinn.Platform.Authorization.Services.Implementation
                 return;
             }
 
-            List<Role> roleList = await GetRoles(subjectUserId, resourcePartyId); 
+            XacmlPolicy xacmlPolicy = await _prp.GetPolicyAsync(request);
+            List<string> subjectAttributes = PolicyHelper.GetSubjectAttributeIds(xacmlPolicy);
 
-            subjectContextAttributes.Attributes.Add(GetRoleAttribute(roleList));
+            if (subjectAttributes.Contains(AltinnXacmlConstants.MatchAttributeIdentifiers.RoleAttribute))
+            {
+                List<Role> roleList = await GetRoles(subjectUserId, resourcePartyId);
+
+                subjectContextAttributes.Attributes.Add(GetRoleAttribute(roleList));
+            }
         }
 
         /// <summary>

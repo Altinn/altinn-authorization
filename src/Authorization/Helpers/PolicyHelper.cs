@@ -52,6 +52,38 @@ namespace Altinn.Platform.Authorization.Helpers
         }
 
         /// <summary>
+        /// Returns a list of uniue subject attribute ids. Used to identify the role/group and other sources needed to enirch subject info
+        /// </summary>
+        /// <param name="policy">The policy</param>
+        /// <returns>List of attribute ids</returns>
+        public static List<string> GetSubjectAttributeIds(XacmlPolicy policy)
+        {
+            HashSet<string> attributeIds = new HashSet<string>();
+
+            foreach (XacmlRule rule in policy.Rules)
+            {
+                if (rule.Effect.Equals(XacmlEffectType.Permit) && rule.Target != null)
+                {
+                    foreach (XacmlAnyOf anyOf in rule.Target.AnyOf)
+                    {
+                        foreach (XacmlAllOf allOf in anyOf.AllOf)
+                        {
+                            foreach (XacmlMatch xacmlMatch in allOf.Matches)
+                            {
+                                if (xacmlMatch.AttributeDesignator.Category.Equals(XacmlConstants.MatchAttributeCategory.Subject))
+                                {
+                                    attributeIds.Add(xacmlMatch.AttributeDesignator.AttributeId.AbsoluteUri);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            return attributeIds.ToList();
+        }
+
+        /// <summary>
         /// Finds the correct policy path based on a XacmlContextRequest
         /// </summary>
         /// <param name="request">Xacml context request to use for finding the org and app for building the path</param>

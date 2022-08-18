@@ -75,6 +75,11 @@ namespace Altinn.Platform.Authorization.Constants
             /// Role Code attribute match indentifier 
             /// </summary>
             public const string RoleAttribute = "urn:altinn:rolecode";
+
+            /// <summary>
+            /// Access Group Attribute match identifier
+            /// </summary>
+            public const string AccessGroupAttribute = "urn:altinn:accessgroupcode";
         }
 
         /// <summary>

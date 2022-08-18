@@ -27,6 +27,22 @@ namespace Altinn.Platform.Authorization.Configuration
         }
 
         /// <summary>
+        /// Gets or sets the AccessGroups api endpoint
+        /// </summary>
+        public string AccessGroupsApiEndpoint { get; set; }
+
+        /// <summary>
+        /// Gets the AccessGroups api endpoint from kubernetes environment variables and appsettings if environment variable is not set
+        /// </summary>
+        public string GetAccessGroupsApiEndpoint
+        {
+            get
+            {
+                return Environment.GetEnvironmentVariable("GeneralSettings__AccessGroupsApiEndpoint") ?? AccessGroupsApiEndpoint;
+            }
+        }
+
+        /// <summary>
         /// Gets or sets the SBL base adress
         /// </summary>
         public string SBLBaseAdress { get; set; }

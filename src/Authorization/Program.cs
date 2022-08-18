@@ -189,6 +189,7 @@ void ConfigureServices(IServiceCollection services, IConfiguration config)
     services.AddSingleton(config);
     services.AddSingleton<IParties, PartiesWrapper>();
     services.AddSingleton<IRoles, RolesWrapper>();
+    services.AddSingleton<IAccessGroups, AccessGroupsWrapper>();
     services.AddSingleton<IContextHandler, ContextHandler>();
     services.AddSingleton<IDelegationContextHandler, DelegationContextHandler>();
     services.AddSingleton<IPolicyRetrievalPoint, PolicyRetrievalPoint>();
@@ -206,6 +207,7 @@ void ConfigureServices(IServiceCollection services, IConfiguration config)
     services.AddHttpClient<PartyClient>();
     services.AddHttpClient<RolesClient>();
     services.AddHttpClient<SBLClient>();
+    services.AddHttpClient<AccessGroupsClient>();
     services.TryAddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 
     GeneralSettings generalSettings = config.GetSection("GeneralSettings").Get<GeneralSettings>();

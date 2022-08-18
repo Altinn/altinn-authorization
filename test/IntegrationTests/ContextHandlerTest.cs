@@ -5,10 +5,11 @@ using Altinn.Platform.Authorization.Configuration;
 using Altinn.Platform.Authorization.IntegrationTests.MockServices;
 using Altinn.Platform.Authorization.IntegrationTests.Util;
 using Altinn.Platform.Authorization.Services.Implementation;
-
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-
+using Moq;
 using Xunit;
 
 namespace Altinn.Platform.Authorization.IntegrationTests
@@ -27,7 +28,8 @@ namespace Altinn.Platform.Authorization.IntegrationTests
                 new RolesMock(),
                 new PartiesMock(),
                 new MemoryCache(new MemoryCacheOptions()),
-                Options.Create(new GeneralSettings { RoleCacheTimeout = 5 }));
+                Options.Create(new GeneralSettings { RoleCacheTimeout = 5 }),
+                new PolicyRetrievalPointMock(new HttpContextAccessor(), new Mock<ILogger<PolicyRetrievalPointMock>>().Object));
         }
 
         /// <summary>
