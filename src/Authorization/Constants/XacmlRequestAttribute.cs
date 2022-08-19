@@ -49,5 +49,10 @@ namespace Altinn.Platform.Authorization.Constants
         /// xacml string that represents role
         /// </summary>
         public const string RoleAttribute = "urn:altinn:rolecode";
+
+        /// <summary>
+        /// Access Group Attribute match identifier
+        /// </summary>
+        public const string AccessGroupAttribute = "urn:altinn:accessgroupcode";
     }
 }

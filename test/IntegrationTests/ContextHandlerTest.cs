@@ -29,7 +29,8 @@ namespace Altinn.Platform.Authorization.IntegrationTests
                 new PartiesMock(),
                 new MemoryCache(new MemoryCacheOptions()),
                 Options.Create(new GeneralSettings { RoleCacheTimeout = 5 }),
-                new PolicyRetrievalPointMock(new HttpContextAccessor(), new Mock<ILogger<PolicyRetrievalPointMock>>().Object));
+                new PolicyRetrievalPointMock(new HttpContextAccessor(), new Mock<ILogger<PolicyRetrievalPointMock>>().Object), 
+                new AccessGroupsMock());
         }
 
         /// <summary>

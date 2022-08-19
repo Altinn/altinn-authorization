@@ -29,8 +29,9 @@ namespace Altinn.Platform.Authorization.Services.Implementation
         /// <param name="memoryCache">The cache handler </param>
         /// <param name="settings">The app settings</param>
         /// <param name="policyRetrievalPoint">The policy Retrieval point</param>
-        public DelegationContextHandler(IInstanceMetadataRepository policyInformationRepository, IRoles rolesWrapper, IParties partiesWrapper, IMemoryCache memoryCache, IOptions<GeneralSettings> settings, IPolicyRetrievalPoint policyRetrievalPoint)
-            : base(policyInformationRepository, rolesWrapper, partiesWrapper, memoryCache, settings, policyRetrievalPoint)
+        /// <param name="accessGroupsWrapper">The access groups wrapper</param>
+        public DelegationContextHandler(IInstanceMetadataRepository policyInformationRepository, IRoles rolesWrapper, IParties partiesWrapper, IMemoryCache memoryCache, IOptions<GeneralSettings> settings, IPolicyRetrievalPoint policyRetrievalPoint, IAccessGroups accessGroupsWrapper)
+            : base(policyInformationRepository, rolesWrapper, partiesWrapper, memoryCache, settings, policyRetrievalPoint, accessGroupsWrapper)
         {
         }
 

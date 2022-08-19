@@ -31,6 +31,7 @@ namespace Altinn.Platform.Authorization.Services.Implementation
     {
         private readonly IInstanceMetadataRepository _policyInformationRepository;
         private readonly IRoles _rolesWrapper;
+        private readonly IAccessGroups _accessGroupsWrapper;
         private readonly IParties _partiesWrapper;
         private readonly IMemoryCache _memoryCache;
         private readonly GeneralSettings _generalSettings;
@@ -45,8 +46,9 @@ namespace Altinn.Platform.Authorization.Services.Implementation
         /// <param name="memoryCache">The cache handler </param>
         /// <param name="settings">The app settings</param>
         /// <param name="policyRetrievalPoint">The policy Retrieval point</param>
+        /// <param name="accessGroupsWrapper">The access groups wrapper</param>
         public ContextHandler(
-            IInstanceMetadataRepository policyInformationRepository, IRoles rolesWrapper, IParties partiesWrapper, IMemoryCache memoryCache, IOptions<GeneralSettings> settings, IPolicyRetrievalPoint policyRetrievalPoint)
+            IInstanceMetadataRepository policyInformationRepository, IRoles rolesWrapper, IParties partiesWrapper, IMemoryCache memoryCache, IOptions<GeneralSettings> settings, IPolicyRetrievalPoint policyRetrievalPoint, IAccessGroups accessGroupsWrapper)
         {
             _policyInformationRepository = policyInformationRepository;
             _rolesWrapper = rolesWrapper;
@@ -54,6 +56,7 @@ namespace Altinn.Platform.Authorization.Services.Implementation
             _memoryCache = memoryCache;
             _generalSettings = settings.Value;
             _prp = policyRetrievalPoint;
+            _accessGroupsWrapper = accessGroupsWrapper;
         }
 
         /// <summary>
@@ -251,6 +254,13 @@ namespace Altinn.Platform.Authorization.Services.Implementation
 
                 subjectContextAttributes.Attributes.Add(GetRoleAttribute(roleList));
             }
+
+            if (subjectAttributes.Contains(AltinnXacmlConstants.MatchAttributeIdentifiers.AccessGroupAttribute))
+            {
+                List<AccessGroupMembership> accessGroupMemberships = await GetMemberships(subjectUserId, resourcePartyId);
+
+                subjectContextAttributes.Attributes.Add(GetAccessGroupsAttribute(accessGroupMemberships));
+            }
         }
 
         /// <summary>
@@ -264,6 +274,22 @@ namespace Altinn.Platform.Authorization.Services.Implementation
             foreach (Role role in roles)
             {
                 attribute.AttributeValues.Add(new XacmlAttributeValue(new Uri(XacmlConstants.DataTypes.XMLString), role.Value));
+            }
+
+            return attribute;
+        }
+
+        /// <summary>
+        /// Gets a XacmlAttribute model for the list of access groups membership
+        /// </summary>
+        /// <param name="memberships">The list of memberships</param>
+        /// <returns>XacmlAttribute</returns>
+        protected XacmlAttribute GetAccessGroupsAttribute(List<AccessGroupMembership> memberships)
+        {
+            XacmlAttribute attribute = new XacmlAttribute(new Uri(XacmlRequestAttribute.AccessGroupAttribute), false);
+            foreach (AccessGroupMembership membership in memberships)
+            {
+                attribute.AttributeValues.Add(new XacmlAttributeValue(new Uri(XacmlConstants.DataTypes.XMLString), membership.AccessGroupCode));
             }
 
             return attribute;
@@ -299,6 +325,32 @@ namespace Altinn.Platform.Authorization.Services.Implementation
             {
                 // Key not in cache, so get data.
                 roles = await _rolesWrapper.GetDecisionPointRolesForUser(subjectUserId, resourcePartyId) ?? new List<Role>();
+
+                var cacheEntryOptions = new MemoryCacheEntryOptions()
+               .SetPriority(CacheItemPriority.High)
+               .SetAbsoluteExpiration(new TimeSpan(0, _generalSettings.RoleCacheTimeout, 0));
+
+                _memoryCache.Set(cacheKey, roles, cacheEntryOptions);
+            }
+
+            return roles;
+        }
+
+        /// <summary>
+        /// Gets the list of roletype codes the subject user has for the resource reportee
+        /// </summary>
+        /// <param name="subjectUserId">The user id of the subject</param>
+        /// <param name="resourcePartyId">The party id of the reportee</param>
+        /// <returns>List of roles</returns>
+        protected async Task<List<AccessGroupMembership>> GetMemberships(int subjectUserId, int resourcePartyId)
+        {
+            string cacheKey = GetAccessGroupsCacheKey(subjectUserId, resourcePartyId);
+
+            if (!_memoryCache.TryGetValue(cacheKey, out List<AccessGroupMembership> roles))
+            {
+                // Key not in cache, so get dat
+
+                roles = await _accessGroupsWrapper.GetMemberships(subjectUserId, null, resourcePartyId) ?? new List<AccessGroupMembership>();
 
                 var cacheEntryOptions = new MemoryCacheEntryOptions()
                .SetPriority(CacheItemPriority.High)
@@ -361,6 +413,11 @@ namespace Altinn.Platform.Authorization.Services.Implementation
         private string GetCacheKey(int userId, int partyId)
         {
             return "rolelist_" + userId + "_" + partyId;
+        }
+
+        private string GetAccessGroupsCacheKey(int userId, int partyId)
+        {
+            return "accessgroupmembers" + userId + "_" + partyId;
         }
     }
 }

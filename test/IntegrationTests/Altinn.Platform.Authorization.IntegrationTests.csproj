@@ -66,12 +66,23 @@
     <None Remove="Data\blobs\input\error\delegationeventfail\50001337\u20001336\delegationpolicy.xml" />
     <None Remove="Data\blobs\input\error\delegationeventfail\policy.xml" />
     <None Remove="Data\blobs\input\skd\taxreport\1000\u20001337\delegationpolicy.xml" />
+    <None Remove="Data\Instances\1000\26133fb5-a9f2-45d4-90b1-f6d93ad60766.json" />
     <None Remove="Data\Json\AddRules\DelegationEventError.json" />
     <None Remove="Data\Json\GetResourcePolicies\Org2App1Request.json" />
     <None Remove="Data\Json\GetResourcePolicies\Org2App2Request.json" />
+    <None Remove="Data\Roles\user_1\party_1000\memberships.json" />
     <None Remove="Data\Xacml\3.0\AltinnApps\AltinnApps0001DelegationRequest.xml" />
     <None Remove="Data\Xacml\3.0\AltinnApps\AltinnApps0001DelegationResponse.xml" />
+    <None Remove="Data\Xacml\3.0\AltinnApps\AltinnApps0030Request.json" />
+    <None Remove="Data\Xacml\3.0\AltinnApps\AltinnApps0030Response.json" />
     <None Remove="Data\Xacml\3.0\AltinnApps\error\delegationeventfail\policy.xml" />
+    <None Remove="Data\Xacml\3.0\AltinnApps\skd\taxreport3\policy.xml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Update="Data\Xacml\3.0\AltinnApps\skd\taxreport3\policy.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
 
 </Project>
