@@ -8,7 +8,15 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Altinn.Platform.Models" Version="1.1.1" />
+  </ItemGroup>
+	
+  <ItemGroup>
     <ProjectReference Include="..\Altinn.AccessGroups.Core\Altinn.AccessGroups.Core.csproj" />
+  </ItemGroup>
+	
+  <ItemGroup>
+    <Folder Include="Models\" />
   </ItemGroup>
 
 </Project>

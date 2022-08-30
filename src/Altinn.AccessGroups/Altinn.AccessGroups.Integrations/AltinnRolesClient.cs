@@ -1,6 +1,6 @@
-﻿using Altinn.AccessGroups.Core;
-using Microsoft.Extensions.Options;
-using System.Net.Http.Headers;
+﻿using Authorization.Platform.Authorization.Models;
+using Altinn.AccessGroups.Core;
+using System.Text.Json;
 
 namespace Altinn.AccessGroups.Integrations
 {
@@ -9,23 +9,31 @@ namespace Altinn.AccessGroups.Integrations
     /// </summary>
     public class AltinnRolesClient : IAltinnRolesClient
     {
-        /// <summary>
-        /// Gets an instance of httpclient from httpclientfactory
-        /// </summary>
-        public HttpClient Client { get; }
+        private readonly SBLBridgeClient _bridgeClient;
 
         /// <summary>
-        /// Initializes the http client for getting roles from AltinnII SBL Bridge 
+        /// Initializes a new instance of the <see cref="RolesWrapper"/> class
         /// </summary>
-        /// <param name="client">the http client</param>
-        /// <param name="settings">the general settings configured for the authorization component</param>
-        public AltinnRolesClient(HttpClient client, IOptions<SBLBridgeSettings> settings)
+        /// <param name="bridgeClient">the client handler for roles api</param>
+        public AltinnRolesClient(SBLBridgeClient bridgeClient)
         {
-            SBLBridgeSettings sblBridgeSettings = settings.Value;
-            Client = client;
-            Client.BaseAddress = new Uri(sblBridgeSettings.GetBridgeApiEndpoint);
-            Client.DefaultRequestHeaders.Clear();
-            Client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+            _bridgeClient = bridgeClient;
+        }
+
+        /// <inheritdoc />
+        public async Task<List<Role>> GetDecisionPointRolesForUser(int coveredByUserId, int offeredByPartyId)
+        {
+            List<Role> decisionPointRoles = new List<Role>();
+            string apiurl = $"roles?coveredByUserId={coveredByUserId}&offeredByPartyId={offeredByPartyId}";
+
+            HttpResponseMessage response = await _bridgeClient.Client.GetAsync(apiurl);
+            string roleList = await response.Content.ReadAsStringAsync();
+            if (response.StatusCode == System.Net.HttpStatusCode.OK)
+            {
+                decisionPointRoles = JsonSerializer.Deserialize<List<Role>>(roleList);
+            }
+
+            return decisionPointRoles;
         }
     }
 }

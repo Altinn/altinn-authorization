@@ -6,18 +6,18 @@
     public class SBLBridgeSettings
     {
         /// <summary>
-        /// Gets or sets the bridge api endpoint
+        /// Gets or sets the bridge authorization api endpoint
         /// </summary>
-        public string BridgeApiEndpoint { get; set; }
+        public string AuthorizationApiEndpoint { get; set; }
 
         /// <summary>
         /// Gets the bridge api endpoint from kubernetes environment variables and appsettings if environment variable is not set
         /// </summary>
-        public string GetBridgeApiEndpoint
+        public string GetAuthorizationApiEndpoint
         {
             get
             {
-                return Environment.GetEnvironmentVariable("GeneralSettings__BridgeApiEndpoint") ?? BridgeApiEndpoint;
+                return Environment.GetEnvironmentVariable("SBLBridgeSettings__AuthorizationApiEndpoint") ?? AuthorizationApiEndpoint;
             }
         }
     }

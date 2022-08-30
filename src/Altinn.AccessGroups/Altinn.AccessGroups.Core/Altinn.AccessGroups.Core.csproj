@@ -11,4 +11,8 @@
     <Folder Include="Models\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <PackageReference Include="Altinn.Platform.Models" Version="1.1.1" />
+  </ItemGroup>
+
 </Project>
