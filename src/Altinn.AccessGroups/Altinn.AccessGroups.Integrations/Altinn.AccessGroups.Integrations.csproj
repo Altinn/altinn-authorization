@@ -8,7 +8,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Configuration\" />
+    <ProjectReference Include="..\Altinn.AccessGroups.Core\Altinn.AccessGroups.Core.csproj" />
   </ItemGroup>
 
 </Project>
