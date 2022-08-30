@@ -22,7 +22,7 @@ namespace ResourceRegistryTest
         public async Task Test1Async_Get()
         {
             HttpClient client = SetupUtil.GetTestClient(_factory);
-            string requestUri = "/api/Resource/";
+            string requestUri = "/api/Resource/aaa";
 
             HttpRequestMessage httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, requestUri)
             {

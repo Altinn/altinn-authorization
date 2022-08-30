@@ -8,9 +8,11 @@ namespace ResourceRegistry.Controllers
     [ApiController]
     public class ResourceController : ControllerBase
     {
+
+        [HttpGet("{id}")]
         public async Task<ServiceResource> Get(string id)
         {
-            ServiceResource resource =  new ServiceResource();
+            ServiceResource resource = new ServiceResource() { identifier = "aaa" };
             return resource;
         }
     }
