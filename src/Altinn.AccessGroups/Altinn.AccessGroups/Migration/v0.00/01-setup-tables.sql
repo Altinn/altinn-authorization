@@ -7,7 +7,7 @@ END $$;
 
 CREATE TABLE IF NOT EXISTS accessgroup."AccessGroup"
 (
-    "AccessGroupId" bigint NOT NULL DEFAULT nextval('accessgroup."AccessGroup_AccessGroupId_seq"'::regclass),
+    "AccessGroupId" bigint GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     "AccessGroupCode" "char"[],
     "AccessGroupType" accessgroup.AccessGroupType NOT NULL,
     "Hidden" boolean,
@@ -26,7 +26,7 @@ ALTER TABLE accessgroup."AccessGroup"
 
 CREATE TABLE IF NOT EXISTS accessgroup."AccessGroupCategory"
 (
-    "CategoryId" bigint NOT NULL DEFAULT nextval('accessgroup."AccessGroupCategory_CategoryId_seq"'::regclass),
+    "CategoryId" bigint GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     "ParentCategoryId" integer,
     CONSTRAINT "AccessGroupCategory_pkey" PRIMARY KEY ("CategoryId")
 )
@@ -95,7 +95,7 @@ END $$;
 
 CREATE TABLE IF NOT EXISTS accessgroup."MemberShipDelegation"
 (
-    "DelegationId" bigint NOT NULL DEFAULT nextval('accessgroup."MemberShipDelegation_DelegationId_seq"'::regclass),
+    "DelegationId" bigint GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     "DelegatedByUserId" bigint,
     "DelegatedByPartyId" bigint,
     "DelegationTime" date,
@@ -114,7 +114,7 @@ ALTER TABLE accessgroup."MemberShipDelegation"
 
 CREATE TABLE IF NOT EXISTS accessgroup."MembershipHistory"
 (
-    "HistoryId" bigint NOT NULL DEFAULT nextval('accessgroup."MembershipHistory_HistoryId_seq"'::regclass),
+    "HistoryId" bigint GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     "MembershipId" bigint,
     "OfferedByParty" bigint,
     "UserId" bigint,
