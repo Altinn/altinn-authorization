@@ -40,7 +40,7 @@ ALTER TABLE accessgroup."AccessGroupCategory"
 
 CREATE TABLE IF NOT EXISTS accessgroup."AccessGroupMembership"
 (
-    "MembershipID" bigint NOT NULL,
+    "MembershipID" bigint GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     "OfferedByParty" bigint,
     "UserId" bigint,
     "PartyId" bigint,
