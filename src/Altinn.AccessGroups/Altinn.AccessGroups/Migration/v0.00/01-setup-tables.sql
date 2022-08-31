@@ -1,3 +1,6 @@
+CREATE SCHEMA IF NOT EXISTS accessgroup
+    AUTHORIZATION postgres;
+
 -- Enum: AccessGroup.AccessGroupType
 DO $$ BEGIN
     CREATE TYPE accessgroup.AccessGroupType AS ENUM ('altinn');
