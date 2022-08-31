@@ -10,10 +10,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Models\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\Altinn.ResourceRegistry.Core\Altinn.ResourceRegistry.Core.csproj" />
     <ProjectReference Include="..\Altinn.ResourceRegistry.Persistence\Altinn.ResourceRegistry.Persistence.csproj" />
   </ItemGroup>

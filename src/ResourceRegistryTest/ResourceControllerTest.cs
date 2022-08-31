@@ -34,7 +34,7 @@ namespace ResourceRegistryTest
             ServiceResource? resource = System.Text.Json.JsonSerializer.Deserialize<ServiceResource>(responseContent, new System.Text.Json.JsonSerializerOptions() { PropertyNamingPolicy = JsonNamingPolicy.CamelCase }) as ServiceResource;
 
             Assert.NotNull(resource);
-            Assert.NotNull(resource.identifier);
+            Assert.NotNull(resource.Identifier);
 
         }
     }

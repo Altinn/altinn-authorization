@@ -27,7 +27,7 @@ namespace ResourceRegistryTest.Mocks
             if (File.Exists(evPath))
             {
                 string content = System.IO.File.ReadAllText(evPath);
-                ServiceResource? resource = System.Text.Json.JsonSerializer.Deserialize<ServiceResource>(content) as ServiceResource;
+                ServiceResource? resource = System.Text.Json.JsonSerializer.Deserialize<ServiceResource>(content, new System.Text.Json.JsonSerializerOptions() {  PropertyNamingPolicy = System.Text.Json.JsonNamingPolicy.CamelCase}) as ServiceResource;
                 return resource;
             }
 

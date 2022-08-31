@@ -1,10 +1,10 @@
 {
   "identifier": "altinn_access_management",
   "description": {
-    "nb-NO": "Funksjonalitet for å tilgangsstyring I Altinn"
+    "nb": "Funksjonalitet for å tilgangsstyring I Altinn"
   },
   "title": {
-    "nb-NO": "Tilgangsstyring Altinn"
+    "nb": "Tilgangsstyring Altinn"
   },
   "hasCompetentAuthority": {
     "organization": "991825827",
