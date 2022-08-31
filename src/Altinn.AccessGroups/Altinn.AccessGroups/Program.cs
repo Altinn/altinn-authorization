@@ -1,5 +1,11 @@
+using Altinn.AccessGroups;
+using Altinn.AccessGroups.Core;
+using Altinn.AccessGroups.Persistance;
+using Npgsql.Logging;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using Yuniql.AspNetCore;
+using Yuniql.PostgreSql;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -13,6 +19,8 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
+
+ConfigurePostgreSql();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
@@ -37,4 +45,31 @@ void ConfigureServices(IServiceCollection services, IConfiguration config)
     });
 
     services.AddSingleton(config);
+    services.AddSingleton<IAccessGroupsRepository, AccessGroupsRepository>();
+}
+
+void ConfigurePostgreSql()
+{
+    if (builder.Configuration.GetValue<bool>("PostgreSQLSettings:EnableDBConnection"))
+    {
+        NpgsqlLogManager.Provider = new ConsoleLoggingProvider(NpgsqlLogLevel.Trace, true, true);
+
+        ConsoleTraceService traceService = new ConsoleTraceService { IsDebugEnabled = true };
+
+        string connectionString = string.Format(
+            builder.Configuration.GetValue<string>("PostgreSQLSettings:AdminConnectionString"),
+            builder.Configuration.GetValue<string>("PostgreSQLSettings:authorizationDbAdminPwd"));
+
+        app.UseYuniql(
+            new PostgreSqlDataService(traceService),
+            new PostgreSqlBulkImportService(traceService),
+            traceService,
+            new Yuniql.AspNetCore.Configuration
+            {
+                Workspace = Path.Combine(Environment.CurrentDirectory, builder.Configuration.GetValue<string>("PostgreSQLSettings:WorkspacePath")),
+                ConnectionString = connectionString,
+                IsAutoCreateDatabase = false,
+                IsDebug = true
+            });
+    }
 }
