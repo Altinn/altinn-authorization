@@ -10,8 +10,7 @@ CREATE TABLE IF NOT EXISTS accessgroup."AccessGroup"
     "AccessGroupId" bigint GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     "AccessGroupCode" "char"[],
     "AccessGroupType" accessgroup.AccessGroupType NOT NULL,
-    "Hidden" boolean,
-    CONSTRAINT "AccessGroup_pkey" PRIMARY KEY ("AccessGroupId")
+    "Hidden" boolean
 )
 
 TABLESPACE pg_default;
@@ -27,8 +26,7 @@ ALTER TABLE accessgroup."AccessGroup"
 CREATE TABLE IF NOT EXISTS accessgroup."AccessGroupCategory"
 (
     "CategoryId" bigint GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-    "ParentCategoryId" integer,
-    CONSTRAINT "AccessGroupCategory_pkey" PRIMARY KEY ("CategoryId")
+    "ParentCategoryId" integer
 )
 
 TABLESPACE pg_default;
@@ -47,8 +45,7 @@ CREATE TABLE IF NOT EXISTS accessgroup."AccessGroupMembership"
     "UserId" bigint,
     "PartyId" bigint,
     "DelegationId" bigint,
-    "ValidTo" date,
-    CONSTRAINT "AccessGroupMembership_pkey" PRIMARY KEY ("MembershipID")
+    "ValidTo" date
 )
 
 TABLESPACE pg_default;
@@ -99,8 +96,7 @@ CREATE TABLE IF NOT EXISTS accessgroup."MemberShipDelegation"
     "DelegatedByUserId" bigint,
     "DelegatedByPartyId" bigint,
     "DelegationTime" date,
-    "DelegationType" text COLLATE pg_catalog."default",
-    CONSTRAINT "MemberShipDelegation_pkey" PRIMARY KEY ("DelegationId")
+    "DelegationType" text COLLATE pg_catalog."default"
 )
 
 TABLESPACE pg_default;
@@ -120,8 +116,7 @@ CREATE TABLE IF NOT EXISTS accessgroup."MembershipHistory"
     "UserId" bigint,
     "PartyId" bigint,
     "DelegationId" bigint,
-    "ValidTo" date,
-    CONSTRAINT "MembershipHistory_pkey" PRIMARY KEY ("HistoryId")
+    "ValidTo" date
 )
 
 TABLESPACE pg_default;
