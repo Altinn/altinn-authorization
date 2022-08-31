@@ -1,5 +1,4 @@
 CREATE SCHEMA IF NOT EXISTS accessgroup
-    AUTHORIZATION postgres;
 
 -- Enum: AccessGroup.AccessGroupType
 DO $$ BEGIN
@@ -18,9 +17,6 @@ CREATE TABLE IF NOT EXISTS accessgroup."AccessGroup"
 
 TABLESPACE pg_default;
 
-ALTER TABLE accessgroup."AccessGroup"
-    OWNER to postgres;
-
 -- Table: accessgroup.AccessGroupCategory
 
 
@@ -33,9 +29,6 @@ CREATE TABLE IF NOT EXISTS accessgroup."AccessGroupCategory"
 )
 
 TABLESPACE pg_default;
-
-ALTER TABLE accessgroup."AccessGroupCategory"
-    OWNER to postgres;
 
 -- Table: accessgroup.AccessGroupMembership
 
@@ -53,10 +46,7 @@ CREATE TABLE IF NOT EXISTS accessgroup."AccessGroupMembership"
 
 TABLESPACE pg_default;
 
-ALTER TABLE accessgroup."AccessGroupMembership"
-    OWNER to postgres;
-
-    -- Table: accessgroup.ExternalRelationship
+-- Table: accessgroup.ExternalRelationship
 
 -- DROP TABLE accessgroup."ExternalRelationship";
 
@@ -77,9 +67,6 @@ CREATE TABLE IF NOT EXISTS accessgroup."ExternalRelationship"
 )
 
 TABLESPACE pg_default;
-
-ALTER TABLE accessgroup."ExternalRelationship"
-    OWNER to postgres;
 
 -- Table: accessgroup.MemberShipDelegation
 
@@ -104,9 +91,6 @@ CREATE TABLE IF NOT EXISTS accessgroup."MemberShipDelegation"
 
 TABLESPACE pg_default;
 
-ALTER TABLE accessgroup."MemberShipDelegation"
-    OWNER to postgres;
-
 -- Table: accessgroup.MembershipHistory
 
 -- DROP TABLE accessgroup."MembershipHistory";
@@ -124,9 +108,6 @@ CREATE TABLE IF NOT EXISTS accessgroup."MembershipHistory"
 
 TABLESPACE pg_default;
 
-ALTER TABLE accessgroup."MembershipHistory"
-    OWNER to postgres;
-
 -- Table: accessgroup.ResourceRight
 
 -- DROP TABLE accessgroup."ResourceRight";
@@ -139,6 +120,3 @@ CREATE TABLE IF NOT EXISTS accessgroup."ResourceRight"
 )
 
 TABLESPACE pg_default;
-
-ALTER TABLE accessgroup."ResourceRight"
-    OWNER to postgres;
