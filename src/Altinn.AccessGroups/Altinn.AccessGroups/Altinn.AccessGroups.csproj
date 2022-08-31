@@ -9,7 +9,10 @@
   <ItemGroup>
     <Folder Include="Controllers\" />
     <Folder Include="Migration\" />
-    <Folder Include="Services\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Altinn.AccessGroups.Core\Altinn.AccessGroups.Core.csproj" />
   </ItemGroup>
 
 </Project>
