@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace ResourceRegistry.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("ResourceRegistry/api/[controller]")]
     [ApiController]
     public class ResourceController : ControllerBase
     {

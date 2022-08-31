@@ -39,11 +39,33 @@ namespace ResourceRegistryTest
 
         }
 
+
+        [Fact]
+        public async Task Test_Nav_Get()
+        {
+            HttpClient client = SetupUtil.GetTestClient(_factory);
+            string requestUri = "ResourceRegistry/api/Resource/nav_tiltakAvtaleOmArbeidstrening";
+
+            HttpRequestMessage httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, requestUri)
+            {
+            };
+
+            HttpResponseMessage response = await client.SendAsync(httpRequestMessage);
+
+            string responseContent = await response.Content.ReadAsStringAsync();
+            ServiceResource? resource = System.Text.Json.JsonSerializer.Deserialize<ServiceResource>(responseContent, new System.Text.Json.JsonSerializerOptions() { PropertyNamingPolicy = JsonNamingPolicy.CamelCase }) as ServiceResource;
+
+            Assert.NotNull(resource);
+            Assert.NotNull(resource.Identifier);
+            Assert.Equal("nav_tiltakAvtaleOmArbeidstrening", resource.Identifier);
+
+        }
+
         [Fact]
         public async Task Search_Get()
         {
             HttpClient client = SetupUtil.GetTestClient(_factory);
-            string requestUri = "/api/Resource/Search?SearchTerm=test";
+            string requestUri = "ResourceRegistry/api/Resource/Search?SearchTerm=test";
 
             HttpRequestMessage httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, requestUri)
             {

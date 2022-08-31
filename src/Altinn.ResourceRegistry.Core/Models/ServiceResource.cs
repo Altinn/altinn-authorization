@@ -23,5 +23,11 @@
         /// 
         /// </summary>
         public string Status { get; set; }
+
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public DateTime ValidFrom { get; set; } 
     }
 }
