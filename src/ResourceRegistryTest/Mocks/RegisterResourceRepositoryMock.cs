@@ -1,4 +1,5 @@
 ﻿using Altinn.ResourceRegistry.Core;
+using Altinn.ResourceRegistry.Core.Models;
 using Altinn.ResourceRegistry.Models;
 using System;
 using System.Collections.Generic;
@@ -23,15 +24,32 @@ namespace ResourceRegistryTest.Mocks
 
         public async Task<ServiceResource> GetResource(string id)
         {
-            string evPath = GetResourcePath(id);
-            if (File.Exists(evPath))
+            string resourcePath = GetResourcePath(id);
+            if (File.Exists(resourcePath))
             {
-                string content = System.IO.File.ReadAllText(evPath);
+                string content = System.IO.File.ReadAllText(resourcePath);
                 ServiceResource? resource = System.Text.Json.JsonSerializer.Deserialize<ServiceResource>(content, new System.Text.Json.JsonSerializerOptions() {  PropertyNamingPolicy = System.Text.Json.JsonNamingPolicy.CamelCase}) as ServiceResource;
                 return resource;
             }
 
             return null;
+        }
+
+        public async Task<List<ServiceResource>> Search(ResourceSearch resourceSearch)
+        {
+            List<ServiceResource> resources = new List<ServiceResource>();
+            string[] files =  Directory.GetFiles(GetResourcePath());
+            if(files != null)
+            {
+                foreach (string file in files)
+                {
+                    string content = System.IO.File.ReadAllText(file);
+                    ServiceResource? resource = System.Text.Json.JsonSerializer.Deserialize<ServiceResource>(content, new System.Text.Json.JsonSerializerOptions() { PropertyNamingPolicy = System.Text.Json.JsonNamingPolicy.CamelCase }) as ServiceResource;
+                    resources.Add(resource);
+                }
+            }
+
+            return resources;
         }
 
         private static string GetResourcePath(string id)
@@ -49,5 +67,6 @@ namespace ResourceRegistryTest.Mocks
             string unitTestFolder = Path.GetDirectoryName(new Uri(typeof(RegisterResourceRepositoryMock).Assembly.Location).LocalPath);
             return Path.Combine(unitTestFolder, @"..\..\..\Data\Resources");
         }
+   
     }
 }

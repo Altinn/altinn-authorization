@@ -1,4 +1,5 @@
 ﻿using Altinn.ResourceRegistry.Core;
+using Altinn.ResourceRegistry.Core.Models;
 using Altinn.ResourceRegistry.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -9,7 +10,6 @@ namespace ResourceRegistry.Controllers
     [ApiController]
     public class ResourceController : ControllerBase
     {
-
         private IResourceRegistry _resourceRegistry;
 
         public ResourceController(IResourceRegistry resourceRegistry)
@@ -38,9 +38,15 @@ namespace ResourceRegistry.Controllers
 
 
         [HttpDelete("{id}")]
-        public async void  Delete(string id)
+        public async void Delete(string id)
         {
             await _resourceRegistry.Delete(id);
         }
-    }
+
+        [HttpGet("Search")]
+        public async Task<List<ServiceResource>> Search([FromQuery] ResourceSearch search)
+        {
+            return await _resourceRegistry.Search(search);
+        }
+     }
 }

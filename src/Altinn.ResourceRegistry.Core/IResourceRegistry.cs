@@ -1,4 +1,5 @@
-﻿using Altinn.ResourceRegistry.Models;
+﻿using Altinn.ResourceRegistry.Core.Models;
+using Altinn.ResourceRegistry.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,5 +18,6 @@ namespace Altinn.ResourceRegistry.Core
 
         Task Delete(string id);
 
+        Task<List<ServiceResource>> Search(ResourceSearch resourceSearch);
     }
 }

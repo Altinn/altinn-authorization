@@ -1,6 +1,7 @@
 using Altinn.ResourceRegistry.Models;
 using ResourceRegistry.Controllers;
 using ResourceRegistryTest.Utils;
+using System.Collections.Generic;
 using System.Net.Http;
 using System.Text.Json;
 using System.Threading.Tasks;
@@ -22,7 +23,7 @@ namespace ResourceRegistryTest
         public async Task Test1Async_Get()
         {
             HttpClient client = SetupUtil.GetTestClient(_factory);
-            string requestUri = "/api/Resource/altinn_access_management";
+            string requestUri = "ResourceRegistry/api/Resource/altinn_access_management";
 
             HttpRequestMessage httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, requestUri)
             {
@@ -35,6 +36,26 @@ namespace ResourceRegistryTest
 
             Assert.NotNull(resource);
             Assert.NotNull(resource.Identifier);
+
+        }
+
+        [Fact]
+        public async Task Search_Get()
+        {
+            HttpClient client = SetupUtil.GetTestClient(_factory);
+            string requestUri = "/api/Resource/Search?SearchTerm=test";
+
+            HttpRequestMessage httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, requestUri)
+            {
+            };
+
+            HttpResponseMessage response = await client.SendAsync(httpRequestMessage);
+
+            string responseContent = await response.Content.ReadAsStringAsync();
+            List<ServiceResource>? resource = System.Text.Json.JsonSerializer.Deserialize<List<ServiceResource>>(responseContent, new System.Text.Json.JsonSerializerOptions() { PropertyNamingPolicy = JsonNamingPolicy.CamelCase }) as List<ServiceResource>;
+
+            Assert.NotNull(resource);
+            Assert.Equal(2, resource.Count);
 
         }
     }

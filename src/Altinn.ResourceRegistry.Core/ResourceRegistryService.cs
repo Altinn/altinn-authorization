@@ -1,4 +1,5 @@
-﻿using Altinn.ResourceRegistry.Models;
+﻿using Altinn.ResourceRegistry.Core.Models;
+using Altinn.ResourceRegistry.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -29,6 +30,11 @@ namespace Altinn.ResourceRegistry.Core
         public async Task<ServiceResource> GetResource(string id)
         {
             return await _repository.GetResource(id);
+        }
+
+        public async Task<List<ServiceResource>> Search(ResourceSearch resourceSearch)
+        {
+            return await _repository.Search(resourceSearch);
         }
 
         public async Task UpdateResource(ServiceResource serviceResource)

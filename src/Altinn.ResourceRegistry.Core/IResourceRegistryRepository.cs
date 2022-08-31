@@ -1,4 +1,5 @@
-﻿using Altinn.ResourceRegistry.Models;
+﻿using Altinn.ResourceRegistry.Core.Models;
+using Altinn.ResourceRegistry.Models;
 
 namespace Altinn.ResourceRegistry.Core
 {
@@ -11,5 +12,7 @@ namespace Altinn.ResourceRegistry.Core
         Task UpdateResource(ServiceResource resource);
 
         Task CreateResource(ServiceResource resource);
+
+        Task<List<ServiceResource>> Search(ResourceSearch resourceSearch);
     }
 }
