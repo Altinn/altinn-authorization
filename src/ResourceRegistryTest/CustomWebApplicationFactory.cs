@@ -19,7 +19,7 @@ namespace ResourceRegistryTest
         {
             builder.ConfigureServices(services =>
             {
-                services.AddTransient<IResourceRepository, ResourceRepository>();
+
             });
         }
     }

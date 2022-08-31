@@ -1,6 +1,10 @@
-﻿using Microsoft.AspNetCore.Mvc.Testing;
+﻿using Altinn.ResourceRegistry.Core;
+using Altinn.ResourceRegistry.Persistence;
+using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.TestHost;
+using Microsoft.Extensions.DependencyInjection;
 using ResourceRegistry.Controllers;
+using ResourceRegistryTest.Mocks;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,12 +23,11 @@ namespace ResourceRegistryTest.Utils
             {
                 builder.ConfigureTestServices(services =>
                 {
-                    
+                    services.AddSingleton<IResourceRegistryRepository, RegisterResourceRepositoryMock>();
                 });
             });
             factory.Server.AllowSynchronousIO = true;
             return factory.CreateClient();
         }
-
     }
 }

@@ -1,0 +1,27 @@
+{
+  "identifier": "altinn_access_management",
+  "description": {
+    "nb-NO": "Funksjonalitet for å tilgangsstyring I Altinn"
+  },
+  "title": {
+    "nb-NO": "Tilgangsstyring Altinn"
+  },
+  "hasCompetentAuthority": {
+    "organization": "991825827",
+    "orgcode": "digdir"
+  },
+  "contactpoint": [
+    {
+      "phone": "1231324",
+      "email": "online@digdir.no"
+    }
+  ],
+  "isPartOf": "altiinnportal",
+  "hasPart": "delegationrequests",
+  "homepage": "www.altinn.no",
+  "status": "Completed",
+  "thematicArea": [],
+  "type": [],
+  "sector": []
+
+}

@@ -22,7 +22,7 @@ namespace ResourceRegistryTest
         public async Task Test1Async_Get()
         {
             HttpClient client = SetupUtil.GetTestClient(_factory);
-            string requestUri = "/api/Resource/aaa";
+            string requestUri = "/api/Resource/altinn_access_management";
 
             HttpRequestMessage httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, requestUri)
             {
