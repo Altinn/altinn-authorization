@@ -14,7 +14,6 @@ using Microsoft.VisualBasic;
 
 namespace Altinn.AccessGroups.Controllers
 {
-    [Route("authorization/api/v1/[controller]")]
     [ApiController]
     public class AccessGroupController : ControllerBase
     {

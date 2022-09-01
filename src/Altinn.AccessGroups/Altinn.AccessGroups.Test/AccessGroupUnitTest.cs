@@ -35,7 +35,7 @@ namespace AccessGroupTest
 
             // Assert
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-            Assert.Equal("\"Hello world!\"", responseContent);
+            Assert.Equal("Hello world!", responseContent);
         }
 
         [Fact]
@@ -45,8 +45,7 @@ namespace AccessGroupTest
             string requestUri = "authorization/api/v1/AccessGroup/ListGroupMemberships";
 
             HttpRequestMessage httpRequestMessage = new HttpRequestMessage(HttpMethod.Post, requestUri)
-            {
-            };
+            {};
 
             HttpResponseMessage response = await client.SendAsync(httpRequestMessage);
 
