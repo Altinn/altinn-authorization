@@ -1,4 +1,6 @@
+-- Schema: accessgroup
 CREATE SCHEMA IF NOT EXISTS accessgroup
+    AUTHORIZATION postgres;
 
 -- Enum: AccessGroup.AccessGroupType
 DO $$ BEGIN
@@ -7,48 +9,37 @@ EXCEPTION
     WHEN duplicate_object THEN null;
 END $$;
 
-CREATE TABLE IF NOT EXISTS accessgroup."AccessGroup"
+-- Table: accessgroup.AccessGroup
+CREATE TABLE IF NOT EXISTS accessgroup.AccessGroup
 (
     "AccessGroupId" bigint GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-    "AccessGroupCode" "char"[],
+    "AccessGroupCode" char[],
     "AccessGroupType" accessgroup.AccessGroupType NOT NULL,
-    "Hidden" boolean
+    "Hidden" boolean,
+    "Created" timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "Modified" timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP
 )
-
 TABLESPACE pg_default;
 
 -- Table: accessgroup.AccessGroupCategory
-
-
--- DROP TABLE accessgroup."AccessGroupCategory";
-
-CREATE TABLE IF NOT EXISTS accessgroup."AccessGroupCategory"
+CREATE TABLE IF NOT EXISTS accessgroup.AccessGroupCategory
 (
     "CategoryId" bigint GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-    "ParentCategoryId" integer
+    "ParentCategoryId" bigint
 )
-
 TABLESPACE pg_default;
 
 -- Table: accessgroup.AccessGroupMembership
-
--- DROP TABLE accessgroup."AccessGroupMembership";
-
-CREATE TABLE IF NOT EXISTS accessgroup."AccessGroupMembership"
+CREATE TABLE IF NOT EXISTS accessgroup.AccessGroupMembership
 (
-    "MembershipID" bigint GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    "MembershipId" bigint GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     "OfferedByParty" bigint,
     "UserId" bigint,
     "PartyId" bigint,
     "DelegationId" bigint,
-    "ValidTo" date
+    "ValidTo" timestamp with time zone
 )
-
 TABLESPACE pg_default;
-
--- Table: accessgroup.ExternalRelationship
-
--- DROP TABLE accessgroup."ExternalRelationship";
 
 -- Enum: AccessGroup.ExternalSource
 DO $$ BEGIN
@@ -57,22 +48,16 @@ EXCEPTION
     WHEN duplicate_object THEN null;
 END $$;
 
-
-CREATE TABLE IF NOT EXISTS accessgroup."ExternalRelationship"
+-- Table: accessgroup.ExternalRelationship
+CREATE TABLE IF NOT EXISTS accessgroup.ExternalRelationship
 (
     "ExternalSource" accessgroup.ExternalSource NOT NULL,
     "ExternalID" char[] NOT NULL,
     "PartyTypeFilter" char[] NOT NULL,
     "AccessGroupID" bigint
 )
-
 TABLESPACE pg_default;
 
--- Table: accessgroup.MemberShipDelegation
-
--- DROP TABLE accessgroup."MemberShipDelegation";
-
---Brukerdelegering, Klientdelegering, Tjenestedelegering
 -- Enum: AccessGroup.DelegationType
 DO $$ BEGIN
     CREATE TYPE accessgroup.DelegationType AS ENUM ('Brukerdelegering', 'Klientdelegering', 'Tjenestedelegering');
@@ -80,22 +65,19 @@ EXCEPTION
     WHEN duplicate_object THEN null;
 END $$;
 
-CREATE TABLE IF NOT EXISTS accessgroup."MemberShipDelegation"
+-- Table: accessgroup.MemberShipDelegation
+CREATE TABLE IF NOT EXISTS accessgroup.MemberShipDelegation
 (
     "DelegationId" bigint GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     "DelegatedByUserId" bigint,
     "DelegatedByPartyId" bigint,
     "DelegationTime" date,
-    "DelegationType" text COLLATE pg_catalog."default"
+    "DelegationType" accessgroup.DelegationType NOT NULL
 )
-
 TABLESPACE pg_default;
 
 -- Table: accessgroup.MembershipHistory
-
--- DROP TABLE accessgroup."MembershipHistory";
-
-CREATE TABLE IF NOT EXISTS accessgroup."MembershipHistory"
+CREATE TABLE IF NOT EXISTS accessgroup.MembershipHistory
 (
     "HistoryId" bigint GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     "MembershipId" bigint,
@@ -103,20 +85,16 @@ CREATE TABLE IF NOT EXISTS accessgroup."MembershipHistory"
     "UserId" bigint,
     "PartyId" bigint,
     "DelegationId" bigint,
-    "ValidTo" date
+    "ValidTo" timestamp with time zone
 )
-
 TABLESPACE pg_default;
 
 -- Table: accessgroup.ResourceRight
-
--- DROP TABLE accessgroup."ResourceRight";
-
-CREATE TABLE IF NOT EXISTS accessgroup."ResourceRight"
+CREATE TABLE IF NOT EXISTS accessgroup.ResourceRight
 (
     "RightId" bigint,
     "GroupId" bigint,
     "ResourceId" bigint
 )
-
 TABLESPACE pg_default;
+
