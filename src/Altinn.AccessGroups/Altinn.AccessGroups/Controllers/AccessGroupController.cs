@@ -54,14 +54,7 @@ namespace Altinn.AccessGroups.Controllers
         [Route("authorization/api/v1/[controller]/ExportAccessGroups")]
         public async Task<ActionResult> ExportAccessGroups()
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-
-            List<AccessGroup> result = await _accessGroup.ExportAccessGroups();
-
-            return Ok(result);
+            return Ok(await _accessGroup.GetAccessGroups());
         }
 
         [HttpPost]
@@ -88,6 +81,13 @@ namespace Altinn.AccessGroups.Controllers
             }
 
             return Ok(await _accessGroup.ImportExternalRelationships(externalRelationships));
+        }
+
+        [HttpGet]
+        [Route("authorization/api/v1/[controller]/ExportExternalRelationships")]
+        public async Task<ActionResult> ExportExternalRelationships()
+        {
+            return Ok(await _accessGroup.GetExternalRelationships());
         }
 
         [HttpGet]

@@ -12,7 +12,11 @@ namespace Altinn.AccessGroups.Persistance
         private readonly ILogger _logger;
 
         private readonly string insertAccessGroupFunc = "select * from accessgroup.insert_accessgroup(@_accessGroupCode, @_accessGroupType, @_hidden)";
+        private readonly string getAccessGroups = "SELECT accessgroupid, accessgroupcode, accessgrouptype, hidden, created, modified FROM accessgroup.accessgroup";
+
         private readonly string insertExternalRelationshipFunc = "select * from accessgroup.insert_externalrelationship(@_ExternalSource, @_ExternalId, @_AccessGroupId, @_UnitTypeFilter)";
+        private readonly string getExternalRelationships = "SELECT externalsource, externalid, accessgroupid, unittypefilter FROM accessgroup.externalrelationship";
+
         private readonly string insertGroupMembershipFunc = "select * from accessgroup.insert_accessgroupmembership(@_coveredByUserId, @_coveredByPartyId, @_offeredByPartyId, @_groupId)";
         private readonly string deleteGroupMembershipFunc = "select * from accessgroup.delete_accessgroupmembership(@_coveredByUserId, @_coveredByPartyId, @_offeredByPartyId, @_groupId)";
 
@@ -60,6 +64,33 @@ namespace Altinn.AccessGroups.Persistance
         }        
 
         /// <inheritdoc/>
+        public async Task<List<AccessGroup>> GetAccessGroups()
+        {
+            try
+            {
+                await using NpgsqlConnection conn = new NpgsqlConnection(_connectionString);
+                await conn.OpenAsync();
+
+                NpgsqlCommand pgcom = new NpgsqlCommand(getAccessGroups, conn);
+
+                using NpgsqlDataReader reader = await pgcom.ExecuteReaderAsync();
+
+                List<AccessGroup> accessGroups = new();
+                if (reader.Read())
+                {
+                    accessGroups.Add(GetAccessGroup(reader));
+                }
+
+                return accessGroups;
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, "AccessGroups // AccessGroupsRepository // GetAccessGroups // Exception");
+                throw;
+            }
+        }
+
+        /// <inheritdoc/>
         public async Task<ExternalRelationship> InsertExternalRelationship(ExternalRelationship externalrelationship)
         {
             try
@@ -88,6 +119,33 @@ namespace Altinn.AccessGroups.Persistance
             catch (Exception e)
             {
                 _logger.LogError(e, "AccessGroups // AccessGroupsRepository // InsertExternalRelationship // Exception");
+                throw;
+            }
+        }
+
+        /// <inheritdoc/>
+        public async Task<List<ExternalRelationship>> GetExternalRelationships()
+        {
+            try
+            {
+                await using NpgsqlConnection conn = new NpgsqlConnection(_connectionString);
+                await conn.OpenAsync();
+
+                NpgsqlCommand pgcom = new NpgsqlCommand(getExternalRelationships, conn);
+
+                using NpgsqlDataReader reader = await pgcom.ExecuteReaderAsync();
+
+                List<ExternalRelationship> externalRelationships = new();
+                if (reader.Read())
+                {
+                    externalRelationships.Add(GetExternalRelationship(reader));
+                }
+
+                return externalRelationships;
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, "AccessGroups // AccessGroupsRepository // GetExternalRelationships // Exception");
                 throw;
             }
         }
