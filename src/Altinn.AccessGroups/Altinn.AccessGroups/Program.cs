@@ -1,6 +1,9 @@
 using Altinn.AccessGroups;
 using Altinn.AccessGroups.Core;
+using Altinn.AccessGroups.Interfaces;
 using Altinn.AccessGroups.Persistance;
+using Altinn.AccessGroups.Services;
+using Microsoft.Extensions.Logging;
 using Npgsql.Logging;
 using System.Text.Json;
 using System.Text.Json.Serialization;
@@ -20,6 +23,8 @@ builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
+await SetConfigurationProviders(builder.Configuration);
+
 ConfigurePostgreSql();
 
 // Configure the HTTP request pipeline.
@@ -35,6 +40,33 @@ app.MapControllers();
 
 app.Run();
 
+async Task SetConfigurationProviders(ConfigurationManager config)
+{
+    string basePath = Directory.GetParent(Directory.GetCurrentDirectory()).FullName;
+
+    //logger.LogInformation($"Program // Loading Configuration from basePath={basePath}");
+
+    config.SetBasePath(basePath);
+    string configJsonFile1 = $"{basePath}/altinn-appsettings/altinn-dbsettings-secret.json";
+    string configJsonFile2 = $"{Directory.GetCurrentDirectory()}/appsettings.json";
+
+    if (basePath == "/")
+    {
+        configJsonFile2 = "/app/appsettings.json";
+    }
+
+    //logger.LogInformation($"Loading configuration file: '{configJsonFile1}'");
+    config.AddJsonFile(configJsonFile1, optional: true, reloadOnChange: true);
+
+    //logger.LogInformation($"Loading configuration file2: '{configJsonFile2}'");
+    config.AddJsonFile(configJsonFile2, optional: false, reloadOnChange: true);
+
+    config.AddEnvironmentVariables();
+    config.AddCommandLine(args);
+
+    //await ConnectToKeyVaultAndSetApplicationInsights(config);
+}
+
 void ConfigureServices(IServiceCollection services, IConfiguration config)
 {
     services.AddControllers().AddJsonOptions(options =>
@@ -46,6 +78,7 @@ void ConfigureServices(IServiceCollection services, IConfiguration config)
 
     services.AddSingleton(config);
     services.AddSingleton<IAccessGroupsRepository, AccessGroupsRepository>();
+    services.AddSingleton<IAccessGroup, AccessGroupService>();
 }
 
 void ConfigurePostgreSql()
@@ -73,3 +106,4 @@ void ConfigurePostgreSql()
             });
     }
 }
+

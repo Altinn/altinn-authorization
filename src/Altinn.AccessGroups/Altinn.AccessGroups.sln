@@ -3,15 +3,17 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.1.32228.430
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Altinn.AccessGroups", "Altinn.AccessGroups\Altinn.AccessGroups.csproj", "{842ECFE2-2741-4FC0-915D-E2D0585978F6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Altinn.AccessGroups", "Altinn.AccessGroups\Altinn.AccessGroups.csproj", "{842ECFE2-2741-4FC0-915D-E2D0585978F6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Altinn.AccessGroups.Core", "Altinn.AccessGroups.Core\Altinn.AccessGroups.Core.csproj", "{E2B3358A-7AE3-4BC1-8A33-AA46C07417F5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Altinn.AccessGroups.Core", "Altinn.AccessGroups.Core\Altinn.AccessGroups.Core.csproj", "{E2B3358A-7AE3-4BC1-8A33-AA46C07417F5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Altinn.AccessGroups.Integrations", "Altinn.AccessGroups.Integrations\Altinn.AccessGroups.Integrations.csproj", "{B0A7358B-1B14-418A-9D49-B23CEFC2B03B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Altinn.AccessGroups.Integrations", "Altinn.AccessGroups.Integrations\Altinn.AccessGroups.Integrations.csproj", "{B0A7358B-1B14-418A-9D49-B23CEFC2B03B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Altinn.AccessGroups.Interfaces", "Altinn.AccessGroups.Interfaces\Altinn.AccessGroups.Interfaces.csproj", "{38FE7E1B-53D7-4DC2-BF13-7F2EF6458D49}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Altinn.AccessGroups.Interfaces", "Altinn.AccessGroups.Interfaces\Altinn.AccessGroups.Interfaces.csproj", "{38FE7E1B-53D7-4DC2-BF13-7F2EF6458D49}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Altinn.AccessGroups.Persistance", "Altinn.AccessGroups.Persistance\Altinn.AccessGroups.Persistance.csproj", "{8CEC9DD9-BB21-473D-8636-4A0AAB09DCA8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Altinn.AccessGroups.Persistance", "Altinn.AccessGroups.Persistance\Altinn.AccessGroups.Persistance.csproj", "{8CEC9DD9-BB21-473D-8636-4A0AAB09DCA8}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Altinn.AccessGroups.Test", "Altinn.AccessGroups.Test\Altinn.AccessGroups.Test.csproj", "{2EE3F57D-D38C-4FCB-8930-8B0557A772D5}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -39,6 +41,10 @@ Global
 		{8CEC9DD9-BB21-473D-8636-4A0AAB09DCA8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8CEC9DD9-BB21-473D-8636-4A0AAB09DCA8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8CEC9DD9-BB21-473D-8636-4A0AAB09DCA8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2EE3F57D-D38C-4FCB-8930-8B0557A772D5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2EE3F57D-D38C-4FCB-8930-8B0557A772D5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2EE3F57D-D38C-4FCB-8930-8B0557A772D5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2EE3F57D-D38C-4FCB-8930-8B0557A772D5}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
