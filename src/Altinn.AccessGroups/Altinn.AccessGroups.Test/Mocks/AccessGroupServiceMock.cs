@@ -16,7 +16,7 @@ namespace Altinn.AccessGroups.Test.Mocks
             throw new NotImplementedException();
         }
 
-        public Task<bool> CreateGroup(AccessGroup accessGroup)
+        public Task<AccessGroup> CreateGroup(AccessGroup accessGroup)
         {
             throw new NotImplementedException();
         }
