@@ -49,14 +49,6 @@ namespace Altinn.ResourceRegistry.Models
 
         public bool IsPublicService { get; set; }
 
-        public bool IsLimitedToSpesificUsers { get; set; }
-
-        public bool IsUsedByNorwegianCitiens { get; set; }
-
-        public bool IsUsedByNorwgianEnterprices { get; set; }
-
-        public bool IsUsedBySelfIdentified { get; set; }
-
         public string? ThematicArea { get; set; }
 
         public List<string>? Keywords { get; set;  }
