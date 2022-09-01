@@ -13,7 +13,7 @@ END $$;
 CREATE TABLE IF NOT EXISTS accessgroup.AccessGroup
 (
     "AccessGroupId" bigint GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-    "AccessGroupCode" char[],
+    "AccessGroupCode" character varying,
     "AccessGroupType" accessgroup.AccessGroupType NOT NULL,
     "Hidden" boolean,
     "Created" timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -52,8 +52,8 @@ END $$;
 CREATE TABLE IF NOT EXISTS accessgroup.ExternalRelationship
 (
     "ExternalSource" accessgroup.ExternalSource NOT NULL,
-    "ExternalID" char[] NOT NULL,
-    "PartyTypeFilter" char[] NOT NULL,
+    "ExternalID" character varying NOT NULL,
+    "PartyTypeFilter" character varying NOT NULL,
     "AccessGroupID" bigint
 )
 TABLESPACE pg_default;
