@@ -12,32 +12,32 @@ END $$;
 -- Table: accessgroup.AccessGroup
 CREATE TABLE IF NOT EXISTS accessgroup.AccessGroup
 (
-    "AccessGroupId" bigint GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-    "AccessGroupCode" character varying,
-    "AccessGroupType" accessgroup.AccessGroupType NOT NULL,
-    "Hidden" boolean,
-    "Created" timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "Modified" timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP
+    AccessGroupId bigint GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    AccessGroupCode character varying,
+    AccessGroupType accessgroup.AccessGroupType NOT NULL,
+    Hidden boolean,
+    Created timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    Modified timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP
 )
 TABLESPACE pg_default;
 
 -- Table: accessgroup.AccessGroupCategory
 CREATE TABLE IF NOT EXISTS accessgroup.AccessGroupCategory
 (
-    "CategoryId" bigint GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-    "ParentCategoryId" bigint
+    CategoryId bigint GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    ParentCategoryId bigint
 )
 TABLESPACE pg_default;
 
 -- Table: accessgroup.AccessGroupMembership
 CREATE TABLE IF NOT EXISTS accessgroup.AccessGroupMembership
 (
-    "MembershipId" bigint GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-    "OfferedByParty" bigint,
-    "UserId" bigint,
-    "PartyId" bigint,
-    "DelegationId" bigint,
-    "ValidTo" timestamp with time zone
+    MembershipId bigint GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    OfferedByParty bigint,
+    UserId bigint,
+    PartyId bigint,
+    DelegationId bigint,
+    ValidTo timestamp with time zone
 )
 TABLESPACE pg_default;
 
@@ -51,10 +51,10 @@ END $$;
 -- Table: accessgroup.ExternalRelationship
 CREATE TABLE IF NOT EXISTS accessgroup.ExternalRelationship
 (
-    "ExternalSource" accessgroup.ExternalSource NOT NULL,
-    "ExternalID" character varying NOT NULL,
-    "PartyTypeFilter" character varying NOT NULL,
-    "AccessGroupID" bigint
+    ExternalSource accessgroup.ExternalSource NOT NULL,
+    ExternalID character varying NOT NULL,
+    PartyTypeFilter character varying NOT NULL,
+    AccessGroupID bigint
 )
 TABLESPACE pg_default;
 
@@ -68,33 +68,33 @@ END $$;
 -- Table: accessgroup.MemberShipDelegation
 CREATE TABLE IF NOT EXISTS accessgroup.MemberShipDelegation
 (
-    "DelegationId" bigint GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-    "DelegatedByUserId" bigint,
-    "DelegatedByPartyId" bigint,
-    "DelegationTime" date,
-    "DelegationType" accessgroup.DelegationType NOT NULL
+    DelegationId bigint GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    DelegatedByUserId bigint,
+    DelegatedByPartyId bigint,
+    DelegationTime date,
+    DelegationType accessgroup.DelegationType NOT NULL
 )
 TABLESPACE pg_default;
 
 -- Table: accessgroup.MembershipHistory
 CREATE TABLE IF NOT EXISTS accessgroup.MembershipHistory
 (
-    "HistoryId" bigint GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-    "MembershipId" bigint,
-    "OfferedByParty" bigint,
-    "UserId" bigint,
-    "PartyId" bigint,
-    "DelegationId" bigint,
-    "ValidTo" timestamp with time zone
+    HistoryId bigint GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    MembershipId bigint,
+    OfferedByParty bigint,
+    UserId bigint,
+    PartyId bigint,
+    DelegationId bigint,
+    ValidTo timestamp with time zone
 )
 TABLESPACE pg_default;
 
 -- Table: accessgroup.ResourceRight
 CREATE TABLE IF NOT EXISTS accessgroup.ResourceRight
 (
-    "RightId" bigint,
-    "GroupId" bigint,
-    "ResourceId" bigint
+    RightId bigint,
+    GroupId bigint,
+    ResourceId bigint
 )
 TABLESPACE pg_default;
 
