@@ -91,6 +91,13 @@ namespace Altinn.AccessGroups.Controllers
         }
 
         [HttpGet]
+        [Route("authorization/api/v1/[controller]/ExportExternalRelationships")]
+        public async Task<ActionResult> ExportExternalRelationships()
+        {
+            return Ok(await _accessGroup.GetExternalRelationships());
+        }
+
+        [HttpGet]
         [Route("authorization/api/v1/[controller]/")]
         public string Get()
         {

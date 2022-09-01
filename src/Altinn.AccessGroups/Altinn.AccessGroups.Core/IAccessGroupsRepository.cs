@@ -17,5 +17,11 @@ namespace Altinn.AccessGroups.Core
         /// <param name="externalRelationship">The external relationship model to insert</param>
         /// <returns>The resulting external relationship</returns>
         Task<ExternalRelationship> InsertExternalRelationship(ExternalRelationship externalRelationship);
+
+        /// <summary>
+        /// Operation for getting all external relationship from the postgreSQL database
+        /// </summary>
+        /// <returns>The list of external relationships</returns>
+        Task<List<ExternalRelationship>> GetExternalRelationships();
     }
 }
