@@ -54,14 +54,7 @@ namespace Altinn.AccessGroups.Controllers
         [Route("authorization/api/v1/[controller]/ExportAccessGroups")]
         public async Task<ActionResult> ExportAccessGroups()
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-
-            List<AccessGroup> result = await _accessGroup.ExportAccessGroups();
-
-            return Ok(result);
+            return Ok(await _accessGroup.GetAccessGroups());
         }
 
         [HttpPost]

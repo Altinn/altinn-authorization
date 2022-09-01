@@ -26,9 +26,9 @@ namespace Altinn.AccessGroups.Services
             return await _accessGroupRepository.InsertAccessGroup(accessGroup);
         }
 
-        public Task<List<AccessGroup>> ExportAccessGroups()
+        public async Task<List<AccessGroup>> GetAccessGroups()
         {
-            throw new NotImplementedException();
+            return await _accessGroupRepository.GetAccessGroups();
         }
 
         public Task<bool> ImportAccessGroups(List<AccessGroup> accessGroups)

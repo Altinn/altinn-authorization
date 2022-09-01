@@ -23,5 +23,12 @@ namespace Altinn.AccessGroups.Core
         /// </summary>
         /// <returns>The list of external relationships</returns>
         Task<List<ExternalRelationship>> GetExternalRelationships();
+
+
+        /// <summary>
+        /// Operation for getting all access groups from the postgreSQL database
+        /// </summary>
+        /// <returns>The list of access groups</returns>
+        Task<List<AccessGroup>> GetAccessGroups();
     }
 }

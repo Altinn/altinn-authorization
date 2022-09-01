@@ -21,7 +21,7 @@ namespace Altinn.AccessGroups.Test.Mocks
             throw new NotImplementedException();
         }
 
-        public Task<List<AccessGroup>> ExportAccessGroups()
+        public Task<List<AccessGroup>> GetAccessGroups()
         {
             throw new NotImplementedException();
         }

@@ -10,6 +10,11 @@ namespace Altinn.AccessGroups.Test.Mocks
 {
     internal class AccessGroupRepositoryMock : IAccessGroupsRepository
     {
+        public Task<List<AccessGroup>> GetAccessGroups()
+        {
+            throw new NotImplementedException();
+        }
+
         public Task<List<ExternalRelationship>> GetExternalRelationships()
         {
             throw new NotImplementedException();
