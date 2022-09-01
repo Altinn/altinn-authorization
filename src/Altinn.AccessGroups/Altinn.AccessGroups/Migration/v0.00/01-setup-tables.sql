@@ -53,7 +53,7 @@ CREATE TABLE IF NOT EXISTS accessgroup.ExternalRelationship
 (
     ExternalSource accessgroup.ExternalSource NOT NULL,
     ExternalID character varying NOT NULL,
-    PartyTypeFilter character varying NOT NULL,
+    UnitTypeFilter character varying NOT NULL,
     AccessGroupID bigint
 )
 TABLESPACE pg_default;
