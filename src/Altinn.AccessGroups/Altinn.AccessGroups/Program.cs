@@ -9,6 +9,7 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using Yuniql.AspNetCore;
 using Yuniql.PostgreSql;
+using Altinn.AccessGroups.Integrations;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -76,8 +77,12 @@ void ConfigureServices(IServiceCollection services, IConfiguration config)
     services.AddSingleton(config);
 
     services.Configure<PostgreSQLSettings>(config.GetSection("PostgreSQLSettings"));
+    services.Configure<SBLBridgeSettings>(config.GetSection("SBLBridgeSettings"));
     services.AddSingleton<IAccessGroupsRepository, AccessGroupsRepository>();
     services.AddSingleton<IAccessGroup, AccessGroupService>();
+    services.AddHttpClient<SBLBridgeClient>();
+    services.AddSingleton<IAltinnRolesClient, AltinnRolesClient>();
+    services.AddSingleton<IMemberships, MembershipService>();    
 }
 
 void ConfigurePostgreSql()

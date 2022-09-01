@@ -1,21 +1,38 @@
-﻿using Altinn.AccessGroups.Core.Models;
+﻿using Altinn.AccessGroups.Core;
+using Altinn.AccessGroups.Core.Models;
 using Altinn.AccessGroups.Interfaces;
+using Authorization.Platform.Authorization.Models;
 
 namespace Altinn.AccessGroups.Services
 {
     public class MembershipService : IMemberships
     {
-        public Task<bool> AddMembership(GroupMembership input)
+        private IAltinnRolesClient _rolesClient;
+        public MembershipService(IAltinnRolesClient rolesClient)
+        {
+            _rolesClient = rolesClient;
+        }
+
+        public async Task<bool> AddMembership(GroupMembership input)
         {
             throw new NotImplementedException();
         }
 
-        public Task<List<AccessGroup>> ListGroupMemberships(AccessGroupSearch search)
+        public async Task<List<AccessGroup>> ListGroupMemberships(AccessGroupSearch search)
         {
-            throw new NotImplementedException();
-        }
+            if(!search.CoveredByUserId.HasValue)
+            {
+                throw new NotImplementedException();
+            }
 
-        public Task<bool> RevokeMembership(GroupMembership input)
+            List<Role> erRoles = await _rolesClient.GetDecisionPointRolesForUser((int)search.CoveredByUserId, search.OfferedByPartyId);
+
+            List<AccessGroup> accessGroups = new List<AccessGroup>();
+
+            return accessGroups;
+        }
+        
+        public async Task<bool> RevokeMembership(GroupMembership input)
         {
             throw new NotImplementedException();
         }

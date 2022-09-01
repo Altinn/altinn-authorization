@@ -24,6 +24,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Altinn.AccessGroups.Integrations\Altinn.AccessGroups.Integrations.csproj" />
     <ProjectReference Include="..\Altinn.AccessGroups.Persistance\Altinn.AccessGroups.Persistance.csproj" />
   </ItemGroup>
 
