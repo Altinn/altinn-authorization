@@ -33,12 +33,31 @@ namespace Altinn.AccessGroups.Services
             return await _accessGroupRepository.GetAccessGroups();
         }
 
+        public async Task<ExternalRelationship> CreateExternalRelationship(ExternalRelationship externalRelationship)
+        {
+            if (externalRelationship.AccessGroupId == 0)
+            {
+                List<AccessGroup> accessGroups = await GetAccessGroups();
+                AccessGroup accessGroup = accessGroups.FirstOrDefault(ag => ag.AccessGroupCode == externalRelationship.AccessGroupCode);
+                if (accessGroup != null)
+                {
+                    externalRelationship.AccessGroupId = accessGroup.AccessGroupId;
+                }
+                else
+                {
+                    return externalRelationship;
+                }               
+            }
+
+            return await _accessGroupRepository.InsertExternalRelationship(externalRelationship);
+        }
+
         public async Task<List<ExternalRelationship>> ImportExternalRelationships(List<ExternalRelationship> externalRelationships)
         {
-            List<ExternalRelationship> results = new List<ExternalRelationship> ();
+            List<ExternalRelationship> results = new();
             foreach (ExternalRelationship externalRelationship in externalRelationships)
             {
-                results.Add(await _accessGroupRepository.InsertExternalRelationship(externalRelationship));
+                results.Add(await CreateExternalRelationship(externalRelationship));
             }
 
             return results;

@@ -2,15 +2,30 @@
 using Altinn.AccessGroups.Core.Models;
 using Altinn.AccessGroups.Interfaces;
 using Authorization.Platform.Authorization.Models;
+using System.Linq;
 
 namespace Altinn.AccessGroups.Services
 {
     public class MembershipService : IMemberships
     {
-        private IAltinnRolesClient _rolesClient;
-        public MembershipService(IAltinnRolesClient rolesClient)
+        private readonly ILogger<IMemberships> _logger;
+        private readonly IAccessGroupsRepository _accessGroupRepository;
+        private readonly IAccessGroup _accessGroups;
+        private readonly IAltinnRolesClient _altinnRoles;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="MembershipService"/> class.
+        /// </summary>
+        /// <param name="accessGroupRepository">The repository client for access groups</param>
+        /// <param name="accessGroup">The access group service implementation</param>
+        /// <param name="altinnRoles">The Altinn role integration client</param>
+        /// <param name="logger">Logger instance</param>
+        public MembershipService(IAccessGroupsRepository accessGroupRepository, IAccessGroup accessGroups, IAltinnRolesClient altinnRoles, ILogger<IMemberships> logger)
         {
-            _rolesClient = rolesClient;
+            _accessGroupRepository = accessGroupRepository;
+            _accessGroups = accessGroups;
+            _altinnRoles = altinnRoles;
+            _logger = logger;
         }
 
         public async Task<bool> AddMembership(GroupMembership input)
@@ -25,11 +40,15 @@ namespace Altinn.AccessGroups.Services
                 throw new NotImplementedException();
             }
 
-            List<Role> erRoles = await _rolesClient.GetDecisionPointRolesForUser((int)search.CoveredByUserId, search.OfferedByPartyId);
+            List<Role> erRoles = await _altinnRoles.GetDecisionPointRolesForUser((int)search.CoveredByUserId, search.OfferedByPartyId);
 
-            List<AccessGroup> accessGroups = new List<AccessGroup>();
+            List<ExternalRelationship> externalRelationships = await _accessGroups.GetExternalRelationships();
 
-            return accessGroups;
+            List<AccessGroup> accessGroups = await _accessGroups.GetAccessGroups();
+
+            List<AccessGroup> result = new();
+            result.AddRange(erRoles.SelectMany(role => externalRelationships.SelectMany(rel => accessGroups.Where(ag => ag.AccessGroupId == rel.AccessGroupId && rel.ExternalId == role.Value))));
+            return result;
         }
         
         public async Task<bool> RevokeMembership(GroupMembership input)

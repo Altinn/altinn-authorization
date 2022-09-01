@@ -21,6 +21,11 @@
         public int AccessGroupId { get; set; }
 
         /// <summary>
+        /// The Access Group Code
+        /// </summary>
+        public string AccessGroupCode { get; set; }
+
+        /// <summary>
         /// Unittype filter value if any
         /// </summary>
         public string UnitTypeFilter { get; set; }

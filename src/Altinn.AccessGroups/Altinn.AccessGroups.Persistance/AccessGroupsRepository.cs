@@ -76,7 +76,7 @@ namespace Altinn.AccessGroups.Persistance
                 using NpgsqlDataReader reader = await pgcom.ExecuteReaderAsync();
 
                 List<AccessGroup> accessGroups = new();
-                if (reader.Read())
+                while (reader.Read())
                 {
                     accessGroups.Add(GetAccessGroup(reader));
                 }
@@ -102,11 +102,7 @@ namespace Altinn.AccessGroups.Persistance
                 pgcom.Parameters.AddWithValue("_ExternalSource", externalrelationship.ExternalSource);
                 pgcom.Parameters.AddWithValue("_ExternalId", externalrelationship.ExternalId);
                 pgcom.Parameters.AddWithValue("_AccessGroupId", externalrelationship.AccessGroupId);
-
-                if (!string.IsNullOrWhiteSpace(externalrelationship.UnitTypeFilter))
-                {
-                    pgcom.Parameters.AddWithValue("_UnitTypeFilter", externalrelationship.UnitTypeFilter);
-                }
+                pgcom.Parameters.AddWithValue("_UnitTypeFilter", externalrelationship.UnitTypeFilter);
 
                 using NpgsqlDataReader reader = await pgcom.ExecuteReaderAsync();
                 if (reader.Read())
@@ -136,7 +132,7 @@ namespace Altinn.AccessGroups.Persistance
                 using NpgsqlDataReader reader = await pgcom.ExecuteReaderAsync();
 
                 List<ExternalRelationship> externalRelationships = new();
-                if (reader.Read())
+                while (reader.Read())
                 {
                     externalRelationships.Add(GetExternalRelationship(reader));
                 }

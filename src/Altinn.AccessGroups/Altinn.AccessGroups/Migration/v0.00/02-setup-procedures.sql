@@ -29,8 +29,9 @@ $BODY$;
 CREATE OR REPLACE FUNCTION accessgroup.insert_externalrelationship(
 	_externalsource accessgroup.externalsource,
 	_externalid character varying,
-    _unittypefilter character varying,
-	_accessgroupid bigint)
+    _accessgroupid bigint,
+    _unittypefilter character varying
+	)
     RETURNS SETOF accessgroup.externalrelationship 
     LANGUAGE 'sql'
     VOLATILE
@@ -39,13 +40,13 @@ AS $BODY$
     INSERT INTO accessgroup.externalrelationship(
         externalsource,
         externalid,
-        unittypefilter,
-        accessgroupid
+        accessgroupid,
+        unittypefilter        
     )
     VALUES (
         _externalsource,
         _externalid,
-        _unittypefilter,
-        _accessgroupid
+        _accessgroupid,
+        _unittypefilter        
     ) RETURNING *;
 $BODY$;
