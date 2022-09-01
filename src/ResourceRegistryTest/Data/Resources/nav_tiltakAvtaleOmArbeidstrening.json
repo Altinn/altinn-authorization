@@ -27,26 +27,18 @@
   "validFrom": "2019-05-08T14:00:00",
   "validTo": "2049-05-08T14:00:00",
   "isPartOf": "nav_RapporteringOmArbeidstrening",
-  "isPublicService": "true",
-  "isLimitedToSpesificUsers": "false",
-  "isUsedByNorwegianCitiens": "true",
-  "isUsedByNorwgianEnterprices": "true",
-  "isUsedBySelfIdentified users": "true",
+  "isPublicService": true,
+  "isLimitedToSpesificUsers": false,
+  "isUsedByNorwegianCitiens": true,
+  "isUsedByNorwgianEnterprices": true,
+  "isUsedBySelfIdentified users": true,
   "thematicArea": "http://publications.europa.eu/resource/authority/eurovoc/2468",
-
   "type": [],
   "sector": [],
-  "keyword": [
-    {
-      "keyword": "Dødsbo"
-    }
-  ],
-  "referencid": {
-
-    "idsource": "altinn2",
-    "id": {
-      "ServiceCode": "5332",
-      "ServiceEditionCode": "2"
-    }
+  "keywords": [ "Dødsbo" ],
+  "resourceReference": {
+    "referenceSource": "Altinn2",
+    "referenceType": "ServiceCodeVersion",
+    "reference": "5332/2"
   }
 }

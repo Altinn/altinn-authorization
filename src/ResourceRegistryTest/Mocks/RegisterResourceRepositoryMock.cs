@@ -67,6 +67,5 @@ namespace ResourceRegistryTest.Mocks
             string unitTestFolder = Path.GetDirectoryName(new Uri(typeof(RegisterResourceRepositoryMock).Assembly.Location).LocalPath);
             return Path.Combine(unitTestFolder, @"..\..\..\Data\Resources");
         }
-   
     }
 }
