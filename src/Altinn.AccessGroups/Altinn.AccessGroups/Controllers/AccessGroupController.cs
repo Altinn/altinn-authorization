@@ -33,9 +33,7 @@ namespace Altinn.AccessGroups.Controllers
                 return BadRequest(ModelState);
             }
 
-            bool result = await _accessGroup.CreateGroup(accessGroup);
-
-            return Ok(result);
+            return Ok(await _accessGroup.CreateGroup(accessGroup));
         }
 
         [HttpPost]

@@ -4,7 +4,7 @@ namespace Altinn.AccessGroups.Interfaces
 {
     public interface IAccessGroup
     {
-        Task<bool> CreateGroup(AccessGroup accessGroup);
+        Task<AccessGroup> CreateGroup(AccessGroup accessGroup);
 
         Task<bool> UpdateGroup(AccessGroup accessGroup);
 
