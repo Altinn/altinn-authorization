@@ -25,52 +25,6 @@ namespace Altinn.AccessGroups.Controllers
             _accessGroup = accessGroup;
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <returns></returns>
-        [HttpPost]
-        [Route("authorization/api/v1/[controller]/ListGroupMemberships")]
-        public async Task<ActionResult> ListGroupMemberships([FromBody] AccessGroupSearch search)
-        {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-
-            List<AccessGroup> result = await _accessGroup.ListGroupMemberships(search);
-
-            return Ok(result);
-        }
-
-        [HttpPost]
-        [Route("authorization/api/v1/[controller]/AddMembership")]
-        public async Task<ActionResult> AddMembership([FromBody] GroupMembership input)
-        {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-
-            bool result = await _accessGroup.AddMembership(input);
-
-            return Ok(result);
-        }
-
-        [HttpPost]
-        [Route("authorization/api/v1/[controller]/RevokeMembership")]
-        public async Task<ActionResult> RevokeMembership([FromBody] GroupMembership input)
-        {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-
-            bool result = await _accessGroup.RevokeMembership(input);
-
-            return Ok(result);
-        }
-
         [HttpPost]
         [Route("authorization/api/v1/[controller]/CreateGroup")]
         public async Task<ActionResult> CreateGroup([FromBody] AccessGroup accessGroup)
