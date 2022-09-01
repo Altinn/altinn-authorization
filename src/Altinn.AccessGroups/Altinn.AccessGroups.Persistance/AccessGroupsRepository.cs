@@ -57,7 +57,7 @@ namespace Altinn.AccessGroups.Persistance
                 _logger.LogError(e, "AccessGroups // AccessGroupsRepository // InsertAccessGroup // Exception");
                 throw;
             }
-        }
+        }        
 
         /// <inheritdoc/>
         public async Task<ExternalRelationship> InsertExternalRelationship(ExternalRelationship externalrelationship)

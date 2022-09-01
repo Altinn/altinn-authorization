@@ -26,9 +26,9 @@ namespace Altinn.AccessGroups.Test.Mocks
             throw new NotImplementedException();
         }
 
-        public Task<bool> ImportAccessGroups(List<AccessGroup> accessGroups)
+        public async Task<List<AccessGroup>> ImportAccessGroups(List<AccessGroup> accessGroups)
         {
-            throw new NotImplementedException();
+            return await Task.FromResult(accessGroups);
         }
 
         public Task<List<ExternalRelationship>> ImportExternalRelationships(List<ExternalRelationship> externalRelationships)

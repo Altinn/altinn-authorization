@@ -2,6 +2,8 @@
 using Altinn.AccessGroups.Core.Models;
 using Altinn.AccessGroups.Interfaces;
 using Altinn.AccessGroups.Persistance;
+using Microsoft.AspNetCore.Http;
+using System.Collections.Generic;
 
 namespace Altinn.AccessGroups.Services
 {
@@ -31,11 +33,6 @@ namespace Altinn.AccessGroups.Services
             throw new NotImplementedException();
         }
 
-        public Task<bool> ImportAccessGroups(List<AccessGroup> accessGroups)
-        {
-            throw new NotImplementedException();
-        }
-
         public async Task<List<ExternalRelationship>> ImportExternalRelationships(List<ExternalRelationship> externalRelationships)
         {
             List<ExternalRelationship> results = new List<ExternalRelationship> ();
@@ -50,6 +47,17 @@ namespace Altinn.AccessGroups.Services
         public Task<bool> UpdateGroup(AccessGroup accessGroup)
         {
             throw new NotImplementedException();
+        }
+
+        public async Task<List<AccessGroup>> ImportAccessGroups(List<AccessGroup> accessGroups)
+        {
+            List<AccessGroup> result = new();
+            foreach (AccessGroup accessGroup in accessGroups)
+            {
+                result.Add(await _accessGroupRepository.InsertAccessGroup(accessGroup));
+            }
+
+            return result;
         }
     }
 }

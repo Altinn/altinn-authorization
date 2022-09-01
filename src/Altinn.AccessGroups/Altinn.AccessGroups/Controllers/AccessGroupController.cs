@@ -73,7 +73,7 @@ namespace Altinn.AccessGroups.Controllers
                 return BadRequest(ModelState);
             }
 
-            bool result = await _accessGroup.ImportAccessGroups(accessGroups);
+            List<AccessGroup> result = await _accessGroup.ImportAccessGroups(accessGroups);
 
             return Ok(result);
         }

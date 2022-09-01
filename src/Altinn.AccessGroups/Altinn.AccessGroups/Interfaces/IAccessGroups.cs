@@ -10,7 +10,7 @@ namespace Altinn.AccessGroups.Interfaces
 
         Task<List<AccessGroup>> ExportAccessGroups();
 
-        Task<bool> ImportAccessGroups(List<AccessGroup> accessGroups);
+        Task<List<AccessGroup>> ImportAccessGroups(List<AccessGroup> accessGroups);
 
         Task<List<ExternalRelationship>> ImportExternalRelationships(List<ExternalRelationship> externalRelationships);
     }
