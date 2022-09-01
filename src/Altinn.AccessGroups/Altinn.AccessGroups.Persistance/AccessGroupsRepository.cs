@@ -12,6 +12,7 @@ namespace Altinn.AccessGroups.Persistance
         private readonly ILogger _logger;
 
         private readonly string insertAccessGroupFunc = "select * from accessgroup.insert_accessgroup(@_accessGroupCode, @_accessGroupType, @_hidden)";
+        private readonly string insertExternalRelationshipFunc = "select * from accessgroup.insert_externalrelationship(@_ExternalSource, @_ExternalId, @_AccessGroupId, @_UnitTypeFilter)";
         private readonly string insertGroupMembershipFunc = "select * from accessgroup.insert_accessgroupmembership(@_coveredByUserId, @_coveredByPartyId, @_offeredByPartyId, @_groupId)";
         private readonly string deleteGroupMembershipFunc = "select * from accessgroup.delete_accessgroupmembership(@_coveredByUserId, @_coveredByPartyId, @_offeredByPartyId, @_groupId)";
 
@@ -27,6 +28,7 @@ namespace Altinn.AccessGroups.Persistance
                 postgresSettings.Value.ConnectionString,
                 postgresSettings.Value.AuthorizationDbPwd);
             NpgsqlConnection.GlobalTypeMapper.MapEnum<AccessGroupType>("accessgroup.accessgrouptype");
+            NpgsqlConnection.GlobalTypeMapper.MapEnum<ExternalSource>("accessgroup.externalsource");
         }
 
         /// <inheritdoc/>
@@ -53,6 +55,39 @@ namespace Altinn.AccessGroups.Persistance
             catch (Exception e)
             {
                 _logger.LogError(e, "AccessGroups // AccessGroupsRepository // InsertAccessGroup // Exception");
+                throw;
+            }
+        }
+
+        /// <inheritdoc/>
+        public async Task<ExternalRelationship> InsertExternalRelationship(ExternalRelationship externalrelationship)
+        {
+            try
+            {
+                await using NpgsqlConnection conn = new NpgsqlConnection(_connectionString);
+                await conn.OpenAsync();
+
+                NpgsqlCommand pgcom = new NpgsqlCommand(insertExternalRelationshipFunc, conn);
+                pgcom.Parameters.AddWithValue("_ExternalSource", externalrelationship.ExternalSource);
+                pgcom.Parameters.AddWithValue("_ExternalId", externalrelationship.ExternalId);
+                pgcom.Parameters.AddWithValue("_AccessGroupId", externalrelationship.AccessGroupId);
+
+                if (!string.IsNullOrWhiteSpace(externalrelationship.UnitTypeFilter))
+                {
+                    pgcom.Parameters.AddWithValue("_UnitTypeFilter", externalrelationship.UnitTypeFilter);
+                }
+
+                using NpgsqlDataReader reader = await pgcom.ExecuteReaderAsync();
+                if (reader.Read())
+                {
+                    return GetExternalRelationship(reader);
+                }
+
+                return null;
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, "AccessGroups // AccessGroupsRepository // InsertExternalRelationship // Exception");
                 throw;
             }
         }
@@ -162,6 +197,17 @@ namespace Altinn.AccessGroups.Persistance
                 Hidden = reader.GetValue<bool>("Hidden"),
                 Created = reader.GetValue<DateTime>("Created"),
                 Modified = reader.GetValue<DateTime>("Modified")
+            };
+        }
+
+        private static ExternalRelationship GetExternalRelationship(NpgsqlDataReader reader)
+        {
+            return new ExternalRelationship
+            {
+                ExternalSource = reader.GetValue<ExternalSource>("ExternalSource"),
+                ExternalId = reader.GetValue<string>("ExternalId"),
+                AccessGroupId = reader.GetValue<int>("AccessGroupId"),
+                UnitTypeFilter = reader.GetValue<string>("UnitTypeFilter")
             };
         }
 

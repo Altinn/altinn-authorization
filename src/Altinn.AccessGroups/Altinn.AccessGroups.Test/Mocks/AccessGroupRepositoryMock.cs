@@ -14,5 +14,10 @@ namespace Altinn.AccessGroups.Test.Mocks
         {
             throw new NotImplementedException();
         }
+
+        public Task<ExternalRelationship> InsertExternalRelationship(ExternalRelationship externalRelationship)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

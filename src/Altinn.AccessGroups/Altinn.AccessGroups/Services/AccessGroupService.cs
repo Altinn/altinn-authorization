@@ -36,6 +36,17 @@ namespace Altinn.AccessGroups.Services
             throw new NotImplementedException();
         }
 
+        public async Task<List<ExternalRelationship>> ImportExternalRelationships(List<ExternalRelationship> externalRelationships)
+        {
+            List<ExternalRelationship> results = new List<ExternalRelationship> ();
+            foreach (ExternalRelationship externalRelationship in externalRelationships)
+            {
+                results.Add(await _accessGroupRepository.InsertExternalRelationship(externalRelationship));
+            }
+
+            return results;
+        }
+
         public Task<bool> UpdateGroup(AccessGroup accessGroup)
         {
             throw new NotImplementedException();

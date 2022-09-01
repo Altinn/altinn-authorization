@@ -43,7 +43,7 @@ TABLESPACE pg_default;
 
 -- Enum: AccessGroup.ExternalSource
 DO $$ BEGIN
-    CREATE TYPE accessgroup.ExternalSource AS ENUM ('ER');
+    CREATE TYPE accessgroup.ExternalSource AS ENUM ('Enhetsregisteret');
 EXCEPTION
     WHEN duplicate_object THEN null;
 END $$;
@@ -53,8 +53,8 @@ CREATE TABLE IF NOT EXISTS accessgroup.ExternalRelationship
 (
     ExternalSource accessgroup.ExternalSource NOT NULL,
     ExternalID character varying NOT NULL,
-    UnitTypeFilter character varying NOT NULL,
-    AccessGroupID bigint
+    AccessGroupID bigint NOT NULL,
+    UnitTypeFilter character varying DEFAULT NULL
 )
 TABLESPACE pg_default;
 

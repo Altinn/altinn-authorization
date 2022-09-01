@@ -78,6 +78,18 @@ namespace Altinn.AccessGroups.Controllers
             return Ok(result);
         }
 
+        [HttpPost]
+        [Route("authorization/api/v1/[controller]/ImportExternalRelationships")]
+        public async Task<ActionResult> ImportExternalRelationships([FromBody] List<ExternalRelationship> externalRelationships)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            return Ok(await _accessGroup.ImportExternalRelationships(externalRelationships));
+        }
+
         [HttpGet]
         [Route("authorization/api/v1/[controller]/")]
         public string Get()

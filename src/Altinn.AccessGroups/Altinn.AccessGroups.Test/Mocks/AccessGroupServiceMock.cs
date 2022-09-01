@@ -31,6 +31,11 @@ namespace Altinn.AccessGroups.Test.Mocks
             throw new NotImplementedException();
         }
 
+        public Task<List<ExternalRelationship>> ImportExternalRelationships(List<ExternalRelationship> externalRelationships)
+        {
+            throw new NotImplementedException();
+        }
+
         public Task<List<AccessGroup>> ListGroupMemberships(AccessGroupSearch search)
         {
             throw new NotImplementedException();

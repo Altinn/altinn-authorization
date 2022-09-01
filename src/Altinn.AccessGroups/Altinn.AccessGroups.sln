@@ -13,7 +13,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Altinn.AccessGroups.Interfa
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Altinn.AccessGroups.Persistance", "Altinn.AccessGroups.Persistance\Altinn.AccessGroups.Persistance.csproj", "{8CEC9DD9-BB21-473D-8636-4A0AAB09DCA8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Altinn.AccessGroups.Test", "Altinn.AccessGroups.Test\Altinn.AccessGroups.Test.csproj", "{2EE3F57D-D38C-4FCB-8930-8B0557A772D5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Altinn.AccessGroups.Test", "Altinn.AccessGroups.Test\Altinn.AccessGroups.Test.csproj", "{2EE3F57D-D38C-4FCB-8930-8B0557A772D5}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
