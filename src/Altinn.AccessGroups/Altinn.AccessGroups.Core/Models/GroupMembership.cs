@@ -10,12 +10,12 @@
 
         public string GroupId { get; set; }
 
-        public GroupMembership(int? coveredByUserId, int? coveredByPartyId, int offeredByPartyId, string groupId)
-        {
-            CoveredByUserId = coveredByUserId;
-            CoveredByPartyId = coveredByPartyId;
-            OfferedByPartyId = offeredByPartyId;
-            GroupId = groupId;
-        }
+        //public GroupMembership(int? coveredByUserId, int? coveredByPartyId, int offeredByPartyId, string groupId)
+        //{
+        //    CoveredByUserId = coveredByUserId;
+        //    CoveredByPartyId = coveredByPartyId;
+        //    OfferedByPartyId = offeredByPartyId;
+        //    GroupId = groupId;
+        //}
     }
 }

@@ -8,7 +8,7 @@ namespace Altinn.AccessGroups.Controllers
     [ApiController]
     public class MembershipController : ControllerBase
     {
-        private IMemberships _membership;
+        private readonly IMemberships _membership;
 
         public MembershipController(IMemberships membership)
         {

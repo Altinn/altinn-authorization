@@ -12,6 +12,8 @@ namespace Altinn.AccessGroups.Persistance
         private readonly ILogger _logger;
 
         private readonly string insertAccessGroupFunc = "select * from accessgroup.insert_accessgroup(@_accessGroupCode, @_accessGroupType, @_hidden)";
+        private readonly string insertGroupMembershipFunc = "select * from accessgroup.insert_accessgroupmembership(@_coveredByUserId, @_coveredByPartyId, @_offeredByPartyId, @_groupId)";
+        private readonly string deleteGroupMembershipFunc = "select * from accessgroup.delete_accessgroupmembership(@_coveredByUserId, @_coveredByPartyId, @_offeredByPartyId, @_groupId)";
 
         /// <summary>
         /// Initializes a new instance of the <see cref="AccessGroupsRepository"/> class
@@ -50,9 +52,104 @@ namespace Altinn.AccessGroups.Persistance
             }
             catch (Exception e)
             {
-                _logger.LogError(e, "AccessGroups // AccessGroupsRepository // Insert // Exception");
+                _logger.LogError(e, "AccessGroups // AccessGroupsRepository // InsertAccessGroup // Exception");
                 throw;
             }
+        }
+
+        public async Task<GroupMembership> InsertGroupMembership(GroupMembership membership)
+        {
+            try
+            {
+                await using NpgsqlConnection conn = new NpgsqlConnection(_connectionString);
+                await conn.OpenAsync();
+
+                NpgsqlCommand pgcom = new NpgsqlCommand(insertGroupMembershipFunc, conn);
+
+                if (membership.CoveredByUserId != null)
+                {
+                    pgcom.Parameters.AddWithValue("_coveredByUserId", membership.CoveredByUserId);
+                }
+                else
+                {
+                    pgcom.Parameters.AddWithValue("_coveredByUserId", DBNull.Value);
+                }
+                
+                if (membership.CoveredByPartyId != null)
+                {
+                    pgcom.Parameters.AddWithValue("_coveredByPartyId", membership.CoveredByPartyId);
+                }
+                else
+                {
+                    pgcom.Parameters.AddWithValue("_coveredByPartyId", DBNull.Value);
+                }
+                
+                pgcom.Parameters.AddWithValue("_offeredByPartyId", membership.OfferedByPartyId);
+                pgcom.Parameters.AddWithValue("_groupId", membership.GroupId);
+
+                using NpgsqlDataReader reader = await pgcom.ExecuteReaderAsync();
+                if (reader.Read())
+                {
+                    return GetGroupMembership(reader);
+                }
+                else
+                {
+                    return null;
+                }
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, "AccessGroups // AccessGroupsRepository // InsertGroupMembership // Exception");
+                throw;
+            }
+        }
+
+        public async Task<GroupMembership> RevokeGroupMembership(GroupMembership membership)
+        {
+            try
+            {
+                await using NpgsqlConnection conn = new NpgsqlConnection(_connectionString);
+                await conn.OpenAsync();
+
+                NpgsqlCommand pgcom = new NpgsqlCommand(deleteGroupMembershipFunc, conn);
+
+                if (membership.CoveredByUserId != null)
+                {
+                    pgcom.Parameters.AddWithValue("_coveredByUserId", membership.CoveredByUserId);
+                }
+                else
+                {
+                    pgcom.Parameters.AddWithValue("_coveredByUserId", DBNull.Value);
+                }
+
+                if (membership.CoveredByPartyId != null)
+                {
+                    pgcom.Parameters.AddWithValue("_coveredByPartyId", membership.CoveredByPartyId);
+                }
+                else
+                {
+                    pgcom.Parameters.AddWithValue("_coveredByPartyId", DBNull.Value);
+                }
+
+                pgcom.Parameters.AddWithValue("_offeredByPartyId", membership.OfferedByPartyId);
+                pgcom.Parameters.AddWithValue("_groupId", membership.GroupId);
+
+                using NpgsqlDataReader reader = await pgcom.ExecuteReaderAsync();
+                if (reader.Read())
+                {
+                    return GetGroupMembership(reader);
+                }
+                else
+                {
+                    return null;
+                }
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, "AccessGroups // AccessGroupsRepository // DeleteGroupMembership // Exception");
+                throw;
+            }
+
         }
 
         private static AccessGroup GetAccessGroup(NpgsqlDataReader reader)
@@ -61,10 +158,21 @@ namespace Altinn.AccessGroups.Persistance
             {
                 AccessGroupId = reader.GetValue<int>("AccessGroupId"),
                 AccessGroupCode = reader.GetValue<string>("AccessGroupCode"),
-                AccessGroupType = reader.GetValue<AccessGroupType>("AccessGroupType"),                
+                AccessGroupType = reader.GetValue<AccessGroupType>("AccessGroupType"),            
                 Hidden = reader.GetValue<bool>("Hidden"),
                 Created = reader.GetValue<DateTime>("Created"),
                 Modified = reader.GetValue<DateTime>("Modified")
+            };
+        }
+
+        private static GroupMembership GetGroupMembership(NpgsqlDataReader reader)
+        {
+            return new GroupMembership
+            {
+                CoveredByUserId = reader.GetValue<int?>("CoveredByUserId"),
+                CoveredByPartyId = reader.GetValue<int?>("CoveredByPartyId"),
+                OfferedByPartyId = reader.GetValue<int>("OfferedByPartyId"),
+                GroupId = reader.GetValue<string>("GroupId")
             };
         }
     }
