@@ -5,11 +5,6 @@ namespace Altinn.AccessGroups.Services
 {
     public class AccessGroupService : IAccessGroup
     {
-        public Task<bool> AddMembership(GroupMembership input)
-        {
-            throw new NotImplementedException();
-        }
-
         public Task<bool> CreateGroup(AccessGroup accessGroup)
         {
             throw new NotImplementedException();
@@ -21,16 +16,6 @@ namespace Altinn.AccessGroups.Services
         }
 
         public Task<bool> ImportAccessGroups(List<AccessGroup> accessGroups)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<List<AccessGroup>> ListGroupMemberships(AccessGroupSearch search)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<bool> RevokeMembership(GroupMembership input)
         {
             throw new NotImplementedException();
         }

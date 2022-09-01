@@ -19,7 +19,7 @@ namespace Altinn.AccessGroups.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpPost]
-        [Microsoft.AspNetCore.Mvc.Route("authorization/api/v1/[controller]/ListGroupMemberships")]
+        [Route("authorization/api/v1/[controller]/ListGroupMemberships")]
         public async Task<ActionResult> ListGroupMemberships([FromBody] AccessGroupSearch search)
         {
             if (!ModelState.IsValid)
