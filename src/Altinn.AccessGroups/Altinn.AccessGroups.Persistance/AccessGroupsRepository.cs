@@ -17,6 +17,7 @@ namespace Altinn.AccessGroups.Persistance
         private readonly string insertExternalRelationshipFunc = "select * from accessgroup.insert_externalrelationship(@_ExternalSource, @_ExternalId, @_AccessGroupId, @_UnitTypeFilter)";
         private readonly string getExternalRelationships = "SELECT externalsource, externalid, accessgroupid, unittypefilter FROM accessgroup.externalrelationship";
 
+        private readonly string listGroupMembershipsFunc = "select * from accessgroup.select_accessgroupmembership";
         private readonly string insertGroupMembershipFunc = "select * from accessgroup.insert_accessgroupmembership(@_coveredByUserId, @_coveredByPartyId, @_offeredByPartyId, @_groupId)";
         private readonly string deleteGroupMembershipFunc = "select * from accessgroup.delete_accessgroupmembership(@_coveredByUserId, @_coveredByPartyId, @_offeredByPartyId, @_groupId)";
 
@@ -238,7 +239,32 @@ namespace Altinn.AccessGroups.Persistance
                 _logger.LogError(e, "AccessGroups // AccessGroupsRepository // DeleteGroupMembership // Exception");
                 throw;
             }
+        }
 
+        public async Task<GroupMembership> ListGroupmemberships()
+        {
+            try
+            {
+                await using NpgsqlConnection conn = new NpgsqlConnection(_connectionString);
+                await conn.OpenAsync();
+
+                NpgsqlCommand pgcom = new NpgsqlCommand(listGroupMembershipsFunc, conn);
+                using NpgsqlDataReader reader = await pgcom.ExecuteReaderAsync();
+
+                if (reader.Read())
+                {
+                    return GetGroupMembership(reader);
+                }
+                else
+                {
+                    return null;
+                }
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, "AccessGroups // AccessGroupsRepository // ListGroupMemberships // Exception");
+                throw;
+            }
         }
 
         private static AccessGroup GetAccessGroup(NpgsqlDataReader reader)

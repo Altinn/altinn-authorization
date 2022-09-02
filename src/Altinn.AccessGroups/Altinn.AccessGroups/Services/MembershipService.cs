@@ -28,6 +28,12 @@ namespace Altinn.AccessGroups.Services
             _logger = logger;
         }
 
+        public Task<GroupMembership> ListMemberships()
+        {
+            Task<GroupMembership> result = _accessGroupRepository.ListGroupmemberships();
+            return result;
+        }
+
         public Task<GroupMembership> AddMembership(GroupMembership input)
         {
             Task<GroupMembership> result = _accessGroupRepository.InsertGroupMembership(input);
