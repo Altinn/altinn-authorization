@@ -6,7 +6,7 @@ namespace Altinn.AccessGroups.Interfaces
     {
         Task<List<AccessGroup>> ListGroupMemberships(AccessGroupSearch search);
 
-        Task<bool> AddMembership(GroupMembership input);
+        Task<GroupMembership> AddMembership(GroupMembership input);
 
         Task<bool> RevokeMembership(GroupMembership input);
     }

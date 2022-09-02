@@ -28,9 +28,10 @@ namespace Altinn.AccessGroups.Services
             _logger = logger;
         }
 
-        public async Task<bool> AddMembership(GroupMembership input)
+        public Task<GroupMembership> AddMembership(GroupMembership input)
         {
-            throw new NotImplementedException();
+            Task<GroupMembership> result = _accessGroupRepository.InsertGroupMembership(input);
+            return result;
         }
 
         public async Task<List<AccessGroup>> ListGroupMemberships(AccessGroupSearch search)

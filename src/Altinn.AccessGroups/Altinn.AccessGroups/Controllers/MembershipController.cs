@@ -41,7 +41,7 @@ namespace Altinn.AccessGroups.Controllers
                 return BadRequest(ModelState);
             }
 
-            bool result = await _membership.AddMembership(input);
+            GroupMembership result = await _membership.AddMembership(input);
 
             return Ok(result);
         }

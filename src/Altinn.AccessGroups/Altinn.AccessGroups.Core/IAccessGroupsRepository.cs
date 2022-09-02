@@ -30,5 +30,11 @@ namespace Altinn.AccessGroups.Core
         /// </summary>
         /// <returns>The list of access groups</returns>
         Task<List<AccessGroup>> GetAccessGroups();
+
+        /// <summary>
+        /// Operation for inserting group membership in the postgreSQL database
+        /// </summary>
+        /// <returns>The list of access groups</returns>
+        Task<GroupMembership> InsertGroupMembership(GroupMembership membership);
     }
 }
