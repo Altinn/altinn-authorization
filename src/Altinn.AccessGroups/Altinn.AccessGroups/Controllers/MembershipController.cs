@@ -41,9 +41,16 @@ namespace Altinn.AccessGroups.Controllers
                 return BadRequest(ModelState);
             }
 
-            GroupMembership result = await _membership.AddMembership(input);
+            bool result = await _membership.AddMembership(input);
 
-            return Ok(result);
+            if (result)
+            {
+                return Created("www.altinn.no", "Created");
+            }
+            else
+            {
+                return BadRequest("Membership was not created");
+            }
         }
 
         [HttpPost]

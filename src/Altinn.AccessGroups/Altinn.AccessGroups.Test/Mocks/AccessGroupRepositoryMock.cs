@@ -30,7 +30,7 @@ namespace Altinn.AccessGroups.Test.Mocks
             throw new NotImplementedException();
         }
 
-        public Task<GroupMembership> InsertGroupMembership(GroupMembership membership)
+        public Task<bool> InsertGroupMembership(GroupMembership membership)
         {
             throw new NotImplementedException();
         }

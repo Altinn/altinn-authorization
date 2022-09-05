@@ -50,3 +50,31 @@ AS $BODY$
         _unittypefilter        
     ) RETURNING *;
 $BODY$;
+
+--FUNCTION: accessgroup.insert_accessgroupmembership
+CREATE OR REPLACE FUNCTION accessgroup.insert_accessgroupmembership(
+    _offeredbyparty bigint,
+    _userid bigint,
+    _partyid bigint,
+    _delegationid bigint
+    )
+    RETURNS SETOF accessgroup.accessgroupmembership
+    LANGUAGE 'sql'
+    VOLATILE
+    ROWS 1
+AS $BODY$
+    INSERT INTO accessgroup.accessgroupmembership(
+    offeredbyparty,
+    userid,
+    partyid,
+    delegationid,
+    validto
+    )
+    VALUES (
+    _offeredbyparty,
+    _userid,
+    _partyid,
+    _delegationid,
+    CURRENT_TIMESTAMP + interval '1 year'
+    ) RETURNING *;
+$BODY$;

@@ -34,9 +34,9 @@ namespace Altinn.AccessGroups.Services
             return result;
         }
 
-        public Task<GroupMembership> AddMembership(GroupMembership input)
+        public Task<bool> AddMembership(GroupMembership input)
         {
-            Task<GroupMembership> result = _accessGroupRepository.InsertGroupMembership(input);
+            Task<bool> result = _accessGroupRepository.InsertGroupMembership(input);
             return result;
         }
 

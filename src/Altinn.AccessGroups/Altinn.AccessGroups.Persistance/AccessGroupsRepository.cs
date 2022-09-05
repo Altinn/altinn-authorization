@@ -147,7 +147,7 @@ namespace Altinn.AccessGroups.Persistance
             }
         }
 
-        public async Task<GroupMembership> InsertGroupMembership(GroupMembership membership)
+        public async Task<bool> InsertGroupMembership(GroupMembership membership)
         {
             try
             {
@@ -175,16 +175,16 @@ namespace Altinn.AccessGroups.Persistance
                 }
                 
                 pgcom.Parameters.AddWithValue("_offeredByPartyId", membership.OfferedByPartyId);
-                pgcom.Parameters.AddWithValue("_groupId", membership.GroupId);
+                pgcom.Parameters.AddWithValue("_groupId", membership.DelegationId);
 
                 using NpgsqlDataReader reader = await pgcom.ExecuteReaderAsync();
                 if (reader.Read())
                 {
-                    return GetGroupMembership(reader);
+                    return true;
                 }
                 else
                 {
-                    return null;
+                    return false;
                 }
             }
             catch (Exception e)
@@ -222,7 +222,7 @@ namespace Altinn.AccessGroups.Persistance
                 }
 
                 pgcom.Parameters.AddWithValue("_offeredByPartyId", membership.OfferedByPartyId);
-                pgcom.Parameters.AddWithValue("_groupId", membership.GroupId);
+                pgcom.Parameters.AddWithValue("_groupId", membership.DelegationId);
 
                 using NpgsqlDataReader reader = await pgcom.ExecuteReaderAsync();
                 if (reader.Read())
@@ -295,10 +295,10 @@ namespace Altinn.AccessGroups.Persistance
         {
             return new GroupMembership
             {
-                CoveredByUserId = reader.GetValue<int?>("CoveredByUserId"),
-                CoveredByPartyId = reader.GetValue<int?>("CoveredByPartyId"),
-                OfferedByPartyId = reader.GetValue<int>("OfferedByPartyId"),
-                GroupId = reader.GetValue<string>("GroupId")
+                CoveredByUserId = reader.GetValue<int>("userid"),
+                CoveredByPartyId = reader.GetValue<int>("partyid"),
+                OfferedByPartyId = reader.GetValue<int>("offeredbyparty"),
+                DelegationId = reader.GetValue<int>("delegationid")
             };
         }
     }

@@ -35,7 +35,7 @@ namespace Altinn.AccessGroups.Core
         /// Operation for inserting group membership in the postgreSQL database
         /// </summary>
         /// <returns>The list of access groups</returns>
-        Task<GroupMembership> InsertGroupMembership(GroupMembership membership);
+        Task<bool> InsertGroupMembership(GroupMembership membership);
 
         /// <summary>
         /// Operation for selecting group memberships in the postgreSQL database
