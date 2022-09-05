@@ -1,5 +1,7 @@
 using Altinn.ResourceRegistry.Core;
+using Altinn.ResourceRegistry.Models;
 using Altinn.ResourceRegistry.Persistence;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
@@ -38,11 +40,13 @@ void ConfigureServices(IServiceCollection services, IConfiguration config)
         options.JsonSerializerOptions.WriteIndented = true;
         options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
         options.JsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
+
     });
 
     services.AddSingleton(config);
 
     services.AddSingleton<IResourceRegistry, ResourceRegistryService>();
     services.AddSingleton<IResourceRegistryRepository, ResourceRepository>();
+    services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 
 }

@@ -14,7 +14,7 @@ namespace ResourceRegistryTest.Mocks
     {
         public Task CreateResource(ServiceResource resource)
         {
-            throw new NotImplementedException();
+            return Task.FromResult<object>(null);
         }
 
         public Task DeleteResource(string id)
@@ -27,9 +27,16 @@ namespace ResourceRegistryTest.Mocks
             string resourcePath = GetResourcePath(id);
             if (File.Exists(resourcePath))
             {
-                string content = System.IO.File.ReadAllText(resourcePath);
-                ServiceResource? resource = System.Text.Json.JsonSerializer.Deserialize<ServiceResource>(content, new System.Text.Json.JsonSerializerOptions() {  PropertyNamingPolicy = System.Text.Json.JsonNamingPolicy.CamelCase}) as ServiceResource;
-                return resource;
+                try
+                {
+                    string content = System.IO.File.ReadAllText(resourcePath);
+                    ServiceResource? resource = System.Text.Json.JsonSerializer.Deserialize<ServiceResource>(content, new System.Text.Json.JsonSerializerOptions() { PropertyNamingPolicy = System.Text.Json.JsonNamingPolicy.CamelCase }) as ServiceResource;
+                    return resource;
+                }
+                catch(Exception ex)
+                {
+                    throw;
+                }
             }
 
             return null;

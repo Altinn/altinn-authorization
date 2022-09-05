@@ -19,7 +19,7 @@ namespace Altinn.ResourceRegistry.Models
         /// <summary>
         /// 
         /// </summary>
-        public Dictionary<string, string> RightsDescription { get; set;  }
+        public Dictionary<string, string> RightDescription { get; set;  }
 
         /// <summary>
         /// 
@@ -53,6 +53,9 @@ namespace Altinn.ResourceRegistry.Models
 
         public List<string>? Keywords { get; set;  }
 
-        public ResourceReference ResourceReference { get; set;  }
+        public ResourceReference? ResourceReference { get; set;  }
+
+
+        public bool? IsComplete { get; set; }
     }
 }

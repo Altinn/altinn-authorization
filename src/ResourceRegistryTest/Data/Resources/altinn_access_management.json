@@ -20,8 +20,7 @@
   "hasPart": "delegationrequests",
   "homepage": "www.altinn.no",
   "status": "Completed",
-  "thematicArea": [],
+  "thematicArea": "http://publications.europa.eu/resource/authority/eurovoc/2468",
   "type": [],
   "sector": []
-
 }
