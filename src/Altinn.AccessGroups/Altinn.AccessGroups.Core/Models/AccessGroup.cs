@@ -6,11 +6,6 @@
     public class AccessGroup
     {
         /// <summary>
-        /// The Access Group Id
-        /// </summary>
-        public int AccessGroupId { get; set; }
-
-        /// <summary>
         /// The Access Group Code
         /// </summary>
         public string AccessGroupCode { get; set; }

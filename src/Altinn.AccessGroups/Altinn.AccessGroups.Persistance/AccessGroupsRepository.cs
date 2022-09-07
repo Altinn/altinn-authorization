@@ -11,11 +11,20 @@ namespace Altinn.AccessGroups.Persistance
         private readonly string _connectionString;
         private readonly ILogger _logger;
 
-        private readonly string insertAccessGroupFunc = "select * from accessgroup.insert_accessgroup(@_accessGroupCode, @_accessGroupType, @_hidden)";
-        private readonly string getAccessGroups = "SELECT accessgroupid, accessgroupcode, accessgrouptype, hidden, created, modified FROM accessgroup.accessgroup";
+        private readonly string insertCategoryFunc = "select * from accessgroup.insert_category(@_categoryCode)";
+        private readonly string getCategories = "SELECT categorycode FROM accessgroup.category";
 
-        private readonly string insertExternalRelationshipFunc = "select * from accessgroup.insert_externalrelationship(@_ExternalSource, @_ExternalId, @_AccessGroupId, @_UnitTypeFilter)";
-        private readonly string getExternalRelationships = "SELECT externalsource, externalid, accessgroupid, unittypefilter FROM accessgroup.externalrelationship";
+        private readonly string insertAccessGroupFunc = "select * from accessgroup.insert_accessgroup(@_accessGroupCode, @_accessGroupType, @_hidden)";
+        private readonly string getAccessGroups = "SELECT accessgroupcode, accessgrouptype, hidden, created, modified FROM accessgroup.accessgroup";
+
+        private readonly string insertExternalRelationshipFunc = "select * from accessgroup.insert_externalrelationship(@_ExternalSource, @_ExternalId, @_AccessGroupCode, @_UnitTypeFilter)";
+        private readonly string getExternalRelationships = "SELECT externalsource, externalid, accessgroupcode, unittypefilter FROM accessgroup.externalrelationship";
+
+        private readonly string insertAccessGroupCategoryFunc = "select * from accessgroup.insert_accessgroupcategory(@_accessgroupcode, @_categorycode)";
+        private readonly string getAccessGroupCategories = "SELECT accessgroupcode, categorycode FROM accessgroup.accessgroupcategory";
+
+        private readonly string insertTextResourceFunc = "select * from accessgroup.insert_textresource(@_textType, @_key, @_content, @_key, @_language, @_accessgroupcode, @_categorycode)";
+        private readonly string getTextResources = "SELECT texttype, key, content, language, accessgroupcode, categorycode FROM accessgroup.textresource";
 
         private readonly string listGroupMembershipsFunc = "select * from accessgroup.select_accessgroupmembership";
         private readonly string insertGroupMembershipFunc = "select * from accessgroup.insert_accessgroupmembership(@_coveredByUserId, @_coveredByPartyId, @_offeredByPartyId, @_groupId)";
@@ -34,6 +43,7 @@ namespace Altinn.AccessGroups.Persistance
                 postgresSettings.Value.AuthorizationDbPwd);
             NpgsqlConnection.GlobalTypeMapper.MapEnum<AccessGroupType>("accessgroup.accessgrouptype");
             NpgsqlConnection.GlobalTypeMapper.MapEnum<ExternalSource>("accessgroup.externalsource");
+            NpgsqlConnection.GlobalTypeMapper.MapEnum<ExternalSource>("accessgroup.textresourcetype");
         }
 
         /// <inheritdoc/>
@@ -102,7 +112,7 @@ namespace Altinn.AccessGroups.Persistance
                 NpgsqlCommand pgcom = new NpgsqlCommand(insertExternalRelationshipFunc, conn);
                 pgcom.Parameters.AddWithValue("_ExternalSource", externalrelationship.ExternalSource);
                 pgcom.Parameters.AddWithValue("_ExternalId", externalrelationship.ExternalId);
-                pgcom.Parameters.AddWithValue("_AccessGroupId", externalrelationship.AccessGroupId);
+                pgcom.Parameters.AddWithValue("_AccessGroupCode", externalrelationship.AccessGroupCode);
                 pgcom.Parameters.AddWithValue("_UnitTypeFilter", externalrelationship.UnitTypeFilter);
 
                 using NpgsqlDataReader reader = await pgcom.ExecuteReaderAsync();
@@ -271,7 +281,6 @@ namespace Altinn.AccessGroups.Persistance
         {
             return new AccessGroup
             {
-                AccessGroupId = reader.GetValue<int>("AccessGroupId"),
                 AccessGroupCode = reader.GetValue<string>("AccessGroupCode"),
                 AccessGroupType = reader.GetValue<AccessGroupType>("AccessGroupType"),            
                 Hidden = reader.GetValue<bool>("Hidden"),
@@ -286,7 +295,7 @@ namespace Altinn.AccessGroups.Persistance
             {
                 ExternalSource = reader.GetValue<ExternalSource>("ExternalSource"),
                 ExternalId = reader.GetValue<string>("ExternalId"),
-                AccessGroupId = reader.GetValue<int>("AccessGroupId"),
+                AccessGroupCode = reader.GetValue<string>("AccessGroupCode"),
                 UnitTypeFilter = reader.GetValue<string>("UnitTypeFilter")
             };
         }

@@ -54,7 +54,7 @@ namespace Altinn.AccessGroups.Services
             List<AccessGroup> accessGroups = await _accessGroups.GetAccessGroups();
 
             List<AccessGroup> result = new();
-            result.AddRange(erRoles.SelectMany(role => externalRelationships.SelectMany(rel => accessGroups.Where(ag => ag.AccessGroupId == rel.AccessGroupId && rel.ExternalId == role.Value))));
+            result.AddRange(erRoles.SelectMany(role => externalRelationships.SelectMany(rel => accessGroups.Where(ag => ag.AccessGroupCode == rel.AccessGroupCode && rel.ExternalId == role.Value))));
             return result;
         }
         

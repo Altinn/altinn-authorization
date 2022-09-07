@@ -35,20 +35,6 @@ namespace Altinn.AccessGroups.Services
 
         public async Task<ExternalRelationship> CreateExternalRelationship(ExternalRelationship externalRelationship)
         {
-            if (externalRelationship.AccessGroupId == 0)
-            {
-                List<AccessGroup> accessGroups = await GetAccessGroups();
-                AccessGroup accessGroup = accessGroups.FirstOrDefault(ag => ag.AccessGroupCode == externalRelationship.AccessGroupCode);
-                if (accessGroup != null)
-                {
-                    externalRelationship.AccessGroupId = accessGroup.AccessGroupId;
-                }
-                else
-                {
-                    return externalRelationship;
-                }               
-            }
-
             return await _accessGroupRepository.InsertExternalRelationship(externalRelationship);
         }
 
