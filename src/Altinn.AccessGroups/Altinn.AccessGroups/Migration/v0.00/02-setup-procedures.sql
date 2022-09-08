@@ -1,3 +1,52 @@
+-- FUNCTION: accessgroup.insert_textresource
+CREATE OR REPLACE FUNCTION accessgroup.insert_textresource(
+  _textType accessgroup.TextResourceType,
+  _key character varying,
+  _content character varying,
+  _language character varying,
+  _accessgroupcode character varying,
+  _categorycode character varying
+)
+RETURNS SETOF accessgroup.TextResource
+LANGUAGE 'sql'
+VOLATILE
+ROWS 1
+AS $BODY$
+  INSERT INTO accessgroup.TextResource(
+    TextType, 
+    Key,
+    Content,
+    Language,
+    AccessGroupCode,
+    CategoryCode
+  )
+  VALUES (
+    _textType,
+    _key,
+    _content,
+    _language,
+    _accessgroupcode,
+    _categorycode
+  ) RETURNING *;
+$BODY$;
+
+-- FUNCTION: accessgroup.insert_category
+CREATE OR REPLACE FUNCTION accessgroup.insert_category(
+  _categoryCode character varying
+)
+RETURNS SETOF accessgroup.Category
+LANGUAGE 'sql'
+VOLATILE
+ROWS 1
+AS $BODY$
+  INSERT INTO accessgroup.Category(
+    CategoryCode
+  )
+  VALUES (
+    _categoryCode
+  ) RETURNING *;
+$BODY$;
+
 -- FUNCTION: accessgroup.insert_accessgroup
 CREATE OR REPLACE FUNCTION accessgroup.insert_accessgroup(
   _accessGroupCode character varying,
@@ -29,7 +78,7 @@ $BODY$;
 CREATE OR REPLACE FUNCTION accessgroup.insert_externalrelationship(
 	_externalsource accessgroup.externalsource,
 	_externalid character varying,
-    _accessgroupid bigint,
+    _accessgroupcode character varying,
     _unittypefilter character varying
 	)
     RETURNS SETOF accessgroup.externalrelationship 
@@ -40,14 +89,34 @@ AS $BODY$
     INSERT INTO accessgroup.externalrelationship(
         externalsource,
         externalid,
-        accessgroupid,
+        accessgroupcode,
         unittypefilter        
     )
     VALUES (
         _externalsource,
         _externalid,
-        _accessgroupid,
+        _accessgroupcode,
         _unittypefilter        
+    ) RETURNING *;
+$BODY$;
+
+-- FUNCTION: accessgroup.insert_accessgroupcategory
+CREATE OR REPLACE FUNCTION accessgroup.insert_accessgroupcategory(
+    _accessgroupcode character varying,
+    _categorycode character varying
+	)
+    RETURNS SETOF accessgroup.AccessGroupCategory 
+    LANGUAGE 'sql'
+    VOLATILE
+    ROWS 1
+AS $BODY$
+    INSERT INTO accessgroup.AccessGroupCategory(
+        accessgroupcode,
+        categorycode     
+    )
+    VALUES (
+        _accessgroupcode,
+        _categorycode      
     ) RETURNING *;
 $BODY$;
 

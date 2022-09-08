@@ -10,7 +10,6 @@ using Altinn.AccessGroups.Core.Models;
 using Altinn.AccessGroups.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using Microsoft.VisualBasic;
 
 namespace Altinn.AccessGroups.Controllers
 {
