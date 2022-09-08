@@ -112,7 +112,7 @@ namespace ResourceRegistryTest
 
             Assert.NotNull(errordetails);
 
-            Assert.Equal(6, errordetails.Errors.Count);
+            Assert.Equal(9, errordetails.Errors.Count);
         }
 
 

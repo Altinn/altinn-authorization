@@ -51,11 +51,14 @@ namespace Altinn.ResourceRegistry.Models
 
         public string? ThematicArea { get; set; }
 
-        public List<string>? Keywords { get; set;  }
-
         public ResourceReference? ResourceReference { get; set;  }
 
-
         public bool? IsComplete { get; set; }
+
+        public CompetentAuthority HasCompetentAuthority { get; set; }
+
+        public List<Keyword> Keywords { get; set; }
+
+        public List<string> Sector { get; set; }
     }
 }

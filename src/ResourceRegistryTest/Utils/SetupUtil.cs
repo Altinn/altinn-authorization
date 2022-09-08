@@ -1,4 +1,5 @@
-﻿using Altinn.ResourceRegistry.Core;
+﻿using Altinn.ResourceRegistry.Controllers;
+using Altinn.ResourceRegistry.Core;
 using Altinn.ResourceRegistry.Persistence;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.TestHost;
@@ -20,6 +21,21 @@ namespace ResourceRegistryTest.Utils
             CustomWebApplicationFactory<ResourceController> customFactory)
         {
             WebApplicationFactory<ResourceController> factory = customFactory.WithWebHostBuilder(builder =>
+            {
+                builder.ConfigureTestServices(services =>
+                {
+                    services.AddSingleton<IResourceRegistryRepository, RegisterResourceRepositoryMock>();
+                });
+            });
+            factory.Server.AllowSynchronousIO = true;
+            return factory.CreateClient();
+        }
+
+
+        public static HttpClient GetTestClient(
+        CustomWebApplicationFactory<ExportController> customFactory)
+        {
+            WebApplicationFactory<ExportController> factory = customFactory.WithWebHostBuilder(builder =>
             {
                 builder.ConfigureTestServices(services =>
                 {

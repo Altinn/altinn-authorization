@@ -32,7 +32,12 @@
   "thematicArea": "http://publications.europa.eu/resource/authority/eurovoc/2468",
   "type": [],
   "sector": [],
-  "keywords": [ "Dødsbo" ],
+  "keywords": [
+    {
+      "word" : "Dødsbo",
+      "language" : "nb"
+    }
+  ],
   "resourceReference": {
     "referenceSource": "Altinn2",
     "referenceType": "ServiceCodeVersion",
