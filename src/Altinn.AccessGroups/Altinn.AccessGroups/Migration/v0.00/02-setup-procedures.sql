@@ -78,3 +78,19 @@ AS $BODY$
     CURRENT_TIMESTAMP + interval '1 year'
     ) RETURNING *;
 $BODY$;
+
+--FUNCTION: accessgroup.select_accessgroupmembership
+    CREATE OR REPLACE FUNCTION accessgroup.select_accessgroupmembership()
+    RETURNS SETOF accessgroup.accessgroupmembership
+    LANGUAGE 'sql'
+    VOLATILE
+    ROWS 1
+AS $BODY$
+    SELECT membershipid
+    ,offeredbyparty
+    ,userid
+    ,partyid
+    ,accessgroupid
+    ,validto
+    FROM accessgroup.accessgroupmembership;
+$BODY$;

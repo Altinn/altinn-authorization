@@ -9,6 +9,7 @@
 
   <ItemGroup>
     <PackageReference Include="Altinn.Platform.Models" Version="1.1.1" />
+    <PackageReference Include="Npgsql" Version="6.0.6" />
   </ItemGroup>
 
 </Project>

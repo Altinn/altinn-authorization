@@ -17,7 +17,7 @@ namespace Altinn.AccessGroups.Persistance
         private readonly string insertExternalRelationshipFunc = "select * from accessgroup.insert_externalrelationship(@_ExternalSource, @_ExternalId, @_AccessGroupId, @_UnitTypeFilter)";
         private readonly string getExternalRelationships = "SELECT externalsource, externalid, accessgroupid, unittypefilter FROM accessgroup.externalrelationship";
 
-        private readonly string listGroupMembershipsFunc = "select * from accessgroup.select_accessgroupmembership";
+        private readonly string listGroupMembershipsFunc = "select * from accessgroup.select_accessgroupmembership()";
         private readonly string insertGroupMembershipFunc = "select * from accessgroup.insert_accessgroupmembership(@_coveredByUserId, @_coveredByPartyId, @_offeredByPartyId, @_groupId)";
         private readonly string deleteGroupMembershipFunc = "select * from accessgroup.delete_accessgroupmembership(@_coveredByUserId, @_coveredByPartyId, @_offeredByPartyId, @_groupId)";
 
@@ -175,7 +175,7 @@ namespace Altinn.AccessGroups.Persistance
                 }
                 
                 pgcom.Parameters.AddWithValue("_offeredByPartyId", membership.OfferedByPartyId);
-                pgcom.Parameters.AddWithValue("_groupId", membership.DelegationId);
+                pgcom.Parameters.AddWithValue("_groupId", membership.AccessGroupId);
 
                 using NpgsqlDataReader reader = await pgcom.ExecuteReaderAsync();
                 if (reader.Read())
@@ -222,7 +222,7 @@ namespace Altinn.AccessGroups.Persistance
                 }
 
                 pgcom.Parameters.AddWithValue("_offeredByPartyId", membership.OfferedByPartyId);
-                pgcom.Parameters.AddWithValue("_groupId", membership.DelegationId);
+                pgcom.Parameters.AddWithValue("_groupId", membership.AccessGroupId);
 
                 using NpgsqlDataReader reader = await pgcom.ExecuteReaderAsync();
                 if (reader.Read())
@@ -241,7 +241,7 @@ namespace Altinn.AccessGroups.Persistance
             }
         }
 
-        public async Task<GroupMembership> ListGroupmemberships()
+        public async Task<List<GroupMembership>> ListGroupmemberships()
         {
             try
             {
@@ -253,7 +253,7 @@ namespace Altinn.AccessGroups.Persistance
 
                 if (reader.Read())
                 {
-                    return GetGroupMembership(reader);
+                    return GetGroupMemberships(reader);
                 }
                 else
                 {
@@ -298,8 +298,24 @@ namespace Altinn.AccessGroups.Persistance
                 CoveredByUserId = reader.GetValue<int>("userid"),
                 CoveredByPartyId = reader.GetValue<int>("partyid"),
                 OfferedByPartyId = reader.GetValue<int>("offeredbyparty"),
-                DelegationId = reader.GetValue<int>("delegationid")
+                AccessGroupId = reader.GetValue<int>("accessgroupid")
             };
+        }
+
+        private static List<GroupMembership> GetGroupMemberships(NpgsqlDataReader reader)
+        {
+            GroupMembership groupMembership = new GroupMembership
+            {
+                CoveredByUserId = reader.GetValue<int>("userid"),
+                CoveredByPartyId = reader.GetValue<int>("partyid"),
+                OfferedByPartyId = reader.GetValue<int>("offeredbyparty"),
+                AccessGroupId = reader.GetValue<int>("accessgroupid")
+            };
+
+            List<GroupMembership> groupMemberships = new List<GroupMembership>();
+            groupMemberships.Add(groupMembership);
+
+            return groupMemberships;
         }
     }
 }

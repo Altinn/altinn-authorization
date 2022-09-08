@@ -36,14 +36,14 @@ CREATE TABLE IF NOT EXISTS accessgroup.AccessGroupMembership
     OfferedByParty bigint,
     UserId bigint,
     PartyId bigint,
-    DelegationId bigint,
+    AccessGroupId bigint,
     ValidTo timestamp with time zone
 )
 TABLESPACE pg_default;
 
 -- Enum: AccessGroup.ExternalSource
 DO $$ BEGIN
-    CREATE TYPE accessgroup.ExternalSource AS ENUM ('Enhetsregisteret');
+    CREATE TYPE accessgroup.ExternalSource AS ENUM ('enhetsregisteret');
 EXCEPTION
     WHEN duplicate_object THEN null;
 END $$;
@@ -60,7 +60,7 @@ TABLESPACE pg_default;
 
 -- Enum: AccessGroup.DelegationType
 DO $$ BEGIN
-    CREATE TYPE accessgroup.DelegationType AS ENUM ('Brukerdelegering', 'Klientdelegering', 'Tjenestedelegering');
+    CREATE TYPE accessgroup.DelegationType AS ENUM ('brukerdelegering', 'klientdelegering', 'tjenestedelegering');
 EXCEPTION
     WHEN duplicate_object THEN null;
 END $$;

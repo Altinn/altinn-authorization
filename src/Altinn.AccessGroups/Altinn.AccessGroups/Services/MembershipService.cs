@@ -2,6 +2,7 @@
 using Altinn.AccessGroups.Core.Models;
 using Altinn.AccessGroups.Interfaces;
 using Authorization.Platform.Authorization.Models;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace Altinn.AccessGroups.Services
@@ -28,12 +29,6 @@ namespace Altinn.AccessGroups.Services
             _logger = logger;
         }
 
-        public Task<GroupMembership> ListMemberships()
-        {
-            Task<GroupMembership> result = _accessGroupRepository.ListGroupmemberships();
-            return result;
-        }
-
         public Task<bool> AddMembership(GroupMembership input)
         {
             Task<bool> result = _accessGroupRepository.InsertGroupMembership(input);
@@ -50,8 +45,10 @@ namespace Altinn.AccessGroups.Services
             List<Role> erRoles = await _altinnRoles.GetDecisionPointRolesForUser((int)search.CoveredByUserId, search.OfferedByPartyId);
 
             List<ExternalRelationship> externalRelationships = await _accessGroups.GetExternalRelationships();
-
+            List<GroupMembership> groupMemberships = await _accessGroupRepository.ListGroupmemberships();
             List<AccessGroup> accessGroups = await _accessGroups.GetAccessGroups();
+
+            SortedList<string, AccessGroup> accessGroupCodes = new SortedList<string,AccessGroup>();
 
             List<AccessGroup> result = new();
             result.AddRange(erRoles.SelectMany(role => externalRelationships.SelectMany(rel => accessGroups.Where(ag => ag.AccessGroupId == rel.AccessGroupId && rel.ExternalId == role.Value))));
