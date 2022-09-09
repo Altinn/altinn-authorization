@@ -8,7 +8,9 @@
 
         public int OfferedByPartyId { get; set; }
 
-        public int AccessGroupId { get; set; }
+        public int DelegationId { get; set; }
+
+        public string AccessGroupCode { get; set; }
 
         //public GroupMembership(int? coveredByUserId, int? coveredByPartyId, int offeredByPartyId, string groupId)
         //{

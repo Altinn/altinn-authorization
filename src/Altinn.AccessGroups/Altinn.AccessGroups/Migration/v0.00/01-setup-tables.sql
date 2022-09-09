@@ -61,6 +61,7 @@ CREATE TABLE IF NOT EXISTS accessgroup.AccessGroupMembership
     OfferedByParty bigint,
     UserId bigint,
     PartyId bigint,
+    DelegationId bigint,
     AccessGroupId bigint,
     ValidTo timestamp with time zone
 )

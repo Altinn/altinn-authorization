@@ -125,7 +125,8 @@ CREATE OR REPLACE FUNCTION accessgroup.insert_accessgroupmembership(
     _offeredbyparty bigint,
     _userid bigint,
     _partyid bigint,
-    _delegationid bigint
+    _delegationid bigint,
+    _accessgroupcode character varying 
     )
     RETURNS SETOF accessgroup.accessgroupmembership
     LANGUAGE 'sql'
@@ -137,6 +138,7 @@ AS $BODY$
     userid,
     partyid,
     delegationid,
+    accessgroupcode,
     validto
     )
     VALUES (
@@ -144,6 +146,7 @@ AS $BODY$
     _userid,
     _partyid,
     _delegationid,
+    _accessgroupcode,
     CURRENT_TIMESTAMP + interval '1 year'
     ) RETURNING *;
 $BODY$;
@@ -159,7 +162,8 @@ AS $BODY$
     ,offeredbyparty
     ,userid
     ,partyid
-    ,accessgroupid
+    ,delegationid
+    ,accessgroupcode
     ,validto
     FROM accessgroup.accessgroupmembership;
 $BODY$;

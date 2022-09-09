@@ -48,10 +48,19 @@ namespace Altinn.AccessGroups.Services
             List<GroupMembership> groupMemberships = await _accessGroupRepository.ListGroupmemberships();
             List<AccessGroup> accessGroups = await _accessGroups.GetAccessGroups();
 
-            SortedList<string, AccessGroup> accessGroupCodes = new SortedList<string,AccessGroup>();
+            List<AccessGroup> tmpResult = new();
+            tmpResult.AddRange(erRoles.SelectMany(role => externalRelationships.SelectMany(rel => accessGroups.Where(ag => ag.AccessGroupCode == rel.AccessGroupCode && rel.ExternalId == role.Value))));
+            tmpResult.AddRange(erRoles.SelectMany(role => groupMemberships.SelectMany(gm => accessGroups.Where(ag => ag.AccessGroupCode == gm.AccessGroupCode && gm.CoveredByUserId == search.CoveredByUserId))));
 
-            List<AccessGroup> result = new();
-            result.AddRange(erRoles.SelectMany(role => externalRelationships.SelectMany(rel => accessGroups.Where(ag => ag.AccessGroupCode == rel.AccessGroupCode && rel.ExternalId == role.Value))));
+            List<AccessGroup> result = new List<AccessGroup>();
+            foreach(AccessGroup accessGroup in tmpResult)
+            {
+                if (!result.Contains(accessGroup))
+                {
+                    result.Add(accessGroup);
+                }
+            }
+
             return result;
         }
         

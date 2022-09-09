@@ -185,7 +185,7 @@ namespace Altinn.AccessGroups.Persistance
                 }
                 
                 pgcom.Parameters.AddWithValue("_offeredByPartyId", membership.OfferedByPartyId);
-                pgcom.Parameters.AddWithValue("_groupId", membership.AccessGroupId);
+                pgcom.Parameters.AddWithValue("_groupId", membership.AccessGroupCode);
 
                 using NpgsqlDataReader reader = await pgcom.ExecuteReaderAsync();
                 if (reader.Read())
@@ -232,7 +232,7 @@ namespace Altinn.AccessGroups.Persistance
                 }
 
                 pgcom.Parameters.AddWithValue("_offeredByPartyId", membership.OfferedByPartyId);
-                pgcom.Parameters.AddWithValue("_groupId", membership.AccessGroupId);
+                pgcom.Parameters.AddWithValue("_groupId", membership.AccessGroupCode);
 
                 using NpgsqlDataReader reader = await pgcom.ExecuteReaderAsync();
                 if (reader.Read())
@@ -307,22 +307,28 @@ namespace Altinn.AccessGroups.Persistance
                 CoveredByUserId = reader.GetValue<int>("userid"),
                 CoveredByPartyId = reader.GetValue<int>("partyid"),
                 OfferedByPartyId = reader.GetValue<int>("offeredbyparty"),
-                AccessGroupId = reader.GetValue<int>("accessgroupid")
+                DelegationId = reader.GetValue<int>("delegationid"),
+                AccessGroupCode = reader.GetValue<string>("accessgroupcode")
             };
         }
 
         private static List<GroupMembership> GetGroupMemberships(NpgsqlDataReader reader)
         {
-            GroupMembership groupMembership = new GroupMembership
-            {
-                CoveredByUserId = reader.GetValue<int>("userid"),
-                CoveredByPartyId = reader.GetValue<int>("partyid"),
-                OfferedByPartyId = reader.GetValue<int>("offeredbyparty"),
-                AccessGroupId = reader.GetValue<int>("accessgroupid")
-            };
-
             List<GroupMembership> groupMemberships = new List<GroupMembership>();
-            groupMemberships.Add(groupMembership);
+
+            while (reader.Read())
+            {
+                GroupMembership groupMembership = new GroupMembership
+                {
+                    CoveredByUserId = reader.GetValue<int>("userid"),
+                    CoveredByPartyId = reader.GetValue<int>("partyid"),
+                    OfferedByPartyId = reader.GetValue<int>("offeredbyparty"),
+                    DelegationId = reader.GetValue<int>("delegationid"),
+                    AccessGroupCode = reader.GetValue<string>("accessgroupcode")
+                };
+
+                groupMemberships.Add(groupMembership);
+            }
 
             return groupMemberships;
         }
