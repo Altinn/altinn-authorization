@@ -4,7 +4,7 @@ CREATE SCHEMA IF NOT EXISTS accessgroup
 
 -- Enum: AccessGroup.AccessGroupType
 DO $$ BEGIN
-    CREATE TYPE accessgroup.AccessGroupType AS ENUM ('Altinn');
+    CREATE TYPE accessgroup.AccessGroupType AS ENUM ('altinn');
 EXCEPTION
     WHEN duplicate_object THEN null;
 END $$;
@@ -12,7 +12,7 @@ END $$;
 -- Table: accessgroup.AccessGroup
 CREATE TABLE IF NOT EXISTS accessgroup.AccessGroup
 (
-    AccessGroupCode character varying PRIMARY KEY,
+    AccessGroupCode text PRIMARY KEY,
     AccessGroupType accessgroup.AccessGroupType NOT NULL,
     Hidden boolean,
     Created timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -22,7 +22,7 @@ TABLESPACE pg_default;
 
 -- Enum: AccessGroup.ExternalSource
 DO $$ BEGIN
-    CREATE TYPE accessgroup.ExternalSource AS ENUM ('Enhetsregisteret');
+    CREATE TYPE accessgroup.ExternalSource AS ENUM ('enhetsregisteret');
 EXCEPTION
     WHEN duplicate_object THEN null;
 END $$;
@@ -31,26 +31,37 @@ END $$;
 CREATE TABLE IF NOT EXISTS accessgroup.ExternalRelationship
 (
     ExternalSource accessgroup.ExternalSource NOT NULL,
-    ExternalId character varying NOT NULL,
-    AccessGroupCode character varying NOT NULL,
-    UnitTypeFilter character varying DEFAULT NULL,
-    PRIMARY KEY (ExternalSource, ExternalId, AccessGroupCode)
+    ExternalId text NOT NULL,
+    AccessGroupCode text NOT NULL,
+    UnitTypeFilter text DEFAULT NULL,
+    PRIMARY KEY (ExternalSource, ExternalId, AccessGroupCode),
+    CONSTRAINT externalrelationship_accessgroup_fkey FOREIGN KEY (AccessGroupCode) REFERENCES accessgroup.AccessGroup(AccessGroupCode)
 )
 TABLESPACE pg_default;
+
+-- Enum: AccessGroup.CategoryType
+DO $$ BEGIN
+    CREATE TYPE accessgroup.CategoryType AS ENUM ('organization', 'person');
+EXCEPTION
+    WHEN duplicate_object THEN null;
+END $$;
 
 -- Table: accessgroup.Category
 CREATE TABLE IF NOT EXISTS accessgroup.Category
 (
-    CategoryCode character varying PRIMARY KEY
+    CategoryCode text PRIMARY KEY,
+    CategoryType accessgroup.CategoryType
 )
 TABLESPACE pg_default;
 
 -- Table: accessgroup.AccessGroupCategory
 CREATE TABLE IF NOT EXISTS accessgroup.AccessGroupCategory
 (
-    AccessGroupCode character varying,
-    CategoryCode character varying,
-    PRIMARY KEY (AccessGroupCode, CategoryCode)
+    AccessGroupCode text,
+    CategoryCode text,
+    PRIMARY KEY (AccessGroupCode, CategoryCode),
+    CONSTRAINT accessgroupcategory_accessgroup_fkey FOREIGN KEY (AccessGroupCode) REFERENCES accessgroup.AccessGroup(AccessGroupCode),
+    CONSTRAINT accessgroupcategory_category_fkey FOREIGN KEY (CategoryCode) REFERENCES accessgroup.Category(CategoryCode)
 )
 TABLESPACE pg_default;
 
@@ -62,7 +73,7 @@ CREATE TABLE IF NOT EXISTS accessgroup.AccessGroupMembership
     UserId bigint,
     PartyId bigint,
     DelegationId bigint,
-    AccessGroupId bigint,
+    AccessGroupCode text,
     ValidTo timestamp with time zone
 )
 TABLESPACE pg_default;
@@ -109,7 +120,7 @@ TABLESPACE pg_default;
 
 -- Enum: AccessGroup.TextResourceType
 DO $$ BEGIN
-    CREATE TYPE accessgroup.TextResourceType AS ENUM ('AccessGroup', 'Category');
+    CREATE TYPE accessgroup.TextResourceType AS ENUM ('accessgroup', 'category');
 EXCEPTION
     WHEN duplicate_object THEN null;
 END $$;
@@ -119,11 +130,13 @@ CREATE TABLE IF NOT EXISTS accessgroup.TextResource
 (
     TextResourceId bigint GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     TextType accessgroup.TextResourceType NOT NULL,
-    Key character varying NOT NULL,
-    Content character varying NOT NULL,
-    Language character varying NOT NULL,
-    AccessGroupCode character varying,
-    CategoryCode character varying
+    Key text NOT NULL,
+    Content text NOT NULL,
+    Language text NOT NULL,
+    AccessGroupCode text,
+    CategoryCode text,
+    CONSTRAINT textresource_accessgroup_fkey FOREIGN KEY (AccessGroupCode) REFERENCES accessgroup.AccessGroup(AccessGroupCode),
+    CONSTRAINT textresource_category_fkey FOREIGN KEY (CategoryCode) REFERENCES accessgroup.Category(CategoryCode)
 )
 TABLESPACE pg_default;
 

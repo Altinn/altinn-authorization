@@ -1,4 +1,6 @@
-﻿namespace Altinn.AccessGroups.Core.Models
+﻿using System.Text.Json.Serialization;
+
+namespace Altinn.AccessGroups.Core.Models
 {
     /// <summary>
     /// Model used for Access Groups in Authorization
@@ -13,7 +15,13 @@
         /// <summary>
         /// The Access Group Type
         /// </summary>
+        [JsonConverter(typeof(JsonStringEnumConverter))]
         public AccessGroupType AccessGroupType { get; set; }
+
+        /// <summary>
+        /// The list of categories the Access Group is to have as parents
+        /// </summary>
+        public List<string> Categories { get; set; }
 
         /// <summary>
         /// Whether the Access Group is hiden

@@ -1,4 +1,6 @@
-﻿namespace Altinn.AccessGroups.Core.Models
+﻿using System.Text.Json.Serialization;
+
+namespace Altinn.AccessGroups.Core.Models
 {
     /// <summary>
     /// Model used for representing the relationship between access in an external register to a specific access group in Altinn
@@ -8,6 +10,7 @@
         /// <summary>
         /// The external register source
         /// </summary>
+        [JsonConverter(typeof(JsonStringEnumConverter))]
         public ExternalSource ExternalSource { get; set; }
 
         /// <summary>

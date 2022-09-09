@@ -26,6 +26,11 @@ namespace Altinn.AccessGroups.Test.Mocks
             throw new NotImplementedException();
         }
 
+        public Task<List<Category>> GetCategories()
+        {
+            throw new NotImplementedException();
+        }
+
         public Task<List<ExternalRelationship>> GetExternalRelationships()
         {
             throw new NotImplementedException();
@@ -34,6 +39,11 @@ namespace Altinn.AccessGroups.Test.Mocks
         public async Task<List<AccessGroup>> ImportAccessGroups(List<AccessGroup> accessGroups)
         {
             return await Task.FromResult(accessGroups);
+        }
+
+        public Task<List<Category>> ImportCategories(List<Category> categories)
+        {
+            throw new NotImplementedException();
         }
 
         public Task<List<ExternalRelationship>> ImportExternalRelationships(List<ExternalRelationship> externalRelationships)

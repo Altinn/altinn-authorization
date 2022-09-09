@@ -15,5 +15,9 @@ namespace Altinn.AccessGroups.Interfaces
         Task<List<ExternalRelationship>> ImportExternalRelationships(List<ExternalRelationship> externalRelationships);
 
         Task<List<ExternalRelationship>> GetExternalRelationships();
+
+        Task<List<Category>> ImportCategories(List<Category> categories);
+
+        Task<List<Category>> GetCategories();
     }
 }

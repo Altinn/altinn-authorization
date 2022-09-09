@@ -89,6 +89,25 @@ namespace Altinn.AccessGroups.Controllers
             return Ok(await _accessGroup.GetExternalRelationships());
         }
 
+        [HttpPost]
+        [Route("authorization/api/v1/[controller]/ImportCategories")]
+        public async Task<ActionResult> ImportCategories([FromBody] List<Category> categories)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            return Ok(await _accessGroup.ImportCategories(categories));
+        }
+
+        [HttpGet]
+        [Route("authorization/api/v1/[controller]/ExportCategories")]
+        public async Task<ActionResult> ExportCategories()
+        {
+            return Ok(await _accessGroup.GetCategories());
+        }
+
         [HttpGet]
         [Route("authorization/api/v1/[controller]/")]
         public string Get()

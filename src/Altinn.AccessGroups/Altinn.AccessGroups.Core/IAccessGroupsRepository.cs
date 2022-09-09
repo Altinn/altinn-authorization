@@ -12,6 +12,12 @@ namespace Altinn.AccessGroups.Core
         Task<AccessGroup> InsertAccessGroup(AccessGroup accessGroup);
 
         /// <summary>
+        /// Operation for getting all access groups from the postgreSQL database
+        /// </summary>
+        /// <returns>The list of access groups</returns>
+        Task<List<AccessGroup>> GetAccessGroups();
+
+        /// <summary>
         /// Operation for inserting a new external relationship to the postgreSQL database
         /// </summary>
         /// <param name="externalRelationship">The external relationship model to insert</param>
@@ -24,12 +30,18 @@ namespace Altinn.AccessGroups.Core
         /// <returns>The list of external relationships</returns>
         Task<List<ExternalRelationship>> GetExternalRelationships();
 
+        /// <summary>
+        /// Operation for inserting a new category into the postgreSQL database
+        /// </summary>
+        /// <param name="category">The vategory model to insert</param>
+        /// <returns>The resulting category</returns>
+        Task<Category> InsertCategory(Category category);
 
         /// <summary>
-        /// Operation for getting all access groups from the postgreSQL database
+        /// Operation for getting all categories from the postgreSQL database
         /// </summary>
-        /// <returns>The list of access groups</returns>
-        Task<List<AccessGroup>> GetAccessGroups();
+        /// <returns>The list of categories</returns>
+        Task<List<Category>> GetCategories();
 
         /// <summary>
         /// Operation for inserting group membership in the postgreSQL database
