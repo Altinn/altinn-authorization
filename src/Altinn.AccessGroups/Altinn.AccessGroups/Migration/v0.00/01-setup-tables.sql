@@ -1,10 +1,10 @@
--- Schema: accessgroup
+    -- Schema: accessgroup
 CREATE SCHEMA IF NOT EXISTS accessgroup
     AUTHORIZATION postgres;
 
 -- Enum: AccessGroup.AccessGroupType
 DO $$ BEGIN
-    CREATE TYPE accessgroup.AccessGroupType AS ENUM ('Altinn');
+    CREATE TYPE accessgroup.AccessGroupType AS ENUM ('altinn');
 EXCEPTION
     WHEN duplicate_object THEN null;
 END $$;
@@ -22,7 +22,7 @@ TABLESPACE pg_default;
 
 -- Enum: AccessGroup.ExternalSource
 DO $$ BEGIN
-    CREATE TYPE accessgroup.ExternalSource AS ENUM ('Enhetsregisteret');
+    CREATE TYPE accessgroup.ExternalSource AS ENUM ('enhetsregisteret');
 EXCEPTION
     WHEN duplicate_object THEN null;
 END $$;
@@ -62,8 +62,13 @@ CREATE TABLE IF NOT EXISTS accessgroup.AccessGroupMembership
     UserId bigint,
     PartyId bigint,
     DelegationId bigint,
-    AccessGroupId bigint,
-    ValidTo timestamp with time zone
+    AccessGroupCode character varying,
+    ValidTo timestamp with time zone,
+    CONSTRAINT "delegationId" FOREIGN KEY (delegationid)
+    REFERENCES accessgroup.membershipdelegation (delegationid) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION
+        NOT VALID
 )
 TABLESPACE pg_default;
 
@@ -109,7 +114,7 @@ TABLESPACE pg_default;
 
 -- Enum: AccessGroup.TextResourceType
 DO $$ BEGIN
-    CREATE TYPE accessgroup.TextResourceType AS ENUM ('AccessGroup', 'Category');
+    CREATE TYPE accessgroup.TextResourceType AS ENUM ('accessGroup', 'category');
 EXCEPTION
     WHEN duplicate_object THEN null;
 END $$;

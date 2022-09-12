@@ -1,4 +1,6 @@
-﻿namespace Altinn.AccessGroups.Core.Models
+﻿using System.Text.Json.Serialization;
+
+namespace Altinn.AccessGroups.Core.Models
 {
     public class GroupMembership
     {
@@ -11,6 +13,9 @@
         public int DelegationId { get; set; }
 
         public string AccessGroupCode { get; set; }
+
+        [JsonConverter(typeof(JsonStringEnumConverter))]
+        public DelegationType DelegationType { get; set; }
 
         //public GroupMembership(int? coveredByUserId, int? coveredByPartyId, int offeredByPartyId, string groupId)
         //{

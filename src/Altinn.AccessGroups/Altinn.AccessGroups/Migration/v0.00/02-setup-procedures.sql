@@ -122,33 +122,51 @@ $BODY$;
 
 --FUNCTION: accessgroup.insert_accessgroupmembership
 CREATE OR REPLACE FUNCTION accessgroup.insert_accessgroupmembership(
-    _offeredbyparty bigint,
-    _userid bigint,
-    _partyid bigint,
-    _delegationid bigint,
-    _accessgroupcode character varying 
-    )
-    RETURNS SETOF accessgroup.accessgroupmembership
-    LANGUAGE 'sql'
-    VOLATILE
+	_offeredbyparty bigint,
+	_userid bigint,
+	_partyid bigint,
+	_accessgroupcode character varying,
+	_delegationtype accessgroup.delegationtype)
+    RETURNS SETOF accessgroup.accessgroupmembership 
+    LANGUAGE 'plpgsql'
+    COST 100
+    VOLATILE PARALLEL UNSAFE
     ROWS 1
+
 AS $BODY$
-    INSERT INTO accessgroup.accessgroupmembership(
+DECLARE 
+	delegationid bigint;
+BEGIN
+	INSERT INTO accessgroup.membershipdelegation(
+		delegatedbyuserid,
+		delegatedbypartyid,
+		delegationtime,
+		delegationtype
+	)
+	VALUES (
+		_userid,
+		_partyid,
+		CURRENT_TIMESTAMP,
+		_delegationtype
+	) RETURNING delegationid into delegationid;
+
+INSERT INTO accessgroup.accessgroupmembership(
     offeredbyparty,
     userid,
     partyid,
     delegationid,
-    accessgroupcode,
+	accessgroupcode,
     validto
     )
     VALUES (
     _offeredbyparty,
     _userid,
     _partyid,
-    _delegationid,
-    _accessgroupcode,
+    delegationid,
+	_accessgroupcode,
     CURRENT_TIMESTAMP + interval '1 year'
-    ) RETURNING *;
+    );
+END;
 $BODY$;
 
 --FUNCTION: accessgroup.select_accessgroupmembership

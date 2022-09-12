@@ -27,7 +27,7 @@ namespace Altinn.AccessGroups.Persistance
         private readonly string getTextResources = "SELECT texttype, key, content, language, accessgroupcode, categorycode FROM accessgroup.textresource";
 
         private readonly string listGroupMembershipsFunc = "select * from accessgroup.select_accessgroupmembership()";
-        private readonly string insertGroupMembershipFunc = "select * from accessgroup.insert_accessgroupmembership(@_coveredByUserId, @_coveredByPartyId, @_offeredByPartyId, @_groupId)";
+        private readonly string insertGroupMembershipFunc = "select * from accessgroup.insert_accessgroupmembership(@_offeredByPartyId, @_coveredByUserId, @_coveredByPartyId, @_accessgroupcode, @_DelegationType)";
         private readonly string deleteGroupMembershipFunc = "select * from accessgroup.delete_accessgroupmembership(@_coveredByUserId, @_coveredByPartyId, @_offeredByPartyId, @_groupId)";
 
         /// <summary>
@@ -44,6 +44,7 @@ namespace Altinn.AccessGroups.Persistance
             NpgsqlConnection.GlobalTypeMapper.MapEnum<AccessGroupType>("accessgroup.accessgrouptype");
             NpgsqlConnection.GlobalTypeMapper.MapEnum<ExternalSource>("accessgroup.externalsource");
             NpgsqlConnection.GlobalTypeMapper.MapEnum<ExternalSource>("accessgroup.textresourcetype");
+            NpgsqlConnection.GlobalTypeMapper.MapEnum<DelegationType>("accessgroup.delegationtype");
         }
 
         /// <inheritdoc/>
@@ -185,7 +186,8 @@ namespace Altinn.AccessGroups.Persistance
                 }
                 
                 pgcom.Parameters.AddWithValue("_offeredByPartyId", membership.OfferedByPartyId);
-                pgcom.Parameters.AddWithValue("_groupId", membership.AccessGroupCode);
+                pgcom.Parameters.AddWithValue("_accessgroupcode", membership.AccessGroupCode);
+                pgcom.Parameters.AddWithValue("_DelegationType", membership.DelegationType);
 
                 using NpgsqlDataReader reader = await pgcom.ExecuteReaderAsync();
                 if (reader.Read())
