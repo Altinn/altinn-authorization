@@ -1,5 +1,4 @@
-﻿
-namespace Altinn.AccessGroups.Core.Models
+﻿namespace Altinn.AccessGroups.Core.Models
 {
     /// <summary>
     /// The differenst supported external registers

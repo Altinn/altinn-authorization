@@ -69,5 +69,21 @@ namespace Altinn.AccessGroups.Services
 
             return result;
         }
+
+        public async Task<List<Category>> ImportCategories(List<Category> categories)
+        {
+            List<Category> result = new();
+            foreach (Category category in categories)
+            {
+                result.Add(await _accessGroupRepository.InsertCategory(category));
+            }
+
+            return result;
+        }
+
+        public async Task<List<Category>> GetCategories()
+        {
+            return await _accessGroupRepository.GetCategories();
+        }
     }
 }

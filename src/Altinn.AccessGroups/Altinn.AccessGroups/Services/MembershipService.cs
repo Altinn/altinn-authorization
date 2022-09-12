@@ -48,20 +48,13 @@ namespace Altinn.AccessGroups.Services
             List<GroupMembership> groupMemberships = await _accessGroupRepository.ListGroupmemberships();
             List<AccessGroup> accessGroups = await _accessGroups.GetAccessGroups();
 
-            List<AccessGroup> tmpResult = new();
-            tmpResult.AddRange(erRoles.SelectMany(role => externalRelationships.SelectMany(rel => accessGroups.Where(ag => ag.AccessGroupCode == rel.AccessGroupCode && rel.ExternalId == role.Value))));
-            tmpResult.AddRange(erRoles.SelectMany(role => groupMemberships.SelectMany(gm => accessGroups.Where(ag => ag.AccessGroupCode == gm.AccessGroupCode && gm.CoveredByUserId == search.CoveredByUserId))));
-
-            List<AccessGroup> result = new List<AccessGroup>();
-            foreach(AccessGroup accessGroup in tmpResult)
+            HashSet<string> accessGroupCodes = externalRelationships.Where(extRel => erRoles.Any(erRole => erRole.Value == extRel.ExternalId)).Select(extRel => extRel.AccessGroupCode).ToHashSet();
+            if (groupMemberships != null)
             {
-                if (!result.Contains(accessGroup))
-                {
-                    result.Add(accessGroup);
-                }
-            }
+                accessGroupCodes.UnionWith(groupMemberships?.Where(grpMem => grpMem.CoveredByUserId == search.CoveredByUserId || grpMem.CoveredByPartyId == search.CoveredByPartyId).Select(grpMem => grpMem.AccessGroupCode).ToHashSet());
+            }            
 
-            return result;
+            return accessGroups.Where(ag => accessGroupCodes.Contains(ag.AccessGroupCode)).ToList();
         }
         
         public async Task<bool> RevokeMembership(GroupMembership input)

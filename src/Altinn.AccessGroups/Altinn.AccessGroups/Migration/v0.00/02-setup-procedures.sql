@@ -1,11 +1,11 @@
 -- FUNCTION: accessgroup.insert_textresource
 CREATE OR REPLACE FUNCTION accessgroup.insert_textresource(
   _textType accessgroup.TextResourceType,
-  _key character varying,
-  _content character varying,
-  _language character varying,
-  _accessgroupcode character varying,
-  _categorycode character varying
+  _key text,
+  _content text,
+  _language text,
+  _accessgroupcode text,
+  _categorycode text
 )
 RETURNS SETOF accessgroup.TextResource
 LANGUAGE 'sql'
@@ -32,7 +32,8 @@ $BODY$;
 
 -- FUNCTION: accessgroup.insert_category
 CREATE OR REPLACE FUNCTION accessgroup.insert_category(
-  _categoryCode character varying
+  _categoryCode text,
+  _categoryType accessgroup.CategoryType
 )
 RETURNS SETOF accessgroup.Category
 LANGUAGE 'sql'
@@ -40,46 +41,59 @@ VOLATILE
 ROWS 1
 AS $BODY$
   INSERT INTO accessgroup.Category(
-    CategoryCode
+    CategoryCode,
+    CategoryType
   )
   VALUES (
-    _categoryCode
+    _categoryCode,
+    _categoryType
   ) RETURNING *;
 $BODY$;
 
 -- FUNCTION: accessgroup.insert_accessgroup
 CREATE OR REPLACE FUNCTION accessgroup.insert_accessgroup(
-  _accessGroupCode character varying,
+  _accessGroupCode text,
   _accessGroupType accessgroup.AccessGroupType,
-  _hidden bool
+  _hidden bool,
+  _categoryCodes text[]
 )
 RETURNS SETOF accessgroup.accessgroup
-LANGUAGE 'sql'
+LANGUAGE 'plpgsql'
 VOLATILE
 ROWS 1
 AS $BODY$
-  INSERT INTO accessgroup.AccessGroup(
-    AccessGroupCode,
-    AccessGroupType, 
-    Hidden,
-    Created,
-    Modified
-  )
-  VALUES (
-    _accessGroupCode,
-    _accessGroupType,
-    _hidden,
-    CURRENT_TIMESTAMP,
-    CURRENT_TIMESTAMP
-  ) RETURNING *;
+    BEGIN
+      INSERT INTO accessgroup.AccessGroup(
+        AccessGroupCode,
+        AccessGroupType, 
+        Hidden,
+        Created,
+        Modified
+      )
+      VALUES (
+        _accessGroupCode,
+        _accessGroupType,
+        _hidden,
+        CURRENT_TIMESTAMP,
+        CURRENT_TIMESTAMP
+      );
+
+      INSERT INTO accessgroup.AccessGroupCategory(
+        AccessGroupCode,
+        CategoryCode
+      )
+      SELECT _accessGroupCode, * FROM UNNEST($4);
+
+      RETURN QUERY(SELECT * FROM accessgroup.AccessGroup WHERE AccessGroupCode = _accessGroupCode);
+    END
 $BODY$;
 
 -- FUNCTION: accessgroup.insert_externalrelationship
 CREATE OR REPLACE FUNCTION accessgroup.insert_externalrelationship(
 	_externalsource accessgroup.externalsource,
-	_externalid character varying,
-    _accessgroupcode character varying,
-    _unittypefilter character varying
+	_externalid text,
+    _accessgroupcode text,
+    _unittypefilter text
 	)
     RETURNS SETOF accessgroup.externalrelationship 
     LANGUAGE 'sql'
@@ -102,8 +116,8 @@ $BODY$;
 
 -- FUNCTION: accessgroup.insert_accessgroupcategory
 CREATE OR REPLACE FUNCTION accessgroup.insert_accessgroupcategory(
-    _accessgroupcode character varying,
-    _categorycode character varying
+    _accessgroupcode text,
+    _categorycode text
 	)
     RETURNS SETOF accessgroup.AccessGroupCategory 
     LANGUAGE 'sql'

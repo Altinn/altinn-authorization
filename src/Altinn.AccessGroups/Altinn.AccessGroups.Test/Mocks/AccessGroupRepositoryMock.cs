@@ -15,12 +15,22 @@ namespace Altinn.AccessGroups.Test.Mocks
             throw new NotImplementedException();
         }
 
+        public Task<List<Category>> GetCategories()
+        {
+            throw new NotImplementedException();
+        }
+
         public Task<List<ExternalRelationship>> GetExternalRelationships()
         {
             throw new NotImplementedException();
         }
 
         public Task<AccessGroup> InsertAccessGroup(AccessGroup accessGroup)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<Category> InsertCategory(Category category)
         {
             throw new NotImplementedException();
         }

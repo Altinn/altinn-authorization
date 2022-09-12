@@ -11,10 +11,10 @@ namespace Altinn.AccessGroups.Persistance
         private readonly string _connectionString;
         private readonly ILogger _logger;
 
-        private readonly string insertCategoryFunc = "select * from accessgroup.insert_category(@_categoryCode)";
-        private readonly string getCategories = "SELECT categorycode FROM accessgroup.category";
+        private readonly string insertCategoryFunc = "select * from accessgroup.insert_category(@_categoryCode, @_categoryType)";
+        private readonly string getCategories = "SELECT categorycode, categorytype FROM accessgroup.category";
 
-        private readonly string insertAccessGroupFunc = "select * from accessgroup.insert_accessgroup(@_accessGroupCode, @_accessGroupType, @_hidden)";
+        private readonly string insertAccessGroupFunc = "select * from accessgroup.insert_accessgroup(@_accessGroupCode, @_accessGroupType, @_hidden, @_categoryCodes)";
         private readonly string getAccessGroups = "SELECT accessgroupcode, accessgrouptype, hidden, created, modified FROM accessgroup.accessgroup";
 
         private readonly string insertExternalRelationshipFunc = "select * from accessgroup.insert_externalrelationship(@_ExternalSource, @_ExternalId, @_AccessGroupCode, @_UnitTypeFilter)";
@@ -41,10 +41,12 @@ namespace Altinn.AccessGroups.Persistance
             _connectionString = string.Format(
                 postgresSettings.Value.ConnectionString,
                 postgresSettings.Value.AuthorizationDbPwd);
+            NpgsqlConnection.GlobalTypeMapper.MapEnum<CategoryType>("accessgroup.categorytype");
             NpgsqlConnection.GlobalTypeMapper.MapEnum<AccessGroupType>("accessgroup.accessgrouptype");
             NpgsqlConnection.GlobalTypeMapper.MapEnum<ExternalSource>("accessgroup.externalsource");
             NpgsqlConnection.GlobalTypeMapper.MapEnum<ExternalSource>("accessgroup.textresourcetype");
             NpgsqlConnection.GlobalTypeMapper.MapEnum<DelegationType>("accessgroup.delegationtype");
+            NpgsqlConnection.GlobalTypeMapper.MapEnum<TextResourceType>("accessgroup.textresourcetype");
         }
 
         /// <inheritdoc/>
@@ -59,6 +61,7 @@ namespace Altinn.AccessGroups.Persistance
                 pgcom.Parameters.AddWithValue("_accessGroupCode", accessGroup.AccessGroupCode);
                 pgcom.Parameters.AddWithValue("_accessGroupType", accessGroup.AccessGroupType);
                 pgcom.Parameters.AddWithValue("_hidden", accessGroup.Hidden);
+                pgcom.Parameters.AddWithValue("_categoryCodes", accessGroup.Categories);
 
                 using NpgsqlDataReader reader = await pgcom.ExecuteReaderAsync();
                 if (reader.Read())
@@ -154,6 +157,60 @@ namespace Altinn.AccessGroups.Persistance
             catch (Exception e)
             {
                 _logger.LogError(e, "AccessGroups // AccessGroupsRepository // GetExternalRelationships // Exception");
+                throw;
+            }
+        }
+
+        /// <inheritdoc/>
+        public async Task<Category> InsertCategory(Category category)
+        {
+            try
+            {
+                await using NpgsqlConnection conn = new NpgsqlConnection(_connectionString);
+                await conn.OpenAsync();
+
+                NpgsqlCommand pgcom = new NpgsqlCommand(insertCategoryFunc, conn);
+                pgcom.Parameters.AddWithValue("_CategoryCode", category.CategoryCode);
+                pgcom.Parameters.AddWithValue("_CategoryType", category.CategoryType);
+
+                using NpgsqlDataReader reader = await pgcom.ExecuteReaderAsync();
+                if (reader.Read())
+                {
+                    return GetCategory(reader);
+                }
+
+                return null;
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, "AccessGroups // AccessGroupsRepository // InsertCategory // Exception");
+                throw;
+            }
+        }
+
+        /// <inheritdoc/>
+        public async Task<List<Category>> GetCategories()
+        {
+            try
+            {
+                await using NpgsqlConnection conn = new NpgsqlConnection(_connectionString);
+                await conn.OpenAsync();
+
+                NpgsqlCommand pgcom = new NpgsqlCommand(getCategories, conn);
+
+                using NpgsqlDataReader reader = await pgcom.ExecuteReaderAsync();
+
+                List<Category> categories = new();
+                while (reader.Read())
+                {
+                    categories.Add(GetCategory(reader));
+                }
+
+                return categories;
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, "AccessGroups // AccessGroupsRepository // GetCategories // Exception");
                 throw;
             }
         }
@@ -299,6 +356,15 @@ namespace Altinn.AccessGroups.Persistance
                 ExternalId = reader.GetValue<string>("ExternalId"),
                 AccessGroupCode = reader.GetValue<string>("AccessGroupCode"),
                 UnitTypeFilter = reader.GetValue<string>("UnitTypeFilter")
+            };
+        }
+
+        private static Category GetCategory(NpgsqlDataReader reader)
+        {
+            return new Category
+            {
+                CategoryCode = reader.GetValue<string>("CategoryCode"),
+                CategoryType = reader.GetValue<CategoryType>("CategoryType")
             };
         }
 
