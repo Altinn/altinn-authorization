@@ -140,7 +140,8 @@ CREATE OR REPLACE FUNCTION accessgroup.insert_accessgroupmembership(
 	_userid bigint,
 	_partyid bigint,
 	_accessgroupcode character varying,
-	_delegationtype accessgroup.delegationtype)
+	_delegationtype accessgroup.delegationtype,
+    _validto timestamp)
     RETURNS SETOF accessgroup.accessgroupmembership 
     LANGUAGE 'plpgsql'
     COST 100
@@ -178,7 +179,7 @@ INSERT INTO accessgroup.accessgroupmembership(
     _partyid,
     inserted_delegationid,
 	_accessgroupcode,
-    CURRENT_TIMESTAMP + interval '1 year'
+    _validto
     );
     RETURN QUERY(SELECT * FROM accessgroup.accessgroupmembership WHERE delegationid = inserted_delegationid);
 END;

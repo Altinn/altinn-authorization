@@ -27,7 +27,7 @@ namespace Altinn.AccessGroups.Persistance
         private readonly string getTextResources = "SELECT texttype, key, content, language, accessgroupcode, categorycode FROM accessgroup.textresource";
 
         private readonly string listGroupMembershipsFunc = "select * from accessgroup.select_accessgroupmembership()";
-        private readonly string insertGroupMembershipFunc = "select * from accessgroup.insert_accessgroupmembership(@_offeredByPartyId, @_coveredByUserId, @_coveredByPartyId, @_accessgroupcode, @_DelegationType)";
+        private readonly string insertGroupMembershipFunc = "select * from accessgroup.insert_accessgroupmembership(@_offeredByPartyId, @_coveredByUserId, @_coveredByPartyId, @_accessgroupcode, @_DelegationType, @_validto)";
         private readonly string deleteGroupMembershipFunc = "select * from accessgroup.delete_accessgroupmembership(@_coveredByUserId, @_coveredByPartyId, @_offeredByPartyId, @_groupId)";
 
         /// <summary>
@@ -243,8 +243,26 @@ namespace Altinn.AccessGroups.Persistance
                 }
                 
                 pgcom.Parameters.AddWithValue("_offeredByPartyId", membership.OfferedByPartyId);
-                pgcom.Parameters.AddWithValue("_accessgroupcode", membership.AccessGroupCode);
+                
+                if(membership.AccessGroupCode != null)
+                {
+                    pgcom.Parameters.AddWithValue("_accessgroupcode", membership.AccessGroupCode);
+                }
+                else
+                {
+                    pgcom.Parameters.AddWithValue("_accessgroupcode", DBNull.Value);
+                }
+                
                 pgcom.Parameters.AddWithValue("_DelegationType", membership.DelegationType);
+
+                if (membership.ValidTo != null)
+                {
+                    pgcom.Parameters.AddWithValue("_validto", membership.ValidTo);
+                }
+                else
+                {
+                    pgcom.Parameters.AddWithValue("validto", DBNull.Value);
+                }
 
                 using NpgsqlDataReader reader = await pgcom.ExecuteReaderAsync();
                 if (reader.Read())
