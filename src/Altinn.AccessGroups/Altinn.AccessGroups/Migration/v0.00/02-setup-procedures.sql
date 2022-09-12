@@ -149,7 +149,7 @@ CREATE OR REPLACE FUNCTION accessgroup.insert_accessgroupmembership(
 
 AS $BODY$
 DECLARE 
-	delegationid bigint;
+	inserted_delegationid bigint;
 BEGIN
 	INSERT INTO accessgroup.membershipdelegation(
 		delegatedbyuserid,
@@ -162,7 +162,7 @@ BEGIN
 		_partyid,
 		CURRENT_TIMESTAMP,
 		_delegationtype
-	) RETURNING delegationid into delegationid;
+	) RETURNING delegationid into inserted_delegationid;
 
 INSERT INTO accessgroup.accessgroupmembership(
     offeredbyparty,
@@ -176,10 +176,11 @@ INSERT INTO accessgroup.accessgroupmembership(
     _offeredbyparty,
     _userid,
     _partyid,
-    delegationid,
+    inserted_delegationid,
 	_accessgroupcode,
     CURRENT_TIMESTAMP + interval '1 year'
     );
+    RETURN QUERY(SELECT * FROM accessgroup.accessgroupmembership WHERE delegationid = inserted_delegationid);
 END;
 $BODY$;
 

@@ -65,24 +65,6 @@ CREATE TABLE IF NOT EXISTS accessgroup.AccessGroupCategory
 )
 TABLESPACE pg_default;
 
--- Table: accessgroup.AccessGroupMembership
-CREATE TABLE IF NOT EXISTS accessgroup.AccessGroupMembership
-(
-    MembershipId bigint GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-    OfferedByParty bigint,
-    UserId bigint,
-    PartyId bigint,
-    DelegationId bigint,
-    AccessGroupCode character varying,
-    ValidTo timestamp with time zone,
-    CONSTRAINT "delegationId" FOREIGN KEY (delegationid)
-    REFERENCES accessgroup.membershipdelegation (delegationid) MATCH SIMPLE
-        ON UPDATE NO ACTION
-        ON DELETE NO ACTION
-        NOT VALID
-)
-TABLESPACE pg_default;
-
 -- Enum: AccessGroup.DelegationType
 DO $$ BEGIN
     CREATE TYPE accessgroup.DelegationType AS ENUM ('brukerdelegering', 'klientdelegering', 'tjenestedelegering');
@@ -98,6 +80,24 @@ CREATE TABLE IF NOT EXISTS accessgroup.MemberShipDelegation
     DelegatedByPartyId bigint,
     DelegationTime date,
     DelegationType accessgroup.DelegationType NOT NULL
+)
+TABLESPACE pg_default;
+
+-- Table: accessgroup.AccessGroupMembership
+CREATE TABLE IF NOT EXISTS accessgroup.AccessGroupMembership
+(
+    MembershipId bigint GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    OfferedByParty bigint,
+    UserId bigint,
+    PartyId bigint,
+    DelegationId bigint,
+    AccessGroupCode character varying,
+    ValidTo timestamp with time zone,
+    CONSTRAINT delegationId_fkey FOREIGN KEY (delegationid)
+    REFERENCES accessgroup.membershipdelegation (delegationid) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION
+        NOT VALID
 )
 TABLESPACE pg_default;
 
