@@ -186,7 +186,10 @@ END;
 $BODY$;
 
 --FUNCTION: accessgroup.select_accessgroupmembership
-    CREATE OR REPLACE FUNCTION accessgroup.select_accessgroupmembership()
+    CREATE OR REPLACE FUNCTION accessgroup.select_accessgroupmembership_with_coveredbypartyid(
+		_offeredbypartyid bigint,
+		_coveredbypartyid bigint
+	)
     RETURNS SETOF accessgroup.accessgroupmembership
     LANGUAGE 'sql'
     VOLATILE
@@ -199,5 +202,29 @@ AS $BODY$
     ,delegationid
     ,accessgroupcode
     ,validto
-    FROM accessgroup.accessgroupmembership;
+    FROM accessgroup.accessgroupmembership
+	WHERE offeredbyparty = _offeredbypartyid
+	AND partyid = _coveredbypartyid;
+$BODY$;
+
+--FUNCTION: accessgroup.select_accessgroupmembership
+    CREATE OR REPLACE FUNCTION accessgroup.select_accessgroupmembership_with_coveredbyuserid(
+		_offeredbypartyid bigint,
+		_coveredbyuserid bigint
+	)
+    RETURNS SETOF accessgroup.accessgroupmembership
+    LANGUAGE 'sql'
+    VOLATILE
+    ROWS 1
+AS $BODY$
+    SELECT membershipid
+    ,offeredbyparty
+    ,userid
+    ,partyid
+    ,delegationid
+    ,accessgroupcode
+    ,validto
+    FROM accessgroup.accessgroupmembership
+	WHERE offeredbyparty = _offeredbypartyid
+	AND userid = _coveredbyuserid;
 $BODY$;

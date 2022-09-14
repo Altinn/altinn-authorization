@@ -53,6 +53,6 @@ namespace Altinn.AccessGroups.Core
         /// Operation for selecting group memberships in the postgreSQL database
         /// </summary>
         /// <returns>The list of access groups</returns>
-        Task<List<GroupMembership>> ListGroupmemberships();
+        Task<List<GroupMembership>> ListGroupmemberships(AccessGroupSearch search);
     }
 }

@@ -45,7 +45,7 @@ namespace Altinn.AccessGroups.Test.Mocks
             throw new NotImplementedException();
         }
 
-        public Task<List<GroupMembership>> ListGroupmemberships()
+        public Task<List<GroupMembership>> ListGroupmemberships(AccessGroupSearch search)
         {
             throw new NotImplementedException();
         }

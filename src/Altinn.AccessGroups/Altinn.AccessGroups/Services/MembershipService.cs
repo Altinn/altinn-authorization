@@ -45,7 +45,7 @@ namespace Altinn.AccessGroups.Services
             List<Role> erRoles = await _altinnRoles.GetDecisionPointRolesForUser((int)search.CoveredByUserId, search.OfferedByPartyId);
 
             List<ExternalRelationship> externalRelationships = await _accessGroups.GetExternalRelationships();
-            List<GroupMembership> groupMemberships = await _accessGroupRepository.ListGroupmemberships();
+            List<GroupMembership> groupMemberships = await _accessGroupRepository.ListGroupmemberships(search);
             List<AccessGroup> accessGroups = await _accessGroups.GetAccessGroups();
 
             HashSet<string> accessGroupCodes = externalRelationships.Where(extRel => erRoles.Any(erRole => erRole.Value == extRel.ExternalId)).Select(extRel => extRel.AccessGroupCode).ToHashSet();

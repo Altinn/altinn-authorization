@@ -26,7 +26,8 @@ namespace Altinn.AccessGroups.Persistance
         private readonly string insertTextResourceFunc = "select * from accessgroup.insert_textresource(@_textType, @_key, @_content, @_key, @_language, @_accessgroupcode, @_categorycode)";
         private readonly string getTextResources = "SELECT texttype, key, content, language, accessgroupcode, categorycode FROM accessgroup.textresource";
 
-        private readonly string listGroupMembershipsFunc = "select * from accessgroup.select_accessgroupmembership()";
+        private readonly string listGroupMembershipsByPartyIdFunc = "select * from accessgroup.select_accessgroupmembership_with_coveredbypartyid(@_offeredbypartyid, @_coveredbypartyid)";
+        private readonly string listGroupMembershipsByUserIdFunc = "select * from accessgroup.select_accessgroupmembership_with_coveredbyuserid(@_offeredbypartyid, @_coveredbyuserid)";
         private readonly string insertGroupMembershipFunc = "select * from accessgroup.insert_accessgroupmembership(@_offeredByPartyId, @_coveredByUserId, @_coveredByPartyId, @_accessgroupcode, @_DelegationType, @_validto)";
         private readonly string deleteGroupMembershipFunc = "select * from accessgroup.delete_accessgroupmembership(@_coveredByUserId, @_coveredByPartyId, @_offeredByPartyId, @_groupId)";
 
@@ -328,14 +329,27 @@ namespace Altinn.AccessGroups.Persistance
             }
         }
 
-        public async Task<List<GroupMembership>> ListGroupmemberships()
+        public async Task<List<GroupMembership>> ListGroupmemberships(AccessGroupSearch search)
         {
             try
             {
                 await using NpgsqlConnection conn = new NpgsqlConnection(_connectionString);
                 await conn.OpenAsync();
 
-                NpgsqlCommand pgcom = new NpgsqlCommand(listGroupMembershipsFunc, conn);
+                NpgsqlCommand pgcom = new NpgsqlCommand();
+                if (search.CoveredByPartyId.HasValue)
+                {
+                    pgcom = new NpgsqlCommand(listGroupMembershipsByPartyIdFunc, conn);
+                    pgcom.Parameters.AddWithValue("_offeredbypartyid", search.OfferedByPartyId);
+                    pgcom.Parameters.AddWithValue("_coveredbypartyid", search.CoveredByPartyId);
+                }
+                else if (search.CoveredByUserId.HasValue)
+                {
+                    pgcom = new NpgsqlCommand(listGroupMembershipsByUserIdFunc, conn);
+                    pgcom.Parameters.AddWithValue("_offeredbypartyid", search.OfferedByPartyId);
+                    pgcom.Parameters.AddWithValue("_coveredbyuserid", search.CoveredByUserId);
+                }
+               
                 using NpgsqlDataReader reader = await pgcom.ExecuteReaderAsync();
 
                 if (reader.Read())
@@ -410,7 +424,8 @@ namespace Altinn.AccessGroups.Persistance
                     CoveredByPartyId = reader.GetValue<int>("partyid"),
                     OfferedByPartyId = reader.GetValue<int>("offeredbyparty"),
                     DelegationId = reader.GetValue<int>("delegationid"),
-                    AccessGroupCode = reader.GetValue<string>("accessgroupcode")
+                    AccessGroupCode = reader.GetValue<string>("accessgroupcode"),
+                    ValidTo = reader.GetValue<DateTime>("validto")
                 };
 
                 groupMemberships.Add(groupMembership);
