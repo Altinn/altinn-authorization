@@ -49,3 +49,17 @@ VALUES (
 )
 RETURNING *;
 $BODY$;
+
+-- Procedure: search_for_resource
+CREATE OR REPLACE FUNCTION resourceregistry.search_for_resource(IN _searchterm text)
+    RETURNS SETOF resourceregistry.resources
+    LANGUAGE 'sql'
+    STABLE
+    PARALLEL SAFE
+    COST 100    ROWS 1000 
+    
+AS $BODY$
+SELECT identifier, created, modified, serviceresourcejson
+	FROM resourceregistry.resources
+	WHERE serviceresourcejson ->> 'title' iLike concat('%', _searchterm, '%');
+$BODY$;

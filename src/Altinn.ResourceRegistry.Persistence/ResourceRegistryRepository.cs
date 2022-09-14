@@ -17,6 +17,7 @@ namespace Altinn.ResourceRegistry.Persistence
         private readonly string _connectionString;
         private readonly ILogger _logger;
         private readonly string getResource = "SELECT * FROM resourceregistry.get_resource(@_identifier)";
+        private readonly string searchForResource = "SELECT * FROM resourceregistry.search_for_resource(@_searchterm)";
         private readonly string createResource = "SELECT * FROM resourceregistry.create_resource(@_identifier, @_created, @_modified, @_serviceresourcejson)";
         private readonly string deleteResource = "SELECT * FROM resourceregistry.delete_resource(@_identifier)";
 
@@ -32,19 +33,18 @@ namespace Altinn.ResourceRegistry.Persistence
 
         public async Task<List<ServiceResource>> Search(ResourceSearch resourceSearch)
         {
-            throw new NotImplementedException();
             try
             {
                 await using NpgsqlConnection conn = new NpgsqlConnection(_connectionString);
                 await conn.OpenAsync();
 
-                NpgsqlCommand pgcom = new NpgsqlCommand(getResource, conn);
-                pgcom.Parameters.AddWithValue("_searchTerm", resourceSearch.SearchTerm);
+                NpgsqlCommand pgcom = new NpgsqlCommand(searchForResource, conn);
+                pgcom.Parameters.AddWithValue("_searchterm", resourceSearch.SearchTerm);
 
                 List<ServiceResource> serviceResources = new List<ServiceResource>();
 
                 using NpgsqlDataReader reader = pgcom.ExecuteReader();
-                if (reader.Read())
+                while (reader.Read())
                 {
                     serviceResources.Add(getServiceResource(reader));
                 }
@@ -142,6 +142,11 @@ namespace Altinn.ResourceRegistry.Persistence
             }
         }
 
+        public Task<ServiceResource> UpdateResource(ServiceResource resource)
+        {
+            throw new NotImplementedException();
+        }
+
         private static ServiceResource getServiceResource(NpgsqlDataReader reader)
         {
             if (reader["serviceresourcejson"] != DBNull.Value)
@@ -152,11 +157,6 @@ namespace Altinn.ResourceRegistry.Persistence
                 return resource;
             }
             return null;
-        }
-
-        public Task<ServiceResource> UpdateResource(ServiceResource resource)
-        {
-            throw new NotImplementedException();
         }
     }
 }
