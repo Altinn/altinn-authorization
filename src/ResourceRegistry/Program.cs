@@ -1,5 +1,6 @@
 using Altinn.Platform.Authorization.Configuration;
 using Altinn.ResourceRegistry.Core;
+using Altinn.ResourceRegistry.Integration.Clients;
 using Altinn.ResourceRegistry.Models;
 using Altinn.ResourceRegistry.Persistence;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
@@ -53,6 +54,7 @@ void ConfigureServices(IServiceCollection services, IConfiguration config)
 
     services.AddSingleton<IResourceRegistry, ResourceRegistryService>();
     services.AddSingleton<IResourceRegistryRepository, ResourceRepository>();
+    services.AddSingleton<IPRP, PRPClient>();
     services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
     services.Configure<PostgreSQLSettings>(config.GetSection("PostgreSQLSettings"));
 

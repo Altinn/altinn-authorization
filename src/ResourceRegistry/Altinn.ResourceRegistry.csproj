@@ -14,6 +14,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Altinn.ResourceRegistry.Core\Altinn.ResourceRegistry.Core.csproj" />
+    <ProjectReference Include="..\Altinn.ResourceRegistry.Integration\Altinn.ResourceRegistry.Integration.csproj" />
     <ProjectReference Include="..\Altinn.ResourceRegistry.Persistence\Altinn.ResourceRegistry.Persistence.csproj" />
   </ItemGroup>
 

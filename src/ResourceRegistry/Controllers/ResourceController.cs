@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc.ApplicationModels;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
+using System.Text;
 
 namespace ResourceRegistry.Controllers
 {
@@ -18,12 +19,16 @@ namespace ResourceRegistry.Controllers
         private IResourceRegistry _resourceRegistry;
         private readonly IObjectModelValidator _objectModelValidator;
         private readonly IHttpContextAccessor _httpContextAccessor;
+        private IPRP _prp;
+        private readonly ILogger<ResourceController> _logger;
 
-        public ResourceController(IResourceRegistry resourceRegistry, IObjectModelValidator objectModelValidator, IHttpContextAccessor httpContextAccessor)
+        public ResourceController(IResourceRegistry resourceRegistry, IObjectModelValidator objectModelValidator, IHttpContextAccessor httpContextAccessor, IPRP prp, ILogger<ResourceController> logger)
         {
             _resourceRegistry = resourceRegistry;
             _objectModelValidator = objectModelValidator;
             _httpContextAccessor = httpContextAccessor;
+            _logger = logger;
+            _prp = prp;
         }
 
         [HttpGet("{id}")]
@@ -32,11 +37,11 @@ namespace ResourceRegistry.Controllers
             return await _resourceRegistry.GetResource(id);
         }
 
-        [SuppressModelStateInvalidFilter] 
+        [SuppressModelStateInvalidFilter]
         [HttpPost]
         public async Task<ActionResult> Post([ValidateNever] ServiceResource serviceResource)
         {
-            if(serviceResource.IsComplete.HasValue && serviceResource.IsComplete.Value)
+            if (serviceResource.IsComplete.HasValue && serviceResource.IsComplete.Value)
             {
                 if (!ModelState.IsValid)
                 {
@@ -61,10 +66,108 @@ namespace ResourceRegistry.Controllers
                 }
             }
 
-             await _resourceRegistry.UpdateResource(serviceResource);
+            await _resourceRegistry.UpdateResource(serviceResource);
 
             return Ok();
         }
+
+
+
+        [HttpPost("{id}/policy")]
+        public async Task<ActionResult> WritePolicy(string id)
+        {
+            if (string.IsNullOrWhiteSpace(id))
+            {
+                return BadRequest("Unknown resource");
+            }
+
+         
+            // Use Request.Body to capture raw data from body to support other format than JSON
+            Stream content = Request.Body;
+
+            // Request.Body returns Stream of type FrameRequestStream which can only be read once
+            // Copy Request.Body to another stream that supports seeking so the content can be read multiple times
+            string contentString = await new StreamReader(content, Encoding.UTF8).ReadToEndAsync();
+
+            if (string.IsNullOrWhiteSpace(contentString))
+            {
+                return BadRequest("Policy file cannot be empty");
+            }
+
+            byte[] byteArray = Encoding.UTF8.GetBytes(contentString);
+            Stream dataStream = new MemoryStream(byteArray);
+
+            try
+            {
+                bool successfullyStored = await _prp.WriteResourcePolicyAsync(id, dataStream);
+
+                if (successfullyStored)
+                {
+                    return Created(id+"/policy", null);
+                }
+            }
+            catch (ArgumentException ex)
+            {
+                _logger.LogError(ex.Message);
+                return BadRequest(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.ToString());
+                return StatusCode(500);
+            }
+
+            return BadRequest("Something went wrong in the upload of file to storage");
+        }
+
+
+        [HttpPut("{id}/policy")]
+        public async Task<ActionResult> UpdatePolicy(string id)
+        {
+            if (string.IsNullOrWhiteSpace(id))
+            {
+                return BadRequest("Policy file cannot be empty");
+            }
+
+
+            // Use Request.Body to capture raw data from body to support other format than JSON
+            Stream content = Request.Body;
+
+            // Request.Body returns Stream of type FrameRequestStream which can only be read once
+            // Copy Request.Body to another stream that supports seeking so the content can be read multiple times
+            string contentString = await new StreamReader(content, Encoding.UTF8).ReadToEndAsync();
+
+            if (string.IsNullOrWhiteSpace(contentString))
+            {
+                return BadRequest("Policy file cannot be empty");
+            }
+
+            byte[] byteArray = Encoding.UTF8.GetBytes(contentString);
+            Stream dataStream = new MemoryStream(byteArray);
+
+            try
+            {
+                bool successfullyStored = await _prp.WriteResourcePolicyAsync(id, dataStream);
+
+                if (successfullyStored)
+                {
+                    return Ok();
+                }
+            }
+            catch (ArgumentException ex)
+            {
+                _logger.LogError(ex.Message);
+                return BadRequest(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.ToString());
+                return StatusCode(500);
+            }
+
+            return BadRequest("Something went wrong in the upload of file to storage");
+        }
+
 
 
         [HttpDelete("{id}")]
