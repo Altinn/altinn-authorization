@@ -1,98 +1,51 @@
--- Procecure: insert_change
-CREATE OR REPLACE PROCEDURE delegation.insert_change(
-  _altinnAppId character varying,
-  _offeredByPartyId integer,
-  _coveredByUserId integer,
-  _coveredByPartyId integer,
-  _performedByUserId integer,
-  _blobStoragePolicyPath character varying,
-  _blobStorageVersionId character varying,
-  _isDeleted bool,
-  inout _delegationChangeId bigint)
-LANGUAGE 'plpgsql'
+-- Procedure: get_resource
+CREATE OR REPLACE FUNCTION resourceregistry.get_resource(
+	_identifier character varying)
+    RETURNS resourceregistry.resources
+    LANGUAGE 'sql'
+    COST 100
+    STABLE PARALLEL SAFE 
 AS $BODY$
-BEGIN
-INSERT INTO delegation.delegationChanges (
-    altinnAppId, 
-    offeredByPartyId,
-    coveredByUserId,
-    coveredByPartyId,
-    performedByUserId,
-    blobStoragePolicyPath,
-    blobStorageVersionId,
-    isDeleted
-)
-VALUES (
-  _altinnAppId,
-  _offeredByPartyId,
-  _coveredByUserId,
-  _coveredByPartyId,
-  _performedByUserId,
-  _blobStoragePolicyPath,
-  _blobStorageVersionId,
-  _isDeleted
-) RETURNING delegationChangeId INTO _delegationChangeId;
-
-END;
+SELECT identifier, created, modified, serviceresourcejson
+	FROM resourceregistry.resources
+	WHERE identifier = _identifier
 $BODY$;
 
+-- Procedure: delete_resource
+CREATE OR REPLACE FUNCTION resourceregistry.delete_resource(
+	_identifier text)
+    RETURNS resourceregistry.resources
+    LANGUAGE 'sql'
+    COST 100
+    VOLATILE PARALLEL SAFE 
+AS $BODY$
+DELETE FROM resourceregistry.resources
+	WHERE identifier = _identifier
+	RETURNING *;
+$BODY$;
 
--- Function: get_current_change
-CREATE OR REPLACE FUNCTION delegation.get_current_change(
-  _altinnAppId character varying,
-  _offeredByPartyId integer,
-  _coveredByUserId integer,
-  _coveredByPartyId integer
+-- Procedure: create_resource
+CREATE OR REPLACE FUNCTION resourceregistry.create_resource(
+	_identifier text,
+	_created timestamp with time zone,
+	_modified timestamp with time zone,
+	_serviceresourcejson jsonb)
+    RETURNS resourceregistry.resources
+    LANGUAGE 'sql'
+    COST 100
+    VOLATILE PARALLEL SAFE 
+AS $BODY$
+INSERT INTO resourceregistry.resources(
+	identifier,
+	created,
+	modified,
+	serviceresourcejson
 )
-RETURNS SETOF delegation.delegationChanges AS 
-$BODY$
-  SELECT
-    delegationChangeId,
-    altinnAppId, 
-    offeredByPartyId,
-    coveredByUserId,
-    coveredByPartyId,
-    performedByUserId,
-    blobStoragePolicyPath,
-    blobStorageVersionId,
-    isDeleted,
-    created
-  FROM delegation.delegationChanges
-  WHERE
-    altinnAppId = _altinnAppId
-    AND offeredByPartyId = _offeredByPartyId
-    AND (_coveredByUserId IS NULL OR coveredByUserId = _coveredByUserId)
-    AND (_coveredByPartyId IS NULL OR coveredByPartyId = _coveredByPartyId)
-  ORDER BY delegationChangeId DESC LIMIT 1
-$BODY$
-LANGUAGE sql;
-
-
--- Function: get_all_changes
-CREATE OR REPLACE FUNCTION delegation.get_all_changes(
-  IN _altinnAppId character varying,
-  IN _offeredByPartyId integer,
-  IN _coveredByUserId integer,
-  IN _coveredByPartyId integer
+VALUES (
+	_identifier,
+	_created,
+	_modified,
+	_serviceresourcejson
 )
-RETURNS SETOF delegation.delegationChanges AS
-$BODY$
-  SELECT
-    delegationChangeId,
-    altinnAppId, 
-    offeredByPartyId,
-    coveredByUserId,
-    coveredByPartyId,
-    performedByUserId,
-    blobStoragePolicyPath,
-    blobStorageVersionId,
-    isDeleted,
-    created
-  FROM delegation.delegationChanges
-  WHERE
-  altinnAppId = _altinnAppId
-  AND offeredByPartyId = _offeredByPartyId
-  AND (_coveredByUserId IS NULL OR coveredByUserId = _coveredByUserId)
-  AND (_coveredByPartyId IS NULL OR coveredByPartyId = _coveredByPartyId)
-$BODY$
-LANGUAGE sql;
+RETURNING *;
+$BODY$;

@@ -7,11 +7,11 @@ namespace Altinn.ResourceRegistry.Core
     {
         Task<ServiceResource> GetResource(string id);
 
-        Task DeleteResource(string id);
+        Task<ServiceResource> DeleteResource(string id);
 
-        Task UpdateResource(ServiceResource resource);
+        Task<ServiceResource> UpdateResource(ServiceResource resource);
 
-        Task CreateResource(ServiceResource resource);
+        Task<ServiceResource> CreateResource(ServiceResource resource);
 
         Task<List<ServiceResource>> Search(ResourceSearch resourceSearch);
     }

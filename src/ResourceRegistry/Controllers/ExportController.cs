@@ -18,7 +18,7 @@ namespace Altinn.ResourceRegistry.Controllers
             _resourceRegistry = resourceRegistry;
         }
 
-        public async Task<IActionResult> Index()
+        protected async Task<IActionResult> Index()
         {
             List<ServiceResource> serviceResources = await _resourceRegistry.Search(null);
             string rdfString = RdfUtil.CreateRdf(serviceResources);
