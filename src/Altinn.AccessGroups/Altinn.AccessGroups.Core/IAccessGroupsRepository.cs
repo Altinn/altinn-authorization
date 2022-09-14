@@ -54,5 +54,12 @@ namespace Altinn.AccessGroups.Core
         /// </summary>
         /// <returns>The list of access groups</returns>
         Task<List<GroupMembership>> ListGroupmemberships(AccessGroupSearch search);
+
+        /// <summary>
+        /// Operation for revoking accessgroup membership in the postgreSQL database
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns></returns>
+        Task<bool> RevokeGroupMembership(GroupMembership input);
     }
 }

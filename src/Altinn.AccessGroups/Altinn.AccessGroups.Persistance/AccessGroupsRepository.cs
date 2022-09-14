@@ -28,8 +28,8 @@ namespace Altinn.AccessGroups.Persistance
 
         private readonly string listGroupMembershipsByPartyIdFunc = "select * from accessgroup.select_accessgroupmembership_with_coveredbypartyid(@_offeredbypartyid, @_coveredbypartyid)";
         private readonly string listGroupMembershipsByUserIdFunc = "select * from accessgroup.select_accessgroupmembership_with_coveredbyuserid(@_offeredbypartyid, @_coveredbyuserid)";
-        private readonly string insertGroupMembershipFunc = "select * from accessgroup.insert_accessgroupmembership(@_offeredByPartyId, @_coveredByUserId, @_coveredByPartyId, @_accessgroupcode, @_DelegationType, @_validto)";
-        private readonly string deleteGroupMembershipFunc = "select * from accessgroup.delete_accessgroupmembership(@_coveredByUserId, @_coveredByPartyId, @_offeredByPartyId, @_groupId)";
+        private readonly string insertGroupMembershipFunc = "select * from accessgroup.insert_accessgroupmembership(@_offeredByPartyid, @_coveredByUserId, @_coveredByPartyId, @_accessgroupcode, @_DelegationType, @_validto)";
+        private readonly string deleteGroupMembershipFunc = "select * from accessgroup.delete_accessgroupmembership(@_coveredByUserId, @_coveredByPartyId, @_offeredByPartyId, @_delegationid, @_accessgroupcode, @_validto)";
 
         /// <summary>
         /// Initializes a new instance of the <see cref="AccessGroupsRepository"/> class
@@ -282,7 +282,7 @@ namespace Altinn.AccessGroups.Persistance
             }
         }
 
-        public async Task<GroupMembership> RevokeGroupMembership(GroupMembership membership)
+        public async Task<bool> RevokeGroupMembership(GroupMembership input)
         {
             try
             {
@@ -291,35 +291,53 @@ namespace Altinn.AccessGroups.Persistance
 
                 NpgsqlCommand pgcom = new NpgsqlCommand(deleteGroupMembershipFunc, conn);
 
-                if (membership.CoveredByUserId != null)
+                if (input.CoveredByUserId != null)
                 {
-                    pgcom.Parameters.AddWithValue("_coveredByUserId", membership.CoveredByUserId);
+                    pgcom.Parameters.AddWithValue("_coveredByUserId", input.CoveredByUserId);
                 }
                 else
                 {
                     pgcom.Parameters.AddWithValue("_coveredByUserId", DBNull.Value);
                 }
 
-                if (membership.CoveredByPartyId != null)
+                if (input.CoveredByPartyId != null)
                 {
-                    pgcom.Parameters.AddWithValue("_coveredByPartyId", membership.CoveredByPartyId);
+                    pgcom.Parameters.AddWithValue("_coveredByPartyId", input.CoveredByPartyId);
                 }
                 else
                 {
                     pgcom.Parameters.AddWithValue("_coveredByPartyId", DBNull.Value);
                 }
 
-                pgcom.Parameters.AddWithValue("_offeredByPartyId", membership.OfferedByPartyId);
-                pgcom.Parameters.AddWithValue("_groupId", membership.AccessGroupCode);
+                pgcom.Parameters.AddWithValue("_offeredByPartyId", input.OfferedByPartyId);
+                pgcom.Parameters.AddWithValue("_delegationid", input.DelegationId);
+
+                if (input.AccessGroupCode != null)
+                {
+                    pgcom.Parameters.AddWithValue("_accessgroupcode", input.AccessGroupCode);
+                }
+                else
+                {
+                    pgcom.Parameters.AddWithValue("_accessgroupcode", DBNull.Value);
+                }
+
+                if (input.ValidTo != null)
+                {
+                    pgcom.Parameters.AddWithValue("_validto", input.ValidTo);
+                }
+                else
+                {
+                    pgcom.Parameters.AddWithValue("validto", DBNull.Value);
+                }
 
                 using NpgsqlDataReader reader = await pgcom.ExecuteReaderAsync();
                 if (reader.Read())
                 {
-                    return GetGroupMembership(reader);
+                    return false;
                 }
                 else
                 {
-                    return null;
+                    return true;
                 }
             }
             catch (Exception e)

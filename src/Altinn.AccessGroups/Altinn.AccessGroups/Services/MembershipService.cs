@@ -59,7 +59,7 @@ namespace Altinn.AccessGroups.Services
         
         public async Task<bool> RevokeMembership(GroupMembership input)
         {
-            throw new NotImplementedException();
+            return await _accessGroupRepository.RevokeGroupMembership(input);
         }
     }
 }

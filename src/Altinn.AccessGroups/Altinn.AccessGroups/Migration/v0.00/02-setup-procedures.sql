@@ -228,3 +228,48 @@ AS $BODY$
 	WHERE offeredbyparty = _offeredbypartyid
 	AND userid = _coveredbyuserid;
 $BODY$;
+
+--FUNCTION: accessgroup.delete_accessgroupmembership
+    CREATE OR REPLACE FUNCTION accessgroup.delete_accessgroupmembership(
+    	_offeredbyparty bigint,
+	    _userid bigint,
+	    _partyid bigint,
+        _delegationid bigint,
+	    _accessgroupcode character varying,
+        _validto timestamp with time zone
+    )
+    RETURNS SETOF accessgroup.accessgroupmembership
+    LANGUAGE 'plpgsql'
+    VOLATILE
+    ROWS 1
+AS $BODY$
+DECLARE 
+	idofmembershiptorevoke bigint;
+BEGIN
+    INSERT INTO accessgroup.membershiphistory(
+		membershipid,
+		offeredbyparty,
+		userid,
+		partyid,
+		delegationid,
+		validto
+	)
+	(SELECT membershipid,
+			offeredbyparty,
+			userid,
+			partyid,
+			delegationid,
+			validto
+		FROM accessgroup.accessgroupmembership
+		WHERE offeredbyparty = _offeredbyparty
+		AND userid = _userid
+		AND partyid = _partyid
+		AND delegationid = _delegationid
+	)RETURNING membershipid into idofmembershiptorevoke;
+
+    DELETE FROM accessgroup.accessgroupmembership
+    WHERE membershipid = idofmembershiptorevoke;
+	
+	RETURN QUERY(SELECT * FROM accessgroup.accessgroupmembership WHERE membershipid = idofmembershiptorevoke);
+END;
+$BODY$;
