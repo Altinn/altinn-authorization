@@ -25,6 +25,7 @@ namespace ResourceRegistryTest.Utils
                 builder.ConfigureTestServices(services =>
                 {
                     services.AddSingleton<IResourceRegistryRepository, RegisterResourceRepositoryMock>();
+                    services.AddSingleton<IPRP, PRPMock>();
                 });
             });
             factory.Server.AllowSynchronousIO = true;
@@ -40,6 +41,7 @@ namespace ResourceRegistryTest.Utils
                 builder.ConfigureTestServices(services =>
                 {
                     services.AddSingleton<IResourceRegistryRepository, RegisterResourceRepositoryMock>();
+                    services.AddSingleton <IPRP, PRPMock>();
                 });
             });
             factory.Server.AllowSynchronousIO = true;

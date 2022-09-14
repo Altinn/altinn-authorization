@@ -117,6 +117,58 @@ namespace ResourceRegistryTest
 
 
         [Fact]
+        public async Task SetResourcePolicy_OK()
+        {
+
+            ServiceResource resource = new ServiceResource() { Identifier = "superdupertjenestene" };
+            resource.IsComplete = false;
+
+            HttpClient client = SetupUtil.GetTestClient(_factory);
+            string requestUri = "ResourceRegistry/api/Resource/nav/policy";
+
+            HttpRequestMessage httpRequestMessage = new HttpRequestMessage(HttpMethod.Post, requestUri)
+            {
+                Content = new StringContent(System.Text.Json.JsonSerializer.Serialize(resource), Encoding.UTF8, "application/json")
+            };
+
+            httpRequestMessage.Headers.Add("Accept", "application/json");
+            httpRequestMessage.Headers.Add("ContentType", "application/json");
+
+            HttpResponseMessage response = await client.SendAsync(httpRequestMessage);
+
+            string responseContent = await response.Content.ReadAsStringAsync();
+
+            Assert.Equal(HttpStatusCode.Created, response.StatusCode);
+        }
+
+
+
+        [Fact]
+        public async Task UpdateResourcePolicy_OK()
+        {
+            ServiceResource resource = new ServiceResource() { Identifier = "superdupertjenestene" };
+            resource.IsComplete = false;
+
+            HttpClient client = SetupUtil.GetTestClient(_factory);
+            string requestUri = "ResourceRegistry/api/Resource/nav/policy";
+
+            HttpRequestMessage httpRequestMessage = new HttpRequestMessage(HttpMethod.Put, requestUri)
+            {
+                Content = new StringContent(System.Text.Json.JsonSerializer.Serialize(resource), Encoding.UTF8, "application/json")
+            };
+
+            httpRequestMessage.Headers.Add("Accept", "application/json");
+            httpRequestMessage.Headers.Add("ContentType", "application/json");
+
+            HttpResponseMessage response = await client.SendAsync(httpRequestMessage);
+
+            string responseContent = await response.Content.ReadAsStringAsync();
+
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        }
+
+
+        [Fact]
         public async Task CreateResource_Ok()
         {
 
@@ -135,6 +187,7 @@ namespace ResourceRegistryTest
             httpRequestMessage.Headers.Add("ContentType", "application/json");
 
             HttpResponseMessage response = await client.SendAsync(httpRequestMessage);
+
 
             Assert.Equal(HttpStatusCode.Created, response.StatusCode);
         }
