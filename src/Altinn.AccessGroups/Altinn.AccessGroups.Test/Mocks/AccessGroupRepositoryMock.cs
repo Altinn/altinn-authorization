@@ -49,5 +49,10 @@ namespace Altinn.AccessGroups.Test.Mocks
         {
             throw new NotImplementedException();
         }
+
+        public Task<bool> RevokeGroupMembership(GroupMembership input)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
