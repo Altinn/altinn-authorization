@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using System.Net;
 using System.Reflection;
 using System.Threading.Tasks;
 
@@ -45,6 +46,8 @@ using Npgsql.Logging;
 
 using Yuniql.AspNetCore;
 using Yuniql.PostgreSql;
+
+ServicePointManager.DefaultConnectionLimit = 200;
 
 ILogger logger;
 
