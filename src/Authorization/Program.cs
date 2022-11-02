@@ -74,9 +74,9 @@ void ConfigureSetupLogging()
     var logFactory = LoggerFactory.Create(builder =>
     {
         builder
-            .AddFilter("Microsoft", LogLevel.Warning)
-            .AddFilter("System", LogLevel.Warning)
-            .AddFilter("Altinn.Platform.Authorization.Program", LogLevel.Debug)
+            .AddFilter("Microsoft", LogLevel.Error)
+            .AddFilter("System", LogLevel.Error)
+            .AddFilter("Altinn.Platform.Authorization.Program", LogLevel.Error)
             .AddConsole();
     });
 
@@ -99,11 +99,11 @@ void ConfigureLogging(ILoggingBuilder logging)
         // Optional: Apply filters to control what logs are sent to Application Insights.
         // The following configures LogLevel Information or above to be sent to
         // Application Insights for all categories.
-        logging.AddFilter<Microsoft.Extensions.Logging.ApplicationInsights.ApplicationInsightsLoggerProvider>(string.Empty, LogLevel.Warning);
+        logging.AddFilter<Microsoft.Extensions.Logging.ApplicationInsights.ApplicationInsightsLoggerProvider>(string.Empty, LogLevel.Error);
 
         // Adding the filter below to ensure logs of all severity from Program.cs
         // is sent to ApplicationInsights.
-        logging.AddFilter<Microsoft.Extensions.Logging.ApplicationInsights.ApplicationInsightsLoggerProvider>(typeof(Program).FullName, LogLevel.Trace);
+        logging.AddFilter<Microsoft.Extensions.Logging.ApplicationInsights.ApplicationInsightsLoggerProvider>(typeof(Program).FullName, LogLevel.Error);
     }
     else
     {
