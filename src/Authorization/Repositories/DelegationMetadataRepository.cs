@@ -1,15 +1,11 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using System.Linq;
 using System.Threading.Tasks;
 using Altinn.Platform.Authorization.Configuration;
 using Altinn.Platform.Authorization.Extensions;
 using Altinn.Platform.Authorization.Models;
 using Altinn.Platform.Authorization.Repositories.Interface;
-using Altinn.Platform.Authorization.Services.Implementation;
-using Authorization.Platform.Authorization.Models;
-using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Npgsql;
@@ -30,25 +26,21 @@ namespace Altinn.Platform.Authorization.Repositories
         private readonly string getAllCurrentDelegationChangesPartyIdsSql = "select * from delegation.get_all_current_changes_coveredbypartyids(@_altinnAppIds, @_offeredByPartyIds, @_coveredByPartyIds)";
         private readonly string getAllCurrentDelegationChangesUserIdsSql = "select * from delegation.get_all_current_changes_coveredbyuserids(@_altinnAppIds, @_offeredByPartyIds, @_coveredByUserIds)";
         private readonly string getAllCurrentDelegationChangesOfferedByPartyIdOnlysSql = "select * from delegation.get_all_current_changes_offeredbypartyid_only(@_altinnAppIds, @_offeredByPartyIds)";
-        private readonly IMemoryCache _memoryCache;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="DelegationMetadataRepository"/> class
         /// </summary>
         /// <param name="postgresSettings">The postgreSQL configurations for AuthorizationDB</param>
         /// <param name="logger">logger</param>
-        /// <param name="memoryCache">memory cache</param>
         public DelegationMetadataRepository(
             IOptions<PostgreSQLSettings> postgresSettings,
-            ILogger<DelegationMetadataRepository> logger,
-            IMemoryCache memoryCache)
+            ILogger<DelegationMetadataRepository> logger)
         {
             _logger = logger;
             _connectionString = string.Format(
                 postgresSettings.Value.ConnectionString,
                 postgresSettings.Value.AuthorizationDbPwd);
             NpgsqlConnection.GlobalTypeMapper.MapEnum<DelegationChangeType>("delegation.delegationchangetype");
-            _memoryCache = memoryCache;
         }
 
         /// <inheritdoc/>
@@ -147,64 +139,27 @@ namespace Altinn.Platform.Authorization.Repositories
         /// <inheritdoc/>
         public async Task<List<DelegationChange>> GetAllCurrentDelegationChanges(List<int> offeredByPartyIds, List<string> altinnAppIds = null, List<int> coveredByPartyIds = null, List<int> coveredByUserIds = null)
         {
-            string cacheKey = GetCacheKey(offeredByPartyIds, altinnAppIds, coveredByPartyIds, coveredByUserIds);
-            if (!_memoryCache.TryGetValue(cacheKey, out List<DelegationChange> delegationChanges))
+            List<DelegationChange> delegationChanges = new List<DelegationChange>();
+            CheckIfOfferedbyPartyIdsHasValue(offeredByPartyIds);
+
+            if (coveredByPartyIds == null && coveredByUserIds == null)
             {
-                // Key not in cache, so get data.
-                delegationChanges = new();
-                CheckIfOfferedbyPartyIdsHasValue(offeredByPartyIds);
-
-                if (coveredByPartyIds == null && coveredByUserIds == null)
+                delegationChanges.AddRange(await GetAllCurrentDelegationChangesOfferedByPartyIdOnly(altinnAppIds, offeredByPartyIds));
+            }
+            else
+            {
+                if (coveredByPartyIds?.Count > 0)
                 {
-                    delegationChanges.AddRange(await GetAllCurrentDelegationChangesOfferedByPartyIdOnly(altinnAppIds, offeredByPartyIds));
-                }
-                else
-                {
-                    if (coveredByPartyIds?.Count > 0)
-                    {
-                        delegationChanges.AddRange(await GetAllCurrentDelegationChangesCoveredByPartyIds(altinnAppIds, offeredByPartyIds, coveredByPartyIds));
-                    }
-
-                    if (coveredByUserIds?.Count > 0)
-                    {
-                        delegationChanges.AddRange(await GetAllCurrentDelegationChangesCoveredByUserIds(altinnAppIds, offeredByPartyIds, coveredByUserIds));
-                    }
+                    delegationChanges.AddRange(await GetAllCurrentDelegationChangesCoveredByPartyIds(altinnAppIds, offeredByPartyIds, coveredByPartyIds));
                 }
 
-                var cacheEntryOptions = new MemoryCacheEntryOptions()
-               .SetPriority(CacheItemPriority.High)
-               .SetAbsoluteExpiration(new TimeSpan(0, 0, 5, 0));
-
-                _memoryCache.Set(cacheKey, delegationChanges, cacheEntryOptions);
+                if (coveredByUserIds?.Count > 0)
+                {
+                    delegationChanges.AddRange(await GetAllCurrentDelegationChangesCoveredByUserIds(altinnAppIds, offeredByPartyIds, coveredByUserIds));
+                }
             }
 
             return delegationChanges;
-        }
-
-        private string GetCacheKey(List<int> offeredByPartyIds, List<string> altinnAppIds = null, List<int> coveredByPartyIds = null, List<int> coveredByUserIds = null)
-        {
-            string cacheKey = null;
-            foreach (int id in offeredByPartyIds ?? Enumerable.Empty<int>())
-            {
-                cacheKey += "$o:{id}";
-            }
-
-            foreach (string id in altinnAppIds ?? Enumerable.Empty<string>())
-            {
-                cacheKey += "$a:{id}";
-            }
-
-            foreach (int id in coveredByPartyIds ?? Enumerable.Empty<int>())
-            {
-                cacheKey += "$c:{id}";
-            }
-
-            foreach (int id in coveredByUserIds ?? Enumerable.Empty<int>())
-            {
-                cacheKey += "$cu:{id}";
-            }
-
-            return cacheKey;
         }
 
         private static void CheckIfOfferedbyPartyIdsHasValue(List<int> offeredByPartyIds)
