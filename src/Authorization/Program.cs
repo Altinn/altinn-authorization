@@ -1,6 +1,5 @@
 using System;
 using System.IO;
-using System.Net;
 using System.Reflection;
 using System.Threading.Tasks;
 
@@ -47,8 +46,6 @@ using Npgsql.Logging;
 using Yuniql.AspNetCore;
 using Yuniql.PostgreSql;
 
-ServicePointManager.DefaultConnectionLimit = 200;
-
 ILogger logger;
 
 string applicationInsightsKeySecretName = "ApplicationInsights--InstrumentationKey";
@@ -77,9 +74,9 @@ void ConfigureSetupLogging()
     var logFactory = LoggerFactory.Create(builder =>
     {
         builder
-            .AddFilter("Microsoft", LogLevel.Error)
-            .AddFilter("System", LogLevel.Error)
-            .AddFilter("Altinn.Platform.Authorization.Program", LogLevel.Error)
+            .AddFilter("Microsoft", LogLevel.Warning)
+            .AddFilter("System", LogLevel.Warning)
+            .AddFilter("Altinn.Platform.Authorization.Program", LogLevel.Debug)
             .AddConsole();
     });
 
@@ -88,7 +85,7 @@ void ConfigureSetupLogging()
 
 void ConfigureLogging(ILoggingBuilder logging)
 {
-     // Clear log providers
+    // Clear log providers
     logging.ClearProviders();
 
     // Setup up application insight if ApplicationInsightsConnectionString is available
@@ -102,11 +99,11 @@ void ConfigureLogging(ILoggingBuilder logging)
         // Optional: Apply filters to control what logs are sent to Application Insights.
         // The following configures LogLevel Information or above to be sent to
         // Application Insights for all categories.
-        logging.AddFilter<Microsoft.Extensions.Logging.ApplicationInsights.ApplicationInsightsLoggerProvider>(string.Empty, LogLevel.Error);
+        logging.AddFilter<Microsoft.Extensions.Logging.ApplicationInsights.ApplicationInsightsLoggerProvider>(string.Empty, LogLevel.Warning);
 
         // Adding the filter below to ensure logs of all severity from Program.cs
         // is sent to ApplicationInsights.
-        logging.AddFilter<Microsoft.Extensions.Logging.ApplicationInsights.ApplicationInsightsLoggerProvider>(typeof(Program).FullName, LogLevel.Error);
+        logging.AddFilter<Microsoft.Extensions.Logging.ApplicationInsights.ApplicationInsightsLoggerProvider>(typeof(Program).FullName, LogLevel.Trace);
     }
     else
     {
