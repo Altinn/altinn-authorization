@@ -172,7 +172,7 @@ namespace Altinn.Authorization.ABAC.Xacml
 
                     foreach (XacmlMatch xacmlMatch in allOf.Matches)
                     {
-                        if (xacmlMatch.AttributeDesignator.Category.Equals(category))
+                        if (xacmlMatch.AttributeDesignator.Category.OriginalString.Equals(category))
                         {
                             matchinAttributeCategoryFoundInAllOf = true;
 
@@ -234,7 +234,7 @@ namespace Altinn.Authorization.ABAC.Xacml
             Dictionary<string, ICollection<XacmlAttribute>> categoryAttributes = new Dictionary<string, ICollection<XacmlAttribute>>();
             foreach (XacmlContextAttributes attributes in request.Attributes)
             {
-                if (attributes.Category.Equals(category))
+                if (attributes.Category.OriginalString.Equals(category))
                 {
                     foreach (XacmlAttribute attribute in attributes.Attributes)
                     {

@@ -48,6 +48,7 @@ namespace Altinn.Platform.Authorization.Controllers
         /// <param name="policyRetrievalPoint">The policy Retrieval point</param>
         /// <param name="delegationRepository">The delegation repository</param>
         /// <param name="logger">the logger.</param>
+        /// <param name="memoryCache">memory cache</param>
         public DecisionController(IContextHandler contextHandler, IDelegationContextHandler delegationContextHandler, IPolicyRetrievalPoint policyRetrievalPoint, IDelegationMetadataRepository delegationRepository, ILogger<DecisionController> logger, IMemoryCache memoryCache)
         {
             _pdp = new PolicyDecisionPoint();
