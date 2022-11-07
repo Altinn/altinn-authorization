@@ -21,6 +21,12 @@ namespace Altinn.Platform.Authorization.Helpers.Extensions
                 return input;
             }
 
+            // Check for alpha, numeric and hyphen to avoid the third and most expensive check
+            if (input.All(c => (c >= '0' && c <= '9') || (c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z') || c == '-'))
+            {
+                return input;
+            }
+
             char[] illegalFileNameCharacters = System.IO.Path.GetInvalidFileNameChars();
             if (throwExceptionOnInvalidCharacters)
             {

@@ -85,7 +85,7 @@ void ConfigureSetupLogging()
 
 void ConfigureLogging(ILoggingBuilder logging)
 {
-     // Clear log providers
+    // Clear log providers
     logging.ClearProviders();
 
     // Setup up application insight if ApplicationInsightsConnectionString is available
