@@ -337,22 +337,22 @@ namespace Altinn.Platform.Authorization.Controllers
             string cacheKey = null;
             foreach (int id in offeredByPartyIds ?? Enumerable.Empty<int>())
             {
-                cacheKey += "$o:{id};";
+                cacheKey += $"o:{id};";
             }
 
             foreach (string id in altinnAppIds ?? Enumerable.Empty<string>())
             {
-                cacheKey += "$a:{id};";
+                cacheKey += $"a:{id};";
             }
 
             foreach (int id in coveredByPartyIds ?? Enumerable.Empty<int>())
             {
-                cacheKey += "$p:{id};";
+                cacheKey += $"p:{id};";
             }
 
             foreach (int id in coveredByUserIds ?? Enumerable.Empty<int>())
             {
-                cacheKey += "$u:{id};";
+                cacheKey += $"u:{id};";
             }
 
             return cacheKey;
