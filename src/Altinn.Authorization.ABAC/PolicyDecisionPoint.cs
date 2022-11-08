@@ -137,6 +137,17 @@ namespace Altinn.Authorization.ABAC
         }
 
         /// <summary>
+        /// Method that validated if the subject is allwoed to perform the requested operation on a given resource.
+        /// </summary>
+        /// <param name="decisionRequest">The Xacml Context request.</param>
+        /// <param name="policy">The relevant policy.</param>
+        /// <returns>The decision reponse.</returns>
+        public ICollection<XacmlRule> GetXacmlRights(XacmlContextRequest decisionRequest, XacmlPolicy policy)
+        {
+            return this.GetMatchingRules(policy, decisionRequest, out bool requiredAttributesMissingFromContextRequest);
+        }
+
+        /// <summary>
         /// Returns the list of rules that matched the ContextRequest.
         /// </summary>
         /// <param name="policy">The policy.</param>

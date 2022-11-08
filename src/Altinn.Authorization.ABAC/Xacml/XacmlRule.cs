@@ -229,6 +229,39 @@ namespace Altinn.Authorization.ABAC.Xacml
             return xacmlAttributeMatchResult;
         }
 
+        /// <summary>
+        /// Gets a collection of all XacmlAllOfs containing all XacmlMatch instances matching the specified attribute category. 
+        /// </summary>
+        /// <param name="category">The attribute category to match</param>
+        /// <returns>Collection of AllOfs</returns>
+        public ICollection<XacmlAllOf> GetAllOfsByCategory(string category)
+        {
+            ICollection<XacmlAllOf> allOfs = new Collection<XacmlAllOf>();
+
+            foreach (XacmlAnyOf anyOf in this.Target.AnyOf)
+            {
+                foreach (XacmlAllOf allOf in anyOf.AllOf)
+                {
+                    ICollection<XacmlMatch> allOfMatchesFound = new Collection<XacmlMatch>();
+
+                    foreach (XacmlMatch xacmlMatch in allOf.Matches)
+                    {
+                        if (xacmlMatch.AttributeDesignator.Category.Equals(category))
+                        {
+                            allOfMatchesFound.Add(xacmlMatch);
+                        }
+                    }
+
+                    if (allOfMatchesFound.Count > 0)
+                    {
+                        allOfs.Add(new XacmlAllOf(allOfMatchesFound));
+                    }
+                }
+            }
+
+            return allOfs;
+        }
+
         private Dictionary<string, ICollection<XacmlAttribute>> GetCategoryAttributes(XacmlContextRequest request, string category)
         {
             Dictionary<string, ICollection<XacmlAttribute>> categoryAttributes = new Dictionary<string, ICollection<XacmlAttribute>>();

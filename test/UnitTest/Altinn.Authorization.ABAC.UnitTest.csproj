@@ -44,6 +44,9 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Update="Data\Xacml\3.0\AltinnApps\AltinnApps0004Policy.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="Data\Xacml\3.0\AltinnApps\AltinnApps0003Policy.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

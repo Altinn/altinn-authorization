@@ -83,6 +83,12 @@ namespace Altinn.Authorization.ABAC.Xacml
         public bool ReturnPolicyIdList { get; set; }
 
         /// <summary>
+        /// This attribute is used to request that the PDP return a list of all subjects matched from the policies and policy sets which were used
+        /// in the decision as a part of the decision response.
+        /// </summary>
+        public bool ReturnSubjectIdList { get; set; }
+
+        /// <summary>
         /// This attribute is used to request that the PDP combines multiple decisions into a single decision.The use of this attribute
         /// is specified in [Multi]. If the PDP does not implement the relevant functionality in [Multi], then the PDP must return an
         /// Indeterminate with a status code of urn:oasis:names:tc:xacml:1.0:status:processing-error if it receives a request with this attribute set to “true”.
