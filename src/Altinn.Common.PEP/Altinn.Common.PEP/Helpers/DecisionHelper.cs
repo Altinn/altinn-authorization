@@ -27,6 +27,7 @@ namespace Altinn.Common.PEP.Helpers
         private const string ParamApp = "app";
         private const string ParamOrg = "org";
         private const string ParamAppId = "appId";
+        private const string ParamWho = "who";
         private const string DefaultIssuer = "Altinn";
         private const string DefaultType = "string";
 
@@ -92,6 +93,28 @@ namespace Altinn.Common.PEP.Helpers
             request.AccessSubject.Add(CreateSubjectCategory(context.User.Claims));
             request.Action.Add(CreateActionCategory(requirement.ActionType));
             request.Resource.Add(CreateResourceCategory(org, app, instanceOwnerPartyId, instanceGuid, null));
+
+            XacmlJsonRequestRoot jsonRequest = new XacmlJsonRequestRoot() { Request = request };
+
+            return jsonRequest;
+        }
+
+        /// <summary>
+        /// Creates a decision request based on input
+        /// </summary>
+        /// <returns></returns>
+        public static XacmlJsonRequestRoot CreateDecisionRequest(AuthorizationHandlerContext context, ResourceAccessRequirement requirement, RouteData routeData)
+        {
+            XacmlJsonRequest request = new XacmlJsonRequest();
+            request.AccessSubject = new List<XacmlJsonCategory>();
+            request.Action = new List<XacmlJsonCategory>();
+            request.Resource = new List<XacmlJsonCategory>();
+
+            string who = routeData.Values[ParamWho] as string;
+           
+            request.AccessSubject.Add(CreateSubjectCategory(context.User.Claims));
+            request.Action.Add(CreateActionCategory(requirement.ActionType));
+            request.Resource.Add(CreateResourceCategoryForResource(requirement.ResourceId, who));
 
             XacmlJsonRequestRoot jsonRequest = new XacmlJsonRequestRoot() { Request = request };
 
@@ -169,6 +192,24 @@ namespace Altinn.Common.PEP.Helpers
             if (!string.IsNullOrWhiteSpace(task))
             {
                 resourceCategory.Attribute.Add(CreateXacmlJsonAttribute(AltinnXacmlUrns.TaskId, task, DefaultType, DefaultIssuer));
+            }
+
+            return resourceCategory;
+        }
+
+        private static XacmlJsonCategory CreateResourceCategoryForResource(string resourceid, string resourceowner, bool includeResult = false)
+        {
+            XacmlJsonCategory resourceCategory = new XacmlJsonCategory();
+            resourceCategory.Attribute = new List<XacmlJsonAttribute>();
+
+            if (!string.IsNullOrWhiteSpace(resourceowner))
+            {
+                resourceCategory.Attribute.Add(CreateXacmlJsonAttribute(AltinnXacmlUrns.ResourceOwner, resourceowner, DefaultType, DefaultIssuer, includeResult));
+            }
+
+            if (!string.IsNullOrWhiteSpace(resourceid))
+            {
+                resourceCategory.Attribute.Add(CreateXacmlJsonAttribute(AltinnXacmlUrns.ResourceId, resourceid, DefaultType, DefaultIssuer));
             }
 
             return resourceCategory;

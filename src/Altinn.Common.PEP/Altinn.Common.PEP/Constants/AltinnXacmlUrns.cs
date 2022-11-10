@@ -39,5 +39,15 @@ namespace Altinn.Common.PEP.Constants
         /// Get the value task id
         /// </summary>
         public const string TaskId = "urn:altinn:task";
+
+        /// <summary>
+        /// Get the value resourceId
+        /// </summary>
+        public const string ResourceId = "urn:resourceregistry:resourceid";
+
+        /// <summary>
+        /// Get the value ResourceOwner
+        /// </summary>
+        public const string ResourceOwner = "urn:resourceregistry:resourceowner";
     }
 }
