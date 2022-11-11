@@ -1,4 +1,4 @@
-name: Code test and analysis
+name: PEP Code test and analysis
 on:
   push:
     branches: [ main ]
