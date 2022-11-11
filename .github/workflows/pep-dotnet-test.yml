@@ -27,7 +27,7 @@ jobs:
           fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
       - name: Build
         run: |
-           dotnet build src\Altinn.Common.PEP\Altinn.Common.PEP.sln -v m
+           dotnet build src/Altinn.Common.PEP/Altinn.Common.PEP.sln -v m
       - name: Test
         run: |
-           dotnet test src\Altinn.Common.PEP\Altinn.Common.PEP.sln -v m
+           dotnet test src/Altinn.Common.PEP/Altinn.Common.PEP.sln -v m
