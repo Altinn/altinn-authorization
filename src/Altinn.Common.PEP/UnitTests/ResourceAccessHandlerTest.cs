@@ -42,7 +42,7 @@ namespace Altinn.Common.PEP.Authorization
         {
             // Arrange 
             AuthorizationHandlerContext context = CreateAuthorizationHandlerContext();
-            _httpContextAccessorMock.Setup(h => h.HttpContext).Returns(CreateHttpContext());
+            _httpContextAccessorMock.Setup(h => h.HttpContext).Returns(CreateHttpContext("r23453546546"));
             XacmlJsonResponse response = CreateResponse(XacmlContextDecision.Permit.ToString());
             _pdpMock.Setup(a => a.GetDecisionForRequest(It.IsAny<XacmlJsonRequestRoot>())).Returns(Task.FromResult(response));
 
@@ -52,6 +52,49 @@ namespace Altinn.Common.PEP.Authorization
             // Assert
             Assert.True(context.HasSucceeded);
             Assert.False(context.HasFailed);
+        }
+
+        /// <summary>
+        /// Test case: Send request and get response that fulfills all requirements
+        /// Expected: Context will succeed
+        /// </summary>
+        [Fact]
+        public async Task HandleRequirementAsync_TC02Async()
+        {
+            // Arrange 
+            AuthorizationHandlerContext context = CreateAuthorizationHandlerContext();
+            _httpContextAccessorMock.Setup(h => h.HttpContext).Returns(CreateHttpContext("991825827"));
+            XacmlJsonResponse response = CreateResponse(XacmlContextDecision.Permit.ToString());
+            _pdpMock.Setup(a => a.GetDecisionForRequest(It.IsAny<XacmlJsonRequestRoot>())).Returns(Task.FromResult(response));
+
+            // Act
+            await _rah.HandleAsync(context);
+
+            // Assert
+            Assert.True(context.HasSucceeded);
+            Assert.False(context.HasFailed);
+        }
+
+        /// <summary>
+        /// Test case: Send request and get response that fulfills all requirements
+        /// Expected: Exception since format of who is incorrect
+        /// </summary>
+        [Fact]
+
+        public async Task HandleRequirementAsync_TC03Async()
+        {
+            // Arrange 
+            AuthorizationHandlerContext context = CreateAuthorizationHandlerContext();
+            _httpContextAccessorMock.Setup(h => h.HttpContext).Returns(CreateHttpContext("991825827M"));
+            XacmlJsonResponse response = CreateResponse(XacmlContextDecision.Permit.ToString());
+            _pdpMock.Setup(a => a.GetDecisionForRequest(It.IsAny<XacmlJsonRequestRoot>())).Returns(Task.FromResult(response));
+
+            // Act
+            Task Act() => _rah.HandleAsync(context);
+
+            // Assert
+            ArgumentException exception = await Assert.ThrowsAsync<ArgumentException>(Act);
+            Assert.Equal("invalid who - ssn used", exception.Message);
         }
 
         private ClaimsPrincipal CreateUser()
@@ -68,10 +111,10 @@ namespace Altinn.Common.PEP.Authorization
             return user;
         }
 
-        private HttpContext CreateHttpContext()
+        private HttpContext CreateHttpContext(string who)
         {
             HttpContext httpContext = new DefaultHttpContext();
-            httpContext.Request.RouteValues.Add("who", "23423542354");
+            httpContext.Request.RouteValues.Add("who", who);
             return httpContext;
         }
 

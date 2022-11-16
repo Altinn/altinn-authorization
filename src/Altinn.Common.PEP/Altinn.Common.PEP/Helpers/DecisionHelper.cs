@@ -9,7 +9,7 @@ using Altinn.Authorization.ABAC.Xacml.JsonProfile;
 using Altinn.Common.PEP.Authorization;
 using Altinn.Common.PEP.Constants;
 using Altinn.Common.PEP.Models;
-
+using Altinn.Common.PEP.Utils;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Routing;
 
@@ -114,7 +114,20 @@ namespace Altinn.Common.PEP.Helpers
            
             request.AccessSubject.Add(CreateSubjectCategory(context.User.Claims));
             request.Action.Add(CreateActionCategory(requirement.ActionType));
-            request.Resource.Add(CreateResourceCategoryForResource(requirement.ResourceId, who));
+
+            int? partyIid = TryParsePartyId(who);
+            if (partyIid.HasValue)
+            {
+                request.Resource.Add(CreateResourceCategoryForResource(requirement.ResourceId, partyIid, null));
+            }
+            else if (IDFormatDeterminator.IsValidOrganizationNumber(who))
+            {
+                request.Resource.Add(CreateResourceCategoryForResource(requirement.ResourceId, null, who));
+            }
+            else
+            {
+                throw new ArgumentException("invalid who - ssn used");
+            }
 
             XacmlJsonRequestRoot jsonRequest = new XacmlJsonRequestRoot() { Request = request };
 
@@ -197,14 +210,18 @@ namespace Altinn.Common.PEP.Helpers
             return resourceCategory;
         }
 
-        private static XacmlJsonCategory CreateResourceCategoryForResource(string resourceid, string resourceowner, bool includeResult = false)
+        private static XacmlJsonCategory CreateResourceCategoryForResource(string resourceid, int? partyId, string organizationnumber,  bool includeResult = false)
         {
             XacmlJsonCategory resourceCategory = new XacmlJsonCategory();
             resourceCategory.Attribute = new List<XacmlJsonAttribute>();
 
-            if (!string.IsNullOrWhiteSpace(resourceowner))
+            if (partyId.HasValue)
             {
-                resourceCategory.Attribute.Add(CreateXacmlJsonAttribute(AltinnXacmlUrns.ResourceOwner, resourceowner, DefaultType, DefaultIssuer, includeResult));
+                resourceCategory.Attribute.Add(CreateXacmlJsonAttribute(AltinnXacmlUrns.PartyId, partyId.Value.ToString(), DefaultType, DefaultIssuer, includeResult));
+            }
+            else if (string.IsNullOrEmpty(organizationnumber))
+            {
+                resourceCategory.Attribute.Add(CreateXacmlJsonAttribute(AltinnXacmlUrns.OrganizationNumber, organizationnumber, DefaultType, DefaultIssuer, includeResult));
             }
 
             if (!string.IsNullOrWhiteSpace(resourceid))
@@ -416,6 +433,24 @@ namespace Altinn.Common.PEP.Helpers
             }
 
             return null;
+        }
+
+        private static int? TryParsePartyId(string who)
+        {
+            bool hasPrefix = who[0] == 'r';
+
+            if (!hasPrefix)
+            {
+                return null;
+            }
+
+            int partyId;
+            if (!int.TryParse(who.AsSpan(1), out partyId))
+            {
+                return 0;
+            }
+
+            return partyId;
         }
     }
 }

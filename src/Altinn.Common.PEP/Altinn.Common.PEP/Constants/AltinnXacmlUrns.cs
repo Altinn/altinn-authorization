@@ -11,6 +11,16 @@ namespace Altinn.Common.PEP.Constants
         public const string PartyId = "urn:altinn:partyid";
 
         /// <summary>
+        /// Get the URN value for 
+        /// </summary>
+        public const string Ssn = "urn:altinn:ssn";
+
+        /// <summary>
+        /// Get the URN value for 
+        /// </summary>
+        public const string OrganizationNumber = "urn:altinn:organizationnumber";
+
+        /// <summary>
         /// Get the URN value for instance id
         /// </summary>
         public const string InstanceId = "urn:altinn:instance-id";
@@ -43,11 +53,6 @@ namespace Altinn.Common.PEP.Constants
         /// <summary>
         /// Get the value resourceId
         /// </summary>
-        public const string ResourceId = "urn:resourceregistry:resourceid";
-
-        /// <summary>
-        /// Get the value ResourceOwner
-        /// </summary>
-        public const string ResourceOwner = "urn:resourceregistry:resourceowner";
+        public const string ResourceId = "urn:altinn:resourceregistry";
     }
 }
