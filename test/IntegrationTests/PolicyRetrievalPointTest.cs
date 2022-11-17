@@ -98,6 +98,23 @@ namespace Altinn.Platform.Authorization.IntegrationTests
         /// Expected: GetPolicyAsync returns a file that is not null.
         /// </summary>
         [Fact]
+        public async Task GetPolicy_TCResourceRegistry01()
+        {
+            // Arrange
+            XacmlContextRequest request = new XacmlContextRequest(true, true, GetXacmlContextAttributesWithResourceId("apidelegation"));
+
+            // Act
+            XacmlPolicy xacmlPolicy = await _prp.GetPolicyAsync(request);
+
+            // Assert
+            Assert.NotNull(xacmlPolicy);
+        }
+
+        /// <summary>
+        /// Test case: Get file from storage.
+        /// Expected: GetPolicyAsync returns a file that is not null.
+        /// </summary>
+        [Fact]
         public async Task GetPolicy_ByOrgApp_ReturnsPolicy()
         {
             // Arrange
@@ -172,6 +189,21 @@ namespace Altinn.Platform.Authorization.IntegrationTests
 
             xacmlContexts.Add(xacmlContext2);
 
+            return xacmlContexts;
+        }
+
+        private List<XacmlContextAttributes> GetXacmlContextAttributesWithResourceId(string resourceId)
+        {
+            List<XacmlContextAttributes> xacmlContexts = new List<XacmlContextAttributes>();
+
+            XacmlContextAttributes xacmlContext = new XacmlContextAttributes(new Uri(XacmlConstants.MatchAttributeCategory.Resource));
+
+            XacmlAttribute xacmlAttributeOrg = new XacmlAttribute(new Uri("urn:altinn:resourceregistry"), true);
+            xacmlAttributeOrg.AttributeValues.Add(new XacmlAttributeValue(new Uri("urn:altinn:resourceregistry"), resourceId));
+            xacmlContext.Attributes.Add(xacmlAttributeOrg);
+
+            xacmlContexts.Add(xacmlContext);
+            
             return xacmlContexts;
         }
     }

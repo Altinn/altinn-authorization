@@ -16,12 +16,7 @@ namespace Altinn.Platform.Authorization.IntegrationTests.MockServices
 
         private readonly ILogger<ResourceRegistryMock> _logger;
 
-        public Task<XacmlPolicy> GetResourcePolicyAsync(string resourceId)
-        {
-            throw new NotImplementedException();
-        }
-
-        public async Task<XacmlPolicy> GetPolicyAsync(string resourceId)
+        public async Task<XacmlPolicy> GetResourcePolicyAsync(string resourceId)
         {
             if (File.Exists(Path.Combine(GetResourceRegistryPolicyPath(resourceId), "policy.xml")))
             {
