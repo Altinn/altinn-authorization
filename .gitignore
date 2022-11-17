@@ -42,3 +42,4 @@ TestResults
 
 ######### Testdata created by testrun #########
 src/test/IntegrationTests/Data/blobs/output/
+/test/IntegrationTests/Data/blobs/output

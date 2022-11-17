@@ -207,7 +207,7 @@ void ConfigureServices(IServiceCollection services, IConfiguration config)
     services.AddHttpClient<PartyClient>();
     services.AddHttpClient<RolesClient>();
     services.AddHttpClient<SBLClient>();
-services.AddHttpClient<ResourceRegistryClient>();
+    services.AddHttpClient<ResourceRegistryClient>();
     services.TryAddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 
     GeneralSettings generalSettings = config.GetSection("GeneralSettings").Get<GeneralSettings>();
