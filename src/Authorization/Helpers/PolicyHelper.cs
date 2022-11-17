@@ -81,6 +81,56 @@ namespace Altinn.Platform.Authorization.Helpers
         }
 
         /// <summary>
+        /// Returens the policy resource type based on XacmlContextRequest
+        /// </summary>
+        /// <param name="request">The requestId</param>
+        /// <param name="policyId">The policy Id</param>
+        /// <returns></returns>
+        public static PolicyResourceType GetPolicyResourceType(XacmlContextRequest request, out string policyId)
+        {
+            string org = string.Empty;
+            string app = string.Empty;
+            string resourceid = string.Empty;
+
+            foreach (XacmlContextAttributes attr in request.Attributes.Where(attr => attr.Category.OriginalString.Equals(XacmlConstants.MatchAttributeCategory.Resource)))
+            {
+                foreach (XacmlAttribute xacmlAtr in attr.Attributes)
+                {
+                    if (xacmlAtr.AttributeId.OriginalString.Equals(AltinnXacmlConstants.MatchAttributeIdentifiers.OrgAttribute))
+                    {
+                        org = xacmlAtr.AttributeValues.FirstOrDefault().Value;
+                    }
+
+                    if (xacmlAtr.AttributeId.OriginalString.Equals(AltinnXacmlConstants.MatchAttributeIdentifiers.AppAttribute))
+                    {
+                        app = xacmlAtr.AttributeValues.FirstOrDefault().Value;
+                    }
+
+                    if (xacmlAtr.AttributeId.OriginalString.Equals(AltinnXacmlConstants.MatchAttributeIdentifiers.ResourceRegistry))
+                    {
+                        resourceid = xacmlAtr.AttributeValues.FirstOrDefault().Value;
+                    }
+                }
+            }
+
+            if (!string.IsNullOrEmpty(org) && !string.IsNullOrEmpty(app))
+            {
+                policyId = org + "/" + app;
+                return PolicyResourceType.AltinnApps;
+            }
+            else if (!string.IsNullOrEmpty(resourceid))
+            {
+                policyId = resourceid;
+                return PolicyResourceType.ResourceRegistry;
+            }
+            else
+            {
+                policyId=null;
+                return PolicyResourceType.Undefined;
+            }
+        }
+
+        /// <summary>
         /// Builds the policy path based on org and app names
         /// </summary>
         /// <param name="org">The organization name/identifier</param>

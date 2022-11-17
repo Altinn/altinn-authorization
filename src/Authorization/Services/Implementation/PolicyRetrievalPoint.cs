@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Altinn.Authorization.ABAC.Xacml;
 using Altinn.Platform.Authorization.Configuration;
 using Altinn.Platform.Authorization.Helpers;
+using Altinn.Platform.Authorization.Models;
 using Altinn.Platform.Authorization.Repositories.Interface;
 using Altinn.Platform.Authorization.Services.Interface;
 using Microsoft.Extensions.Caching.Memory;
@@ -20,6 +21,7 @@ namespace Altinn.Platform.Authorization.Services.Implementation
         private readonly IPolicyRepository _repository;
         private readonly IMemoryCache _memoryCache;
         private readonly GeneralSettings _generalSettings;
+        private readonly IResourceRegistry _resourceRegistry;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="PolicyRetrievalPoint"/> class.
@@ -27,16 +29,24 @@ namespace Altinn.Platform.Authorization.Services.Implementation
         /// <param name="policyRepository">The policy Repository..</param>
         /// <param name="memoryCache">The cache handler </param>
         /// <param name="settings">The app settings</param>
-        public PolicyRetrievalPoint(IPolicyRepository policyRepository, IMemoryCache memoryCache, IOptions<GeneralSettings> settings)
+        public PolicyRetrievalPoint(IPolicyRepository policyRepository, IMemoryCache memoryCache, IOptions<GeneralSettings> settings, IResourceRegistry resourceRegistry)
         {
             _repository = policyRepository;
             _memoryCache = memoryCache;
             _generalSettings = settings.Value;
+            _resourceRegistry = resourceRegistry;
         }
 
         /// <inheritdoc/>
         public async Task<XacmlPolicy> GetPolicyAsync(XacmlContextRequest request)
         {
+            string policyId = null;
+            PolicyResourceType policyResourceType = PolicyHelper.GetPolicyResourceType(request, out policyId);
+            if (policyResourceType.Equals(PolicyResourceType.ResourceRegistry))
+            {
+                return await _resourceRegistry.GetResourcePolicyAsync(policyId);
+            }
+
             string policyPath = PolicyHelper.GetPolicyPath(request);
             return await GetPolicyInternalAsync(policyPath);
         }
