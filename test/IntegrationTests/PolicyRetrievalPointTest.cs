@@ -35,13 +35,14 @@ namespace Altinn.Platform.Authorization.IntegrationTests
             ServiceCollection services = new ServiceCollection();
             services.AddMemoryCache();
             ServiceProvider serviceProvider = services.BuildServiceProvider();
-
+            
             IMemoryCache memoryCache = serviceProvider.GetService<IMemoryCache>();
 
             _prp = new PolicyRetrievalPoint(
                 new PolicyRepositoryMock(new Mock<ILogger<PolicyRepositoryMock>>().Object),
                 memoryCache,
-                Options.Create(new GeneralSettings { PolicyCacheTimeout = 1 }));
+                Options.Create(new GeneralSettings { PolicyCacheTimeout = 1 }),
+                new ResourceRegistryMock());
         }
 
         /// <summary>
