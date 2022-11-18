@@ -27,6 +27,10 @@ namespace Altinn.Platform.Authorization.IntegrationTests.Util
             {
                 policyDocument.Load(Path.Combine(GetAltinnAppsPath(), testcase + "Request.xml"));
             }
+            else if (testcase.Contains("ResourceRegistry"))
+            {
+                policyDocument.Load(Path.Combine(GetResourceRegistryPath(), testcase + "Request.xml"));
+            }
             else
             {
                 policyDocument.Load(Path.Combine(GetConformancePath(), testcase + "Request.xml"));
@@ -48,6 +52,10 @@ namespace Altinn.Platform.Authorization.IntegrationTests.Util
             if (testcase.Contains("AltinnApps"))
             {
                 requestText = File.ReadAllText(Path.Combine(GetAltinnAppsPath(), testcase + "Request.json"));
+            }
+            else if (testcase.Contains("ResourceRegistry"))
+            {
+                requestText = File.ReadAllText(Path.Combine(GetResourceRegistryPath(), testcase + "Request.json"));
             }
             else
             {
@@ -98,6 +106,10 @@ namespace Altinn.Platform.Authorization.IntegrationTests.Util
             {
                 return XacmlTestDataParser.ParseResponse(testCase + "Response.xml", GetAltinnAppsPath());
             }
+            else if (testCase.Contains("ResourceRegistry"))
+            {
+                return XacmlTestDataParser.ParseResponse(testCase + "Response.xml", GetResourceRegistryPath());
+            }
 
             return XacmlTestDataParser.ParseResponse(testCase + "Response.xml", GetConformancePath());
         }
@@ -109,6 +121,10 @@ namespace Altinn.Platform.Authorization.IntegrationTests.Util
             if (testCase.Contains("AltinnApps"))
             {
                 content = File.ReadAllText(Path.Combine(GetAltinnAppsPath(), testCase + "Response.json"));
+            }
+            else if (testCase.Contains("ResourceRegistry"))
+            {
+                content = File.ReadAllText(Path.Combine(GetResourceRegistryPath(), testCase + "Response.json"));
             }
             else
             {
@@ -173,6 +189,12 @@ namespace Altinn.Platform.Authorization.IntegrationTests.Util
         {
             string unitTestFolder = Path.GetDirectoryName(new Uri(typeof(AltinnApps_DecisionTests).Assembly.Location).LocalPath);
             return Path.Combine(unitTestFolder, "..", "..", "..", "Data", "Xacml", "3.0", "AltinnApps");
+        }
+
+        private static string GetResourceRegistryPath()
+        {
+            string unitTestFolder = Path.GetDirectoryName(new Uri(typeof(AltinnApps_DecisionTests).Assembly.Location).LocalPath);
+            return Path.Combine(unitTestFolder, "..", "..", "..", "Data", "Xacml", "3.0", "ResourceRegistry");
         }
 
         private static string GetConformancePath()

@@ -102,6 +102,12 @@ namespace Altinn.Platform.Authorization.Services.Implementation
                 // The resource attributes are complete
                 resourceAttributeComplete = true;
             }
+            else if (!string.IsNullOrEmpty(resourceAttributes.ResourceRegistryId) &&
+           !string.IsNullOrEmpty(resourceAttributes.ResourcePartyValue))
+            {
+                // The resource attributes are complete
+                resourceAttributeComplete = true;
+            }
 
             if (!resourceAttributeComplete && !string.IsNullOrEmpty(resourceAttributes.InstanceValue))
             {
@@ -167,6 +173,11 @@ namespace Altinn.Platform.Authorization.Services.Implementation
                 if (attribute.AttributeId.OriginalString.Equals(XacmlRequestAttribute.AppResourceAttribute))
                 {
                     resourceAttributes.AppResourceValue = attribute.AttributeValues.First().Value;
+                }
+
+                if (attribute.AttributeId.OriginalString.Equals(XacmlRequestAttribute.ResourceRegistryAttribute))
+                {
+                    resourceAttributes.ResourceRegistryId = attribute.AttributeValues.First().Value;
                 }
             }
 

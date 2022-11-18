@@ -23,6 +23,8 @@ namespace Altinn.Platform.Authorization.IntegrationTests.MockServices
 
         private readonly string _appAttributeId = "urn:altinn:app";
 
+        private readonly string _resourceregistryAttributeId = "urn:altinn:resourceregistry";
+
         public PolicyRetrievalPointMock(IHttpContextAccessor httpContextAccessor, ILogger<PolicyRetrievalPointMock> logger)
         {
             _httpContextAccessor = httpContextAccessor;
@@ -33,6 +35,15 @@ namespace Altinn.Platform.Authorization.IntegrationTests.MockServices
         {
             string testID = GetTestId(_httpContextAccessor.HttpContext);
             if (!string.IsNullOrEmpty(testID) && testID.ToLower().Contains("altinnapps"))
+            {
+                if (File.Exists(Path.Combine(GetPolicyPath(request), "policy.xml")))
+                {
+                    return await Task.FromResult(ParsePolicy("policy.xml", GetPolicyPath(request)));
+                }
+
+                return await Task.FromResult(ParsePolicy(testID + "Policy.xml", GetAltinnAppsPath()));
+            }
+            else if (!string.IsNullOrEmpty(testID) && testID.ToLower().Contains("resourceregistry"))
             {
                 if (File.Exists(Path.Combine(GetPolicyPath(request), "policy.xml")))
                 {
@@ -74,6 +85,7 @@ namespace Altinn.Platform.Authorization.IntegrationTests.MockServices
         {
             string org = string.Empty;
             string app = string.Empty;
+            string resourceregistry = string.Empty;
             foreach (XacmlContextAttributes attr in request.Attributes)
             {
                 if (attr.Category.OriginalString.Equals(XacmlConstants.MatchAttributeCategory.Resource))
@@ -97,8 +109,22 @@ namespace Altinn.Platform.Authorization.IntegrationTests.MockServices
                                 break;
                             }
                         }
+
+                        if (asd.AttributeId.OriginalString.Equals(_resourceregistryAttributeId))
+                        {
+                            foreach (var asff in asd.AttributeValues)
+                            {
+                                resourceregistry = asff.Value;
+                                break;
+                            }
+                        }
                     }
                 }
+            }
+
+            if (!string.IsNullOrEmpty(resourceregistry))
+            {
+                return GetAltinnResourceRegistryPath(resourceregistry);
             }
 
             return GetAltinnAppsPolicyPath(org, app);
@@ -125,6 +151,12 @@ namespace Altinn.Platform.Authorization.IntegrationTests.MockServices
         {
             string unitTestFolder = Path.GetDirectoryName(new Uri(typeof(AltinnApps_DecisionTests).Assembly.Location).LocalPath);
             return Path.Combine(unitTestFolder, "..", "..", "..", "Data", "Xacml", "3.0", "AltinnApps");
+        }
+
+        private string GetAltinnResourceRegistryPath(string resourceid)
+        {
+            string unitTestFolder = Path.GetDirectoryName(new Uri(typeof(AltinnApps_DecisionTests).Assembly.Location).LocalPath);
+            return Path.Combine(unitTestFolder, "..", "..", "..", "Data", "Xacml", "3.0", "ResourceRegistry", resourceid);
         }
 
         private string GetConformancePath()
