@@ -10,6 +10,8 @@ using Altinn.Platform.Authorization.Constants;
 using Altinn.Platform.Authorization.Models;
 using Altinn.Platform.Authorization.Repositories.Interface;
 using Altinn.Platform.Authorization.Services.Interface;
+using Altinn.Platform.Authorization.Services.Interfaces;
+using Altinn.Platform.Register.Models;
 using Altinn.Platform.Storage.Interface.Models;
 using Authorization.Platform.Authorization.Models;
 using Microsoft.Extensions.Caching.Memory;
@@ -33,6 +35,7 @@ namespace Altinn.Platform.Authorization.Services.Implementation
         private readonly IParties _partiesWrapper;
         private readonly IMemoryCache _memoryCache;
         private readonly GeneralSettings _generalSettings;
+        private readonly IRegisterService _registerService;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ContextHandler"/> class
@@ -42,14 +45,16 @@ namespace Altinn.Platform.Authorization.Services.Implementation
         /// <param name="partiesWrapper">the party information handler</param>
         /// <param name="memoryCache">The cache handler </param>
         /// <param name="settings">The app settings</param>
+        /// <param name="registerService">Register service</param>
         public ContextHandler(
-            IInstanceMetadataRepository policyInformationRepository, IRoles rolesWrapper, IParties partiesWrapper, IMemoryCache memoryCache, IOptions<GeneralSettings> settings)
+            IInstanceMetadataRepository policyInformationRepository, IRoles rolesWrapper, IParties partiesWrapper, IMemoryCache memoryCache, IOptions<GeneralSettings> settings, IRegisterService registerService)
         {
             _policyInformationRepository = policyInformationRepository;
             _rolesWrapper = rolesWrapper;
             _partiesWrapper = partiesWrapper;
             _memoryCache = memoryCache;
             _generalSettings = settings.Value;
+            _registerService = registerService;
         }
 
         /// <summary>
@@ -71,6 +76,7 @@ namespace Altinn.Platform.Authorization.Services.Implementation
         {
             XacmlContextAttributes resourceContextAttributes = request.GetResourceAttributes();
             XacmlResourceAttributes resourceAttributes = GetResourceAttributeValues(resourceContextAttributes);
+            await EnrichResourceParty(resourceAttributes);
 
             bool resourceAttributeComplete = false;
 
@@ -135,6 +141,22 @@ namespace Altinn.Platform.Authorization.Services.Implementation
         }
 
         /// <summary>
+        /// Method that adds information about the resource party 
+        /// </summary>
+        /// <returns></returns>
+        protected async Task EnrichResourceParty(XacmlResourceAttributes resourceAttributes)
+        {
+            if (string.IsNullOrEmpty(resourceAttributes.ResourcePartyValue) && !string.IsNullOrEmpty(resourceAttributes.OrganizationNumber))
+            {
+                int partyId = await _registerService.PartyLookup(resourceAttributes.OrganizationNumber, null);
+                if (partyId != 0)
+                {
+                    resourceAttributes.ResourcePartyValue = partyId.ToString();
+                }
+            }
+        }
+
+        /// <summary>
         /// Maps the XacmlContextAttributes for the Xacml Resource category to the Altinn XacmlResourceAttributes model
         /// </summary>
         /// <param name="resourceContextAttributes">XacmlContextAttributes for mapping of resource attribute values</param>
@@ -178,6 +200,11 @@ namespace Altinn.Platform.Authorization.Services.Implementation
                 if (attribute.AttributeId.OriginalString.Equals(XacmlRequestAttribute.ResourceRegistryAttribute))
                 {
                     resourceAttributes.ResourceRegistryId = attribute.AttributeValues.First().Value;
+                }
+
+                if (attribute.AttributeId.OriginalString.Equals(XacmlRequestAttribute.OrganizationNumberAttribute))
+                {
+                    resourceAttributes.OrganizationNumber = attribute.AttributeValues.First().Value;
                 }
             }
 

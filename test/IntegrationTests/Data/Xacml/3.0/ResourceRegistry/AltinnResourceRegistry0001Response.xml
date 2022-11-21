@@ -21,7 +21,7 @@
       </Obligations>
       <Attributes Category="urn:oasis:names:tc:xacml:3.0:attribute-category:resource">
         <Attribute IncludeInResult="true" AttributeId="urn:altinn:partyid">
-          <AttributeValue DataType="http://www.w3.org/2001/XMLSchema#string">1000</AttributeValue>
+          <AttributeValue DataType="http://www.w3.org/2001/XMLSchema#string">500700</AttributeValue>
         </Attribute>
       </Attributes>
     </Result>

@@ -41,6 +41,11 @@ namespace Altinn.Platform.Authorization.Constants
         public const string PartyAttribute = "urn:altinn:partyid";
 
         /// <summary>
+        /// xacml string that represents organization number 
+        /// </summary>
+        public const string OrganizationNumberAttribute = "urn:altinn:organizationnumber";
+
+        /// <summary>
         /// xacml string that represents user
         /// </summary>
         public const string UserAttribute = "urn:altinn:userid";
