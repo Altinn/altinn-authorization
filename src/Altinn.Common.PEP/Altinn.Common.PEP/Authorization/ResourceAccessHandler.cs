@@ -24,7 +24,7 @@ namespace Altinn.Common.PEP.Authorization
         private readonly ILogger _logger;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="AppAccessHandler"/> class.
+        /// Initializes a new instance of the <see cref="ResourceAccessHandler"/> class.
         /// </summary>
         /// <param name="httpContextAccessor">The http context accessor</param>
         /// <param name="pdp">The pdp</param>
