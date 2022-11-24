@@ -42,7 +42,7 @@ namespace Altinn.Common.PEP.Authorization
         {
             // Arrange 
             AuthorizationHandlerContext context = CreateAuthorizationHandlerContext();
-            _httpContextAccessorMock.Setup(h => h.HttpContext).Returns(CreateHttpContext("r23453546546"));
+            _httpContextAccessorMock.Setup(h => h.HttpContext).Returns(CreateHttpContext("23453546", null, null));
             XacmlJsonResponse response = CreateResponse(XacmlContextDecision.Permit.ToString());
             _pdpMock.Setup(a => a.GetDecisionForRequest(It.IsAny<XacmlJsonRequestRoot>())).Returns(Task.FromResult(response));
 
@@ -63,7 +63,7 @@ namespace Altinn.Common.PEP.Authorization
         {
             // Arrange 
             AuthorizationHandlerContext context = CreateAuthorizationHandlerContext();
-            _httpContextAccessorMock.Setup(h => h.HttpContext).Returns(CreateHttpContext("991825827"));
+            _httpContextAccessorMock.Setup(h => h.HttpContext).Returns(CreateHttpContext("organization", "991825827", null));
             XacmlJsonResponse response = CreateResponse(XacmlContextDecision.Permit.ToString());
             _pdpMock.Setup(a => a.GetDecisionForRequest(It.IsAny<XacmlJsonRequestRoot>())).Returns(Task.FromResult(response));
 
@@ -85,7 +85,7 @@ namespace Altinn.Common.PEP.Authorization
         {
             // Arrange 
             AuthorizationHandlerContext context = CreateAuthorizationHandlerContext();
-            _httpContextAccessorMock.Setup(h => h.HttpContext).Returns(CreateHttpContext("991825827M"));
+            _httpContextAccessorMock.Setup(h => h.HttpContext).Returns(CreateHttpContext("organization", "991825827M", null));
             XacmlJsonResponse response = CreateResponse(XacmlContextDecision.Permit.ToString());
             _pdpMock.Setup(a => a.GetDecisionForRequest(It.IsAny<XacmlJsonRequestRoot>())).Returns(Task.FromResult(response));
 
@@ -94,7 +94,7 @@ namespace Altinn.Common.PEP.Authorization
 
             // Assert
             ArgumentException exception = await Assert.ThrowsAsync<ArgumentException>(Act);
-            Assert.Equal("invalid who - ssn used", exception.Message);
+            Assert.Equal("invalid party organization", exception.Message);
         }
 
         private ClaimsPrincipal CreateUser()
@@ -111,10 +111,20 @@ namespace Altinn.Common.PEP.Authorization
             return user;
         }
 
-        private HttpContext CreateHttpContext(string who)
+        private HttpContext CreateHttpContext(string party, string orgHeader, string ssnHeader)
         {
             HttpContext httpContext = new DefaultHttpContext();
-            httpContext.Request.RouteValues.Add("who", who);
+            httpContext.Request.RouteValues.Add("party", party);
+            if (!string.IsNullOrEmpty(orgHeader))
+            {
+                httpContext.Request.Headers.Add("party-organizationumber", orgHeader);
+            }
+            
+            if (!string.IsNullOrEmpty(ssnHeader))
+            {
+                httpContext.Request.Headers.Add("party-ssn", ssnHeader);
+            }
+
             return httpContext;
         }
 
