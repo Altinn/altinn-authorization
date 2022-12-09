@@ -56,7 +56,8 @@ namespace Altinn.Platform.Authorization.Services.Implementation
 
         private async Task<XacmlPolicy> GetPolicyInternalAsync(string policyPath, string version = "")
         {
-            if (!_memoryCache.TryGetValue(policyPath + version, out XacmlPolicy policy))
+            string cacheKey = policyPath + version;
+            if (!_memoryCache.TryGetValue(cacheKey, out XacmlPolicy policy))
             {
                 Stream policyBlob = string.IsNullOrEmpty(version) ?
                     await _repository.GetPolicyAsync(policyPath) :
@@ -66,7 +67,7 @@ namespace Altinn.Platform.Authorization.Services.Implementation
                     policy = (policyBlob.Length > 0) ? PolicyHelper.ParsePolicy(policyBlob) : null;
                 }
 
-                PutXacmlPolicyInCache(policyPath, policy);
+                PutXacmlPolicyInCache(cacheKey, policy);
             }
 
             return policy;
