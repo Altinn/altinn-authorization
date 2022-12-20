@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 
 namespace Altinn.Common.PEP.Authorization
 {
@@ -16,22 +17,22 @@ namespace Altinn.Common.PEP.Authorization
     /// <see href="https://docs.asp.net/en/latest/security/authorization/policies.html"/> for details about authorization
     /// in asp.net core
     /// </summary>
-    public class AppAccessHandler : AuthorizationHandler<AppAccessRequirement>
+    public class ResourceAccessHandler : AuthorizationHandler<ResourceAccessRequirement>
     {
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IPDP _pdp;
         private readonly ILogger _logger;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="AppAccessHandler"/> class.
+        /// Initializes a new instance of the <see cref="ResourceAccessHandler"/> class.
         /// </summary>
         /// <param name="httpContextAccessor">The http context accessor</param>
         /// <param name="pdp">The pdp</param>
         /// <param name="logger">The logger. </param>
-        public AppAccessHandler(
+        public ResourceAccessHandler(
             IHttpContextAccessor httpContextAccessor,
             IPDP pdp,
-            ILogger<AppAccessHandler> logger)
+            ILogger<ResourceAccessHandler> logger)
         {
             _httpContextAccessor = httpContextAccessor;
             _pdp = pdp;
@@ -45,9 +46,9 @@ namespace Altinn.Common.PEP.Authorization
         /// <param name="context">The context</param>
         /// <param name="requirement">The requirement</param>
         /// <returns>A Task</returns>
-        protected override async Task HandleRequirementAsync(AuthorizationHandlerContext context, AppAccessRequirement requirement)
+        protected override async Task HandleRequirementAsync(AuthorizationHandlerContext context, ResourceAccessRequirement requirement)
         {
-            XacmlJsonRequestRoot request = DecisionHelper.CreateDecisionRequest(context, requirement, _httpContextAccessor.HttpContext.GetRouteData());
+            XacmlJsonRequestRoot request = DecisionHelper.CreateDecisionRequest(context, requirement, _httpContextAccessor.HttpContext.GetRouteData(), _httpContextAccessor.HttpContext.Request.Headers);
 
             XacmlJsonResponse response = await _pdp.GetDecisionForRequest(request);
 
