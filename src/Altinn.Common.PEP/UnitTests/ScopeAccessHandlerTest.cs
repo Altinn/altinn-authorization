@@ -42,6 +42,60 @@ namespace UnitTests
         }
 
         /// <summary>
+        /// Test case: Valid scope claim is included in context.
+        /// Expected: Context will succeed.
+        /// </summary>
+        [Fact]
+        public async Task HandleAsync_ValidScopeOf2_OneInvalidPresent_ContextSuccess()
+        {
+            // Arrange 
+            AuthorizationHandlerContext context = CreateAuthzHandlerContext("altinn:resourceregistry:write altinn:resourceregistry:read",  "altinn:resourceregistry:admin,altinn:resourceregistry:write");
+
+            // Act
+            await _sah.HandleAsync(context);
+
+            // Assert
+            Assert.True(context.HasSucceeded);
+            Assert.False(context.HasFailed);
+        }
+
+        /// <summary>
+        /// Test case: Valid scope is missing in context
+        /// Expected: Context will fail.
+        /// </summary>
+        [Fact]
+        public async Task HandleAsync_ValidScopeOf2_OneInvalidPresent_ContextFail()
+        {
+            // Arrange 
+            AuthorizationHandlerContext context = CreateAuthzHandlerContext("altinn:resourceregistry:read", "altinn:resourceregistry:admin,altinn:resourceregistry:write");
+
+            // Act
+            await _sah.HandleAsync(context);
+
+            // Assert
+            Assert.False(context.HasSucceeded);
+            Assert.True(context.HasFailed);
+        }
+
+        /// <summary>
+        /// Test case: Valid scope claim is included in context.
+        /// Expected: Context will succeed.
+        /// </summary>
+        [Fact]
+        public async Task HandleAsync_ValidScopeOf2_ContextSuccess()
+        {
+            // Arrange 
+            AuthorizationHandlerContext context = CreateAuthzHandlerContext("altinn:resourceregistry:write", "altinn:resourceregistry:admin,altinn:resourceregistry:write");
+
+            // Act
+            await _sah.HandleAsync(context);
+
+            // Assert
+            Assert.True(context.HasSucceeded);
+            Assert.False(context.HasFailed);
+        }
+
+        /// <summary>
         /// Test case: Invalid scope claim is included in context.
         /// Expected: Context will fail.
         /// </summary>
@@ -86,6 +140,26 @@ namespace UnitTests
                     new List<Claim>
                     {
                         new Claim("urn:altinn:scope", scopeClaim, "string", "org"),
+                        new Claim("urn:altinn:org", "brg", "string", "org")
+                    },
+                    "AuthenticationTypes.Federation"));
+
+            AuthorizationHandlerContext context = new AuthorizationHandlerContext(
+                new[] { requirement },
+                user,
+                default(Document));
+            return context;
+        }
+
+        private AuthorizationHandlerContext CreateAuthzHandlerContext(string scopeClaim, string requiredScopes)
+        {
+            ScopeAccessRequirement requirement = new ScopeAccessRequirement(requiredScopes);
+
+            ClaimsPrincipal user = new ClaimsPrincipal(
+                new ClaimsIdentity(
+                    new List<Claim>
+                    {
+                        new Claim("scope", scopeClaim, "string", "org"),
                         new Claim("urn:altinn:org", "brg", "string", "org")
                     },
                     "AuthenticationTypes.Federation"));
