@@ -49,7 +49,7 @@ namespace UnitTests
         public async Task HandleAsync_ValidScopeOf2_OneInvalidPresent_ContextSuccess()
         {
             // Arrange 
-            AuthorizationHandlerContext context = CreateAuthzHandlerContext("altinn:resourceregistry:write altinn:resourceregistry:read",  "altinn:resourceregistry:admin,altinn:resourceregistry:write");
+            AuthorizationHandlerContext context = CreateAuthzHandlerContext("altinn:resourceregistry:write altinn:resourceregistry:read", new[] { "altinn:resourceregistry:admin", "altinn:resourceregistry:write" });
 
             // Act
             await _sah.HandleAsync(context);
@@ -67,7 +67,7 @@ namespace UnitTests
         public async Task HandleAsync_ValidScopeOf2_OneInvalidPresent_ContextFail()
         {
             // Arrange 
-            AuthorizationHandlerContext context = CreateAuthzHandlerContext("altinn:resourceregistry:read", "altinn:resourceregistry:admin,altinn:resourceregistry:write");
+            AuthorizationHandlerContext context = CreateAuthzHandlerContext("altinn:resourceregistry:read", new[] { "altinn:resourceregistry:admin", "altinn:resourceregistry:write" });
 
             // Act
             await _sah.HandleAsync(context);
@@ -85,7 +85,7 @@ namespace UnitTests
         public async Task HandleAsync_ValidScopeOf2_ContextSuccess()
         {
             // Arrange 
-            AuthorizationHandlerContext context = CreateAuthzHandlerContext("altinn:resourceregistry:write", "altinn:resourceregistry:admin,altinn:resourceregistry:write");
+            AuthorizationHandlerContext context = CreateAuthzHandlerContext("altinn:resourceregistry:write", new[] { "altinn:resourceregistry:admin", "altinn:resourceregistry:write" });
 
             // Act
             await _sah.HandleAsync(context);
@@ -151,7 +151,7 @@ namespace UnitTests
             return context;
         }
 
-        private AuthorizationHandlerContext CreateAuthzHandlerContext(string scopeClaim, string requiredScopes)
+        private AuthorizationHandlerContext CreateAuthzHandlerContext(string scopeClaim, string[] requiredScopes)
         {
             ScopeAccessRequirement requirement = new ScopeAccessRequirement(requiredScopes);
 

@@ -44,7 +44,7 @@ namespace Altinn.Common.PEP.Authorization
             // compare scope claim value to
             if (!string.IsNullOrWhiteSpace(contextScope))
             {
-                string[] requiredScopes = requirement.Scope?.Split(',');
+                string[] requiredScopes = requirement.Scope;
                 List<string> clientScopes = contextScope?.Split(' ').ToList();
 
                 foreach (string requiredScope in requiredScopes)
