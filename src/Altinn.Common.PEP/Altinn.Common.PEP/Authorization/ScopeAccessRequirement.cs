@@ -15,12 +15,21 @@ namespace Altinn.Common.PEP.Authorization
         /// <param name="scope">The scope for this requirement</param>
         public ScopeAccessRequirement(string scope)
         {
-            this.Scope = scope;
+            this.Scope = new string[] { scope };
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ScopeAccessRequirement"/> class
+        /// </summary>
+        /// <param name="scopes">The scope for this requirement</param>
+        public ScopeAccessRequirement(string[] scopes)
+        {
+            this.Scope = scopes;
         }
 
         /// <summary>
         /// Gets or sets the scope defined for the policy using this requirement
         /// </summary>
-        public string Scope { get; set; }
+        public string[] Scope { get; set; }
     }
 }

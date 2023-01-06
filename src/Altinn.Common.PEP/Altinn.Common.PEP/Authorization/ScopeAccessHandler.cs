@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
@@ -30,8 +31,6 @@ namespace Altinn.Common.PEP.Authorization
         /// <returns>Returns a Task for async await</returns>
         protected override async Task HandleRequirementAsync(AuthorizationHandlerContext context, ScopeAccessRequirement requirement)
         {
-            _logger.LogInformation($"// ScopeAccessHandler // HandleRequirementAsync // Verifying scope: {requirement.Scope}");
-
             // get scope parameter from  user claims
             string contextScope = context?.User?.Identities 
                 ?.FirstOrDefault(i => i.AuthenticationType != null && i.AuthenticationType.Equals("AuthenticationTypes.Federation"))?.Claims
@@ -40,20 +39,30 @@ namespace Altinn.Common.PEP.Authorization
 
             contextScope ??= context?.User?.Claims.Where(c => c.Type.Equals("scope")).Select(c => c.Value).FirstOrDefault();
 
-            _logger.LogInformation($"// ScopeAccessHandler // HandleRequirementAsync // Scope claim in context: {contextScope}");
-
-            _logger.LogInformation($"// ScopeAccessHandler // HandleRequirementAsync // Identity with correct authNType " +
-                                    $"{context?.User?.Identities?.Where(i => i.AuthenticationType != null && i.AuthenticationType.Equals("AuthenticationTypes.Federation"))}");
+            bool validScope = false;
 
             // compare scope claim value to
-            if (!string.IsNullOrWhiteSpace(contextScope) && contextScope.Contains(requirement.Scope, StringComparison.InvariantCultureIgnoreCase))
+            if (!string.IsNullOrWhiteSpace(contextScope))
             {
-                _logger.LogInformation($"// ScopeAccessHandler // HandleRequirementAsync // Found matching scope in claims.");
+                string[] requiredScopes = requirement.Scope;
+                List<string> clientScopes = contextScope?.Split(' ').ToList();
+
+                foreach (string requiredScope in requiredScopes)
+                {
+                    if (clientScopes.Contains(requiredScope))
+                    {
+                        validScope = true;
+                        break;
+                    }
+                }
+            }
+
+            if (validScope)
+            {
                 context.Succeed(requirement);
             }
             else
             {
-                _logger.LogInformation($"// ScopeAccessHandler // HandleRequirementAsync // Did NOT find matching scope in claims.");
                 context.Fail();
             }
 

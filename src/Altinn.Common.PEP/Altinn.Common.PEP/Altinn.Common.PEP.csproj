@@ -13,13 +13,14 @@
     <PackageVersion>1.1.0</PackageVersion>
     <PackageTags>Altinn;Studio;Authorization;Policy;Enforcement;Point</PackageTags>
     <Description>
-      Policy Enforcement Point for Attribute based authoirzation using Altinn.Authorization.ABAC in ASP.Net core 3.0 web aps.
-    </Description>
+		Policy Enforcement Point for Attribute-based authorization using Altinn.Authorization.ABAC in ASP.Net apps.
+		See our repository for the full documentation.
+	</Description>
     <PackageReleaseNotes>
     </PackageReleaseNotes>
     <Authors>Altinn Platform Contributors</Authors>
     <RepositoryType>git</RepositoryType>
-    <RepositoryUrl>https://github.com/Altinn/altinn-studio</RepositoryUrl>
+    <RepositoryUrl>https://github.com/altinn/altinn-authorization</RepositoryUrl>
     <IncludeSymbols>true</IncludeSymbols>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
   </PropertyGroup>
@@ -47,7 +48,7 @@
   <PropertyGroup>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <NoWarn>$(NoWarn);1591</NoWarn>
-    <Version>1.0.39</Version>
+    <Version>1.1.0</Version>
   </PropertyGroup>
 
 </Project>

@@ -17,6 +17,7 @@ namespace Altinn.Common.PEP.Authorization
         public ResourceAccessRequirement(string actionType, string resourceId)
         {
             this.ActionType = actionType;
+            this.ResourceId = resourceId;
         }
 
         /// <summary>
