@@ -1,12 +1,15 @@
 # Altinn Platform Authorization
 
-This repository covers the Altinn Platform Authorization component. This component is responsible for authorization of users, systems and organizations that access the Altinn 3 platform. 
+This repository covers the Altinn Access Control (PDP) and the Policy Enforcement Point.
+
+This component authorizes users, systems, and organizations that access the Altinn 3 platform. 
 
 Read more about the component on docs.altinn.studio
 
 - [Authorization capabilities](https://docs.altinn.studio/technology/architecture/capabilities/runtime/security/authorization/) supported by this component
-- [Solution components](https://docs.altinn.studio/technology/architecture/components/application/solution/altinn-platform/authorization/)
-- [Construction components](https://docs.altinn.studio/technology/architecture/components/application/construction/altinn-platform/authorization/)
+- [Solution components](https://docs.altinn.studio/technology/solutions/altinn-platform/authorization/)
+- [Construction Access Controll](https://docs.altinn.studio/technology/architecture/components/application/construction/altinn-platform/authorization/accesscontrol/)
+- [Construction PEP](https://docs.altinn.studio/technology/architecture/components/application/construction/altinn-platform/authorization/accesscontrol/pep/)
 
 
 ## Build status
