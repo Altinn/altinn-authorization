@@ -98,17 +98,17 @@ namespace Altinn.Platform.Authorization.Helpers
                 {
                     if (xacmlAtr.AttributeId.OriginalString.Equals(AltinnXacmlConstants.MatchAttributeIdentifiers.OrgAttribute))
                     {
-                        org = xacmlAtr.AttributeValues.FirstOrDefault().Value;
+                        org = xacmlAtr.AttributeValues.First().Value;
                     }
 
                     if (xacmlAtr.AttributeId.OriginalString.Equals(AltinnXacmlConstants.MatchAttributeIdentifiers.AppAttribute))
                     {
-                        app = xacmlAtr.AttributeValues.FirstOrDefault().Value;
+                        app = xacmlAtr.AttributeValues.First().Value;
                     }
 
                     if (xacmlAtr.AttributeId.OriginalString.Equals(AltinnXacmlConstants.MatchAttributeIdentifiers.ResourceRegistry))
                     {
-                        resourceid = xacmlAtr.AttributeValues.FirstOrDefault().Value;
+                        resourceid = xacmlAtr.AttributeValues.First().Value;
                     }
                 }
             }
