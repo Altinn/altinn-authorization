@@ -23,11 +23,11 @@ namespace Altinn.Platform.Authorization.IntegrationTests.MockServices
         {
             if (File.Exists(Path.Combine(GetResourceRegistryPolicyPath(resourceId), "policy.xml")))
             {
+                _logger.LogError("Resource policy" + Path.Combine(GetResourceRegistryPolicyPath(resourceId), "policy.xml"));
                 return await Task.FromResult(ParsePolicy("policy.xml", GetResourceRegistryPolicyPath(resourceId)));
             }
             else
             {
-                _logger.LogError("Policy not found");
                 throw new Exception("Policy not found  " + Path.Combine(GetResourceRegistryPolicyPath(resourceId), "policy.xml"));
             }
 
