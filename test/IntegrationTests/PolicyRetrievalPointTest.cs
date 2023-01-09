@@ -192,7 +192,7 @@ namespace Altinn.Platform.Authorization.IntegrationTests
             return xacmlContexts;
         }
 
-        private List<XacmlContextAttributes> GetXacmlContextAttributesWithResourceId(string resourceId)
+        private static List<XacmlContextAttributes> GetXacmlContextAttributesWithResourceId(string resourceId)
         {
             List<XacmlContextAttributes> xacmlContexts = new List<XacmlContextAttributes>();
 
