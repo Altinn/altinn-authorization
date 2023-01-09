@@ -106,4 +106,28 @@
     <None Remove="Data\Xacml\3.0\ResourceRegistry\apidelegation\policy.xml" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Content Update="Data\Xacml\3.0\ResourceRegistry\AltinnResourceRegistry0001Request.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Update="Data\Xacml\3.0\ResourceRegistry\AltinnResourceRegistry0001Response.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Update="Data\Xacml\3.0\ResourceRegistry\AltinnResourceRegistry0002Request.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Update="Data\Xacml\3.0\ResourceRegistry\AltinnResourceRegistry0002Response.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Update="Data\Xacml\3.0\ResourceRegistry\AltinnResourceRegistry0003Request.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Update="Data\Xacml\3.0\ResourceRegistry\AltinnResourceRegistry0003Response.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Update="Data\Xacml\3.0\ResourceRegistry\apidelegation\policy.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
 </Project>
