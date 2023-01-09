@@ -19,7 +19,7 @@ namespace Altinn.Platform.Authorization.Services.Implementation
         /// Initializes a new instance of the <see cref="ResourceRegistryWrapper"/> class.
         /// </summary>
         /// <param name="resourceRegistryClient">The httpclient</param>
-        public ResourceRegistryWrapper(ResourceRegistryClient  resourceRegistryClient)
+        public ResourceRegistryWrapper(ResourceRegistryClient resourceRegistryClient)
         {
             _client = resourceRegistryClient;
         }
@@ -28,7 +28,7 @@ namespace Altinn.Platform.Authorization.Services.Implementation
         public async Task<XacmlPolicy> GetResourcePolicyAsync(string resourceId)
         {
             XacmlPolicy policy = null;
-            string apiurl = $"resorces/{resourceId}/policy";
+            string apiurl = $"resource/{resourceId}/policy";
             HttpResponseMessage response = await _client.Client.GetAsync(apiurl);
         
             if (response.StatusCode == System.Net.HttpStatusCode.OK)
