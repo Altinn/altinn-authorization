@@ -45,6 +45,7 @@ namespace Altinn.Platform.Authorization.Services.Implementation
         {
             string policyId = null;
             PolicyResourceType policyResourceType = PolicyHelper.GetPolicyResourceType(request, out policyId);
+            _logger.LogError("Resource init log test");
             if (policyResourceType.Equals(PolicyResourceType.ResourceRegistry))
             {
                 _logger.LogError("Resource log test");
