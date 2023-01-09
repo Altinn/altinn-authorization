@@ -21,7 +21,7 @@ namespace Altinn.Platform.Authorization.IntegrationTests.MockServices
 
         public async Task<XacmlPolicy> GetResourcePolicyAsync(string resourceId)
         {
-            _logger.LogInformation("XYXXX Logtest");
+            _logger.LogWarning("XYXXX Logtest");
             if (File.Exists(Path.Combine(GetResourceRegistryPolicyPath(resourceId), "policy.xml")))
             {
                 return await Task.FromResult(ParsePolicy("policy.xml", GetResourceRegistryPolicyPath(resourceId)));
