@@ -21,7 +21,7 @@ namespace Altinn.Platform.Authorization.IntegrationTests.MockServices
             }
             else
             {
-                Console.WriteLine("Cant find testdata " + Path.Combine(GetResourceRegistryPolicyPath(resourceId), "policy.xml"));
+                throw new Exception("Policy not found  " + Path.Combine(GetResourceRegistryPolicyPath(resourceId), "policy.xml"));
             }
 
             return null;
