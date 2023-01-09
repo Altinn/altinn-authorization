@@ -49,7 +49,7 @@ namespace Altinn.Platform.Authorization.IntegrationTests
             _delegationMetadataRepositoryMock = new DelegationMetadataRepositoryMock();
             _prp = new PolicyRepositoryMock(new Mock<ILogger<PolicyRepositoryMock>>().Object);
             _eventQueue = new DelegationChangeEventQueueMock();
-            _resourceRegistry = new ResourceRegistryMock(new Mock<ILogger<ResourceRegistryMock>>().Object);
+            _resourceRegistry = new ResourceRegistryMock();
             _pap = new PolicyAdministrationPoint(
                 new PolicyRetrievalPoint(_prp, memoryCache, Options.Create(new GeneralSettings { PolicyCacheTimeout = 1 }), _resourceRegistry),
                 _prp,

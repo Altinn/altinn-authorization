@@ -12,24 +12,13 @@ namespace Altinn.Platform.Authorization.IntegrationTests.MockServices
 {
     public class ResourceRegistryMock : IResourceRegistry
     {
-        private ILogger<ResourceRegistryMock> _logger;
-
-        public ResourceRegistryMock(ILogger<ResourceRegistryMock> logger)
-        {
-            _logger = logger;
-        }
-
         public async Task<XacmlPolicy> GetResourcePolicyAsync(string resourceId)
         {
             if (File.Exists(Path.Combine(GetResourceRegistryPolicyPath(resourceId), "policy.xml")))
             {
                 return await Task.FromResult(ParsePolicy("policy.xml", GetResourceRegistryPolicyPath(resourceId)));
             }
-            else
-            {
-                _logger.LogError("Policy not found" + Path.Combine(GetResourceRegistryPolicyPath(resourceId), "policy.xml"));
-            }
-
+           
             return null;
         }
 
