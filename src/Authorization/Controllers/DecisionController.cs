@@ -213,7 +213,7 @@ namespace Altinn.Platform.Authorization.Controllers
             XacmlPolicy policy = await this._prp.GetPolicyAsync(decisionRequest);
 
             _logger.LogError("Policy rule count " + policy.Rules.Count);
-            _logger.LogError("Attribute count " + decisionRequest.Attributes.Count); ;
+            _logger.LogError("Attribute count " + decisionRequest.Attributes.Count);
 
             XacmlContextResponse rolesContextResponse = _pdp.Authorize(decisionRequest, policy);
             ////_logger.LogInformation($"// DecisionController // Authorize // Roles // XACML ContextResponse: {JsonConvert.SerializeObject(rolesContextResponse)}.");
