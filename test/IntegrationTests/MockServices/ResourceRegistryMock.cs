@@ -21,16 +21,13 @@ namespace Altinn.Platform.Authorization.IntegrationTests.MockServices
 
         public async Task<XacmlPolicy> GetResourcePolicyAsync(string resourceId)
         {
-            _logger.LogError("Resource policy before" + Path.Combine(GetResourceRegistryPolicyPath(resourceId), "policy.xml"));
             if (File.Exists(Path.Combine(GetResourceRegistryPolicyPath(resourceId), "policy.xml")))
             {
-                _logger.LogError("Resource policy in" + Path.Combine(GetResourceRegistryPolicyPath(resourceId), "policy.xml"));
                 return await Task.FromResult(ParsePolicy("policy.xml", GetResourceRegistryPolicyPath(resourceId)));
             }
             else
             {
-                _logger.LogError("Resource policy out" + Path.Combine(GetResourceRegistryPolicyPath(resourceId), "policy.xml"));
-                throw new Exception("Policy not found  " + Path.Combine(GetResourceRegistryPolicyPath(resourceId), "policy.xml"));
+                _logger.LogError("Policy not found" + Path.Combine(GetResourceRegistryPolicyPath(resourceId), "policy.xml"));
             }
 
             return null;
