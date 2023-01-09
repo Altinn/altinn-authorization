@@ -18,6 +18,10 @@ namespace Altinn.Platform.Authorization.IntegrationTests.MockServices
             {
                 return await Task.FromResult(ParsePolicy("policy.xml", GetResourceRegistryPolicyPath(resourceId)));
             }
+            else
+            {
+                Console.WriteLine("Cant find testdata " + Path.Combine(GetResourceRegistryPolicyPath(resourceId), "policy.xml"));
+            }
 
             return null;
         }
