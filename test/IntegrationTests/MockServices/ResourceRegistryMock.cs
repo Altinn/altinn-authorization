@@ -12,10 +12,6 @@ namespace Altinn.Platform.Authorization.IntegrationTests.MockServices
 {
     public class ResourceRegistryMock : IResourceRegistry
     {
-        private readonly IHttpContextAccessor _httpContextAccessor;
-
-        private readonly ILogger<ResourceRegistryMock> _logger;
-
         public async Task<XacmlPolicy> GetResourcePolicyAsync(string resourceId)
         {
             if (File.Exists(Path.Combine(GetResourceRegistryPolicyPath(resourceId), "policy.xml")))
@@ -26,7 +22,7 @@ namespace Altinn.Platform.Authorization.IntegrationTests.MockServices
             return null;
         }
 
-        private string GetResourceRegistryPolicyPath(string resourceId)
+        private static string GetResourceRegistryPolicyPath(string resourceId)
         {
             string unitTestFolder = Path.GetDirectoryName(new Uri(typeof(AltinnApps_DecisionTests).Assembly.Location).LocalPath);
             return Path.Combine(unitTestFolder, "..", "..", "..", "Data", "Xacml", "3.0", "ResourceRegistry", resourceId);
