@@ -125,7 +125,7 @@ namespace Altinn.Platform.Authorization.Helpers
             }
             else
             {
-                policyId=null;
+                policyId = null;
                 return PolicyResourceType.Undefined;
             }
         }
