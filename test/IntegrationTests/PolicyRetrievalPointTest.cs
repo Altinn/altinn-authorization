@@ -42,8 +42,7 @@ namespace Altinn.Platform.Authorization.IntegrationTests
                 new PolicyRepositoryMock(new Mock<ILogger<PolicyRepositoryMock>>().Object),
                 memoryCache,
                 Options.Create(new GeneralSettings { PolicyCacheTimeout = 1 }),
-                new ResourceRegistryMock(new Mock<ILogger<ResourceRegistryMock>>().Object), 
-                new Mock<ILogger<PolicyRetrievalPoint>>().Object);
+                new ResourceRegistryMock(new Mock<ILogger<ResourceRegistryMock>>().Object));
         }
 
         /// <summary>

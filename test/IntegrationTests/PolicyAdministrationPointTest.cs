@@ -51,7 +51,7 @@ namespace Altinn.Platform.Authorization.IntegrationTests
             _eventQueue = new DelegationChangeEventQueueMock();
             _resourceRegistry = new ResourceRegistryMock(new Mock<ILogger<ResourceRegistryMock>>().Object);
             _pap = new PolicyAdministrationPoint(
-                new PolicyRetrievalPoint(_prp, memoryCache, Options.Create(new GeneralSettings { PolicyCacheTimeout = 1 }), _resourceRegistry, new Mock<ILogger<PolicyRetrievalPoint>>().Object),
+                new PolicyRetrievalPoint(_prp, memoryCache, Options.Create(new GeneralSettings { PolicyCacheTimeout = 1 }), _resourceRegistry),
                 _prp,
                 _delegationMetadataRepositoryMock,
                 _eventQueue,

@@ -78,8 +78,36 @@ namespace Altinn.Platform.Authorization.Services.Implementation
             XacmlResourceAttributes resourceAttributes = GetResourceAttributeValues(resourceContextAttributes);
             await EnrichResourceParty(resourceAttributes);
 
-            bool resourceAttributeComplete = false;
+            bool resourceAttributeComplete = IsResourceComplete(resourceAttributes);
 
+            if (!resourceAttributeComplete && !string.IsNullOrEmpty(resourceAttributes.InstanceValue))
+            {
+                Instance instanceData = await _policyInformationRepository.GetInstance(resourceAttributes.InstanceValue);
+                if (instanceData != null)
+                {
+                    AddIfValueDoesNotExist(resourceContextAttributes, XacmlRequestAttribute.OrgAttribute, resourceAttributes.OrgValue, instanceData.Org);
+                    string app = instanceData.AppId.Split("/")[1];
+                    AddIfValueDoesNotExist(resourceContextAttributes, XacmlRequestAttribute.AppAttribute, resourceAttributes.AppValue, app);
+                    if (instanceData.Process?.CurrentTask != null)
+                    {
+                        AddIfValueDoesNotExist(resourceContextAttributes, XacmlRequestAttribute.TaskAttribute, resourceAttributes.TaskValue, instanceData.Process.CurrentTask.ElementId);
+                    }
+                    else if (instanceData.Process?.EndEvent != null)
+                    {
+                        AddIfValueDoesNotExist(resourceContextAttributes, XacmlRequestAttribute.EndEventAttribute, null, instanceData.Process.EndEvent);
+                    }
+
+                    AddIfValueDoesNotExist(resourceContextAttributes, XacmlRequestAttribute.PartyAttribute, resourceAttributes.ResourcePartyValue, instanceData.InstanceOwner.PartyId);
+                    resourceAttributes.ResourcePartyValue = instanceData.InstanceOwner.PartyId;
+                }
+            }
+
+            await EnrichSubjectAttributes(request, resourceAttributes.ResourcePartyValue);
+        }
+
+        private static bool IsResourceComplete(XacmlResourceAttributes resourceAttributes)
+        {
+            bool resourceAttributeComplete = false;
             if (!string.IsNullOrEmpty(resourceAttributes.OrgValue) &&
                 !string.IsNullOrEmpty(resourceAttributes.AppValue) &&
                 !string.IsNullOrEmpty(resourceAttributes.InstanceValue) &&
@@ -115,29 +143,7 @@ namespace Altinn.Platform.Authorization.Services.Implementation
                 resourceAttributeComplete = true;
             }
 
-            if (!resourceAttributeComplete && !string.IsNullOrEmpty(resourceAttributes.InstanceValue))
-            {
-                Instance instanceData = await _policyInformationRepository.GetInstance(resourceAttributes.InstanceValue);
-                if (instanceData != null)
-                {
-                    AddIfValueDoesNotExist(resourceContextAttributes, XacmlRequestAttribute.OrgAttribute, resourceAttributes.OrgValue, instanceData.Org);
-                    string app = instanceData.AppId.Split("/")[1];
-                    AddIfValueDoesNotExist(resourceContextAttributes, XacmlRequestAttribute.AppAttribute, resourceAttributes.AppValue, app);
-                    if (instanceData.Process?.CurrentTask != null)
-                    {
-                        AddIfValueDoesNotExist(resourceContextAttributes, XacmlRequestAttribute.TaskAttribute, resourceAttributes.TaskValue, instanceData.Process.CurrentTask.ElementId);
-                    }
-                    else if (instanceData.Process?.EndEvent != null)
-                    {
-                        AddIfValueDoesNotExist(resourceContextAttributes, XacmlRequestAttribute.EndEventAttribute, null, instanceData.Process.EndEvent);
-                    }
-
-                    AddIfValueDoesNotExist(resourceContextAttributes, XacmlRequestAttribute.PartyAttribute, resourceAttributes.ResourcePartyValue, instanceData.InstanceOwner.PartyId);
-                    resourceAttributes.ResourcePartyValue = instanceData.InstanceOwner.PartyId;
-                }
-            }
-
-            await EnrichSubjectAttributes(request, resourceAttributes.ResourcePartyValue);
+            return resourceAttributeComplete;
         }
 
         /// <summary>

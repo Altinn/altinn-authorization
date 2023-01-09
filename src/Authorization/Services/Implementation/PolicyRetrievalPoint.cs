@@ -23,7 +23,6 @@ namespace Altinn.Platform.Authorization.Services.Implementation
         private readonly IMemoryCache _memoryCache;
         private readonly GeneralSettings _generalSettings;
         private readonly IResourceRegistry _resourceRegistry;
-        private readonly ILogger _logger;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="PolicyRetrievalPoint"/> class.
@@ -31,13 +30,13 @@ namespace Altinn.Platform.Authorization.Services.Implementation
         /// <param name="policyRepository">The policy Repository..</param>
         /// <param name="memoryCache">The cache handler </param>
         /// <param name="settings">The app settings</param>
-        public PolicyRetrievalPoint(IPolicyRepository policyRepository, IMemoryCache memoryCache, IOptions<GeneralSettings> settings, IResourceRegistry resourceRegistry, ILogger<PolicyRetrievalPoint> logger)
+        /// <param name="resourceRegistry">The regis</param>
+        public PolicyRetrievalPoint(IPolicyRepository policyRepository, IMemoryCache memoryCache, IOptions<GeneralSettings> settings, IResourceRegistry resourceRegistry)
         {
             _repository = policyRepository;
             _memoryCache = memoryCache;
             _generalSettings = settings.Value;
             _resourceRegistry = resourceRegistry;
-            _logger = logger;
         }
 
         /// <inheritdoc/>
