@@ -153,7 +153,7 @@ namespace Altinn.Platform.Authorization.IntegrationTests.MockServices
             return Path.Combine(unitTestFolder, "..", "..", "..", "Data", "Xacml", "3.0", "AltinnApps");
         }
 
-        private string GetAltinnResourceRegistryPath(string resourceid)
+        private static string GetAltinnResourceRegistryPath(string resourceid)
         {
             string unitTestFolder = Path.GetDirectoryName(new Uri(typeof(AltinnApps_DecisionTests).Assembly.Location).LocalPath);
             return Path.Combine(unitTestFolder, "..", "..", "..", "Data", "Xacml", "3.0", "ResourceRegistry", resourceid);
