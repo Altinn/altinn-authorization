@@ -55,7 +55,7 @@ namespace Altinn.Platform.Authorization.Services
 
             string endpointUrl = $"parties/{partyId}";
             string token = JwtTokenUtil.GetTokenFromContext(_httpContextAccessor.HttpContext, _generalSettings.RuntimeCookieName);
-            string accessToken = _accessTokenGenerator.GenerateAccessToken("platform", "events");
+            string accessToken = _accessTokenGenerator.GenerateAccessToken("platform", "authorization");
 
             HttpResponseMessage response = await _client.GetAsync(token, endpointUrl, accessToken);
             if (response.StatusCode == HttpStatusCode.OK)
@@ -79,7 +79,7 @@ namespace Altinn.Platform.Authorization.Services
             PartyLookup partyLookup = new PartyLookup() { Ssn = person, OrgNo = orgNo };
 
             string bearerToken = JwtTokenUtil.GetTokenFromContext(_httpContextAccessor.HttpContext, _generalSettings.RuntimeCookieName);
-            string accessToken = _accessTokenGenerator.GenerateAccessToken("platform", "events");
+            string accessToken = _accessTokenGenerator.GenerateAccessToken("platform", "authorization");
 
             StringContent content = new StringContent(JsonSerializer.Serialize(partyLookup));
             content.Headers.ContentType = MediaTypeHeaderValue.Parse("application/json");
