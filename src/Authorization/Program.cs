@@ -4,6 +4,7 @@ using System.Reflection;
 using System.Threading.Tasks;
 
 using Altinn.Authorization.ABAC.Interface;
+using Altinn.Common.AccessTokenClient.Services;
 using Altinn.Common.PEP.Authorization;
 using Altinn.Platform.Authorization.Clients;
 using Altinn.Platform.Authorization.Configuration;
@@ -13,8 +14,10 @@ using Altinn.Platform.Authorization.Health;
 using Altinn.Platform.Authorization.ModelBinding;
 using Altinn.Platform.Authorization.Repositories;
 using Altinn.Platform.Authorization.Repositories.Interface;
+using Altinn.Platform.Authorization.Services;
 using Altinn.Platform.Authorization.Services.Implementation;
 using Altinn.Platform.Authorization.Services.Interface;
+using Altinn.Platform.Authorization.Services.Interfaces;
 using Altinn.Platform.Telemetry;
 
 using AltinnCore.Authentication.Constants;
@@ -195,6 +198,7 @@ void ConfigureServices(IServiceCollection services, IConfiguration config)
     services.AddSingleton<IPolicyInformationPoint, PolicyInformationPoint>();
     services.AddSingleton<IPolicyAdministrationPoint, PolicyAdministrationPoint>();
     services.AddSingleton<IPolicyRepository, PolicyRepository>();
+    services.AddSingleton<IResourceRegistry, ResourceRegistryWrapper>();
     services.AddSingleton<IInstanceMetadataRepository, InstanceMetadataRepository>();
     services.AddSingleton<IDelegationMetadataRepository, DelegationMetadataRepository>();
     services.AddSingleton<IDelegationChangeEventQueue, DelegationChangeEventQueue>();
@@ -203,11 +207,16 @@ void ConfigureServices(IServiceCollection services, IConfiguration config)
     services.Configure<AzureStorageConfiguration>(config.GetSection("AzureStorageConfiguration"));
     services.Configure<AzureCosmosSettings>(config.GetSection("AzureCosmosSettings"));
     services.Configure<PostgreSQLSettings>(config.GetSection("PostgreSQLSettings"));
+    services.Configure<PlatformSettings>(config.GetSection("PlatformSettings"));
+    services.Configure<ResourceRegistrySettings>(config.GetSection("ResourceRegistrySettings"));
+    services.AddHttpClient<IRegisterService, RegisterService>();
     services.AddHttpClient<PartyClient>();
     services.AddHttpClient<RolesClient>();
     services.AddHttpClient<SBLClient>();
+    services.AddHttpClient<ResourceRegistryClient>();
     services.TryAddSingleton<IHttpContextAccessor, HttpContextAccessor>();
-
+    services.AddSingleton<IAccessTokenGenerator, AccessTokenGenerator>();
+    services.AddTransient<ISigningCredentialsResolver, SigningCredentialsResolver>();
     GeneralSettings generalSettings = config.GetSection("GeneralSettings").Get<GeneralSettings>();
     services.AddAuthentication(JwtCookieDefaults.AuthenticationScheme)
         .AddJwtCookie(JwtCookieDefaults.AuthenticationScheme, options =>

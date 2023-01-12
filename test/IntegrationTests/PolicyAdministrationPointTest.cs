@@ -31,8 +31,10 @@ namespace Altinn.Platform.Authorization.IntegrationTests
     {
         private readonly IPolicyAdministrationPoint _pap;
         private readonly IPolicyRepository _prp;
+        private readonly IResourceRegistry _resourceRegistry;
         private readonly IDelegationChangeEventQueue _eventQueue;
         private readonly Mock<ILogger<IPolicyAdministrationPoint>> _logger;
+
         private DelegationMetadataRepositoryMock _delegationMetadataRepositoryMock;
 
         public PolicyAdministrationPointTest()
@@ -47,8 +49,9 @@ namespace Altinn.Platform.Authorization.IntegrationTests
             _delegationMetadataRepositoryMock = new DelegationMetadataRepositoryMock();
             _prp = new PolicyRepositoryMock(new Mock<ILogger<PolicyRepositoryMock>>().Object);
             _eventQueue = new DelegationChangeEventQueueMock();
+            _resourceRegistry = new ResourceRegistryMock();
             _pap = new PolicyAdministrationPoint(
-                new PolicyRetrievalPoint(_prp, memoryCache, Options.Create(new GeneralSettings { PolicyCacheTimeout = 1 })),
+                new PolicyRetrievalPoint(_prp, memoryCache, Options.Create(new GeneralSettings { PolicyCacheTimeout = 1 }), _resourceRegistry),
                 _prp,
                 _delegationMetadataRepositoryMock,
                 _eventQueue,

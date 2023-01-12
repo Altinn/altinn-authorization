@@ -42,6 +42,11 @@ namespace Altinn.Platform.Authorization.Constants
             public const string AppAttribute = "urn:altinn:app";
 
             /// <summary>
+            /// Resource registry match identifer
+            /// </summary>
+            public const string ResourceRegistry = "urn:altinn:resourceregistry";
+
+            /// <summary>
             /// Instance attribute match indentifier 
             /// </summary>
             public const string InstanceAttribute = "urn:altinn:instance-id";

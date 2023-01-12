@@ -9,6 +9,7 @@ using Altinn.Platform.Authorization.Constants;
 using Altinn.Platform.Authorization.Models;
 using Altinn.Platform.Authorization.Repositories.Interface;
 using Altinn.Platform.Authorization.Services.Interface;
+using Altinn.Platform.Authorization.Services.Interfaces;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Options;
 
@@ -28,8 +29,9 @@ namespace Altinn.Platform.Authorization.Services.Implementation
         /// <param name="partiesWrapper">the party information handler</param>
         /// <param name="memoryCache">The cache handler </param>
         /// <param name="settings">The app settings</param>
-        public DelegationContextHandler(IInstanceMetadataRepository policyInformationRepository, IRoles rolesWrapper, IParties partiesWrapper, IMemoryCache memoryCache, IOptions<GeneralSettings> settings)
-            : base(policyInformationRepository, rolesWrapper, partiesWrapper, memoryCache, settings)
+        /// <param name="registerService">Register service</param>
+        public DelegationContextHandler(IInstanceMetadataRepository policyInformationRepository, IRoles rolesWrapper, IParties partiesWrapper, IMemoryCache memoryCache, IOptions<GeneralSettings> settings, IRegisterService registerService)
+            : base(policyInformationRepository, rolesWrapper, partiesWrapper, memoryCache, settings, registerService)
         {
         }
 

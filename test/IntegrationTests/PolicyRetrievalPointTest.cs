@@ -35,13 +35,14 @@ namespace Altinn.Platform.Authorization.IntegrationTests
             ServiceCollection services = new ServiceCollection();
             services.AddMemoryCache();
             ServiceProvider serviceProvider = services.BuildServiceProvider();
-
+            
             IMemoryCache memoryCache = serviceProvider.GetService<IMemoryCache>();
 
             _prp = new PolicyRetrievalPoint(
                 new PolicyRepositoryMock(new Mock<ILogger<PolicyRepositoryMock>>().Object),
                 memoryCache,
-                Options.Create(new GeneralSettings { PolicyCacheTimeout = 1 }));
+                Options.Create(new GeneralSettings { PolicyCacheTimeout = 1 }),
+                new ResourceRegistryMock());
         }
 
         /// <summary>
@@ -90,6 +91,23 @@ namespace Altinn.Platform.Authorization.IntegrationTests
 
             // Act & Assert
             await Assert.ThrowsAsync<ArgumentException>(() => _prp.GetPolicyAsync(request));
+        }
+
+        /// <summary>
+        /// Test case: Get file from storage.
+        /// Expected: GetPolicyAsync returns a file that is not null.
+        /// </summary>
+        [Fact]
+        public async Task GetPolicy_TCResourceRegistry01()
+        {
+            // Arrange
+            XacmlContextRequest request = new XacmlContextRequest(true, true, GetXacmlContextAttributesWithResourceId("apidelegation"));
+
+            // Act
+            XacmlPolicy xacmlPolicy = await _prp.GetPolicyAsync(request);
+
+            // Assert
+            Assert.NotNull(xacmlPolicy);
         }
 
         /// <summary>
@@ -171,6 +189,21 @@ namespace Altinn.Platform.Authorization.IntegrationTests
 
             xacmlContexts.Add(xacmlContext2);
 
+            return xacmlContexts;
+        }
+
+        private static List<XacmlContextAttributes> GetXacmlContextAttributesWithResourceId(string resourceId)
+        {
+            List<XacmlContextAttributes> xacmlContexts = new List<XacmlContextAttributes>();
+
+            XacmlContextAttributes xacmlContext = new XacmlContextAttributes(new Uri(XacmlConstants.MatchAttributeCategory.Resource));
+
+            XacmlAttribute xacmlAttributeOrg = new XacmlAttribute(new Uri("urn:altinn:resourceregistry"), true);
+            xacmlAttributeOrg.AttributeValues.Add(new XacmlAttributeValue(new Uri("urn:altinn:resourceregistry"), resourceId));
+            xacmlContext.Attributes.Add(xacmlAttributeOrg);
+
+            xacmlContexts.Add(xacmlContext);
+            
             return xacmlContexts;
         }
     }

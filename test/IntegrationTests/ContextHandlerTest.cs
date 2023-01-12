@@ -5,7 +5,7 @@ using Altinn.Platform.Authorization.Configuration;
 using Altinn.Platform.Authorization.IntegrationTests.MockServices;
 using Altinn.Platform.Authorization.IntegrationTests.Util;
 using Altinn.Platform.Authorization.Services.Implementation;
-
+using Altinn.Platform.Events.Tests.Mocks;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Options;
 
@@ -27,7 +27,8 @@ namespace Altinn.Platform.Authorization.IntegrationTests
                 new RolesMock(),
                 new PartiesMock(),
                 new MemoryCache(new MemoryCacheOptions()),
-                Options.Create(new GeneralSettings { RoleCacheTimeout = 5 }));
+                Options.Create(new GeneralSettings { RoleCacheTimeout = 5 }),
+                new RegisterServiceMock());
         }
 
         /// <summary>
