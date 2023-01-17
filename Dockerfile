@@ -1,4 +1,4 @@
-FROM mcr.microsoft.com/dotnet/sdk:6.0.404-alpine3.16 AS build
+FROM mcr.microsoft.com/dotnet/sdk:6.0.405-alpine3.16 AS build
 WORKDIR Authorization/
 
 COPY src/Authorization ./Authorization
@@ -7,7 +7,7 @@ WORKDIR Authorization/
 RUN dotnet build Altinn.Platform.Authorization.csproj -c Release -o /app_output
 RUN dotnet publish Altinn.Platform.Authorization.csproj -c Release -o /app_output
 
-FROM mcr.microsoft.com/dotnet/aspnet:6.0.12-alpine3.16 AS final
+FROM mcr.microsoft.com/dotnet/aspnet:6.0.13-alpine3.16 AS final
 EXPOSE 5030
 WORKDIR /app
 COPY --from=build /app_output .
