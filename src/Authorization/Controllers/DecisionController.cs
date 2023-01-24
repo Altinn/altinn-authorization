@@ -326,8 +326,7 @@ namespace Altinn.Platform.Authorization.Controllers
                .SetPriority(CacheItemPriority.High)
                .SetAbsoluteExpiration(new TimeSpan(0, 0, 5, 0));
 
-                // Disable caching unil we figure ou how to handle K6 tests
-                // _memoryCache.Set(cacheKey, delegationChanges, cacheEntryOptions);
+                _memoryCache.Set(cacheKey, delegationChanges, cacheEntryOptions);
             }
 
             return delegationChanges;
