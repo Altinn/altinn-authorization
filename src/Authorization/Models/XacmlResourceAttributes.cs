@@ -34,5 +34,15 @@ namespace Altinn.Platform.Authorization.Models
         /// Gets or sets the value for app resource. 
         /// </summary>
         public string AppResourceValue { get; set; }
+
+        /// <summary>
+        /// Gets or sets the resource registry Id
+        /// </summary>
+        public string ResourceRegistryId { get; set; }
+
+        /// <summary>
+        /// Gets or sets the OrganizationNumber for the org owning the resource
+        /// </summary>
+        public string OrganizationNumber { get; set; }
     }
 }
