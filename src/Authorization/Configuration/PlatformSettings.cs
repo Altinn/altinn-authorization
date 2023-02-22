@@ -19,6 +19,11 @@ namespace Altinn.Platform.Authorization.Configuration
         public string ApiProfileEndpoint { get; set; }
 
         /// <summary>
+        /// Gets or sets the url for the Resource Registry API endpoint
+        /// </summary>
+        public string ApiResourceRegistryEndpoint { get; set; }
+
+        /// <summary>
         /// Gets or sets the apps domain used to match events source
         /// </summary>
         public string AppsDomain { get; set; }

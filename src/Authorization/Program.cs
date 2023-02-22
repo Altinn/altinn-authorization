@@ -208,7 +208,6 @@ void ConfigureServices(IServiceCollection services, IConfiguration config)
     services.Configure<AzureCosmosSettings>(config.GetSection("AzureCosmosSettings"));
     services.Configure<PostgreSQLSettings>(config.GetSection("PostgreSQLSettings"));
     services.Configure<PlatformSettings>(config.GetSection("PlatformSettings"));
-    services.Configure<ResourceRegistrySettings>(config.GetSection("ResourceRegistrySettings"));
     services.AddHttpClient<IRegisterService, RegisterService>();
     services.AddHttpClient<PartyClient>();
     services.AddHttpClient<RolesClient>();
