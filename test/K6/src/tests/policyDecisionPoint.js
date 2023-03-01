@@ -176,7 +176,7 @@ export function CleanupBeforeTests() {
   }
   
   // Act
-  var success = helper.checkPDPDecision(offeredByPartyId, coveredByUserId, 'Task_1', 'read', 'Permit', showResults, appOwner, appName, "directDelegationFromOrgToOrg");
+  var success = helper.checkPDPDecision(offeredByPartyId, coveredByUserId, 'Task_1', 'read', 'Permit', showResults, appOwner, appName, "directDelegationFromOrgToUser");
   
   // Assert
   addErrorCount(success);
