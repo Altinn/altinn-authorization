@@ -176,7 +176,7 @@ export function CleanupBeforeTests() {
   }
   
   // Act
-  var success = helper.checkPDPDecision(offeredByPartyId, coveredByUserId, 'Task_1', 'read', 'Permit', showResults, appOwner, appName);
+  var success = helper.checkPDPDecision(offeredByPartyId, coveredByUserId, 'Task_1', 'read', 'Permit', showResults, appOwner, appName, "directDelegationFromOrgToOrg");
   
   // Assert
   addErrorCount(success);
@@ -203,7 +203,7 @@ export function directDelegationFromOrgToOrg() {
   }
 
   // Act
-  var success = helper.checkPDPDecision(offeredByPartyId, DAGLUserIdForCoveredBy, 'Task_1', 'read', 'Permit', showResults, appOwner, appName);
+  var success = helper.checkPDPDecision(offeredByPartyId, DAGLUserIdForCoveredBy, 'Task_1', 'read', 'Permit', showResults, appOwner, appName, "directDelegationFromOrgToOrg");
 
   // Assert
   addErrorCount(success);
@@ -230,7 +230,7 @@ export function directDelegationFromMainUnitToUser() {
   }
 
   // Act
-  var success = helper.checkPDPDecision(subUnitPartyId, coveredByUserId, 'Task_1', 'read', 'Permit', showResults, appOwner, appName);
+  var success = helper.checkPDPDecision(subUnitPartyId, coveredByUserId, 'Task_1', 'read', 'Permit', showResults, appOwner, appName, "directDelegationFromMainUnitToUser");
 
   // Assert
   addErrorCount(success);
@@ -258,7 +258,7 @@ export function directDelegationFromMainUnitToOrg() {
   }
 
   // Act
-  var success = helper.checkPDPDecision(subUnitPartyId, DAGLUserIdForCoveredBy, 'Task_1', 'read', 'Permit', showResults, appOwner, appName);
+  var success = helper.checkPDPDecision(subUnitPartyId, DAGLUserIdForCoveredBy, 'Task_1', 'read', 'Permit', showResults, appOwner, appName, "directDelegationFromMainUnitToOrg");
 
   // Assert
   addErrorCount(success);
@@ -286,7 +286,7 @@ export function directDelegationFromMainUnitToOrgInheritedByDAGLViaKeyRole() {
   }
 
   // Act
-  var success = helper.checkPDPDecision(subUnitPartyId, DAGLUserIdForCoveredBy, 'Task_1', 'read', 'Permit', showResults, appOwner, appName);
+  var success = helper.checkPDPDecision(subUnitPartyId, DAGLUserIdForCoveredBy, 'Task_1', 'read', 'Permit', showResults, appOwner, appName, "directDelegationFromMainUnitToOrgInheritedByDAGLViaKeyRole");
   
   // Assert
   addErrorCount(success);
@@ -314,7 +314,7 @@ export function delegationToOrgIsInheritedByECUserViaKeyrole() {
   }
   
   // Act
-  var success = helper.checkPDPDecision(offeredByPartyId, ecUserIdForCoveredBy, 'Task_1', 'read', 'Permit', showResults, appOwner, appName);
+  var success = helper.checkPDPDecision(offeredByPartyId, ecUserIdForCoveredBy, 'Task_1', 'read', 'Permit', showResults, appOwner, appName,"delegationToOrgIsInheritedByECUserViaKeyrole");
   // Assert
   addErrorCount(success);
   if(showResults == 1) {console.log('delegationToOrgIsInheritedByECUserViaKeyrole:' + success)}

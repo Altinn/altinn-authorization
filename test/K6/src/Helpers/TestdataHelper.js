@@ -71,7 +71,7 @@ let pdpInputJson = open('../data/pdpinput.json');
  * @param {*} actionName 'read', 'write', 'sign'
  * @param {*} expectedDecision 'Permit', 'NotApplicable'
  */
-export function checkPDPDecision(offeredByPartyId, coveredBy, taskName, actionName, expectedDecision, showResults, appOwner, appName) {
+export function checkPDPDecision(offeredByPartyId, coveredBy, taskName, actionName, expectedDecision, showResults, appOwner, appName, testTitle) {
   var jsonPermitData = {
     AccessSubject: ['urn:altinn:userid'],
     Action: [actionName],
@@ -81,8 +81,8 @@ export function checkPDPDecision(offeredByPartyId, coveredBy, taskName, actionNa
 
   // Assert
   var success = check(res, {
-    'Get PDP Decision for delegated rule Status is 200': (r) => r.status === 200,
-    'Get PDP Decision for delegated rule - decision is permit': (r) => r.json('response.0.decision') === expectedDecision,
+    [`${testTitle} - Get PDP Decision for delegated rule Status is 200`]: (r) => r.status === 200,
+    [`${testTitle} - Get PDP Decision for delegated rule - decision is permit`]: (r) => r.json('response.0.decision') === expectedDecision,
   });
 
   if(!success && showResults) {
