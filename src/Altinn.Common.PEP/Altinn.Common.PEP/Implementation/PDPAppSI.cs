@@ -6,6 +6,7 @@ using Altinn.Authorization.ABAC.Xacml.JsonProfile;
 using Altinn.Common.PEP.Clients;
 using Altinn.Common.PEP.Helpers;
 using Altinn.Common.PEP.Interfaces;
+using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 
@@ -18,22 +19,30 @@ namespace Altinn.Common.PEP.Implementation
     {
         private readonly ILogger _logger;
         private readonly AuthorizationApiClient _authorizationApiClient;
+        private readonly IMemoryCache _memoryCache;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="PDPAppSI"/> class
         /// </summary>
         /// <param name="logger">the handler for logger service</param>
         /// <param name="authorizationApiClient">A typed Http client accessor</param>
-        public PDPAppSI(ILogger<PDPAppSI> logger, AuthorizationApiClient authorizationApiClient)
+        /// <param name="memoryCache">Memory cache for decision response</param>
+        public PDPAppSI(ILogger<PDPAppSI> logger, AuthorizationApiClient authorizationApiClient, IMemoryCache memoryCache)
         {
             _logger = logger;
             _authorizationApiClient = authorizationApiClient;
+            _memoryCache = memoryCache;
         }
 
         /// <inheritdoc/>
         public async Task<XacmlJsonResponse> GetDecisionForRequest(XacmlJsonRequestRoot xacmlJsonRequest)
         {
             XacmlJsonResponse xacmlJsonResponse = null;
+            string uniqueCacheKey = System.Text.Json.JsonSerializer.Serialize(xacmlJsonRequest);
+            if (_memoryCache.TryGetValue(uniqueCacheKey, out xacmlJsonResponse))
+            {
+                return xacmlJsonResponse;
+            }
 
             try
             {
@@ -42,6 +51,14 @@ namespace Altinn.Common.PEP.Implementation
             catch (Exception e)
             {
                 _logger.LogError($"Unable to retrieve Xacml Json response. An error occured {e.Message}");
+            }
+
+            if (xacmlJsonResponse != null)
+            {
+                _memoryCache.Set(uniqueCacheKey, xacmlJsonResponse, new MemoryCacheEntryOptions()
+                {
+                    AbsoluteExpirationRelativeToNow = TimeSpan.FromSeconds(60*5)
+                });
             }
 
             return xacmlJsonResponse;
