@@ -48,11 +48,12 @@ public class PolicyContextHandler : IPolicyContextHandler
     {
         //// TODO! Check if this can benefit from caching
         return (
-            from rule in policy.Rules
+            from rule in policy.Rules.TakeWhile(x => x.Target != null)
             from anyOf in rule.Target.AnyOf
             from allOf in anyOf.AllOf
             from match in allOf.Matches
-            where match.AttributeDesignator.Category.OriginalString == "urn:oasis:names:tc:xacml:1.0:subject-category:access-subject"
+            where match.AttributeDesignator.Category.OriginalString ==
+                  "urn:oasis:names:tc:xacml:1.0:subject-category:access-subject"
             select match.AttributeDesignator.AttributeId).ToList();
     }
 }
