@@ -35,6 +35,7 @@ namespace Altinn.Platform.Authorization.Controllers
         private readonly PolicyDecisionPoint _pdp;
         private readonly IPolicyRetrievalPoint _prp;
         private readonly IContextHandler _contextHandler;
+        private readonly IPolicyContextHandler policyContextHandler;
         private readonly IDelegationContextHandler _delegationContextHandler;
         private readonly IDelegationMetadataRepository _delegationRepository;
         private readonly ILogger _logger;
@@ -44,16 +45,18 @@ namespace Altinn.Platform.Authorization.Controllers
         /// Initializes a new instance of the <see cref="DecisionController"/> class.
         /// </summary>
         /// <param name="contextHandler">The Context handler</param>
+        /// <param name="policyContextHandler">The Policy Context handler</param>
         /// <param name="delegationContextHandler">The delegation context handler</param>
         /// <param name="policyRetrievalPoint">The policy Retrieval point</param>
         /// <param name="delegationRepository">The delegation repository</param>
         /// <param name="logger">the logger.</param>
         /// <param name="memoryCache">memory cache</param>
-        public DecisionController(IContextHandler contextHandler, IDelegationContextHandler delegationContextHandler, IPolicyRetrievalPoint policyRetrievalPoint, IDelegationMetadataRepository delegationRepository, ILogger<DecisionController> logger, IMemoryCache memoryCache)
+        public DecisionController(IContextHandler contextHandler, IPolicyContextHandler policyContextHandler, IDelegationContextHandler delegationContextHandler, IPolicyRetrievalPoint policyRetrievalPoint, IDelegationMetadataRepository delegationRepository, ILogger<DecisionController> logger, IMemoryCache memoryCache)
         {
             _pdp = new PolicyDecisionPoint();
             _prp = policyRetrievalPoint;
             _contextHandler = contextHandler;
+            this.policyContextHandler = policyContextHandler;
             _delegationContextHandler = delegationContextHandler;
             _delegationRepository = delegationRepository;
             _logger = logger;
@@ -211,6 +214,9 @@ namespace Altinn.Platform.Authorization.Controllers
 
             ////_logger.LogInformation($"// DecisionController // Authorize // Roles // Enriched request: {JsonConvert.SerializeObject(decisionRequest)}.");
             XacmlPolicy policy = await this._prp.GetPolicyAsync(decisionRequest);
+
+            decisionRequest = await this.policyContextHandler.Enrich(decisionRequest, policy);
+            ////_logger.LogInformation($"// DecisionController // Authorize // Roles // Dynamically enriched request: {JsonConvert.SerializeObject(decisionRequest)}.");
 
             XacmlContextResponse rolesContextResponse = _pdp.Authorize(decisionRequest, policy);
             ////_logger.LogInformation($"// DecisionController // Authorize // Roles // XACML ContextResponse: {JsonConvert.SerializeObject(rolesContextResponse)}.");

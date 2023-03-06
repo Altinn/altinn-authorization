@@ -198,6 +198,7 @@ void ConfigureServices(IServiceCollection services, IConfiguration config)
     services.AddSingleton<IPolicyInformationPoint, PolicyInformationPoint>();
     services.AddSingleton<IPolicyAdministrationPoint, PolicyAdministrationPoint>();
     services.AddSingleton<IPolicyRepository, PolicyRepository>();
+    services.AddSingleton<IPolicyContextHandler, PolicyContextHandler>();
     services.AddSingleton<IResourceRegistry, ResourceRegistryWrapper>();
     services.AddSingleton<IInstanceMetadataRepository, InstanceMetadataRepository>();
     services.AddSingleton<IDelegationMetadataRepository, DelegationMetadataRepository>();
