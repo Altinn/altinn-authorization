@@ -138,6 +138,34 @@ namespace Altinn.Platform.Authorization.Services.Implementation
             return result;
         }
 
+        /// <summary>
+        /// Operation for triggering a replay of delegationchange events pushing them to the delegationevents queue for syncronization with Altinn 2.0
+        /// </summary>
+        /// <param name="startId">The first id in the range to replay</param>
+        /// <param name="endId">The last id in the range to replay. If left to 0 all events after the startId will be replayed</param>
+        /// <returns>bool</returns>
+        public async Task<bool> ReplayDelegationChangeEvents(int startId, int endId)
+        {
+            int currentId = 0;
+            try
+            {
+                List<DelegationChange> delegationChanges = await _delegationRepository.GetDelegationChangesByIdRange(startId, endId);
+
+                foreach (DelegationChange change in delegationChanges)
+                {
+                    currentId = change.DelegationChangeId;
+                    await _eventQueue.Push(change);
+                }
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(new EventId(delegationChangeEventQueueErrorId, "DelegationChangeEventQueue.Push.Error"), ex, "ReplayDelegationChangeEvents could not push DelegationChangeEvent to DelegationChangeEventQueue. StartId: {startId}, EndId: {endId}, CurrentId: {currentId}", startId, endId, currentId);
+                return false;
+            }
+        }
+
         private async Task<bool> WriteDelegationPolicyInternal(string policyPath, List<Rule> rules)
         {
             if (!DelegationHelper.TryGetDelegationParamsFromRule(rules.First(), out string org, out string app, out int offeredByPartyId, out int? coveredByPartyId, out int? coveredByUserId, out int delegatedByUserId))

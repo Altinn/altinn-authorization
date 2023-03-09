@@ -155,5 +155,10 @@ namespace Altinn.Platform.Authorization.IntegrationTests.MockServices
 
             return Task.FromResult(result);
         }
+
+        public Task<List<DelegationChange>> GetDelegationChangesByIdRange(int startId, int endId)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
