@@ -2,7 +2,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
 using Altinn.Platform.Authorization.Models;
-using Microsoft.AspNetCore.Mvc;
 
 namespace Altinn.Platform.Authorization.Services.Interface
 {
@@ -47,6 +46,6 @@ namespace Altinn.Platform.Authorization.Services.Interface
         /// <param name="startId">The first id in the range to replay</param>
         /// <param name="endId">The last id in the range to replay. If left/set to 0 all events found after the startId will be replayed</param>
         /// <returns>bool</returns>
-        Task<bool> ReplayDelegationChangeEvents([FromQuery] int startId, [FromQuery] int endId);
+        Task<bool> ReplayDelegationChangeEvents(int startId, int endId);
     }
 }
