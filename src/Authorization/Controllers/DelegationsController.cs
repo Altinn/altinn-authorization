@@ -230,7 +230,7 @@ namespace Altinn.Platform.Authorization.Controllers
         [HttpPost]
         [Authorize(Policy = AuthzConstants.ALTINNII_AUTHORIZATION)]
         [Route("authorization/api/v1/[controller]/delegationchangeevents/replay")]
-        public async Task<ActionResult> Post([FromQuery] int startId, [FromQuery] int endId)
+        public async Task<ActionResult> ReplayDelegationEvents([FromQuery] int startId, [FromQuery] int endId)
         {
             if (startId <= 0)
             {
