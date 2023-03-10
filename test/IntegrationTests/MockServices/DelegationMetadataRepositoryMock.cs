@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Text.Json;
 using System.Threading.Tasks;
 using Altinn.Platform.Authorization.IntegrationTests.Data;
 using Altinn.Platform.Authorization.Models;
@@ -158,7 +160,20 @@ namespace Altinn.Platform.Authorization.IntegrationTests.MockServices
 
         public Task<List<DelegationChange>> GetDelegationChangesByIdRange(int startId, int endId)
         {
-            throw new NotImplementedException();
+            List<DelegationChange> allTestDataDelegationChanges = GetTestDataFromFile("delegationchanges_replay");
+            if (endId == 0)
+            {
+                return Task.FromResult(allTestDataDelegationChanges.Where(dc => dc.DelegationChangeId >= startId).ToList());
+            }
+
+            return Task.FromResult(allTestDataDelegationChanges.Where(dc => dc.DelegationChangeId >= startId && dc.DelegationChangeId <= endId).ToList());
+        }
+
+        private static List<DelegationChange> GetTestDataFromFile(string fileName)
+        {
+            string responsePath = $"Data/Json/DelegationChanges/{fileName}.json";
+            string content = File.ReadAllText(responsePath);
+            return (List<DelegationChange>)JsonSerializer.Deserialize(content, typeof(List<DelegationChange>), new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
         }
     }
 }

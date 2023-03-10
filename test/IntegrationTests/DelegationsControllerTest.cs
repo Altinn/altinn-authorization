@@ -1112,6 +1112,132 @@ namespace Altinn.Platform.Authorization.IntegrationTests
             AssertionUtil.AssertCollections(expectedRules, actualRules, AssertionUtil.AssertRuleEqual);
         }
 
+        /// <summary>
+        /// Test case: ReplayDelegationEvents from startId=100000 to endId=100005
+        /// Expected: ReplayDelegationEvents returns 200 OK and all expected events have been pushed to the queue 
+        /// </summary>
+        [Fact]
+        public async Task ReplayDelegationEvents_Success()
+        {
+            // Arrange
+            int startId = 100000;
+            int endId = 100005;
+
+            DelegationChangeEventQueueMock queueMock = new DelegationChangeEventQueueMock();
+            HttpClient client = GetTestClient(queueMock);
+            client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", PrincipalUtil.GetAccessToken("sbl.authorization"));
+
+            // Act
+            HttpResponseMessage response = await client.PostAsync($"authorization/api/v1/delegations/delegationchangeevents/replay?startid={startId}&endId={endId}", null);
+
+            // Assert
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+            Assert.Equal(6, queueMock.DelegationChangeEvents.Count);
+        }
+
+        /// <summary>
+        /// Test case: ReplayDelegationEvents from startId=100000 to endId=0 meaning all events from the startId is replayed
+        /// Expected: ReplayDelegationEvents returns 200 OK and all expected events have been pushed to the queue
+        /// </summary>
+        [Fact]
+        public async Task ReplayDelegationEvents_EndId0_Success()
+        {
+            // Arrange
+            int startId = 100000;
+            int endId = 0;
+
+            DelegationChangeEventQueueMock queueMock = new DelegationChangeEventQueueMock();
+            HttpClient client = GetTestClient(queueMock);
+            client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", PrincipalUtil.GetAccessToken("sbl.authorization"));
+
+            // Act
+            HttpResponseMessage response = await client.PostAsync($"authorization/api/v1/delegations/delegationchangeevents/replay?startid={startId}&endId={endId}", null);
+
+            // Assert
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+            Assert.Equal(17, queueMock.DelegationChangeEvents.Count);
+        }
+
+        /// <summary>
+        /// Test case: ReplayDelegationEvents from startId=100100 to endId=0 but no changes exists in this range
+        /// Expected: ReplayDelegationEvents returns 422 Unprocessable
+        /// </summary>
+        [Fact]
+        public async Task ReplayDelegationEvents_InvalidRange_Unprocessable()
+        {
+            // Arrange
+            int startId = 100100;
+            int endId = 0;
+
+            DelegationChangeEventQueueMock queueMock = new DelegationChangeEventQueueMock();
+            HttpClient client = GetTestClient(queueMock);
+            client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", PrincipalUtil.GetAccessToken("sbl.authorization"));
+
+            // Act
+            HttpResponseMessage response = await client.PostAsync($"authorization/api/v1/delegations/delegationchangeevents/replay?startid={startId}&endId={endId}", null);
+
+            // Assert
+            Assert.Equal(HttpStatusCode.UnprocessableEntity, response.StatusCode);
+            Assert.Empty(queueMock.DelegationChangeEvents);
+        }
+
+        /// <summary>
+        /// Test case: ReplayDelegationEvents with 
+        /// Expected: ReplayDelegationEvents returns 200 OK and all expected events have been pushed to the queue
+        /// </summary>
+        [Fact]
+        public async Task ReplayDelegationEvents_InvalidStartId_ProblemDetails()
+        {
+            // Arrange
+            int startId = 0;
+            int endId = 0;
+
+            DelegationChangeEventQueueMock queueMock = new DelegationChangeEventQueueMock();
+            HttpClient client = GetTestClient(queueMock);
+            client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", PrincipalUtil.GetAccessToken("sbl.authorization"));
+
+            // Act
+            HttpResponseMessage response = await client.PostAsync($"authorization/api/v1/delegations/delegationchangeevents/replay?startid={startId}&endId={endId}", null);
+
+            // Assert
+            Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+
+            ValidationProblemDetails validationProblem = JsonConvert.DeserializeObject<ValidationProblemDetails>(await response.Content.ReadAsStringAsync());
+            Assert.True(validationProblem.Errors.TryGetValue("startId", out string[] errorMsg));
+            Assert.Equal($"Must specify a valid starting delegation change id for replay. Invalid value: {startId}", errorMsg[0]);
+        }
+
+        /// <summary>
+        /// Test case: ReplayDelegationEvents from startId=100000 to endId=0 meaning all events from the startId is replayed
+        /// Expected: ReplayDelegationEvents returns 200 OK and all expected events have been pushed to the queue
+        /// </summary>
+        [Fact]
+        public async Task ReplayDelegationEvents_EndIdLessThenStartId_ProblemDetails()
+        {
+            // Arrange
+            int startId = 100010;
+            int endId = 100005;
+
+            DelegationChangeEventQueueMock queueMock = new DelegationChangeEventQueueMock();
+            HttpClient client = GetTestClient(queueMock);
+            client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", PrincipalUtil.GetAccessToken("sbl.authorization"));
+
+            // Act
+            HttpResponseMessage response = await client.PostAsync($"authorization/api/v1/delegations/delegationchangeevents/replay?startid={startId}&endId={endId}", null);
+
+            // Assert
+            Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+
+            ValidationProblemDetails validationProblem = JsonConvert.DeserializeObject<ValidationProblemDetails>(await response.Content.ReadAsStringAsync());
+            Assert.True(validationProblem.Errors.TryGetValue("endId", out string[] errorMsg));
+            Assert.Equal($"The endId cannot be smaller than the startId. startId: {startId}, endId: {endId}", errorMsg[0]);
+        }
+
         private static List<Rule> GetExpectedRulesForUser()
         {
             List<Rule> list = new List<Rule>();
@@ -1127,8 +1253,9 @@ namespace Altinn.Platform.Authorization.IntegrationTests
             return list;
         }
 
-        private HttpClient GetTestClient()
+        private HttpClient GetTestClient(DelegationChangeEventQueueMock queueMock = null)
         {
+            queueMock = queueMock ?? new DelegationChangeEventQueueMock();
             HttpClient client = _factory.WithWebHostBuilder(builder =>
             {
                 builder.ConfigureTestServices(services =>
@@ -1138,7 +1265,7 @@ namespace Altinn.Platform.Authorization.IntegrationTests
                     services.AddSingleton<IDelegationMetadataRepository, DelegationMetadataRepositoryMock>();
                     services.AddSingleton<IRoles, RolesMock>();
                     services.AddSingleton<IPolicyRepository, PolicyRepositoryMock>();
-                    services.AddSingleton<IDelegationChangeEventQueue, DelegationChangeEventQueueMock>();
+                    services.AddSingleton<IDelegationChangeEventQueue>(queueMock);
                     services.AddSingleton<IPostConfigureOptions<JwtCookieOptions>, JwtCookiePostConfigureOptionsStub>();
                 });
             }).CreateClient(new WebApplicationFactoryClientOptions { AllowAutoRedirect = false });

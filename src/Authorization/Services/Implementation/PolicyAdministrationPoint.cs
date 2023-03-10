@@ -151,6 +151,11 @@ namespace Altinn.Platform.Authorization.Services.Implementation
             {
                 List<DelegationChange> delegationChanges = await _delegationRepository.GetDelegationChangesByIdRange(startId, endId);
 
+                if (!delegationChanges.Any())
+                {
+                    return false;
+                }
+
                 foreach (DelegationChange change in delegationChanges)
                 {
                     currentId = change.DelegationChangeId;

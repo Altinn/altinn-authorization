@@ -67,6 +67,7 @@
     <None Remove="Data\blobs\input\error\delegationeventfail\policy.xml" />
     <None Remove="Data\blobs\input\skd\taxreport\1000\u20001337\delegationpolicy.xml" />
     <None Remove="Data\Json\AddRules\DelegationEventError.json" />
+    <None Remove="Data\Json\DelegationChanges\delegationchanges_replay.json" />
     <None Remove="Data\Json\GetResourcePolicies\Org2App1Request.json" />
     <None Remove="Data\Json\GetResourcePolicies\Org2App2Request.json" />
     <None Remove="Data\Register\500000.json" />
