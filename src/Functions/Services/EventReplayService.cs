@@ -1,5 +1,4 @@
 using System;
-using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Altinn.Platform.Authorization.Functions.Clients.Interfaces;
@@ -20,7 +19,7 @@ public class EventReplayService : IEventReplayService
     /// </summary>
     /// <param name="logger">The logger.</param>
     /// <param name="authorizationClient">The authorization client.</param>
-    public EventReplayService(ILogger<EventPusherService> logger, IAuthorizationClient authorizationClient)
+    public EventReplayService(ILogger<EventReplayService> logger, IAuthorizationClient authorizationClient)
     {
         _logger = logger;
         _authorizationClient = authorizationClient;
@@ -35,20 +34,18 @@ public class EventReplayService : IEventReplayService
     {
         try
         {
-            if (startId <= 0)
-            {
-                throw new ArgumentException($"Must specify a valid starting delegation change id for replay. Invalid value: {startId}");
-            }
-
-            if (endId != 0 && endId < startId)
-            {
-                throw new ArgumentException($"The endId cannot be smaller than the startId. startId: {startId}, endId: {endId}");
-            }
-
             HttpResponseMessage response = await _authorizationClient.PostDelegationEventsReplayAsync(startId, endId);
 
             if (!response.IsSuccessStatusCode)
             {
+                _logger.LogError(
+                    "Authorization returned non-success. resultCode={resultCode} reasonPhrase={reasonPhrase} resultBody={resultBody} startId={startId} endId={endId}",
+                    response.StatusCode,
+                    response.ReasonPhrase,
+                    await response.Content.ReadAsStringAsync(),
+                    startId,
+                    endId);
+
                 throw new AuthorizationRequestFailedException($"Authorization returned non-success. resultCode={response.StatusCode} reasonPhrase={response.ReasonPhrase} resultBody={await response.Content.ReadAsStringAsync()} startId={startId} endId={endId}");
             }
 
@@ -60,15 +57,8 @@ public class EventReplayService : IEventReplayService
                     endId);
             }
         }
-        catch (AuthorizationRequestFailedException ex)
+        catch (AuthorizationRequestFailedException)
         {
-            _logger.LogError(
-                "Exception thrown while attempting to post replay of delegation events to Authorization for the range startId={startId} endId={endId}. exception={exception} message={message}",
-                startId,
-                endId,
-                ex.GetType().Name,
-                ex.Message);
-
             throw;
         }
         catch (Exception ex)
