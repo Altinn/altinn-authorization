@@ -1,3 +1,4 @@
+using System;
 using System.Threading.Tasks;
 using Altinn.Platform.Authorization.Functions.Models;
 using Altinn.Platform.Authorization.Functions.Services.Interfaces;
@@ -29,21 +30,21 @@ public class DelegationEventsReplay
     /// Function endpoint for replay of delegation events
     /// </summary>
     [FunctionName(nameof(DelegationEventsReplay))]
-    public async Task RunAsync([HttpTrigger(AuthorizationLevel.Function, "post", Route = null)] HttpRequest req, ILogger log)
+    public async Task RunAsync([HttpTrigger(AuthorizationLevel.Function, "post", Route = null)] HttpRequest req)
     {
-        int startId = 0;
+        int startId;
         int endId = 0;
         string startIdParam = req.Query["startId"];
         string endIdParam = req.Query["endId"];
 
         if (startIdParam == null || !int.TryParse(startIdParam, out startId))
         {
-            new BadRequestObjectResult("Must specify a valid integer for 'startId' query param for the delegation change id range to replay");
+            throw new ArgumentException("Must specify a valid integer for 'startId' query param for the delegation change id range to replay");
         }
 
         if (endIdParam != null && !int.TryParse(endIdParam, out endId))
         {
-            new BadRequestObjectResult("'endId' query param is not a valid integer");
+            throw new ArgumentException("'endId' query param is not a valid integer");
         }
 
         await _eventReplayService.ReplayEvents(startId, endId);

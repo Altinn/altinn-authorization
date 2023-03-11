@@ -49,15 +49,7 @@ public class EventReplayService : IEventReplayService
 
             if (!response.IsSuccessStatusCode)
             {
-                _logger.LogWarning(
-                    "Authorization returned non-success. resultCode={resultCode} reasonPhrase={reasonPhrase} resultBody={resultBody} startId={startId} endId={endId}",
-                    response.StatusCode,
-                    response.ReasonPhrase,
-                    await response.Content.ReadAsStringAsync(),
-                    startId,
-                    endId);
-
-                throw new AuthorizationRequestFailedException();
+                throw new AuthorizationRequestFailedException($"Authorization returned non-success. resultCode={response.StatusCode} reasonPhrase={response.ReasonPhrase} resultBody={await response.Content.ReadAsStringAsync()} startId={startId} endId={endId}");
             }
 
             if (_logger.IsEnabled(LogLevel.Debug))
@@ -68,8 +60,15 @@ public class EventReplayService : IEventReplayService
                     endId);
             }
         }
-        catch (AuthorizationRequestFailedException)
+        catch (AuthorizationRequestFailedException ex)
         {
+            _logger.LogError(
+                "Exception thrown while attempting to post replay of delegation events to Authorization for the range startId={startId} endId={endId}. exception={exception} message={message}",
+                startId,
+                endId,
+                ex.GetType().Name,
+                ex.Message);
+
             throw;
         }
         catch (Exception ex)
