@@ -1113,6 +1113,27 @@ namespace Altinn.Platform.Authorization.IntegrationTests
         }
 
         /// <summary>
+        /// Test case: ReplayDelegationEvents from startId=100000 to endId=100005, without a token for authorized access
+        /// Expected: ReplayDelegationEvents returns 401 Unauthorized
+        /// </summary>
+        [Fact]
+        public async Task ReplayDelegationEvents_NoToken_Unauthorized()
+        {
+            // Arrange
+            int startId = 100000;
+            int endId = 100005;
+
+            HttpClient client = GetTestClient();
+            client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+
+            // Act
+            HttpResponseMessage response = await client.PostAsync($"authorization/api/v1/delegations/delegationchangeevents/replay?startid={startId}&endId={endId}", null);
+
+            // Assert
+            Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
+        }
+
+        /// <summary>
         /// Test case: ReplayDelegationEvents from startId=100000 to endId=100005
         /// Expected: ReplayDelegationEvents returns 200 OK and all expected events have been pushed to the queue 
         /// </summary>
@@ -1126,7 +1147,7 @@ namespace Altinn.Platform.Authorization.IntegrationTests
             DelegationChangeEventQueueMock queueMock = new DelegationChangeEventQueueMock();
             HttpClient client = GetTestClient(queueMock);
             client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", PrincipalUtil.GetAccessToken("sbl.authorization"));
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", PrincipalUtil.GetAccessToken("platform.authorization"));
 
             // Act
             HttpResponseMessage response = await client.PostAsync($"authorization/api/v1/delegations/delegationchangeevents/replay?startid={startId}&endId={endId}", null);
@@ -1150,7 +1171,7 @@ namespace Altinn.Platform.Authorization.IntegrationTests
             DelegationChangeEventQueueMock queueMock = new DelegationChangeEventQueueMock();
             HttpClient client = GetTestClient(queueMock);
             client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", PrincipalUtil.GetAccessToken("sbl.authorization"));
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", PrincipalUtil.GetAccessToken("platform.authorization"));
 
             // Act
             HttpResponseMessage response = await client.PostAsync($"authorization/api/v1/delegations/delegationchangeevents/replay?startid={startId}&endId={endId}", null);
@@ -1174,7 +1195,7 @@ namespace Altinn.Platform.Authorization.IntegrationTests
             DelegationChangeEventQueueMock queueMock = new DelegationChangeEventQueueMock();
             HttpClient client = GetTestClient(queueMock);
             client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", PrincipalUtil.GetAccessToken("sbl.authorization"));
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", PrincipalUtil.GetAccessToken("platform.authorization"));
 
             // Act
             HttpResponseMessage response = await client.PostAsync($"authorization/api/v1/delegations/delegationchangeevents/replay?startid={startId}&endId={endId}", null);
@@ -1198,7 +1219,7 @@ namespace Altinn.Platform.Authorization.IntegrationTests
             DelegationChangeEventQueueMock queueMock = new DelegationChangeEventQueueMock();
             HttpClient client = GetTestClient(queueMock);
             client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", PrincipalUtil.GetAccessToken("sbl.authorization"));
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", PrincipalUtil.GetAccessToken("platform.authorization"));
 
             // Act
             HttpResponseMessage response = await client.PostAsync($"authorization/api/v1/delegations/delegationchangeevents/replay?startid={startId}&endId={endId}", null);
@@ -1225,7 +1246,7 @@ namespace Altinn.Platform.Authorization.IntegrationTests
             DelegationChangeEventQueueMock queueMock = new DelegationChangeEventQueueMock();
             HttpClient client = GetTestClient(queueMock);
             client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", PrincipalUtil.GetAccessToken("sbl.authorization"));
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", PrincipalUtil.GetAccessToken("platform.authorization"));
 
             // Act
             HttpResponseMessage response = await client.PostAsync($"authorization/api/v1/delegations/delegationchangeevents/replay?startid={startId}&endId={endId}", null);
