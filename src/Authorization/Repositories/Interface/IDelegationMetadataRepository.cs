@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using System.IO;
 using System.Threading.Tasks;
 using Altinn.Platform.Authorization.Models;
 
@@ -43,5 +42,13 @@ namespace Altinn.Platform.Authorization.Repositories.Interface
         /// <param name="coveredByPartyIds">The list of party id of the entity having received the delegated policy, if the entity is an organization</param>
         /// <param name="coveredByUserIds">The list of user id of the entity having received the delegated policy, if the entity is a user</param>
         Task<List<DelegationChange>> GetAllCurrentDelegationChanges(List<int> offeredByPartyIds, List<string> altinnAppIds = null, List<int> coveredByPartyIds = null, List<int> coveredByUserIds = null);
+
+        /// <summary>
+        /// Operation for getting delegationchange events by delegation change id range
+        /// </summary>
+        /// <param name="startId">The first id in the range to retrieve</param>
+        /// <param name="endId">The last id in the range to retrieve. If left to 0 all events after the startId will be returned</param>
+        /// <returns>List of delegation changes</returns>
+        Task<List<DelegationChange>> GetDelegationChangesByIdRange(int startId, int endId);
     }
 }
