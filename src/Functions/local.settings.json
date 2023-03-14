@@ -9,6 +9,7 @@
     "Platform:BridgeApiEndpoint": "https://at22.altinn.cloud/sblbridge/authorization/api/",
     "Platform:AuthorizationApiEndpoint": "http://localhost:5117/authorization/api/v1/",
     "Platform:AccessTokenIssuer": "https://platform.at22.altinn.cloud/authentication/api/v1/openid/",
+    "Platform:SubscriptionKey": "SubscriptionKey",
     "KeyVault:KeyVaultURI": "https://kv-delegationevents-test.vault.azure.net/"
   }
 }

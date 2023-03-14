@@ -20,6 +20,7 @@ public class AuthorizationClient : IAuthorizationClient
 {
     private readonly IAccessTokenProvider _accessTokenProvider;
     private readonly ILogger<AuthorizationClient> _logger;
+    private readonly PlatformSettings _platformSettings;
 
     /// <summary>
     /// Gets an instance of httpclient from httpclientfactory
@@ -37,9 +38,9 @@ public class AuthorizationClient : IAuthorizationClient
     {
         _accessTokenProvider = accessTokenProvider;
         _logger = logger;
-        PlatformSettings settings = platformSettings.Value;
+        _platformSettings = platformSettings.Value;
         Client = client;
-        Client.BaseAddress = new Uri(settings.AuthorizationApiEndpoint);
+        Client.BaseAddress = new Uri(_platformSettings.AuthorizationApiEndpoint);
         Client.Timeout = new TimeSpan(0, 0, 30);
         Client.DefaultRequestHeaders.Clear();
         Client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
@@ -60,6 +61,8 @@ public class AuthorizationClient : IAuthorizationClient
                 Authorization = new AuthenticationHeaderValue("Bearer", await _accessTokenProvider.GetAccessToken())
             }
         };
+
+        request.Headers.Add("Ocp-Apim-Subscription-Key", _platformSettings.SubscriptionKey);
 
         if (_logger.IsEnabled(LogLevel.Debug))
         {
