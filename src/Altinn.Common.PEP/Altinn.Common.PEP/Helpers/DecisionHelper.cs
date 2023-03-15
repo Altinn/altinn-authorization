@@ -33,8 +33,8 @@ namespace Altinn.Common.PEP.Helpers
         private const string DefaultType = "string";
         private const string PersonHeaderTrigger = "person";
         private const string OrganizationHeaderTrigger = "organization";
-        private const string PersonHeader = "party-ssn";
-        private const string OrganizationNumberHeader = "party-organizationumber";
+        private const string PersonHeader = "Altinn-Party-SocialSecurityNumber";
+        private const string OrganizationNumberHeader = "Altinn-Party-OrganizationNumber";
 
         private const string PolicyObligationMinAuthnLevel = "urn:altinn:minimum-authenticationlevel";
         private const string PolicyObligationMinAuthnLevelOrg = "urn:altinn:minimum-authenticationlevel-org";
