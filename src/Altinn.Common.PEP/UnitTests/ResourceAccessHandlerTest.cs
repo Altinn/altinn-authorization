@@ -161,12 +161,12 @@ namespace Altinn.Common.PEP.Authorization
             httpContext.Request.RouteValues.Add("party", party);
             if (!string.IsNullOrEmpty(orgHeader))
             {
-                httpContext.Request.Headers.Add("party-organizationumber", orgHeader);
+                httpContext.Request.Headers.Add("Altinn-Party-OrganizationNumber", orgHeader);
             }
             
             if (!string.IsNullOrEmpty(ssnHeader))
             {
-                httpContext.Request.Headers.Add("party-ssn", ssnHeader);
+                httpContext.Request.Headers.Add("Altinn-Party-SocialSecurityNumber", ssnHeader);
             }
 
             return httpContext;
