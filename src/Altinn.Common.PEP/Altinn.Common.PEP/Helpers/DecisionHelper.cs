@@ -177,7 +177,15 @@ namespace Altinn.Common.PEP.Helpers
             // Mapping all claims on user to attributes
             foreach (Claim claim in claims)
             {
-                if (IsValidUrn(claim.Type))
+                if (IsCamelCaseOrgnumberClaim(claim.Type))
+                {
+                    attributes.Add(CreateXacmlJsonAttribute(AltinnXacmlUrns.OrganizationNumber, claim.Value, claim.ValueType, claim.Issuer));
+                }
+                else if (IsScopeClaim(claim.Type))
+                {
+                    attributes.Add(CreateXacmlJsonAttribute(AltinnXacmlUrns.Scope, claim.Value, claim.ValueType, claim.Issuer));
+                }
+                else if (IsValidUrn(claim.Type))
                 {
                     attributes.Add(CreateXacmlJsonAttribute(claim.Type, claim.Value, claim.ValueType, claim.Issuer));
                 }
@@ -271,6 +279,16 @@ namespace Altinn.Common.PEP.Helpers
         {
             Regex regex = new Regex("^urn*");
             return regex.Match(value).Success;
+        }
+
+        private static bool IsCamelCaseOrgnumberClaim(string value)
+        {
+            return value.Equals("urn:altinn:orgNumber");
+        }
+
+        private static bool IsScopeClaim(string value)
+        {
+            return value.Equals("scope");
         }
 
         /// <summary>

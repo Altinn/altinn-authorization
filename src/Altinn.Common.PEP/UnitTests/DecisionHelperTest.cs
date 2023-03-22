@@ -54,6 +54,23 @@ namespace UnitTests
         }
 
         /// <summary>
+        /// Test case: Send attributes and creates request out of it 
+        /// Expected: Only valid urn, scope and orgnumber with correct values sent in will be created to attributes
+        /// </summary>
+        [Fact]
+        public void CreateXacmlJsonRequest_TC03()
+        {
+            // Arrange & Act
+            XacmlJsonRequestRoot requestRoot = DecisionHelper.CreateDecisionRequest(Org, App, CreateMaskinportenClaims("12313", "altinn.master"), ActionType, PartyId, null);
+            XacmlJsonRequest request = requestRoot.Request;
+
+            // Assert
+            Assert.Equal(3, request.AccessSubject[0].Attribute.Count);
+            Assert.Single(request.Action[0].Attribute);
+            Assert.Equal(3, request.Resource[0].Attribute.Count);
+        }
+
+        /// <summary>
         /// Test case: Response with result permit
         /// Expected: Returns true
         /// </summary>
@@ -363,6 +380,23 @@ namespace UnitTests
             if (addExtraClaim)
             {
                 claims.Add(new Claim("a", "a", "string", "a"));
+            }
+
+            ClaimsPrincipal user = new ClaimsPrincipal(new ClaimsIdentity(claims));
+            return user;
+        }
+
+        private ClaimsPrincipal CreateMaskinportenClaims(string org, string scope)
+        {
+            // Create the user
+            List<Claim> claims = new List<Claim>();
+
+            // type, value, valuetype, issuer
+            claims.Add(new Claim("urn:altinn:authlevel", "2", "string", "org"));
+            claims.Add(new Claim("urn:altinn:orgNumber", org, "string", "org"));
+            if (scope != null)
+            {
+               claims.Add(new Claim("scope", scope, "string", "org"));
             }
 
             ClaimsPrincipal user = new ClaimsPrincipal(new ClaimsIdentity(claims));

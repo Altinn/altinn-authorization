@@ -53,6 +53,26 @@ namespace Altinn.Common.PEP.Constants
         /// <summary>
         /// Get the value resourceId
         /// </summary>
-        public const string ResourceId = "urn:altinn:resourceregistry";
+        public const string ResourceId = "urn:altinn:resource";
+
+        /// <summary>
+        /// Get the value Resource Instance
+        /// </summary>
+        public const string ResourceInstance = "urn:altinn:resourceinstance";
+
+        /// <summary>
+        /// Get the value eventType
+        /// </summary>
+        public const string EventType = "urn:altinn:eventtype";
+
+        /// <summary>
+        /// Get the value EventSource
+        /// </summary>
+        public const string EventSource = "urn:altinn:eventsource";
+
+        /// <summary>
+        /// Get the value scope
+        /// </summary>
+        public const string Scope = "urn:scope";
     }
 }
