@@ -6,13 +6,13 @@ on:
   push:
     branches: [ main ]
     paths:
-      - 'src/**'
+      - 'src/Authorization/**'
       - 'Dockerfile'
   pull_request:
     branches: [ main ]
     types: [opened, synchronize, reopened]
     paths:
-      - 'src/**'
+      - 'src/Authorization/**'
       - 'Dockerfile'
 jobs:
   scan:
