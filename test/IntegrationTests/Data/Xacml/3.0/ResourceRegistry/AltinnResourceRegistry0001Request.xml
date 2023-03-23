@@ -6,7 +6,7 @@
     </Attribute>
   </Attributes>
   <Attributes Category="urn:oasis:names:tc:xacml:3.0:attribute-category:resource">
-    <Attribute IncludeInResult="false" AttributeId="urn:altinn:resourceregistry">
+    <Attribute IncludeInResult="false" AttributeId="urn:altinn:resource">
       <AttributeValue DataType="http://www.w3.org/2001/XMLSchema#string">apidelegation</AttributeValue>
     </Attribute>
 	<Attribute IncludeInResult="true" AttributeId="urn:altinn:partyid">

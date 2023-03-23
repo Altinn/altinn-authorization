@@ -198,8 +198,8 @@ namespace Altinn.Platform.Authorization.IntegrationTests
 
             XacmlContextAttributes xacmlContext = new XacmlContextAttributes(new Uri(XacmlConstants.MatchAttributeCategory.Resource));
 
-            XacmlAttribute xacmlAttributeOrg = new XacmlAttribute(new Uri("urn:altinn:resourceregistry"), true);
-            xacmlAttributeOrg.AttributeValues.Add(new XacmlAttributeValue(new Uri("urn:altinn:resourceregistry"), resourceId));
+            XacmlAttribute xacmlAttributeOrg = new XacmlAttribute(new Uri("urn:altinn:resource"), true);
+            xacmlAttributeOrg.AttributeValues.Add(new XacmlAttributeValue(new Uri("urn:altinn:resource"), resourceId));
             xacmlContext.Attributes.Add(xacmlAttributeOrg);
 
             xacmlContexts.Add(xacmlContext);

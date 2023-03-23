@@ -44,7 +44,7 @@ namespace Altinn.Platform.Authorization.Constants
             /// <summary>
             /// Resource registry match identifer
             /// </summary>
-            public const string ResourceRegistry = "urn:altinn:resourceregistry";
+            public const string ResourceRegistry = "urn:altinn:resource";
 
             /// <summary>
             /// Instance attribute match indentifier 
