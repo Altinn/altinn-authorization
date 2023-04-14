@@ -1,0 +1,53 @@
+{
+  "Request": {
+    "ReturnPolicyIdList": true,
+    "AccessSubject": [
+      {
+        "Attribute": [
+          {
+            "AttributeId": "urn:altinn:org",
+            "Value": "dsb"
+          }
+        ]
+      }
+    ],
+    "Action": [
+      {
+        "Attribute": [
+          {
+            "AttributeId": "urn:oasis:names:tc:xacml:1.0:action:action-id",
+            "Value": "delete",
+            "DataType": "http://www.w3.org/2001/XMLSchema#string"
+          }
+        ]
+      }
+    ],
+    "Resource": [
+      {
+        "Attribute": [
+          {
+            "AttributeId": "urn:altinn:instance-id",
+            "Value": "12841325/ecb76fc5-6296-48e5-8da4-24a31e8a23a9",
+            "IncludeInResult": true
+          },
+          {
+            "AttributeId": "urn:altinn:org",
+            "Value": "dsb"
+          },
+          {
+            "AttributeId": "urn:altinn:app",
+            "Value": "brannaarsak"
+          },
+          {
+            "AttributeId": "urn:altinn:partyid",
+            "Value": "12841325"
+          },
+          {
+            "AttributeId": "urn:altinn:task",
+            "Value": "Task_1"
+          }
+        ]
+      }
+    ]
+  }
+}

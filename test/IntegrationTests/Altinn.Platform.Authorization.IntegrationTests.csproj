@@ -97,6 +97,8 @@
     <None Remove="Data\Register\Org\950474084.json" />
     <None Remove="Data\Xacml\3.0\AltinnApps\AltinnApps0001DelegationRequest.xml" />
     <None Remove="Data\Xacml\3.0\AltinnApps\AltinnApps0001DelegationResponse.xml" />
+    <None Remove="Data\Xacml\3.0\AltinnApps\AltinnApps0028Request.json" />
+    <None Remove="Data\Xacml\3.0\AltinnApps\AltinnApps0028Response.json" />
     <None Remove="Data\Xacml\3.0\AltinnApps\error\delegationeventfail\policy.xml" />
     <None Remove="Data\Xacml\3.0\ResourceRegistry\AltinnResourceRegistry0001Request.xml" />
     <None Remove="Data\Xacml\3.0\ResourceRegistry\AltinnResourceRegistry0001Response.xml" />
@@ -129,6 +131,10 @@
     <Content Update="Data\Xacml\3.0\ResourceRegistry\apidelegation\policy.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Data\Xacml\3.0\AltinnApps\dsb\brannaarsak\" />
   </ItemGroup>
 
 </Project>
