@@ -236,11 +236,11 @@ namespace Altinn.Common.PEP.Helpers
             {
                 resourceCategory.Attribute.Add(CreateXacmlJsonAttribute(AltinnXacmlUrns.PartyId, partyId.Value.ToString(), DefaultType, DefaultIssuer, includeResult));
             }
-            else if (string.IsNullOrEmpty(organizationnumber))
+            else if (!string.IsNullOrEmpty(organizationnumber))
             {
                 resourceCategory.Attribute.Add(CreateXacmlJsonAttribute(AltinnXacmlUrns.OrganizationNumber, organizationnumber, DefaultType, DefaultIssuer, includeResult));
             }
-            else if (string.IsNullOrEmpty(ssn))
+            else if (!string.IsNullOrEmpty(ssn))
             {
                 resourceCategory.Attribute.Add(CreateXacmlJsonAttribute(AltinnXacmlUrns.Ssn, ssn, DefaultType, DefaultIssuer, includeResult));
             }
