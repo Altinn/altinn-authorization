@@ -73,6 +73,10 @@ namespace Altinn.Common.PEP.Authorization
             // Assert
             Assert.True(context.HasSucceeded);
             Assert.False(context.HasFailed);
+
+            XacmlJsonRequestRoot request = _pdpMock.Invocations[0].Arguments[0] as XacmlJsonRequestRoot;
+            Assert.Equal("urn:altinn:organizationnumber", request.Request.Resource[0].Attribute[0].AttributeId);
+            Assert.Equal("991825827", request.Request.Resource[0].Attribute[0].Value);
         }
 
         /// <summary>
@@ -117,6 +121,10 @@ namespace Altinn.Common.PEP.Authorization
             // Assert
             Assert.True(context.HasSucceeded);
             Assert.False(context.HasFailed);
+
+            XacmlJsonRequestRoot request = _pdpMock.Invocations[0].Arguments[0] as XacmlJsonRequestRoot;
+            Assert.Equal("urn:altinn:ssn", request.Request.Resource[0].Attribute[0].AttributeId);
+            Assert.Equal("01014922047", request.Request.Resource[0].Attribute[0].Value);
         }
 
         /// <summary>
