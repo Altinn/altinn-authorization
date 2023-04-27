@@ -9,12 +9,15 @@ import * as authz from '../api/platform/authorization/authorization.js';
 import * as setUpData from '../setup.js';
 import { generateJUnitXML, reportPath } from '../report.js';
 
-const userName = __ENV.username;
-const userPassword = __ENV.userpwd;
-const appOwner = __ENV.org;
-const appName = __ENV.level2app;
 let policyFile = open('../data/policy.xml', 'b');
 let pdpInputJson = open('../data/pdpinput.json');
+const environment = __ENV.env.toLowerCase();
+let testDataFile = open(`../data/testdata/${environment}testdata.json`);
+var testdata = JSON.parse(testDataFile);
+const userName = testdata.authorizationTests.user;
+const userPassword = testdata.authorizationTests.password;
+const appOwner = testdata.org;
+const appName = testdata.app;
 
 export const options = {
   thresholds: {
