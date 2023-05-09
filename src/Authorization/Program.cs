@@ -194,10 +194,6 @@ void ConfigureServices(IServiceCollection services, IConfiguration config)
     services.AddSingleton<IRoles, RolesWrapper>();
     services.AddSingleton<IContextHandler, ContextHandler>();
     services.AddSingleton<IDelegationContextHandler, DelegationContextHandler>();
-    services.AddSingleton<IPolicyRetrievalPoint, PolicyRetrievalPoint>();
-    services.AddSingleton<IPolicyInformationPoint, PolicyInformationPoint>();
-    services.AddSingleton<IPolicyAdministrationPoint, PolicyAdministrationPoint>();
-    services.AddSingleton<IPolicyRepository, PolicyRepository>();
 
     // Add the policy context handler handling the orchestration of dynamic enrichers based on policy
     services.AddSingleton<IPolicyContextHandler, PolicyContextHandler>();
@@ -207,6 +203,10 @@ void ConfigureServices(IServiceCollection services, IConfiguration config)
     ////services.AddSingleton<AdvRegSubjectContextHandler>();
     ////services.AddSingleton<AaRegSubjectContextHandler>();
 
+    services.AddSingleton<IPolicyRetrievalPoint, PolicyRetrievalPoint>();
+    services.AddSingleton<IPolicyInformationPoint, PolicyInformationPoint>();
+    services.AddSingleton<IPolicyAdministrationPoint, PolicyAdministrationPoint>();
+    services.AddSingleton<IPolicyRepository, PolicyRepository>();
     services.AddSingleton<IResourceRegistry, ResourceRegistryWrapper>();
     services.AddSingleton<IInstanceMetadataRepository, InstanceMetadataRepository>();
     services.AddSingleton<IDelegationMetadataRepository, DelegationMetadataRepository>();

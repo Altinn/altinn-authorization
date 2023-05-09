@@ -12,6 +12,14 @@ namespace Altinn.Platform.Authorization.Services.Implementation;
 /// </summary>
 public class OedSubjectContextHandler : IContextHandler
 {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="OedSubjectContextHandler"/> class. Using DIC, so
+    /// one can add dependencies to http clients, settings etc. if required
+    /// </summary>
+    public OedSubjectContextHandler()
+    {
+    }
+
     /// <inheritdoc />
     public async Task<XacmlContextRequest> Enrich(XacmlContextRequest decisionRequest)
     {
