@@ -210,6 +210,9 @@ namespace Altinn.Platform.Authorization.Controllers
 
         private async Task<XacmlContextResponse> Authorize(XacmlContextRequest decisionRequest)
         {
+            // TODO! Consider refactoring this to separate resource and subject enrichment. Resource enrichment
+            // must be performed early to get the reportee, whilst subject enrichment can be performed
+            // dynamically via policyContextHandler (ie. isn't always required to fetch Altinn roles)
             decisionRequest = await this._contextHandler.Enrich(decisionRequest);
 
             ////_logger.LogInformation($"// DecisionController // Authorize // Roles // Enriched request: {JsonConvert.SerializeObject(decisionRequest)}.");

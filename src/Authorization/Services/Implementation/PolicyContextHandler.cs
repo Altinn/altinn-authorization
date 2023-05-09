@@ -5,48 +5,63 @@ using System.Linq;
 using System.Threading.Tasks;
 using Altinn.Authorization.ABAC.Interface;
 using Altinn.Authorization.ABAC.Xacml;
+using Altinn.Platform.Authorization.Extensions;
 using Altinn.Platform.Authorization.Services.Interface;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Altinn.Platform.Authorization.Services.Implementation;
 
 /// <inheritdoc />
 public class PolicyContextHandler : IPolicyContextHandler
 {
-    private readonly ConcurrentDictionary<string, IContextHandler> _contextHandlers = new();
+    private readonly IServiceProvider serviceProvider;
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="PolicyContextHandler"/> class.
+    /// </summary>
+    /// <param name="serviceProvider">The service provider used to fetch the various subject enrichers</param>
+    public PolicyContextHandler(IServiceProvider serviceProvider)
+    {
+        this.serviceProvider = serviceProvider;
+    }
 
     /// <inheritdoc />
     public async Task<XacmlContextRequest> Enrich(XacmlContextRequest request, XacmlPolicy policy)
     {
-        //// TODO! This could probably be done in parallell for each enricher, if
-        //// alterations made to XacmlContextRequest can be made thread safe
+        // TODO! This should probably be done in parallell (if >1 enricher?), but
+        // needs to operate on copies of the request that are merged at the end
         foreach (Uri subjectAttributeDesignatorId in GetSubjectAttributeDesignatorIds(policy))
         {
             IContextHandler contextHandler = GetSubjectEnricherForAttributeDesignatorId(subjectAttributeDesignatorId);
             request = await contextHandler.Enrich(request);
         }
 
-        //// TODO! Dynamic resource enrichments too?
+        // TODO! Further dynamic resource enrichments too?
         return request;
     }
 
+    /// <summary>
+    /// This method returns a instance of a context handler for the given attribute designator id.
+    /// </summary>
+    /// <param name="attributeDesignatorId">The subject attribute designator id</param>
+    /// <returns>A context handler able to enrich the request</returns>
     private IContextHandler GetSubjectEnricherForAttributeDesignatorId(Uri attributeDesignatorId)
     {
         return attributeDesignatorId.OriginalString switch
         {
-            "urn:oed:rolecode" => CreateContextHandler<OedSubjectContextHandler>(attributeDesignatorId.OriginalString),
-            _ => CreateContextHandler<NullContextHandler>(attributeDesignatorId.OriginalString)
-        };
-    }
+            "urn:oed:rolecode" => serviceProvider.GetRequiredService<OedSubjectContextHandler>(),
+            ////"urn:altinn:apiscope" => serviceProvider.GetRequiredService<ApiScopeSubjectContextHandler>(),
+            ////"urn:advreg:role" => serviceProvider.GetRequiredService<AdvRegSubjectContextHandler>(),
+            ////"urn:aareg:employee" => serviceProvider.GetRequiredService<AaRegSubjectContextHandler>(),
 
-    private IContextHandler CreateContextHandler<TContextHandler>(string kind)
-        where TContextHandler : IContextHandler, new()
-    {
-        return _contextHandlers.GetOrAdd(kind, (_) => new TContextHandler());
+            //// Handle unknown attribute designator ids
+            _ => new NullContextHandler()
+        };
     }
 
     private ICollection<Uri> GetSubjectAttributeDesignatorIds(XacmlPolicy policy)
     {
-        //// TODO! Check if this can benefit from caching
+        //// TODO! Consider caching this based on policy.PolicyId
         return (
             from rule in policy.Rules.TakeWhile(x => x.Target != null)
             from anyOf in rule.Target.AnyOf

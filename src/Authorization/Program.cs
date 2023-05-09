@@ -198,7 +198,15 @@ void ConfigureServices(IServiceCollection services, IConfiguration config)
     services.AddSingleton<IPolicyInformationPoint, PolicyInformationPoint>();
     services.AddSingleton<IPolicyAdministrationPoint, PolicyAdministrationPoint>();
     services.AddSingleton<IPolicyRepository, PolicyRepository>();
+
+    // Add the policy context handler handling the orchestration of dynamic enrichers based on policy
     services.AddSingleton<IPolicyContextHandler, PolicyContextHandler>();
+    //// Add all the specific context handlers
+    services.AddSingleton<OedSubjectContextHandler>();
+    ////services.AddSingleton<ApiScopeSubjectContextHandler>();
+    ////services.AddSingleton<AdvRegSubjectContextHandler>();
+    ////services.AddSingleton<AaRegSubjectContextHandler>();
+
     services.AddSingleton<IResourceRegistry, ResourceRegistryWrapper>();
     services.AddSingleton<IInstanceMetadataRepository, InstanceMetadataRepository>();
     services.AddSingleton<IDelegationMetadataRepository, DelegationMetadataRepository>();
