@@ -73,6 +73,10 @@ namespace Altinn.Common.PEP.Authorization
             // Assert
             Assert.True(context.HasSucceeded);
             Assert.False(context.HasFailed);
+
+            XacmlJsonRequestRoot request = _pdpMock.Invocations[0].Arguments[0] as XacmlJsonRequestRoot;
+            Assert.Equal("urn:altinn:organizationnumber", request.Request.Resource[0].Attribute[0].AttributeId);
+            Assert.Equal("991825827", request.Request.Resource[0].Attribute[0].Value);
         }
 
         /// <summary>
@@ -117,6 +121,10 @@ namespace Altinn.Common.PEP.Authorization
             // Assert
             Assert.True(context.HasSucceeded);
             Assert.False(context.HasFailed);
+
+            XacmlJsonRequestRoot request = _pdpMock.Invocations[0].Arguments[0] as XacmlJsonRequestRoot;
+            Assert.Equal("urn:altinn:ssn", request.Request.Resource[0].Attribute[0].AttributeId);
+            Assert.Equal("01014922047", request.Request.Resource[0].Attribute[0].Value);
         }
 
         /// <summary>
@@ -161,12 +169,12 @@ namespace Altinn.Common.PEP.Authorization
             httpContext.Request.RouteValues.Add("party", party);
             if (!string.IsNullOrEmpty(orgHeader))
             {
-                httpContext.Request.Headers.Add("party-organizationumber", orgHeader);
+                httpContext.Request.Headers.Add("Altinn-Party-OrganizationNumber", orgHeader);
             }
             
             if (!string.IsNullOrEmpty(ssnHeader))
             {
-                httpContext.Request.Headers.Add("party-ssn", ssnHeader);
+                httpContext.Request.Headers.Add("Altinn-Party-SocialSecurityNumber", ssnHeader);
             }
 
             return httpContext;

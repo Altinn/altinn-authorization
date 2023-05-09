@@ -42,7 +42,9 @@ namespace Altinn.Platform.Authorization.Functions
             builder.Services.AddSingleton<IKeyVaultService, KeyVaultService>();
             builder.Services.AddSingleton<IEventMapperService, EventMapperService>();
             builder.Services.AddSingleton<IEventPusherService, EventPusherService>();
+            builder.Services.AddSingleton<IEventReplayService, EventReplayService>();
             builder.Services.AddHttpClient<IBridgeClient, BridgeClient>();
+            builder.Services.AddHttpClient<IAuthorizationClient, AuthorizationClient>();
         }
     }
 }

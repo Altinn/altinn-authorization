@@ -2,25 +2,22 @@ using System.Collections.Generic;
 using System.Reflection.Metadata;
 using System.Security.Claims;
 using System.Threading.Tasks;
+
 using Altinn.Common.PEP.Authorization;
-using Altinn.Common.PEP.Configuration;
+
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
-using Moq;
+
 using Xunit;
 
 namespace UnitTests
 {
     public class ScopeAccessHandlerTest
     {
-        private readonly IOptions<PepSettings> _pepSettings;
         private readonly ScopeAccessHandler _sah;
 
         public ScopeAccessHandlerTest()
         {
-            _pepSettings = Options.Create(new PepSettings());
-            _sah = new ScopeAccessHandler(new Mock<ILogger<ScopeAccessHandler>>().Object);
+            _sah = new ScopeAccessHandler();
         }
 
         /// <summary>
@@ -74,7 +71,6 @@ namespace UnitTests
 
             // Assert
             Assert.False(context.HasSucceeded);
-            Assert.True(context.HasFailed);
         }
 
         /// <summary>
@@ -110,7 +106,6 @@ namespace UnitTests
 
             // Assert
             Assert.False(context.HasSucceeded);
-            Assert.True(context.HasFailed);
         }
 
         /// <summary>
@@ -128,7 +123,6 @@ namespace UnitTests
 
             // Assert
             Assert.False(context.HasSucceeded);
-            Assert.True(context.HasFailed);
         }
 
         private AuthorizationHandlerContext CreateAuthzHandlerContext(string scopeClaim)

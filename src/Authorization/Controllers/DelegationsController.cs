@@ -220,6 +220,41 @@ namespace Altinn.Platform.Authorization.Controllers
         }
 
         /// <summary>
+        /// Endpoint for triggering a replay of delegationchange events pushing them to the delegationevents queue for syncronization with Altinn 2.0
+        /// </summary>
+        /// <param name="startId">The first id in the range to replay</param>
+        /// <param name="endId">The last id in the range to replay. If left/set to 0 all events found after the startId will be replayed</param>
+        /// <response code="200">OK</response>
+        /// <response code="400">Bad Request</response>
+        /// <response code="500">Internal Server Error</response>
+        [HttpPost]
+        [Authorize(Policy = AuthzConstants.DELEGATIONEVENT_FUNCTION_AUTHORIZATION)]
+        [Route("authorization/api/v1/[controller]/delegationchangeevents/replay")]
+        public async Task<ActionResult> ReplayDelegationEvents([FromQuery] int startId, [FromQuery] int endId)
+        {
+            if (startId <= 0)
+            {
+                ModelState.AddModelError("startId", $"Must specify a valid starting delegation change id for replay. Invalid value: {startId}");
+                return new ObjectResult(ProblemDetailsFactory.CreateValidationProblemDetails(HttpContext, ModelState));
+            }
+
+            if (endId != 0 && endId < startId)
+            {
+                ModelState.AddModelError("endId", $"The endId cannot be smaller than the startId. startId: {startId}, endId: {endId}");
+                return new ObjectResult(ProblemDetailsFactory.CreateValidationProblemDetails(HttpContext, ModelState));
+            }
+
+            bool result = await _pap.ReplayDelegationChangeEvents(startId, endId);
+
+            if (result)
+            {
+                return Ok();
+            }
+
+            return UnprocessableEntity();
+        }
+
+        /// <summary>
         /// Test method. Should be deleted?
         /// </summary>
         /// <returns>test string</returns>

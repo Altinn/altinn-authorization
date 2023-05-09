@@ -1,8 +1,12 @@
 name: PEP Build and Test on windows, macos and ubuntu
 on:
   push:
+    paths:
+      - 'src/Altinn.Common.PEP/**'
     branches: [ main ]
   pull_request:
+    paths:
+      - 'src/Altinn.Common.PEP/**'
     branches: [ main ]
     types: [opened, synchronize, reopened]
   workflow_dispatch:
@@ -13,7 +17,7 @@ jobs:
         os: [macos-latest,windows-latest,ubuntu-latest] # TODO: Fix test to run on ubuntu-latest also
     name: Run dotnet build and test
     runs-on: ${{ matrix.os}}
-    env: 
+    env:
       DOTNET_HOSTBUILDER__RELOADCONFIGONCHANGE: false
     steps:
       - name: Setup .NET

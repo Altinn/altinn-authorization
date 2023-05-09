@@ -11,7 +11,17 @@ public class PlatformSettings
     public string BridgeApiEndpoint { get; set; }
 
     /// <summary>
-    /// Isser to use in the generated token that will be used in calling Bridge API
+    /// Base URL to Platform Authorization API
+    /// </summary>
+    public string AuthorizationApiEndpoint { get; set; }
+
+    /// <summary>
+    /// Issuer to use in the generated token that will be used in calling Bridge API
     /// </summary>
     public string AccessTokenIssuer { get; set; }
+
+    /// <summary>
+    /// Gets or sets the subscription key for the Authorization API
+    /// </summary>
+    public string SubscriptionKey { get; set; }
 }

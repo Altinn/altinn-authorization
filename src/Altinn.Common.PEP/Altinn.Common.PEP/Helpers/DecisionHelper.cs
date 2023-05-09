@@ -33,8 +33,8 @@ namespace Altinn.Common.PEP.Helpers
         private const string DefaultType = "string";
         private const string PersonHeaderTrigger = "person";
         private const string OrganizationHeaderTrigger = "organization";
-        private const string PersonHeader = "party-ssn";
-        private const string OrganizationNumberHeader = "party-organizationumber";
+        private const string PersonHeader = "Altinn-Party-SocialSecurityNumber";
+        private const string OrganizationNumberHeader = "Altinn-Party-OrganizationNumber";
 
         private const string PolicyObligationMinAuthnLevel = "urn:altinn:minimum-authenticationlevel";
         private const string PolicyObligationMinAuthnLevelOrg = "urn:altinn:minimum-authenticationlevel-org";
@@ -177,7 +177,15 @@ namespace Altinn.Common.PEP.Helpers
             // Mapping all claims on user to attributes
             foreach (Claim claim in claims)
             {
-                if (IsValidUrn(claim.Type))
+                if (IsCamelCaseOrgnumberClaim(claim.Type))
+                {
+                    attributes.Add(CreateXacmlJsonAttribute(AltinnXacmlUrns.OrganizationNumber, claim.Value, claim.ValueType, claim.Issuer));
+                }
+                else if (IsScopeClaim(claim.Type))
+                {
+                    attributes.Add(CreateXacmlJsonAttribute(AltinnXacmlUrns.Scope, claim.Value, claim.ValueType, claim.Issuer));
+                }
+                else if (IsValidUrn(claim.Type))
                 {
                     attributes.Add(CreateXacmlJsonAttribute(claim.Type, claim.Value, claim.ValueType, claim.Issuer));
                 }
@@ -228,11 +236,11 @@ namespace Altinn.Common.PEP.Helpers
             {
                 resourceCategory.Attribute.Add(CreateXacmlJsonAttribute(AltinnXacmlUrns.PartyId, partyId.Value.ToString(), DefaultType, DefaultIssuer, includeResult));
             }
-            else if (string.IsNullOrEmpty(organizationnumber))
+            else if (!string.IsNullOrEmpty(organizationnumber))
             {
                 resourceCategory.Attribute.Add(CreateXacmlJsonAttribute(AltinnXacmlUrns.OrganizationNumber, organizationnumber, DefaultType, DefaultIssuer, includeResult));
             }
-            else if (string.IsNullOrEmpty(ssn))
+            else if (!string.IsNullOrEmpty(ssn))
             {
                 resourceCategory.Attribute.Add(CreateXacmlJsonAttribute(AltinnXacmlUrns.Ssn, ssn, DefaultType, DefaultIssuer, includeResult));
             }
@@ -271,6 +279,16 @@ namespace Altinn.Common.PEP.Helpers
         {
             Regex regex = new Regex("^urn*");
             return regex.Match(value).Success;
+        }
+
+        private static bool IsCamelCaseOrgnumberClaim(string value)
+        {
+            return value.Equals("urn:altinn:orgNumber");
+        }
+
+        private static bool IsScopeClaim(string value)
+        {
+            return value.Equals("scope");
         }
 
         /// <summary>

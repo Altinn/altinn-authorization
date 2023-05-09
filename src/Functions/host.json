@@ -9,7 +9,9 @@
     },
     "logLevel": {
       "Altinn.Platform.Authorization.Functions.Services.EventPusherService": "Debug",
-      "Altinn.Platform.Authorization.Functions.Clients.BridgeClient": "Debug"
+      "Altinn.Platform.Authorization.Functions.Clients.BridgeClient": "Debug",
+      "Altinn.Platform.Authorization.Functions.Services.EventReplayService": "Debug",
+      "Altinn.Platform.Authorization.Functions.Clients.AuthorizationClient": "Debug"
     }
   },
   "extensions": {
