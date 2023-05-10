@@ -35,8 +35,7 @@
         }
     },
     "authorizationTests": {
-        "user": "msandstad",
-        "password": "Altinn123"
+        "user": "msandstad"
     }
 }
 

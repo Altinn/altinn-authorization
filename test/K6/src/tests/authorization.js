@@ -15,7 +15,7 @@ const environment = __ENV.env.toLowerCase();
 let testDataFile = open(`../data/testdata/${environment}testdata.json`);
 var testdata = JSON.parse(testDataFile);
 const userName = testdata.authorizationTests.user;
-const userPassword = testdata.authorizationTests.password;
+const userPassword = __ENV.userpassword;
 const appOwner = testdata.org;
 const appName = testdata.app;
 
