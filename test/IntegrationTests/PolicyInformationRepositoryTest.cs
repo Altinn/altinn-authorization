@@ -60,7 +60,7 @@ namespace Altinn.Platform.Authorization.IntegrationTests
                 connectionPolicy);
             _client.OpenAsync();
 
-            _pir = new InstanceMetadataRepository(_dbConfigMock.Object, new Mock<ILogger<InstanceMetadataRepository>>().Object);
+            _pir = new InstanceMetadataRepository(_dbConfigMock.Object, new Mock<ILogger<InstanceMetadataRepository>>().Object, null, null);
         }
 
         /// <summary>

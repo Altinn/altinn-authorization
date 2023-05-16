@@ -9,6 +9,11 @@ namespace Altinn.Platform.Authorization.Configuration
     public class PlatformSettings
     {
         /// <summary>
+        /// Gets or sets the url for the Storage API endpoint.
+        /// </summary>
+        public string ApiStorageEndpoint { get; set; }
+
+        /// <summary>
         /// Gets or sets the url for the Register API endpoint.
         /// </summary>
         public string ApiRegisterEndpoint { get; set; }
