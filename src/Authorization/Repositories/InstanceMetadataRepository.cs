@@ -6,6 +6,7 @@ using System.Net.Http.Json;
 using System.Text.Json;
 using System.Threading.Tasks;
 using Altinn.Platform.Authorization.Configuration;
+using Altinn.Platform.Authorization.Exceptions;
 using Altinn.Platform.Authorization.Repositories.Interface;
 using Altinn.Platform.Storage.Interface.Models;
 using Microsoft.Azure.Documents;
@@ -60,17 +61,6 @@ namespace Altinn.Platform.Authorization.Repositories
         }
 
         /// <inheritdoc/>
-        public Task<Instance> GetInstance(string instanceId, int instanceOwnerId)
-        {
-            if (instanceOwnerId <= 0)
-            {
-                throw new ArgumentException("Instance owner id cannot be zero or negative");
-            }
-
-            return GetInstanceInternal(instanceId, instanceOwnerId);
-        }
-
-        /// <inheritdoc/>
         public async Task<(ProcessState Process, string AppId)> GetAuthInfo(string instanceId)
         {
             HttpResponseMessage response = await _storageClient.GetAsync($"instances/AuthInfo/{instanceId}");
@@ -81,8 +71,22 @@ namespace Altinn.Platform.Authorization.Repositories
             }
             else
             {
-                throw new Exception("Bad response: " + response.StatusCode);
+                string reason = await response.Content.ReadAsStringAsync();
+                logger.LogError("// InstanceMetadataRepository // GetAuthInfo // Failed to lookup auth info from storage. Response {response}. \n Reason {reason}.", response, reason);
+
+                throw await PlatformHttpException.CreateAsync(response);
             }
+        }
+
+        /// <inheritdoc/>
+        public Task<Instance> GetInstance(string instanceId, int instanceOwnerId)
+        {
+            if (instanceOwnerId <= 0)
+            {
+                throw new ArgumentException("Instance owner id cannot be zero or negative");
+            }
+
+            return GetInstanceInternal(instanceId, instanceOwnerId);
         }
 
         /// <inheritdoc/>
