@@ -233,7 +233,7 @@ export function delegationToOrgIsInheritedByECUserViaKeyrole() {
 
 export function handleSummary(data) {
   let result = {};
-  result[reportPath('authzDelegationInheritancev2.xml')] = generateJUnitXML(data, 'platform-authorization-delegation-inheritance-v2');
+  result[reportPath('policyDecisionPoint.xml')] = generateJUnitXML(data, 'policy-decision-point');
   return result;
 }
 

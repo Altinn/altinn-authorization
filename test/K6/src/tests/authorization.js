@@ -6,7 +6,7 @@
 import { check } from 'k6';
 import { addErrorCount } from '../errorcounter.js';
 import * as authz from '../api/platform/authorization/authorization.js';
-import * as setUpData from '../setup.js';
+import { generateToken } from '../api/altinn-testtools/token-generator.js';
 import { generateJUnitXML, reportPath } from '../report.js';
 
 let policyFile = open('../data/policy.xml', 'b');
@@ -14,10 +14,8 @@ let pdpInputJson = open('../data/pdpinput.json');
 const environment = __ENV.env.toLowerCase();
 let testDataFile = open(`../data/testdata/${environment}testdata.json`);
 var testdata = JSON.parse(testDataFile);
-const userName = testdata.authorizationTests.user;
-const userPassword = __ENV.userpassword;
-const appOwner = testdata.org;
-const appName = testdata.app;
+const tokenGeneratorUserName = __ENV.tokengenuser;
+const tokenGeneratorUserPwd = __ENV.tokengenuserpwd;
 
 export const options = {
   thresholds: {
@@ -28,18 +26,25 @@ export const options = {
 
 //Function to setup data and return userData
 export function setup() {
-  var aspxauthCookie = setUpData.authenticateUser(userName, userPassword);
-  var altinnStudioRuntimeCookie = setUpData.getAltinnStudioRuntimeToken(aspxauthCookie);
-  var data = setUpData.getUserData(altinnStudioRuntimeCookie, appOwner, appName);
-  data.RuntimeToken = altinnStudioRuntimeCookie;
-  return data;
+  var tokenGenParams = {
+    env: environment,
+    scopes: 'altinn:instances.read',
+    pid: testdata.org1.dagl.pid,
+    userid: testdata.org1.dagl.userid,
+    partyid: testdata.org1.dagl.partyid,
+    authLvl: 3,
+  };
+  testdata.org1.dagl.token = generateToken('personal', tokenGeneratorUserName, tokenGeneratorUserPwd, tokenGenParams);
+  return testdata;
 }
 
 //Tests for platform Authorization
 export default function (data) {
-  const userId = data['userId'];
-  const partyId = data['partyId'];
-  const runtimeToken = data['RuntimeToken'];
+  const userId = data.org1.dagl.userid;
+  const partyId = data.org1.dagl.partyid;
+  const runtimeToken = data.org1.dagl.token;
+  const appOwner = data.org;
+  const appName = data.app;
   var altinnTask = '';
   var res, success;
 

@@ -27,9 +27,11 @@ export function buildHeadersForData(isBinaryAttachment, binaryAttachmentType, al
 //Function to build headers with altinnStudioRuntimeCookie and returns a json object
 export function buildHeaderWithRuntime(altinnStudioRuntimeCookie, api) {
   var params = {
-    headers: { Authorization: 'Bearer ' + altinnStudioRuntimeCookie },
+    headers: {
+      Authorization: 'Bearer ' + altinnStudioRuntimeCookie,
+      'Ocp-Apim-Subscription-Key': appsAccessSubscriptionKey
+  },
   };
-  params = addSubscriptionKey(params, appsAccessSubscriptionKey, api);
   return params;
 }
 
