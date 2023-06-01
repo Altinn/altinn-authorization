@@ -37,7 +37,7 @@ namespace Altinn.Platform.Authorization.Repositories
         /// <param name="logger">the logger</param>
         /// <param name="storageClient">Storage client</param>
         /// <param name="platformSettings">Storage config</param>
-        public InstanceMetadataRepository(IOptions<AzureCosmosSettings> cosmosettings, ILogger<InstanceMetadataRepository> logger, HttpClient storageClient, IOptions<PlatformSettings> platformSettings)
+        public InstanceMetadataRepository(IOptions<AzureCosmosSettings> cosmosettings, ILogger<InstanceMetadataRepository> logger, HttpClient storageClient, IOptions<PlatformSettings> platformSettings, IOptions<GeneralSettings> generalSettings)
         {
             this.logger = logger;
 
@@ -50,12 +50,15 @@ namespace Altinn.Platform.Authorization.Repositories
                 ConnectionProtocol = Protocol.Https,
             };
 
-            _client = new DocumentClient(new Uri(_cosmosettings.EndpointUri), _cosmosettings.PrimaryKey, connectionPolicy);
+            if (!generalSettings.Value.UseStorageApiForInstanceAuthInfo)
+            {
+                _client = new DocumentClient(new Uri(_cosmosettings.EndpointUri), _cosmosettings.PrimaryKey, connectionPolicy);
+                databaseId = _cosmosettings.Database;
+                instanceCollectionId = _cosmosettings.InstanceCollection;
+                applicationCollectionId = _cosmosettings.ApplicationCollection;
+                _client.OpenAsync();
+            }
 
-            databaseId = _cosmosettings.Database;
-            instanceCollectionId = _cosmosettings.InstanceCollection;
-            applicationCollectionId = _cosmosettings.ApplicationCollection;
-            _client.OpenAsync();
             _storageClient = storageClient;
             storageClient.BaseAddress = new Uri(platformSettings.Value.ApiStorageEndpoint);
         }
