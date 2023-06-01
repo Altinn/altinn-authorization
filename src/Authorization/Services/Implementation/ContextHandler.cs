@@ -91,7 +91,7 @@ namespace Altinn.Platform.Authorization.Services.Implementation
                 {
                     instanceData = new();
                     (instanceData.Process, instanceData.AppId) = await _policyInformationRepository.GetAuthInfo(resourceAttributes.InstanceValue);
-                    instanceData.Org = instanceData.AppId.Split('/').First();
+                    instanceData.Org = instanceData.AppId.Split('/')[0];
                 }
 
                 if (instanceData != null)
@@ -108,7 +108,7 @@ namespace Altinn.Platform.Authorization.Services.Implementation
                         AddIfValueDoesNotExist(resourceContextAttributes, XacmlRequestAttribute.EndEventAttribute, null, instanceData.Process.EndEvent);
                     }
 
-                    string partyId = resourceAttributes.InstanceValue.Split('/').First();
+                    string partyId = resourceAttributes.InstanceValue.Split('/')[0];
                     AddIfValueDoesNotExist(resourceContextAttributes, XacmlRequestAttribute.PartyAttribute, resourceAttributes.ResourcePartyValue, partyId);
                     resourceAttributes.ResourcePartyValue = partyId;
                 }
