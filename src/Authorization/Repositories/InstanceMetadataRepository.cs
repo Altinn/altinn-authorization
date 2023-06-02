@@ -37,6 +37,7 @@ namespace Altinn.Platform.Authorization.Repositories
         /// <param name="logger">the logger</param>
         /// <param name="storageClient">Storage client</param>
         /// <param name="platformSettings">Storage config</param>
+        /// <param name="generalSettings">General config to determine storage interface method</param>
         public InstanceMetadataRepository(IOptions<AzureCosmosSettings> cosmosettings, ILogger<InstanceMetadataRepository> logger, HttpClient storageClient, IOptions<PlatformSettings> platformSettings, IOptions<GeneralSettings> generalSettings)
         {
             this.logger = logger;
