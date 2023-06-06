@@ -57,5 +57,10 @@ namespace Altinn.Platform.Authorization.IntegrationTests.MockServices
             Instance instance = (Instance)JsonConvert.DeserializeObject(content, typeof(Instance));
             return instance;
         }
+
+        Task<(ProcessState Process, string AppId)> IInstanceMetadataRepository.GetAuthInfo(string instanceId)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

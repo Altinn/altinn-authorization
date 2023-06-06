@@ -1,3 +1,4 @@
+using System;
 using System.Threading.Tasks;
 using Altinn.Platform.Storage.Interface.Models;
 
@@ -8,6 +9,13 @@ namespace Altinn.Platform.Authorization.Repositories.Interface
     /// </summary>
     public interface IInstanceMetadataRepository
     {
+        /// <summary>
+        /// Gets auth info for a process
+        /// </summary>
+        /// <param name="instanceId">the instance id</param>
+        /// <returns>Auth info</returns>
+        Task<(ProcessState Process, string AppId)> GetAuthInfo(string instanceId);
+
         /// <summary>
         /// Gets the information of a given instance
         /// </summary>

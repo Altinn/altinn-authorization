@@ -1,7 +1,12 @@
 using System;
 using System.Diagnostics.CodeAnalysis;
+using System.Net;
+using System.Net.Http;
+using System.Net.Http.Json;
+using System.Text.Json;
 using System.Threading.Tasks;
 using Altinn.Platform.Authorization.Configuration;
+using Altinn.Platform.Authorization.Exceptions;
 using Altinn.Platform.Authorization.Repositories.Interface;
 using Altinn.Platform.Storage.Interface.Models;
 using Microsoft.Azure.Documents;
@@ -23,13 +28,17 @@ namespace Altinn.Platform.Authorization.Repositories
         private readonly DocumentClient _client;
         private readonly AzureCosmosSettings _cosmosettings;
         private readonly ILogger<InstanceMetadataRepository> logger;
+        private readonly HttpClient _storageClient;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="InstanceMetadataRepository"/> class
         /// </summary>
         /// <param name="cosmosettings">the configuration settings for cosmos database</param>
         /// <param name="logger">the logger</param>
-        public InstanceMetadataRepository(IOptions<AzureCosmosSettings> cosmosettings, ILogger<InstanceMetadataRepository> logger)
+        /// <param name="storageClient">Storage client</param>
+        /// <param name="platformSettings">Storage config</param>
+        /// <param name="generalSettings">General config to determine storage interface method</param>
+        public InstanceMetadataRepository(IOptions<AzureCosmosSettings> cosmosettings, ILogger<InstanceMetadataRepository> logger, HttpClient storageClient, IOptions<PlatformSettings> platformSettings, IOptions<GeneralSettings> generalSettings)
         {
             this.logger = logger;
 
@@ -42,12 +51,35 @@ namespace Altinn.Platform.Authorization.Repositories
                 ConnectionProtocol = Protocol.Https,
             };
 
-            _client = new DocumentClient(new Uri(_cosmosettings.EndpointUri), _cosmosettings.PrimaryKey, connectionPolicy);
+            if (!generalSettings.Value.UseStorageApiForInstanceAuthInfo)
+            {
+                _client = new DocumentClient(new Uri(_cosmosettings.EndpointUri), _cosmosettings.PrimaryKey, connectionPolicy);
+                databaseId = _cosmosettings.Database;
+                instanceCollectionId = _cosmosettings.InstanceCollection;
+                applicationCollectionId = _cosmosettings.ApplicationCollection;
+                _client.OpenAsync();
+            }
 
-            databaseId = _cosmosettings.Database;
-            instanceCollectionId = _cosmosettings.InstanceCollection;
-            applicationCollectionId = _cosmosettings.ApplicationCollection;
-            _client.OpenAsync();
+            _storageClient = storageClient;
+            storageClient.BaseAddress = new Uri(platformSettings.Value.ApiStorageEndpoint);
+        }
+
+        /// <inheritdoc/>
+        public async Task<(ProcessState Process, string AppId)> GetAuthInfo(string instanceId)
+        {
+            HttpResponseMessage response = await _storageClient.GetAsync($"instances/AuthInfo/{instanceId}");
+            if (response.StatusCode == HttpStatusCode.OK)
+            {
+                string responseData = await response.Content.ReadAsStringAsync();
+                return Newtonsoft.Json.JsonConvert.DeserializeObject<(ProcessState Process, string AppId)>(responseData);
+            }
+            else
+            {
+                string reason = await response.Content.ReadAsStringAsync();
+                logger.LogError("// InstanceMetadataRepository // GetAuthInfo // Failed to lookup auth info from storage. Response {response}. \n Reason {reason}.", response, reason);
+
+                throw await PlatformHttpException.CreateAsync(response);
+            }
         }
 
         /// <inheritdoc/>
