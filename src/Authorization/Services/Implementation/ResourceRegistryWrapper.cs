@@ -56,13 +56,13 @@ namespace Altinn.Platform.Authorization.Services.Implementation
             return policy;
         }
 
-        private void PutXacmlPolicyInCache(string policyPath, XacmlPolicy policy)
+        private void PutXacmlPolicyInCache(string cachekey, XacmlPolicy policy)
         {
             var cacheEntryOptions = new MemoryCacheEntryOptions()
                .SetPriority(CacheItemPriority.High)
                .SetAbsoluteExpiration(new TimeSpan(0, _generalSettings.PolicyCacheTimeout, 0));
 
-            _memoryCache.Set(policyPath, policy, cacheEntryOptions);
+            _memoryCache.Set(cachekey, policy, cacheEntryOptions);
         }
     }
 }
