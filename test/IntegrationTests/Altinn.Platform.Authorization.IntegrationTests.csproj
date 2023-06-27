@@ -104,6 +104,8 @@
     <None Remove="Data\Xacml\3.0\ResourceRegistry\AltinnResourceRegistry0002Response.json" />
     <None Remove="Data\Xacml\3.0\ResourceRegistry\AltinnResourceRegistry0003Request.json" />
     <None Remove="Data\Xacml\3.0\ResourceRegistry\AltinnResourceRegistry0003Response.json" />
+    <None Remove="Data\Xacml\3.0\ResourceRegistry\AltinnResourceRegistry0004Request.json" />
+    <None Remove="Data\Xacml\3.0\ResourceRegistry\AltinnResourceRegistry0004Response.json" />
     <None Remove="Data\Xacml\3.0\ResourceRegistry\apidelegation\policy.xml" />
   </ItemGroup>
 
@@ -120,6 +122,12 @@
     <Content Update="Data\Xacml\3.0\ResourceRegistry\AltinnResourceRegistry0002Response.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Update="Data\Xacml\3.0\ResourceRegistry\AltinnResourceRegistry0004Response.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Update="Data\Xacml\3.0\ResourceRegistry\AltinnResourceRegistry0004Request.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Update="Data\Xacml\3.0\ResourceRegistry\AltinnResourceRegistry0003Request.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -129,6 +137,10 @@
     <Content Update="Data\Xacml\3.0\ResourceRegistry\apidelegation\policy.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Data\Xacml\3.0\ResourceRegistry\ttd-altinn-events-automated-tests\" />
   </ItemGroup>
 
 </Project>
