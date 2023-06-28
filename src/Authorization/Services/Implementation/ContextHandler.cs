@@ -90,7 +90,9 @@ namespace Altinn.Platform.Authorization.Services.Implementation
                 else
                 {
                     instanceData = new();
-                    (instanceData.Process, instanceData.AppId) = await _policyInformationRepository.GetAuthInfo(resourceAttributes.InstanceValue);
+                    AuthInfo authInfo = await _policyInformationRepository.GetAuthInfo(resourceAttributes.InstanceValue);
+                    instanceData.Process = authInfo.Process;
+                    instanceData.AppId = authInfo.AppId;
                     instanceData.Org = instanceData.AppId.Split('/')[0];
                 }
 

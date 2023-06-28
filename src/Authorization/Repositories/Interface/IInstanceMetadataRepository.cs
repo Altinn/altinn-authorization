@@ -14,7 +14,7 @@ namespace Altinn.Platform.Authorization.Repositories.Interface
         /// </summary>
         /// <param name="instanceId">the instance id</param>
         /// <returns>Auth info</returns>
-        Task<(ProcessState Process, string AppId)> GetAuthInfo(string instanceId);
+        Task<AuthInfo> GetAuthInfo(string instanceId);
 
         /// <summary>
         /// Gets the information of a given instance

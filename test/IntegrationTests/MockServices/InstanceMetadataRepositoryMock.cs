@@ -58,7 +58,7 @@ namespace Altinn.Platform.Authorization.IntegrationTests.MockServices
             return instance;
         }
 
-        Task<(ProcessState Process, string AppId)> IInstanceMetadataRepository.GetAuthInfo(string instanceId)
+        Task<AuthInfo> IInstanceMetadataRepository.GetAuthInfo(string instanceId)
         {
             throw new NotImplementedException();
         }

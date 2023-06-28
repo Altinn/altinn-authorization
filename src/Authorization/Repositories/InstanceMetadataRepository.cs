@@ -65,13 +65,13 @@ namespace Altinn.Platform.Authorization.Repositories
         }
 
         /// <inheritdoc/>
-        public async Task<(ProcessState Process, string AppId)> GetAuthInfo(string instanceId)
+        public async Task<AuthInfo> GetAuthInfo(string instanceId)
         {
-            HttpResponseMessage response = await _storageClient.GetAsync($"instances/AuthInfo/{instanceId}");
+            HttpResponseMessage response = await _storageClient.GetAsync($"instances/{instanceId}/process/authinfo");
             if (response.StatusCode == HttpStatusCode.OK)
             {
                 string responseData = await response.Content.ReadAsStringAsync();
-                return Newtonsoft.Json.JsonConvert.DeserializeObject<(ProcessState Process, string AppId)>(responseData);
+                return Newtonsoft.Json.JsonConvert.DeserializeObject<AuthInfo>(responseData);
             }
             else
             {
