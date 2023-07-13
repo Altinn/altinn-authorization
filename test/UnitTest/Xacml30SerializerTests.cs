@@ -73,14 +73,16 @@ namespace Altinn.Authorization.ABAC.UnitTests
             string actualAttributeValue = "THIS IS NOT THE VALUE YOU ARE LOOKING FOR";
             serializedPolicy.Rules.First().Target.AnyOf.First().AllOf.First().Matches.First().AttributeValue.Value = actualAttributeValue;
 
+            string expectedMessage = "REGNA";
+            string actualMessage = "THIS IS NOT THE VALUE YOU ARE LOOKING FOR";
             try
             {
                 AssertionUtil.AssertPolicyEqual(originalPolicy, serializedPolicy);
             }
             catch (EqualException e)
             {
-                Assert.Equal(e.Expected, originalAttributeValue);
-                Assert.Equal(e.Actual, actualAttributeValue);
+                Assert.Equal(expectedMessage, originalAttributeValue);
+                Assert.Equal(actualMessage, actualAttributeValue);
             }
         }
 
