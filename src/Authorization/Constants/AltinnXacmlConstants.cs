@@ -77,9 +77,19 @@ namespace Altinn.Platform.Authorization.Constants
             public const string UserAttribute = "urn:altinn:userid";
 
             /// <summary>
+            /// xacml string that represents ssn
+            /// </summary>
+            public const string SsnAttribute = "urn:altinn:ssn";
+
+            /// <summary>
             /// Role Code attribute match indentifier 
             /// </summary>
             public const string RoleAttribute = "urn:altinn:rolecode";
+
+            /// <summary>
+            /// OED Role Code Attribute match identifier
+            /// </summary>
+            public const string OEDRoleAttribute = "urn:oed:rolecode";
         }
 
         /// <summary>

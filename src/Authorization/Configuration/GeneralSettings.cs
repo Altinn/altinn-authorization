@@ -62,6 +62,11 @@ namespace Altinn.Platform.Authorization.Configuration
         public string OpenIdWellKnownEndpoint { get; set; }
 
         /// <summary>
+        /// Gets or sets the OED api endpoint
+        /// </summary>
+        public string OedPipApiEndpoint { get; set; }
+
+        /// <summary>
         /// Gets the SBL base adress from kubernetes environment variables and appsettings if environment variable is not set
         /// </summary>
         public string GetSBLBaseAdress

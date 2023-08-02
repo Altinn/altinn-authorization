@@ -26,6 +26,11 @@ namespace Altinn.Platform.Authorization.Models
         public string ResourcePartyValue { get; set; }
 
         /// <summary>
+        /// Gets or sets the value for resource ssn attribute
+        /// </summary>
+        public string ResourceSsnValue { get; set; }
+
+        /// <summary>
         /// Gets or sets the value for task attribute
         /// </summary>
         public string TaskValue { get; set; }

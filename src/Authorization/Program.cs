@@ -1,8 +1,11 @@
 using System;
 using System.IO;
+using System.Net.Http;
 using System.Reflection;
 using System.Threading.Tasks;
-
+using Altinn.ApiClients.Maskinporten.Config;
+using Altinn.ApiClients.Maskinporten.Extensions;
+using Altinn.ApiClients.Maskinporten.Interfaces;
 using Altinn.Authorization.ABAC.Interface;
 using Altinn.Common.AccessTokenClient.Services;
 using Altinn.Common.PEP.Authorization;
@@ -120,6 +123,7 @@ void ConfigureLogging(ILoggingBuilder logging)
 async Task SetConfigurationProviders(ConfigurationManager config, bool isDevelopment)
 {
     string basePath = Directory.GetParent(Directory.GetCurrentDirectory()).FullName;
+    string applicationInsightsKeySecretName = "ApplicationInsights--InstrumentationKey";
 
     logger.LogInformation($"Program // Loading Configuration from basePath={basePath}");
 
@@ -218,6 +222,11 @@ void ConfigureServices(IServiceCollection services, IConfiguration config)
     services.AddHttpClient<RolesClient>();
     services.AddHttpClient<SBLClient>();
     services.AddHttpClient<ResourceRegistryClient>();
+    services.Configure<MaskinportenSettings>(config.GetSection("OedPipMaskinportenSettings"));
+    MaskinportenSettings maskinportenSettings = new MaskinportenSettings();
+    config.GetSection("OedPipMaskinportenSettings").Bind(maskinportenSettings);
+    services.AddMaskinportenHttpClient<MaskinportenClientSettings, OedPipClient>(maskinportenSettings);
+    services.AddSingleton<IOedRoleAssignmentWrapper, OedRoleAssignmentWrapper>();
     services.TryAddSingleton<IHttpContextAccessor, HttpContextAccessor>();
     services.AddSingleton<IAccessTokenGenerator, AccessTokenGenerator>();
     services.AddTransient<ISigningCredentialsResolver, SigningCredentialsResolver>();

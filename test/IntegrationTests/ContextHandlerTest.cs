@@ -1,14 +1,18 @@
 using System.Threading.Tasks;
-
+using Altinn.ApiClients.Maskinporten.Config;
+using Altinn.ApiClients.Maskinporten.Interfaces;
+using Altinn.ApiClients.Maskinporten.Services;
 using Altinn.Authorization.ABAC.Xacml;
 using Altinn.Platform.Authorization.Configuration;
 using Altinn.Platform.Authorization.IntegrationTests.MockServices;
 using Altinn.Platform.Authorization.IntegrationTests.Util;
 using Altinn.Platform.Authorization.Services.Implementation;
 using Altinn.Platform.Events.Tests.Mocks;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-
+using Microsoft.VisualStudio.TestTools.UnitTesting.Logging;
 using Xunit;
 
 namespace Altinn.Platform.Authorization.IntegrationTests
@@ -28,7 +32,9 @@ namespace Altinn.Platform.Authorization.IntegrationTests
                 new PartiesMock(),
                 new MemoryCache(new MemoryCacheOptions()),
                 Options.Create(new GeneralSettings { RoleCacheTimeout = 5 }),
-                new RegisterServiceMock());
+                new RegisterServiceMock(),
+                new PolicyRetrievalPointMock(new HttpContextAccessor(), new Logger<PolicyRetrievalPointMock>(new LoggerFactory())),
+                new OedRoleAssignmentWrapper(new System.Net.Http.HttpClient(), Options.Create(new GeneralSettings { }), new MaskinportenService(new System.Net.Http.HttpClient(), new Logger<MaskinportenService>(new LoggerFactory()), new MemoryTokenCacheProvider(new MemoryCache(Options.Create(new MemoryCacheOptions())))), Options.Create(new MaskinportenSettings())));
         }
 
         /// <summary>

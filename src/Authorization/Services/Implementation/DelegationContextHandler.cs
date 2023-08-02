@@ -30,8 +30,10 @@ namespace Altinn.Platform.Authorization.Services.Implementation
         /// <param name="memoryCache">The cache handler </param>
         /// <param name="settings">The app settings</param>
         /// <param name="registerService">Register service</param>
-        public DelegationContextHandler(IInstanceMetadataRepository policyInformationRepository, IRoles rolesWrapper, IParties partiesWrapper, IMemoryCache memoryCache, IOptions<GeneralSettings> settings, IRegisterService registerService)
-            : base(policyInformationRepository, rolesWrapper, partiesWrapper, memoryCache, settings, registerService)
+        /// <param name="policyRetrievalPoint">The Policy Retrieval Point</param>
+        /// <param name="oedRoleAssignmentWrapper">The OED Role Assignment handler</param>
+        public DelegationContextHandler(IInstanceMetadataRepository policyInformationRepository, IRoles rolesWrapper, IParties partiesWrapper, IMemoryCache memoryCache, IOptions<GeneralSettings> settings, IRegisterService registerService, IPolicyRetrievalPoint policyRetrievalPoint, IOedRoleAssignmentWrapper oedRoleAssignmentWrapper)
+            : base(policyInformationRepository, rolesWrapper, partiesWrapper, memoryCache, settings, registerService, policyRetrievalPoint, oedRoleAssignmentWrapper)
         {
         }
 
