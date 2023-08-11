@@ -10,15 +10,25 @@ namespace Altinn.Platform.Authorization.Functions;
 /// </summary>
 public class DelegationEventsPoison
 {
+    private readonly ILogger<DelegationEventsPoison> _logger;
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="DelegationEventsPoison"/> class.
+    /// </summary>
+    /// <param name="logger">The logger</param>
+    public DelegationEventsPoison(ILogger<DelegationEventsPoison> logger)
+    {
+        _logger = logger;
+    }
+
     /// <summary>
     /// Logs the failed message to Application Insights.
     /// </summary>
     /// <param name="queueMessage">The queue message.</param>
-    /// <param name="log">The log.</param>
     [FunctionName(nameof(DelegationEventsPoison))]
-    public void Run([QueueTrigger("delegationevents-poison", Connection = "QueueStorage")] QueueMessage queueMessage, ILogger log)
+    public void Run([QueueTrigger("delegationevents-poison", Connection = "QueueStorage")] QueueMessage queueMessage)
     {
-        log.LogCritical(
+        _logger.LogCritical(
             "Failed processing delegation queue item: id={id}, inserted={inserted}, expires={expires}, body={body}",
             queueMessage.MessageId,
             queueMessage.InsertedOn,
