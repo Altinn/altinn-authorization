@@ -43,7 +43,7 @@ public class EventPusherService : IEventPusherService
             if (delegationChangeEventList == null)
             {
                 _logger.LogError("Received null instead of delegation change events. Failed to deserialize model?");
-                throw new BridgeRequestFailedException();
+                throw new BridgeRequestFailedException("Received null instead of delegation change events. Failed to deserialize model?");
             }
 
             delegationChangeEventList.DelegationChangeEvents ??= new List<DelegationChangeEvent>();
@@ -75,7 +75,7 @@ public class EventPusherService : IEventPusherService
                     GetChangeIdsForLog(delegationChangeEventList));
 
                 // Throw exception to ensure requeue of the event list
-                throw new BridgeRequestFailedException();
+                throw new BridgeRequestFailedException($"Bridge returned non-success. resultCode={response.StatusCode} reasonPhrase={response.ReasonPhrase} resultBody={await response.Content.ReadAsStringAsync()} numEventsSent={delegationChangeEventList.DelegationChangeEvents.Count} changeIds={GetChangeIdsForLog(delegationChangeEventList)}");
             }
 
             if (_logger.IsEnabled(LogLevel.Debug))
@@ -99,7 +99,7 @@ public class EventPusherService : IEventPusherService
                 delegationChangeEventList?.DelegationChangeEvents?.Count,
                 GetChangeIdsForLog(delegationChangeEventList));
 
-            throw new BridgeRequestFailedException();
+            throw new BridgeRequestFailedException($"Exception thrown while attempting to post delegation events to Bridge. exception={ex.GetType().Name} message={ex.Message} numEventsSent={delegationChangeEventList?.DelegationChangeEvents?.Count} changeIds={GetChangeIdsForLog(delegationChangeEventList)}", ex);
         }
     }
 
