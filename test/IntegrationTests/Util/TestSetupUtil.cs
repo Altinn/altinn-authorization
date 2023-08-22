@@ -12,7 +12,6 @@ using Altinn.Authorization.ABAC.Xacml.JsonProfile;
 using Altinn.Platform.Storage.Interface.Models;
 
 using Authorization.Platform.Authorization.Models;
-
 using Newtonsoft.Json;
 
 namespace Altinn.Platform.Authorization.IntegrationTests.Util
@@ -138,12 +137,30 @@ namespace Altinn.Platform.Authorization.IntegrationTests.Util
 
         public static XacmlContextRequest CreateXacmlContextRequest(string testCase)
         {
-            return XacmlTestDataParser.ParseRequest(testCase + "Request.xml", GetAltinnAppsPath());
+            if (testCase.Contains("AltinnApps"))
+            {
+                return XacmlTestDataParser.ParseRequest(testCase + "Request.xml", GetAltinnAppsPath());
+            }
+            else if (testCase.Contains("ResourceRegistry"))
+            {
+                return XacmlTestDataParser.ParseRequest(testCase + "Request.xml", GetResourceRegistryPath());
+            }
+
+            return null;
         }
 
         public static XacmlContextRequest GetEnrichedRequest(string testCase)
         {
-            return XacmlTestDataParser.ParseRequest(testCase + "EnrichedRequest.xml", GetAltinnAppsPath());
+            if (testCase.Contains("AltinnApps"))
+            {
+                return XacmlTestDataParser.ParseRequest(testCase + "EnrichedRequest.xml", GetAltinnAppsPath());
+            }
+            else if (testCase.Contains("ResourceRegistry"))
+            {
+                return XacmlTestDataParser.ParseRequest(testCase + "EnrichedRequest.xml", GetResourceRegistryPath());
+            }
+
+            return null;
         }
 
         public static Instance GetInstanceData(string instanceId)

@@ -37,5 +37,20 @@ namespace Altinn.Platform.Authorization.Configuration
         /// The lifetime to cache subscriptions
         /// </summary>
         public int SubscriptionCachingLifetimeInSeconds { get; set; }
+
+        /// <summary>
+        /// The subscription key header name
+        /// </summary>
+        public string SubscriptionKeyHeaderName { get; set; }
+
+        /// <summary>
+        /// The subscription key
+        /// </summary>
+        public string SubscriptionKey { get; set; }
+
+        /// <summary>
+        /// The JWT cookie name
+        /// </summary>
+        public string JwtCookieName { get; set; }
     }
 }

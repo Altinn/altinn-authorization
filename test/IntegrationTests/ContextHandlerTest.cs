@@ -13,6 +13,7 @@ using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.VisualStudio.TestTools.UnitTesting.Logging;
+using Moq;
 using Xunit;
 
 namespace Altinn.Platform.Authorization.IntegrationTests
@@ -23,9 +24,12 @@ namespace Altinn.Platform.Authorization.IntegrationTests
     public class ContextHandlerTest 
     {
         private readonly ContextHandler _contextHandler;
+        private HttpContext _httpContext = new DefaultHttpContext();
 
         public ContextHandlerTest()
         {
+            var httpContextAccessorMock = new Mock<IHttpContextAccessor>();
+            httpContextAccessorMock.Setup(h => h.HttpContext).Returns(_httpContext);
             _contextHandler = new ContextHandler(
                 new InstanceMetadataRepositoryMock(),
                 new RolesMock(),
@@ -33,8 +37,10 @@ namespace Altinn.Platform.Authorization.IntegrationTests
                 new MemoryCache(new MemoryCacheOptions()),
                 Options.Create(new GeneralSettings { RoleCacheTimeout = 5 }),
                 new RegisterServiceMock(),
-                new PolicyRetrievalPointMock(new HttpContextAccessor(), new Logger<PolicyRetrievalPointMock>(new LoggerFactory())),
-                new OedRoleAssignmentWrapper(new System.Net.Http.HttpClient(), Options.Create(new GeneralSettings { }), new MaskinportenService(new System.Net.Http.HttpClient(), new Logger<MaskinportenService>(new LoggerFactory()), new MemoryTokenCacheProvider(new MemoryCache(Options.Create(new MemoryCacheOptions())))), Options.Create(new MaskinportenSettings())));
+                new PolicyRetrievalPointMock(httpContextAccessorMock.Object, new Logger<PolicyRetrievalPointMock>(new LoggerFactory())),
+                new OedRoleAssignmentWrapperMock());
+
+            // new OedRoleAssignmentWrapper(new System.Net.Http.HttpClient(), Options.Create(new GeneralSettings { }), new MaskinportenService(new System.Net.Http.HttpClient(), new Logger<MaskinportenService>(new LoggerFactory()), new MemoryTokenCacheProvider(new MemoryCache(Options.Create(new MemoryCacheOptions())))), Options.Create(new MaskinportenSettings())));
         }
 
         /// <summary>
@@ -52,6 +58,7 @@ namespace Altinn.Platform.Authorization.IntegrationTests
         {
             // Arrange
             string testCase = "AltinnApps0021";
+            _httpContext.Request.Headers.Add("testcase", testCase);
 
             XacmlContextRequest request = TestSetupUtil.CreateXacmlContextRequest(testCase);
             XacmlContextRequest expectedEnrichedRequest = TestSetupUtil.GetEnrichedRequest(testCase);
@@ -80,6 +87,7 @@ namespace Altinn.Platform.Authorization.IntegrationTests
         {
             // Arrange
             string testCase = "AltinnApps0022";
+            _httpContext.Request.Headers.Add("testcase", testCase);
 
             XacmlContextRequest request = TestSetupUtil.CreateXacmlContextRequest(testCase);
             XacmlContextRequest expectedEnrichedRequest = TestSetupUtil.GetEnrichedRequest(testCase);
@@ -108,6 +116,7 @@ namespace Altinn.Platform.Authorization.IntegrationTests
         {
             // Arrange
             string testCase = "AltinnApps0023";
+            _httpContext.Request.Headers.Add("testcase", testCase);
 
             XacmlContextRequest request = TestSetupUtil.CreateXacmlContextRequest(testCase);
             XacmlContextRequest expectedEnrichedRequest = TestSetupUtil.GetEnrichedRequest(testCase);
@@ -136,6 +145,7 @@ namespace Altinn.Platform.Authorization.IntegrationTests
         {
             // Arrange
             string testCase = "AltinnApps0024";
+            _httpContext.Request.Headers.Add("testcase", testCase);
 
             XacmlContextRequest request = TestSetupUtil.CreateXacmlContextRequest(testCase);
             XacmlContextRequest expectedEnrichedRequest = TestSetupUtil.GetEnrichedRequest(testCase);
@@ -164,6 +174,7 @@ namespace Altinn.Platform.Authorization.IntegrationTests
         {
             // Arrange
             string testCase = "AltinnApps0025";
+            _httpContext.Request.Headers.Add("testcase", testCase);
 
             XacmlContextRequest request = TestSetupUtil.CreateXacmlContextRequest(testCase);
             XacmlContextRequest expectedEnrichedRequest = TestSetupUtil.GetEnrichedRequest(testCase);
@@ -192,6 +203,65 @@ namespace Altinn.Platform.Authorization.IntegrationTests
         {
             // Arrange
             string testCase = "AltinnApps0026";
+            _httpContext.Request.Headers.Add("testcase", testCase);
+
+            XacmlContextRequest request = TestSetupUtil.CreateXacmlContextRequest(testCase);
+            XacmlContextRequest expectedEnrichedRequest = TestSetupUtil.GetEnrichedRequest(testCase);
+
+            // Act
+            XacmlContextRequest enrichedRequest = await _contextHandler.Enrich(request);
+
+            // Assert
+            Assert.NotNull(enrichedRequest);
+            Assert.NotNull(expectedEnrichedRequest);
+            AssertionUtil.AssertEqual(expectedEnrichedRequest, enrichedRequest);
+        }
+
+        /// <summary>
+        /// Scenario:
+        /// Tests if the xacml request is enriched with the required rolecode
+        /// Input:
+        /// subject's ssn, resource's id, resource's ssn
+        /// Expected Result:
+        /// Xacml request is enriched with the missing attributes
+        /// Success Criteria:
+        /// A xacml request populated with the required attributes is returned
+        /// </summary>
+        [Fact]
+        public async Task EnrichWithOedRoleUsingSubjectSsn()
+        {
+            // Arrange
+            string testCase = "AltinnAppsOedSsn";
+            _httpContext.Request.Headers.Add("testcase", testCase);
+
+            XacmlContextRequest request = TestSetupUtil.CreateXacmlContextRequest(testCase);
+            XacmlContextRequest expectedEnrichedRequest = TestSetupUtil.GetEnrichedRequest(testCase);
+
+            // Act
+            XacmlContextRequest enrichedRequest = await _contextHandler.Enrich(request);
+
+            // Assert
+            Assert.NotNull(enrichedRequest);
+            Assert.NotNull(expectedEnrichedRequest);
+            AssertionUtil.AssertEqual(expectedEnrichedRequest, enrichedRequest);
+        }
+
+        /// <summary>
+        /// Scenario:
+        /// Tests if the xacml request is enriched with the required rolecode
+        /// Input:
+        /// subject's Altinn role, resource's id, resource's ssn
+        /// Expected Result:
+        /// Xacml request is enriched with the missing attributes
+        /// Success Criteria:
+        /// A xacml request populated with the required attributes is returned
+        /// </summary>
+        [Fact]
+        public async Task EnrichWithOedRoleUsingSubjecUserId()
+        {
+            // Arrange
+            string testCase = "AltinnAppsOedUserId";
+            _httpContext.Request.Headers.Add("testcase", testCase);
 
             XacmlContextRequest request = TestSetupUtil.CreateXacmlContextRequest(testCase);
             XacmlContextRequest expectedEnrichedRequest = TestSetupUtil.GetEnrichedRequest(testCase);

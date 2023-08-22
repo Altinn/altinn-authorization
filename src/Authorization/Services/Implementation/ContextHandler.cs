@@ -15,6 +15,9 @@ using Altinn.Platform.Authorization.Services.Interfaces;
 using Altinn.Platform.Register.Models;
 using Altinn.Platform.Storage.Interface.Models;
 using Authorization.Platform.Authorization.Models;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Options;
 
@@ -317,11 +320,14 @@ namespace Altinn.Platform.Authorization.Services.Implementation
             {
                 if (subjectSsn == string.Empty)
                 {
-                    // slå opp ssn hvis den ikke finnes allerede
+                    subjectSsn = GetSsnForUser(subjectUserId).Result;
                 }
 
                 List<OedRoleAssignment> oedRoleAssignments = await GetOedRoleAssignments(resourceSsn, subjectSsn);
-                requestSubjectContextAttributes.Attributes.Add(GetAccessGroupsAttribute(oedRoleAssignments));
+                if (oedRoleAssignments.Count != 0)
+                {
+                    requestSubjectContextAttributes.Attributes.Add(GetAccessGroupsAttribute(oedRoleAssignments));
+                }
             }
 
             // if (subjectUserId == 0)
@@ -332,7 +338,10 @@ namespace Altinn.Platform.Authorization.Services.Implementation
             if (resourcePartyId != 0)
             {
                 List<Role> roleList = await GetRoles(subjectUserId, resourcePartyId);
-                requestSubjectContextAttributes.Attributes.Add(GetRoleAttribute(roleList));
+                if (roleList.Count != 0)
+                {
+                    requestSubjectContextAttributes.Attributes.Add(GetRoleAttribute(roleList));
+                }
             }
         }
 
@@ -490,6 +499,26 @@ namespace Altinn.Platform.Authorization.Services.Implementation
         private string GetOedRoleassignmentCacheKey(string from, string to)
         {
             return $"oed{from}_{to}";
+        }
+
+        private async Task<string> GetSsnForUser(int userId)
+        {
+            string cacheKey = $"userId:{userId}";
+
+            if (!_memoryCache.TryGetValue(cacheKey, out List<Party> partyList))
+            {
+                partyList = await _partiesWrapper.GetParties(userId);
+            }
+            
+            foreach (Party party in partyList)
+            {
+                if (party.PartyTypeName == Register.Enums.PartyType.Person)
+                {
+                    return party.SSN;
+                }
+            }
+
+            return null;
         }
     }
 }

@@ -39,17 +39,24 @@ namespace Altinn.Platform.Authorization.Services.Implementation
             if (!_memoryCache.TryGetValue(cacheKey, out XacmlPolicy policy))
             {
                 string apiurl = $"resource/{resourceId}/policy";
-                HttpResponseMessage response = await _client.Client.GetAsync(apiurl);
-
-                if (response.StatusCode == System.Net.HttpStatusCode.OK)
+                try
                 {
-                    Stream policyBlob = await response.Content.ReadAsStreamAsync();
-                    using (policyBlob)
-                    {
-                        policy = (policyBlob.Length > 0) ? PolicyHelper.ParsePolicy(policyBlob) : null;
-                    }
+                    HttpResponseMessage response = await _client.Client.GetAsync(apiurl);
 
-                    PutXacmlPolicyInCache(cacheKey, policy);
+                    if (response.StatusCode == System.Net.HttpStatusCode.OK)
+                    {
+                        Stream policyBlob = await response.Content.ReadAsStreamAsync();
+                        using (policyBlob)
+                        {
+                            policy = (policyBlob.Length > 0) ? PolicyHelper.ParsePolicy(policyBlob) : null;
+                        }
+
+                        PutXacmlPolicyInCache(cacheKey, policy);
+                    }
+                }
+                catch (Exception ex) 
+                { 
+                    // thing
                 }
             }
 

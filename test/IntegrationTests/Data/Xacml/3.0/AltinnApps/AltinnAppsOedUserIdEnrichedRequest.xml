@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Request xsi:schemaLocation="urn:oasis:names:tc:xacml:3.0:core:schema:wd-17 http://docs.oasis-open.org/xacml/3.0/xacml-core-v3-schema-wd-17.xsd" ReturnPolicyIdList="false" CombinedDecision="false" xmlns="urn:oasis:names:tc:xacml:3.0:core:schema:wd-17" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <Attributes Category="urn:oasis:names:tc:xacml:1.0:subject-category:access-subject">
+    <Attribute IncludeInResult="false" AttributeId="urn:altinn:ssn">
+      <AttributeValue DataType="http://www.w3.org/2001/XMLSchema#string">12345678910</AttributeValue>
+    </Attribute>
+    <Attribute IncludeInResult="false" AttributeId="urn:oed:rolecode">
+      <AttributeValue DataType="http://www.w3.org/2001/XMLSchema#string">urn:digitaltdodsbo:formuesfullmakt</AttributeValue>
+    </Attribute>
+  </Attributes>
+  <Attributes Category="urn:oasis:names:tc:xacml:3.0:attribute-category:resource">
+    <Attribute IncludeInResult="false" AttributeId="urn:altinn:resource">
+      <AttributeValue DataType="http://www.w3.org/2001/XMLSchema#string">ttd-am-k6-oed</AttributeValue>
+    </Attribute>  
+    <Attribute IncludeInResult="false" AttributeId="urn:altinn:ssn">
+      <AttributeValue DataType="http://www.w3.org/2001/XMLSchema#integer">10987654321</AttributeValue>
+    </Attribute>
+  </Attributes>
+  <Attributes Category="urn:oasis:names:tc:xacml:3.0:attribute-category:action">
+    <Attribute IncludeInResult="false" AttributeId="urn:oasis:names:tc:xacml:1.0:action:action-id">
+      <AttributeValue DataType="http://www.w3.org/2001/XMLSchema#string">ScopeAccess</AttributeValue>
+    </Attribute>
+  </Attributes>
+  <Attributes Category="urn:oasis:names:tc:xacml:3.0:attribute-category:environment" />
+</Request>

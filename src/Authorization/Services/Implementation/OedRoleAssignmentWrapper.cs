@@ -9,6 +9,7 @@ using Altinn.ApiClients.Maskinporten.Interfaces;
 using Altinn.ApiClients.Maskinporten.Models;
 using Altinn.ApiClients.Maskinporten.Services;
 using Altinn.Platform.Authorization.Clients;
+using Altinn.Platform.Authorization.Clients.Interfaces;
 using Altinn.Platform.Authorization.Configuration;
 using Altinn.Platform.Authorization.Models;
 using Altinn.Platform.Authorization.Services.Interface;
@@ -45,32 +46,45 @@ namespace Altinn.Platform.Authorization.Services.Implementation
         /// <inheritdoc/>
         public async Task<List<OedRoleAssignment>> GetOedRoleAssignments(string from, string to)
         {
-            MaskinportenSettings mpsettings = _maskinportenSettings.Value;
-            GeneralSettings gensettings = _generalSettings.Value;
-            TokenResponse tokenResponse = await _maskinPortenService.GetToken(mpsettings.EncodedJwk, mpsettings.Environment, mpsettings.ClientId, mpsettings.Scope, string.Empty);
-
-            OedRoleAssignments oedRoleAssignments = new() { RoleAssignments = new List<OedRoleAssignment>() };
-            OedRoleAssignmentRequest oedRoleAssignmentRequest = new OedRoleAssignmentRequest 
-            { 
-                From = from,
-                To = to
-            };
-
-            string endpoint = _generalSettings.Value.OedPipApiEndpoint + "v1/pip";
-            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", tokenResponse.AccessToken);
-            StringContent requestBody = new StringContent(JsonSerializer.Serialize(oedRoleAssignmentRequest), Encoding.UTF8, "application/json");
-            HttpResponseMessage response = await _httpClient.PostAsync(endpoint, requestBody);
-            string responseContent = await response.Content.ReadAsStringAsync();
-            if (response.StatusCode == System.Net.HttpStatusCode.OK)
+            try
             {
-                var options = new JsonSerializerOptions
+                MaskinportenSettings mpsettings = _maskinportenSettings.Value;
+                GeneralSettings gensettings = _generalSettings.Value;
+                TokenResponse tokenResponse = await _maskinPortenService.GetToken(mpsettings.EncodedJwk, mpsettings.Environment, mpsettings.ClientId, mpsettings.Scope, string.Empty);
+
+                OedRoleAssignments oedRoleAssignments = new() { RoleAssignments = new List<OedRoleAssignment>() };
+                OedRoleAssignmentRequest oedRoleAssignmentRequest = new OedRoleAssignmentRequest
                 {
-                    PropertyNameCaseInsensitive = true
+                    From = from,
+                    To = to
                 };
-                oedRoleAssignments = JsonSerializer.Deserialize<OedRoleAssignments>(responseContent, options);
+
+                string endpoint = _generalSettings.Value.OedPipApiEndpoint + "v1/pip";
+                
+                // AuthenticationHeaderValue token = new AuthenticationHeaderValue("Bearer", tokenResponse.AccessToken);
+                _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", tokenResponse.AccessToken);
+                StringContent requestBody = new StringContent(JsonSerializer.Serialize(oedRoleAssignmentRequest), Encoding.UTF8, "application/json");
+
+                // HttpResponseMessage response = await _httpClient.GetOedRoleAssignments(requestBody, token);
+
+                HttpResponseMessage response = await _httpClient.PostAsync(endpoint, requestBody);
+                string responseContent = await response.Content.ReadAsStringAsync();
+                if (response.StatusCode == System.Net.HttpStatusCode.OK)
+                {
+                    var options = new JsonSerializerOptions
+                    {
+                        PropertyNameCaseInsensitive = true
+                    };
+                    oedRoleAssignments = JsonSerializer.Deserialize<OedRoleAssignments>(responseContent, options);
+                }
+
+                return oedRoleAssignments.RoleAssignments;
+            }
+            catch (System.Exception e)
+            {
             }
 
-            return oedRoleAssignments.RoleAssignments;
+            return null;
         }
     }
 }
