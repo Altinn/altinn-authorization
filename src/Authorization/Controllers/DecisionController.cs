@@ -180,6 +180,11 @@ namespace Altinn.Platform.Authorization.Controllers
             }
 
             XacmlContextResponse xacmlContextResponse = await Authorize(request);
+
+            string xmlRequest = System.Text.Json.JsonSerializer.Serialize(model);
+            string response = System.Text.Json.JsonSerializer.Serialize(xacmlContextResponse);
+            _logger.LogError($"AuthDebugXml, request: {xmlRequest}\r\nresponse: {response}");
+
             return CreateResponse(xacmlContextResponse);
         }
 
@@ -188,6 +193,10 @@ namespace Altinn.Platform.Authorization.Controllers
             XacmlJsonRequestRoot jsonRequest = (XacmlJsonRequestRoot)JsonConvert.DeserializeObject(model.BodyContent, typeof(XacmlJsonRequestRoot));
 
             XacmlJsonResponse jsonResponse = await Authorize(jsonRequest.Request);
+
+            string request = System.Text.Json.JsonSerializer.Serialize(model);
+            string response = System.Text.Json.JsonSerializer.Serialize(jsonResponse);
+            _logger.LogError($"AuthDebugJson, request: {request}\r\nresponse: {response}");
 
             return Ok(jsonResponse);
         }
