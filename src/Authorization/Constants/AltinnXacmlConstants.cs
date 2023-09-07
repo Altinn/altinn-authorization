@@ -80,6 +80,11 @@ namespace Altinn.Platform.Authorization.Constants
             /// Role Code attribute match indentifier 
             /// </summary>
             public const string RoleAttribute = "urn:altinn:rolecode";
+
+            /// <summary>
+            /// OED Role Code Attribute match identifier
+            /// </summary>
+            public const string OedRoleAttribute = "urn:oed:rolecode";
         }
 
         /// <summary>

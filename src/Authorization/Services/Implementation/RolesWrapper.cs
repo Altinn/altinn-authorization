@@ -28,7 +28,7 @@ namespace Altinn.Platform.Authorization.Services.Implementation
         public async Task<List<Role>> GetDecisionPointRolesForUser(int coveredByUserId, int offeredByPartyId)
         {
             List<Role> decisionPointRoles = new List<Role>();
-            string apiurl = $"roles?coveredByUserId={coveredByUserId}&offeredByPartyId={offeredByPartyId}";
+            string apiurl = $"authorization/api/roles?coveredByUserId={coveredByUserId}&offeredByPartyId={offeredByPartyId}";
 
             HttpResponseMessage response = await _rolesClient.Client.GetAsync(apiurl);
             string roleList = await response.Content.ReadAsStringAsync();

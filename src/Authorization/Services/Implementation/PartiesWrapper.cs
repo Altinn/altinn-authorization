@@ -2,8 +2,10 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using System.Net;
 using System.Net.Http;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 using Altinn.Platform.Authorization.Clients;
 using Altinn.Platform.Authorization.Models;
@@ -20,6 +22,7 @@ namespace Altinn.Platform.Authorization.Services.Implementation
     [ExcludeFromCodeCoverage]
     public class PartiesWrapper : IParties
     {
+        private readonly JsonSerializerOptions _serializerOptions = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
         private readonly PartyClient _partyClient;
         private readonly ILogger _logger;
 
@@ -41,7 +44,7 @@ namespace Altinn.Platform.Authorization.Services.Implementation
 
             try
             {
-                string endpointUrl = $"parties?userid={userId}";
+                string endpointUrl = $"authorization/api/parties?userid={userId}";
                 HttpResponseMessage response = await _partyClient.Client.GetAsync(endpointUrl);
                 string partiesDataList = await response.Content.ReadAsStringAsync();
                 if (response.IsSuccessStatusCode)
@@ -61,13 +64,38 @@ namespace Altinn.Platform.Authorization.Services.Implementation
         }
 
         /// <inheritdoc/>
+        public async Task<Party> GetParty(int partyId)
+        {
+            try
+            {
+                string endpointUrl = $"register/api/parties/{partyId}";
+
+                HttpResponseMessage response = await _partyClient.Client.GetAsync(endpointUrl);
+                string responseContent = await response.Content.ReadAsStringAsync();
+
+                if (response.StatusCode == HttpStatusCode.OK)
+                {
+                    return System.Text.Json.JsonSerializer.Deserialize<Party>(responseContent, _serializerOptions);
+                }
+
+                _logger.LogError("SBL-Bridge // PartiesWrapper // GetParty // Failed // Unexpected HttpStatusCode: {statusCode}\n {responseContent}", response.StatusCode, responseContent);
+                return null;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "SBL-Bridge // PartiesWrapper // GetParty // Failed // Unexpected Exception");
+                throw;
+            }
+        }
+
+        /// <inheritdoc/>
         public async Task<List<int>> GetKeyRoleParties(int userId)
         {
             List<int> keyroleParties = null;
 
             try
             {
-                string endpointUrl = $"partieswithkeyroleaccess?userid={userId}";
+                string endpointUrl = $"authorization/api/partieswithkeyroleaccess?userid={userId}";
                 HttpResponseMessage response = await _partyClient.Client.GetAsync(endpointUrl);
                 string responseBody = await response.Content.ReadAsStringAsync();
 
@@ -97,7 +125,7 @@ namespace Altinn.Platform.Authorization.Services.Implementation
                 HttpRequestMessage request = new HttpRequestMessage
                 {
                     Method = HttpMethod.Get,
-                    RequestUri = new Uri($"{_partyClient.Client.BaseAddress}partyparents"),
+                    RequestUri = new Uri($"{_partyClient.Client.BaseAddress}authorization/api/partyparents"),
                     Content = new StringContent(JsonConvert.SerializeObject(subunitPartyIds), Encoding.UTF8, "application/json")
                 };
 

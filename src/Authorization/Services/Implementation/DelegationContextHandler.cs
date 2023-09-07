@@ -26,12 +26,15 @@ namespace Altinn.Platform.Authorization.Services.Implementation
         /// </summary>
         /// <param name="policyInformationRepository">the policy information repository handler</param>
         /// <param name="rolesWrapper">the roles handler</param>
+        /// <param name="oedRolesWrapper">the oed roles handler</param>
         /// <param name="partiesWrapper">the party information handler</param>
+        /// <param name="profileWrapper">the user profile information handler</param>
         /// <param name="memoryCache">The cache handler </param>
         /// <param name="settings">The app settings</param>
         /// <param name="registerService">Register service</param>
-        public DelegationContextHandler(IInstanceMetadataRepository policyInformationRepository, IRoles rolesWrapper, IParties partiesWrapper, IMemoryCache memoryCache, IOptions<GeneralSettings> settings, IRegisterService registerService)
-            : base(policyInformationRepository, rolesWrapper, partiesWrapper, memoryCache, settings, registerService)
+        /// <param name="prp">the policy retrieval point service</param>
+        public DelegationContextHandler(IInstanceMetadataRepository policyInformationRepository, IRoles rolesWrapper, IOedRoleAssignmentWrapper oedRolesWrapper, IParties partiesWrapper, IProfile profileWrapper, IMemoryCache memoryCache, IOptions<GeneralSettings> settings, IRegisterService registerService, IPolicyRetrievalPoint prp)
+            : base(policyInformationRepository, rolesWrapper, oedRolesWrapper, partiesWrapper, profileWrapper, memoryCache, settings, registerService, prp)
         {
         }
 

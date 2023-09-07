@@ -56,6 +56,11 @@ namespace Altinn.Platform.Authorization.Constants
         public const string RoleAttribute = "urn:altinn:rolecode";
 
         /// <summary>
+        /// OED Role Code Attribute match identifier
+        /// </summary>
+        public const string OedRoleAttribute = "urn:oed:rolecode";
+
+        /// <summary>
         /// xacml string that represents resource
         /// </summary>
         public const string ResourceRegistryAttribute = "urn:altinn:resourceregistry";
