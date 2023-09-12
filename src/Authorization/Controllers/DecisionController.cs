@@ -67,10 +67,6 @@ namespace Altinn.Platform.Authorization.Controllers
         [HttpPost]
         public async Task<ActionResult> Post([FromBody] XacmlRequestApiModel model)
         {
-            _logger.LogError("RetryTrace before sleep");
-            await Task.Delay(20_000);
-            _logger.LogError("RetryTrace after sleep");
-            Console.WriteLine("After sleep");
             try
             {
                 if (Request.ContentType.Contains("application/json"))
