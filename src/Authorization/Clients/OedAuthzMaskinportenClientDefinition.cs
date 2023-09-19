@@ -27,9 +27,9 @@ namespace Altinn.Platform.Authorization.Clients
         {
             ClientSecrets clientSecrets = new ClientSecrets();
 
-            byte[] base64EncodedBytes = Convert.FromBase64String(ClientSettings.EncodedJwk);
-            string jwkjson = Encoding.UTF8.GetString(base64EncodedBytes);
-            clientSecrets.ClientKey = new Microsoft.IdentityModel.Tokens.JsonWebKey(jwkjson);
+            byte[] bytesFromBase64Jwk = Convert.FromBase64String(ClientSettings.EncodedJwk);
+            string jwkJson = Encoding.UTF8.GetString(bytesFromBase64Jwk);
+            clientSecrets.ClientKey = new Microsoft.IdentityModel.Tokens.JsonWebKey(jwkJson);
             return Task.FromResult(clientSecrets);
         }
     }

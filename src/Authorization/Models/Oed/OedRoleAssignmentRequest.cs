@@ -1,17 +1,17 @@
 namespace Altinn.Platform.Authorization.Models
 {
     /// <summary>
-    /// Model for Access group membership
+    /// Model for requesting OED role assignments between two persons
     /// </summary>
     public class OedRoleAssignmentRequest
     {
         /// <summary>
-        /// The OED role code 
+        /// The person the OED role if provided from (the deceased)
         /// </summary>
         public string From { get; set; }
 
         /// <summary>
-        /// The OED role code 
+        /// The person the OED role if provided to
         /// </summary>
         public string To { get; set; }
     }
