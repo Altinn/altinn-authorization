@@ -9,6 +9,7 @@ using System.Xml;
 using Altinn.Authorization.ABAC.Utils;
 using Altinn.Authorization.ABAC.Xacml;
 using Altinn.Authorization.ABAC.Xacml.JsonProfile;
+using Altinn.Platform.Authorization.Models;
 using Altinn.Platform.Storage.Interface.Models;
 
 using Authorization.Platform.Authorization.Models;
@@ -219,6 +220,27 @@ namespace Altinn.Platform.Authorization.IntegrationTests.Util
         {
             string unitTestFolder = Path.GetDirectoryName(new Uri(typeof(ContextHandlerTest).Assembly.Location).LocalPath);
             return Path.Combine(unitTestFolder, "..", "..", "..", "Data", "Roles", $"User_{coveredByUserId}", $"party_{offeredByPartyId}", "roles.json");
+        }
+
+        public static AuthorizationEvent GetAuthorizationEvent(string testCase)
+        {
+            string content = null;
+            if (testCase.Contains("AltinnApps"))
+            {
+                content = File.ReadAllText(Path.Combine(GetAltinnAppsPath(), "eventlog//" + testCase + "Event.json"));
+            }
+            else if (testCase.Contains("ResourceRegistry"))
+            {
+                content = File.ReadAllText(Path.Combine(GetResourceRegistryPath(), testCase + "Event.json"));
+            }
+            else
+            {
+                content = File.ReadAllText(Path.Combine(GetConformancePath(), testCase + "Event.json"));
+            }
+
+            AuthorizationEvent authorizationEvennt = (AuthorizationEvent)JsonConvert.DeserializeObject(content, typeof(AuthorizationEvent));
+
+            return authorizationEvennt;
         }
     }
 }

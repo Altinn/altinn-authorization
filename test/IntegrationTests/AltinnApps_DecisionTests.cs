@@ -7,13 +7,17 @@ using Altinn.Platform.Authorization.Controllers;
 using Altinn.Platform.Authorization.IntegrationTests.MockServices;
 using Altinn.Platform.Authorization.IntegrationTests.Util;
 using Altinn.Platform.Authorization.IntegrationTests.Webfactory;
+using Altinn.Platform.Authorization.Models;
 using Altinn.Platform.Authorization.Repositories.Interface;
 using Altinn.Platform.Authorization.Services.Interface;
+using Altinn.Platform.Authorization.Services.Interfaces;
 using AltinnCore.Authentication.JwtCookie;
+using Microsoft.ApplicationInsights.DataContracts;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
+using Moq;
 using Xunit;
 
 namespace Altinn.Platform.Authorization.IntegrationTests
@@ -31,7 +35,11 @@ namespace Altinn.Platform.Authorization.IntegrationTests
         public async Task PDP_Decision_AltinnApps0001()
         {
             string testCase = "AltinnApps0001";
-            HttpClient client = GetTestClient();
+            Mock<IEventLog> eventQueue = new Mock<IEventLog>();
+            eventQueue.Setup(q => q.CreateAuthorizationEvent(It.IsAny<AuthorizationEvent>()));
+            AuthorizationEvent expectedAuthorizationEvent = TestSetupUtil.GetAuthorizationEvent(testCase);
+
+            HttpClient client = GetTestClient(eventQueue.Object);
             HttpRequestMessage httpRequestMessage = TestSetupUtil.CreateXacmlRequest(testCase);
             XacmlContextResponse expected = TestSetupUtil.ReadExpectedResponse(testCase);
 
@@ -40,6 +48,7 @@ namespace Altinn.Platform.Authorization.IntegrationTests
 
             // Assert
             AssertionUtil.AssertEqual(expected, contextResponse);
+            AssertionUtil.AssertAuthorizationEvent(eventQueue, expectedAuthorizationEvent);
         }
 
         [Fact]
@@ -312,7 +321,7 @@ namespace Altinn.Platform.Authorization.IntegrationTests
             AssertionUtil.AssertEqual(expected, contextResponse);
         }
 
-        private HttpClient GetTestClient()
+        private HttpClient GetTestClient(IEventLog eventLog = null)
         {
             HttpClient client = _factory.WithWebHostBuilder(builder =>
             {
@@ -326,6 +335,10 @@ namespace Altinn.Platform.Authorization.IntegrationTests
                     services.AddSingleton<IPolicyRepository, PolicyRepositoryMock>();
                     services.AddSingleton<IDelegationChangeEventQueue, DelegationChangeEventQueueMock>();
                     services.AddSingleton<IPostConfigureOptions<JwtCookieOptions>, JwtCookiePostConfigureOptionsStub>();
+                    if (eventLog != null)
+                    {
+                        services.AddSingleton(eventLog);
+                    }
                 });
             }).CreateClient(new WebApplicationFactoryClientOptions { AllowAutoRedirect = false });
 

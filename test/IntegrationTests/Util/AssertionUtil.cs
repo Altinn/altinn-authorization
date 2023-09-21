@@ -2,11 +2,13 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-
+using System.Net;
 using Altinn.Authorization.ABAC.Xacml;
 using Altinn.Authorization.ABAC.Xacml.JsonProfile;
 using Altinn.Platform.Authorization.Models;
 using Altinn.Platform.Authorization.Models.DelegationChangeEvent;
+using Altinn.Platform.Authorization.Services.Interfaces;
+using Moq;
 using Xunit;
 
 namespace Altinn.Platform.Authorization.IntegrationTests.Util
@@ -266,6 +268,17 @@ namespace Altinn.Platform.Authorization.IntegrationTests.Util
             AssertEqual(expected.CoveredBy, actual.CoveredBy);
             AssertEqual(expected.Resource, actual.Resource);
             AssertEqual(expected.Action, actual.Action);
+        }
+
+        public static void AssertAuthorizationEvent(Mock<IEventLog> eventQueue, AuthorizationEvent expectedAuthorizationEvent)
+        {
+            eventQueue.Verify(
+                e => e.CreateAuthorizationEvent(
+                    It.Is<AuthorizationEvent>(q => q.SubjectUserId == expectedAuthorizationEvent.SubjectUserId && 
+                    q.SubjectParty == expectedAuthorizationEvent.SubjectParty && q.InstanceId == expectedAuthorizationEvent.InstanceId &&
+                    q.IpAdress == expectedAuthorizationEvent.IpAdress && q.Operation == expectedAuthorizationEvent.Operation && q
+                    .Resource == expectedAuthorizationEvent.Resource && q.ContextRequestJson == expectedAuthorizationEvent.ContextRequestJson)), 
+                Times.Once());
         }
 
         private static void AssertEqual(List<AttributeMatch> expected, List<AttributeMatch> actual)
