@@ -314,7 +314,8 @@ namespace Altinn.Platform.Authorization.Services.Implementation
                 return;
             }
 
-            List<string> policySubjectAttributes = PolicyHelper.GetSubjectAttributeIds(xacmlPolicy);
+            PolicyHelper.GetPolicyResourceType(request, out string policyId);
+            List<string> policySubjectAttributes = GetSubjectAttributesFromCacheOrPolicy(xacmlPolicy, policyId);
 
             if (policySubjectAttributes.Contains(AltinnXacmlConstants.MatchAttributeIdentifiers.OedRoleAttribute))
             {
@@ -530,6 +531,23 @@ namespace Altinn.Platform.Authorization.Services.Implementation
             }
 
             return party?.SSN;
+        }
+
+        private List<string> GetSubjectAttributesFromCacheOrPolicy(XacmlPolicy xacmlPolicy, string policyId)
+        {
+            string cacheKey = $"{policyId}";
+            if (!_memoryCache.TryGetValue(cacheKey, out List<string> subjectAttributes))
+            {
+                subjectAttributes = PolicyHelper.GetSubjectAttributeIds(xacmlPolicy);
+
+                var cacheEntryOptions = new MemoryCacheEntryOptions()
+               .SetPriority(CacheItemPriority.High)
+               .SetAbsoluteExpiration(new TimeSpan(0, _generalSettings.RoleCacheTimeout, 0));
+
+                _memoryCache.Set(cacheKey, subjectAttributes, cacheEntryOptions);
+            }
+
+            return subjectAttributes;
         }
     }
 }
