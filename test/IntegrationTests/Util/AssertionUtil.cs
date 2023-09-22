@@ -275,9 +275,15 @@ namespace Altinn.Platform.Authorization.IntegrationTests.Util
             eventQueue.Verify(
                 e => e.CreateAuthorizationEvent(
                     It.Is<AuthorizationEvent>(q => q.SubjectUserId == expectedAuthorizationEvent.SubjectUserId && 
-                    q.SubjectParty == expectedAuthorizationEvent.SubjectParty && q.InstanceId == expectedAuthorizationEvent.InstanceId &&
-                    q.IpAdress == expectedAuthorizationEvent.IpAdress && q.Operation == expectedAuthorizationEvent.Operation && q
-                    .Resource == expectedAuthorizationEvent.Resource && q.ContextRequestJson == expectedAuthorizationEvent.ContextRequestJson)), 
+                    q.SubjectParty == expectedAuthorizationEvent.SubjectParty && 
+                    q.SubjectOrgCode == expectedAuthorizationEvent.SubjectOrgCode &&
+                    q.SubjectOrgNumber == expectedAuthorizationEvent.SubjectOrgNumber &&
+                    q.InstanceId == expectedAuthorizationEvent.InstanceId &&
+                    q.IpAdress == expectedAuthorizationEvent.IpAdress && 
+                    q.Operation == expectedAuthorizationEvent.Operation && 
+                    q.Resource == expectedAuthorizationEvent.Resource &&
+                    q.ResourcePartyId == expectedAuthorizationEvent.ResourcePartyId &&                   
+                    q.ContextRequestJson == expectedAuthorizationEvent.ContextRequestJson)), 
                 Times.Once());
         }
 

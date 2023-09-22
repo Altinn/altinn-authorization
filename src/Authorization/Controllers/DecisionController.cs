@@ -215,7 +215,7 @@ namespace Altinn.Platform.Authorization.Controllers
         {
             decisionRequest = await this._contextHandler.Enrich(decisionRequest);
 
-            EventLogHelper.CreateAuthorizationEvent(_featureManager, _eventLog, decisionRequest);
+            EventLogHelper.CreateAuthorizationEvent(_featureManager, _eventLog, decisionRequest, HttpContext);
             ////_logger.LogInformation($"// DecisionController // Authorize // Roles // Enriched request: {JsonConvert.SerializeObject(decisionRequest)}.");
             XacmlPolicy policy = await this._prp.GetPolicyAsync(decisionRequest);
 
