@@ -11,6 +11,7 @@ using Altinn.Platform.Authorization.Constants;
 using Altinn.Platform.Authorization.Models;
 using Altinn.Platform.Authorization.Services.Interfaces;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Azure.Documents.SystemFunctions;
 using Microsoft.FeatureManagement;
 
 namespace Altinn.Platform.Authorization.Helpers
@@ -25,11 +26,11 @@ namespace Altinn.Platform.Authorization.Helpers
         /// </summary>
         /// <param name="featureManager">handler for feature manager service</param>
         /// <param name="eventLog">handler for eventlog service</param>
-        public async static Task CreateAuthorizationEvent(IFeatureManager featureManager, IEventLog eventLog, XacmlContextRequest contextRequest, HttpContext context)
+        public async static Task CreateAuthorizationEvent(IFeatureManager featureManager, IEventLog eventLog, XacmlContextRequest contextRequest, HttpContext context, XacmlContextResponse contextResponse)
         {
             if (await featureManager.IsEnabledAsync(FeatureFlags.AuditLog))
             {
-                AuthorizationEvent authorizationEvent = MapAuthorizationEventFromContextRequest(contextRequest, context);
+                AuthorizationEvent authorizationEvent = MapAuthorizationEventFromContextRequest(contextRequest, context, contextResponse);
                 eventLog.CreateAuthorizationEvent(authorizationEvent);
             }
         }
@@ -39,7 +40,7 @@ namespace Altinn.Platform.Authorization.Helpers
         /// </summary>
         /// <param name="contextRequest">the context request</param>
         /// <returns></returns>
-        public static AuthorizationEvent MapAuthorizationEventFromContextRequest(XacmlContextRequest contextRequest, HttpContext context)
+        public static AuthorizationEvent MapAuthorizationEventFromContextRequest(XacmlContextRequest contextRequest, HttpContext context, XacmlContextResponse contextRespsonse)
         {
             AuthorizationEvent authorizationEvent = null;
             if (contextRequest != null)
@@ -57,6 +58,7 @@ namespace Altinn.Platform.Authorization.Helpers
                 authorizationEvent.Operation = GetActionInformation(contextRequest);
                 authorizationEvent.IpAdress = GetClientIpAddress(context);
                 authorizationEvent.ContextRequestJson = JsonSerializer.Serialize(contextRequest);
+                authorizationEvent.Decision = contextRespsonse.Results.FirstOrDefault().Decision.ToString();
             }
 
             return authorizationEvent;
