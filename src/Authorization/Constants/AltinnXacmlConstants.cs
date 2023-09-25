@@ -82,9 +82,9 @@ namespace Altinn.Platform.Authorization.Constants
             public const string RoleAttribute = "urn:altinn:rolecode";
 
             /// <summary>
-            /// OED Role Code Attribute match identifier
+            /// Digitalt Dødsbo Role Code Attribute match identifier
             /// </summary>
-            public const string OedRoleAttribute = "urn:oed:rolecode";
+            public const string OedRoleAttribute = "urn:digitaltdodsbo:rolecode";
         }
 
         /// <summary>

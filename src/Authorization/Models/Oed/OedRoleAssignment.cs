@@ -9,9 +9,9 @@ namespace Altinn.Platform.Authorization.Models.Oed
     public class OedRoleAssignment
     {
         /// <summary>
-        /// The OED role code 
+        /// The OED/Digitalt dødsbo role code 
         /// </summary>
-        [JsonPropertyName("urn:oed:rolecode")]
+        [JsonPropertyName("urn:digitaltdodsbo:rolecode")]
         public string OedRoleCode { get; set; }
 
         /// <summary>

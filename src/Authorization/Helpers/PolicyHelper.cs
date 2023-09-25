@@ -1,6 +1,6 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -49,38 +49,6 @@ namespace Altinn.Platform.Authorization.Helpers
             }
 
             return roleCodes.ToList();
-        }
-
-        /// <summary>
-        /// Returns a list of uniue subject attribute ids. Used to identify the role/group and other sources needed to enirch subject info
-        /// </summary>
-        /// <param name="policy">The policy</param>
-        /// <returns>List of attribute ids</returns>
-        public static List<string> GetSubjectAttributeIds(XacmlPolicy policy)
-        {
-            HashSet<string> attributeIds = new HashSet<string>();
-
-            foreach (XacmlRule rule in policy.Rules)
-            {
-                if (rule.Effect.Equals(XacmlEffectType.Permit) && rule.Target != null)
-                {
-                    foreach (XacmlAnyOf anyOf in rule.Target.AnyOf)
-                    {
-                        foreach (XacmlAllOf allOf in anyOf.AllOf)
-                        {
-                            foreach (XacmlMatch xacmlMatch in allOf.Matches)
-                            {
-                                if (xacmlMatch.AttributeDesignator.Category.Equals(XacmlConstants.MatchAttributeCategory.Subject))
-                                {
-                                    attributeIds.Add(xacmlMatch.AttributeDesignator.AttributeId.AbsoluteUri);
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-
-            return attributeIds.ToList();
         }
 
         /// <summary>

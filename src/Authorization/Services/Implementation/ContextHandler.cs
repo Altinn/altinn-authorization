@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
 using Altinn.Authorization.ABAC.Constants;
@@ -314,10 +315,8 @@ namespace Altinn.Platform.Authorization.Services.Implementation
                 return;
             }
 
-            PolicyHelper.GetPolicyResourceType(request, out string policyId);
-            List<string> policySubjectAttributes = GetSubjectAttributesFromCacheOrPolicy(xacmlPolicy, policyId);
-
-            if (policySubjectAttributes.Contains(AltinnXacmlConstants.MatchAttributeIdentifiers.OedRoleAttribute))
+            IDictionary<string, Collection<string>> subjectAttributes = xacmlPolicy.GetAttributeDictionaryByCategory(XacmlConstants.MatchAttributeCategory.Subject);
+            if (subjectAttributes.ContainsKey(AltinnXacmlConstants.MatchAttributeIdentifiers.OedRoleAttribute))
             {
                 string subjectSsn = await GetSsnForUser(subjectUserId);
                 string resourceSsn = await GetSSnForParty(resourcePartyId);
@@ -332,7 +331,7 @@ namespace Altinn.Platform.Authorization.Services.Implementation
                 }
             }
 
-            if (policySubjectAttributes.Contains(AltinnXacmlConstants.MatchAttributeIdentifiers.RoleAttribute))
+            if (subjectAttributes.ContainsKey(AltinnXacmlConstants.MatchAttributeIdentifiers.RoleAttribute))
             {
                 List<Role> roleList = await GetRoles(subjectUserId, resourcePartyId);
                 if (roleList.Count != 0)
@@ -468,7 +467,7 @@ namespace Altinn.Platform.Authorization.Services.Implementation
         /// </summary>
         /// <param name="from">the party which the role assignment provides access on behalf of</param>
         /// <param name="to">the role assignment recipient party</param>
-        /// <returns>list of OED Role Assignments</returns>
+        /// <returns>list of OED/Digitalt dødsbo Role Assignments</returns>
         protected async Task<List<OedRoleAssignment>> GetOedRoleAssignments(string from, string to)
         {
             string cacheKey = GetOedRoleassignmentCacheKey(from, to);
@@ -531,23 +530,6 @@ namespace Altinn.Platform.Authorization.Services.Implementation
             }
 
             return party?.SSN;
-        }
-
-        private List<string> GetSubjectAttributesFromCacheOrPolicy(XacmlPolicy xacmlPolicy, string policyId)
-        {
-            string cacheKey = $"{policyId}";
-            if (!_memoryCache.TryGetValue(cacheKey, out List<string> subjectAttributes))
-            {
-                subjectAttributes = PolicyHelper.GetSubjectAttributeIds(xacmlPolicy);
-
-                var cacheEntryOptions = new MemoryCacheEntryOptions()
-               .SetPriority(CacheItemPriority.High)
-               .SetAbsoluteExpiration(new TimeSpan(0, _generalSettings.RoleCacheTimeout, 0));
-
-                _memoryCache.Set(cacheKey, subjectAttributes, cacheEntryOptions);
-            }
-
-            return subjectAttributes;
         }
     }
 }
