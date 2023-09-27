@@ -58,7 +58,7 @@ namespace Altinn.Platform.Authorization.Helpers
                 authorizationEvent.Operation = GetActionInformation(contextRequest);
                 authorizationEvent.IpAdress = GetClientIpAddress(context);
                 authorizationEvent.ContextRequestJson = JsonSerializer.Serialize(contextRequest);
-                authorizationEvent.Decision = contextRespsonse.Results.FirstOrDefault().Decision.ToString();
+                authorizationEvent.Decision = contextRespsonse.Results?.FirstOrDefault()?.Decision.ToString();
             }
 
             return authorizationEvent;
@@ -180,33 +180,6 @@ namespace Altinn.Platform.Authorization.Helpers
             }
 
             return clientIp;
-        }
-
-        private static Dictionary<string, ICollection<XacmlAttribute>> GetCategoryAttributes(XacmlContextRequest request, string category)
-        {
-            Dictionary<string, ICollection<XacmlAttribute>> categoryAttributes = new Dictionary<string, ICollection<XacmlAttribute>>();
-            foreach (XacmlContextAttributes attributes in request.Attributes)
-            {
-                if (attributes.Category.OriginalString.Equals(category))
-                {
-                    foreach (XacmlAttribute attribute in attributes.Attributes)
-                    {
-                        if (categoryAttributes.Keys.Contains(attribute.AttributeId.OriginalString))
-                        {
-                            categoryAttributes[attribute.AttributeId.OriginalString].Add(attribute);
-                        }
-                        else
-                        {
-                            ICollection<XacmlAttribute> newCollection = new Collection<XacmlAttribute>();
-                            newCollection.Add(attribute);
-
-                            categoryAttributes.Add(attribute.AttributeId.OriginalString, newCollection);
-                        }
-                    }
-                }
-            }
-
-            return categoryAttributes;
         }
     }
 }
