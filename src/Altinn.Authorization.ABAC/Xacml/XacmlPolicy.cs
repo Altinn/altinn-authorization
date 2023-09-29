@@ -327,28 +327,21 @@ namespace Altinn.Authorization.ABAC.Xacml
             IDictionary<string, ICollection<string>> categoryAttributeDict = new Dictionary<string, ICollection<string>>();
             categoryAttributes.Add(matchAttributeCategory, categoryAttributeDict);
 
-            foreach (XacmlRule rule in Rules)
+            foreach (XacmlRule r in Rules.Where(r => r.Target != null))
             {
-                // should we care about permit?
-                if (rule.Effect.Equals(XacmlEffectType.Permit) && rule.Target != null)
+                foreach (XacmlAnyOf anyOf in r.Target.AnyOf)
                 {
-                    foreach (XacmlAnyOf anyOf in rule.Target.AnyOf)
+                    foreach (XacmlAllOf allOf in anyOf.AllOf)
                     {
-                        foreach (XacmlAllOf allOf in anyOf.AllOf)
+                        foreach (XacmlMatch xacmlMatch in allOf.Matches.Where(xm => xm.AttributeDesignator.Category.Equals(matchAttributeCategory)))
                         {
-                            foreach (XacmlMatch xacmlMatch in allOf.Matches)
+                            string attributeId = xacmlMatch.AttributeDesignator.AttributeId.AbsoluteUri;
+                            if (!categoryAttributeDict.ContainsKey(attributeId))
                             {
-                                if (xacmlMatch.AttributeDesignator.Category.Equals(matchAttributeCategory))
-                                {
-                                    string attributeId = xacmlMatch.AttributeDesignator.AttributeId.AbsoluteUri;
-                                    if (!categoryAttributeDict.ContainsKey(attributeId))
-                                    {
-                                        categoryAttributeDict.Add(attributeId, new Collection<string>());
-                                    }
-
-                                    categoryAttributeDict[attributeId].Add(xacmlMatch.AttributeValue.Value);
-                                }
+                                categoryAttributeDict.Add(attributeId, new Collection<string>());
                             }
+
+                            categoryAttributeDict[attributeId].Add(xacmlMatch.AttributeValue.Value);
                         }
                     }
                 }
