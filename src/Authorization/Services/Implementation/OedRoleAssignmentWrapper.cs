@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
@@ -21,6 +22,7 @@ namespace Altinn.Platform.Authorization.Services.Implementation
     /// <summary>
     /// Service implementation for OED Role Assignment integration
     /// </summary>
+    [ExcludeFromCodeCoverage]
     public class OedRoleAssignmentWrapper : IOedRoleAssignmentWrapper
     {
         private readonly JsonSerializerOptions _serializerOptions = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
