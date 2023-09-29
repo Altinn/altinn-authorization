@@ -239,7 +239,7 @@ namespace Altinn.Platform.Authorization.Controllers
                 }
             }
 
-            EventLogHelper.CreateAuthorizationEvent(_featureManager, _eventLog, decisionRequest, HttpContext, rolesContextResponse);
+            _eventLog.CreateAuthorizationEvent(_featureManager, decisionRequest, HttpContext, rolesContextResponse);
             return rolesContextResponse;
         }
 

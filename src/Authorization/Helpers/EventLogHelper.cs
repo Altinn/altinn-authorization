@@ -8,7 +8,7 @@ using Altinn.Authorization.ABAC.Interface;
 using Altinn.Authorization.ABAC.Xacml;
 using Altinn.Platform.Authorization.Configuration;
 using Altinn.Platform.Authorization.Constants;
-using Altinn.Platform.Authorization.Models;
+using Altinn.Platform.Authorization.Models.EventLog;
 using Altinn.Platform.Authorization.Services.Interfaces;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Azure.Documents.SystemFunctions;

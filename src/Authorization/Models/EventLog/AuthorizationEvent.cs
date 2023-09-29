@@ -1,7 +1,7 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 
-namespace Altinn.Platform.Authorization.Models
+namespace Altinn.Platform.Authorization.Models.EventLog
 {
     /// <summary>
     /// This model describes an authorization event. An authorization event is an action triggered when a user requests access to an operation
@@ -31,7 +31,7 @@ namespace Altinn.Platform.Authorization.Models
         /// <summary>
         /// The partyid for the user that requested authorization
         /// </summary>
-        public string? SubjectParty { get; set; }
+        public string SubjectParty { get; set; }
 
         /// <summary>
         /// The partyId for resource owner when applicable
@@ -41,7 +41,7 @@ namespace Altinn.Platform.Authorization.Models
         /// <summary>
         /// The Main resource Id (app, external resource +)
         /// </summary>
-        public string? Resource { get; set; }
+        public string Resource { get; set; }
 
         /// <summary>
         /// Instance Id when applicable
