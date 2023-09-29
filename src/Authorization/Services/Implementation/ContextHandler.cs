@@ -315,7 +315,7 @@ namespace Altinn.Platform.Authorization.Services.Implementation
                 return;
             }
 
-            IDictionary<string, Collection<string>> subjectAttributes = xacmlPolicy.GetAttributeDictionaryByCategory(XacmlConstants.MatchAttributeCategory.Subject);
+            IDictionary<string, ICollection<string>> subjectAttributes = xacmlPolicy.GetAttributeDictionaryByCategory(XacmlConstants.MatchAttributeCategory.Subject);
             if (subjectAttributes.ContainsKey(AltinnXacmlConstants.MatchAttributeIdentifiers.OedRoleAttribute))
             {
                 string subjectSsn = await GetSsnForUser(subjectUserId);
