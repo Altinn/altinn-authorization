@@ -97,6 +97,15 @@
     <None Remove="Data\Register\Org\950474084.json" />
     <None Remove="Data\Xacml\3.0\AltinnApps\AltinnApps0001DelegationRequest.xml" />
     <None Remove="Data\Xacml\3.0\AltinnApps\AltinnApps0001DelegationResponse.xml" />
+    <None Remove="Data\Xacml\3.0\AltinnApps\AltinnApps0021Policy.xml" />
+    <None Remove="Data\Xacml\3.0\AltinnApps\AltinnApps0024Policy.xml" />
+    <None Remove="Data\Xacml\3.0\AltinnApps\AltinnApps0025Policy.xml" />
+    <None Remove="Data\Xacml\3.0\AltinnApps\AltinnApps_OedFormuesfullmakt_Json_PermitPolicy.xml" />
+    <None Remove="Data\Xacml\3.0\AltinnApps\AltinnApps_OedFormuesfullmakt_Json_PermitRequest.json" />
+    <None Remove="Data\Xacml\3.0\AltinnApps\AltinnApps_OedFormuesfullmakt_Json_PermitResponse.json" />
+    <None Remove="Data\Xacml\3.0\AltinnApps\AltinnApps_OedFormuesfullmakt_Xml_PermitPolicy.xml" />
+    <None Remove="Data\Xacml\3.0\AltinnApps\AltinnApps_OedFormuesfullmakt_Xml_PermitRequest.xml" />
+    <None Remove="Data\Xacml\3.0\AltinnApps\AltinnApps_OedFormuesfullmakt_Xml_PermitResponse.xml" />
     <None Remove="Data\Xacml\3.0\AltinnApps\error\delegationeventfail\policy.xml" />
     <None Remove="Data\Xacml\3.0\ResourceRegistry\AltinnResourceRegistry0001Request.xml" />
     <None Remove="Data\Xacml\3.0\ResourceRegistry\AltinnResourceRegistry0001Response.xml" />
@@ -106,11 +115,47 @@
     <None Remove="Data\Xacml\3.0\ResourceRegistry\AltinnResourceRegistry0003Response.json" />
     <None Remove="Data\Xacml\3.0\ResourceRegistry\AltinnResourceRegistry0004Request.json" />
     <None Remove="Data\Xacml\3.0\ResourceRegistry\AltinnResourceRegistry0004Response.json" />
+    <None Remove="Data\Xacml\3.0\ResourceRegistry\oed-role-formuesfullmakt\policy.xml" />
     <None Remove="Data\Xacml\3.0\ResourceRegistry\apidelegation\policy.xml" />
+    <None Remove="Data\Xacml\3.0\ResourceRegistry\ResourceRegistry_OedFormuesfullmakt_Json_IndeterminateRequest.json" />
+    <None Remove="Data\Xacml\3.0\ResourceRegistry\ResourceRegistry_OedFormuesfullmakt_Json_IndeterminateResponse.json" />
+    <None Remove="Data\Xacml\3.0\ResourceRegistry\ResourceRegistry_OedFormuesfullmakt_Json_PermitRequest.json" />
+    <None Remove="Data\Xacml\3.0\ResourceRegistry\ResourceRegistry_OedFormuesfullmakt_Json_PermitResponse.json" />
+    <None Remove="Data\Xacml\3.0\ResourceRegistry\ResourceRegistry_OedFormuesfullmakt_Xml_IndeterminateRequest.xml" />
+    <None Remove="Data\Xacml\3.0\ResourceRegistry\ResourceRegistry_OedFormuesfullmakt_Xml_IndeterminateResponse.xml" />
+    <None Remove="Data\Xacml\3.0\ResourceRegistry\ResourceRegistry_OedFormuesfullmakt_Xml_PermitRequest.xml" />
+    <None Remove="Data\Xacml\3.0\ResourceRegistry\ResourceRegistry_OedFormuesfullmakt_Xml_PermitResponse.xml" />
   </ItemGroup>
 
   <ItemGroup>
+    <Content Update="Data\Xacml\3.0\ResourceRegistry\oed-role-formuesfullmakt\policy.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Update="Data\Xacml\3.0\ResourceRegistry\ResourceRegistry_OedFormuesfullmakt_Json_IndeterminateRequest.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Update="Data\Xacml\3.0\ResourceRegistry\ResourceRegistry_OedFormuesfullmakt_Json_PermitRequest.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Update="Data\Xacml\3.0\ResourceRegistry\ResourceRegistry_OedFormuesfullmakt_Json_IndeterminateResponse.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Update="Data\Xacml\3.0\ResourceRegistry\ResourceRegistry_OedFormuesfullmakt_Json_PermitResponse.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Update="Data\Xacml\3.0\ResourceRegistry\ResourceRegistry_OedFormuesfullmakt_Xml_IndeterminateRequest.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Update="Data\Xacml\3.0\ResourceRegistry\ResourceRegistry_OedFormuesfullmakt_Xml_PermitRequest.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Update="Data\Xacml\3.0\ResourceRegistry\AltinnResourceRegistry0001Request.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Update="Data\Xacml\3.0\ResourceRegistry\ResourceRegistry_OedFormuesfullmakt_Xml_IndeterminateResponse.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Update="Data\Xacml\3.0\ResourceRegistry\ResourceRegistry_OedFormuesfullmakt_Xml_PermitResponse.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Update="Data\Xacml\3.0\ResourceRegistry\AltinnResourceRegistry0001Response.xml">

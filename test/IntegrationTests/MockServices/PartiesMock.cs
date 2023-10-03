@@ -50,6 +50,17 @@ namespace Altinn.Platform.Authorization.IntegrationTests.MockServices
             throw new NotImplementedException();
         }
 
+        public Task<Party> GetParty(int partyId)
+        {
+            Party party = null;
+            if (partyId == 50740574)
+            {
+                party = new Party { PartyId = partyId, SSN = "11895696716" };
+            }
+
+            return Task.FromResult(party);
+        }
+
         public Task<bool> ValidateSelectedParty(int userId, int partyId)
         {
             throw new NotImplementedException();

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
 using Altinn.Authorization.ABAC.Constants;
@@ -7,10 +8,13 @@ using Altinn.Authorization.ABAC.Interface;
 using Altinn.Authorization.ABAC.Xacml;
 using Altinn.Platform.Authorization.Configuration;
 using Altinn.Platform.Authorization.Constants;
+using Altinn.Platform.Authorization.Helpers;
 using Altinn.Platform.Authorization.Models;
+using Altinn.Platform.Authorization.Models.Oed;
 using Altinn.Platform.Authorization.Repositories.Interface;
 using Altinn.Platform.Authorization.Services.Interface;
 using Altinn.Platform.Authorization.Services.Interfaces;
+using Altinn.Platform.Profile.Models;
 using Altinn.Platform.Register.Models;
 using Altinn.Platform.Storage.Interface.Models;
 using Authorization.Platform.Authorization.Models;
@@ -32,29 +36,38 @@ namespace Altinn.Platform.Authorization.Services.Implementation
     {
         private readonly IInstanceMetadataRepository _policyInformationRepository;
         private readonly IRoles _rolesWrapper;
+        private readonly IOedRoleAssignmentWrapper _oedRolesWrapper;
         private readonly IParties _partiesWrapper;
+        private readonly IProfile _profileWrapper;
         private readonly IMemoryCache _memoryCache;
         private readonly GeneralSettings _generalSettings;
         private readonly IRegisterService _registerService;
+        private readonly IPolicyRetrievalPoint _prp;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ContextHandler"/> class
         /// </summary>
         /// <param name="policyInformationRepository">the policy information repository handler</param>
         /// <param name="rolesWrapper">the roles handler</param>
+        /// <param name="oedRolesWrapper">service handling oed role retireval</param>
         /// <param name="partiesWrapper">the party information handler</param>
+        /// <param name="profileWrapper">the user profile information handler</param>
         /// <param name="memoryCache">The cache handler </param>
         /// <param name="settings">The app settings</param>
         /// <param name="registerService">Register service</param>
+        /// <param name="prp">service handling policy retireval</param>
         public ContextHandler(
-            IInstanceMetadataRepository policyInformationRepository, IRoles rolesWrapper, IParties partiesWrapper, IMemoryCache memoryCache, IOptions<GeneralSettings> settings, IRegisterService registerService)
+            IInstanceMetadataRepository policyInformationRepository, IRoles rolesWrapper, IOedRoleAssignmentWrapper oedRolesWrapper, IParties partiesWrapper, IProfile profileWrapper, IMemoryCache memoryCache, IOptions<GeneralSettings> settings, IRegisterService registerService, IPolicyRetrievalPoint prp)
         {
             _policyInformationRepository = policyInformationRepository;
             _rolesWrapper = rolesWrapper;
+            _oedRolesWrapper = oedRolesWrapper;
             _partiesWrapper = partiesWrapper;
+            _profileWrapper = profileWrapper;
             _memoryCache = memoryCache;
             _generalSettings = settings.Value;
             _registerService = registerService;
+            _prp = prp;
         }
 
         /// <summary>
@@ -296,9 +309,36 @@ namespace Altinn.Platform.Authorization.Services.Implementation
                 return;
             }
 
-            List<Role> roleList = await GetRoles(subjectUserId, resourcePartyId); 
+            XacmlPolicy xacmlPolicy = await _prp.GetPolicyAsync(request);
+            if (xacmlPolicy == null)
+            {
+                return;
+            }
 
-            subjectContextAttributes.Attributes.Add(GetRoleAttribute(roleList));
+            IDictionary<string, ICollection<string>> subjectAttributes = xacmlPolicy.GetAttributeDictionaryByCategory(XacmlConstants.MatchAttributeCategory.Subject);
+            if (subjectAttributes.ContainsKey(AltinnXacmlConstants.MatchAttributeIdentifiers.OedRoleAttribute))
+            {
+                string subjectSsn = await GetSsnForUser(subjectUserId);
+                string resourceSsn = await GetSSnForParty(resourcePartyId);
+
+                if (!string.IsNullOrWhiteSpace(subjectSsn) && !string.IsNullOrWhiteSpace(resourceSsn))
+                {
+                    List<OedRoleAssignment> oedRoleAssignments = await GetOedRoleAssignments(resourceSsn, subjectSsn);
+                    if (oedRoleAssignments.Count != 0)
+                    {
+                        subjectContextAttributes.Attributes.Add(GetOedRoleAttributes(oedRoleAssignments));
+                    }
+                }
+            }
+
+            if (subjectAttributes.ContainsKey(AltinnXacmlConstants.MatchAttributeIdentifiers.RoleAttribute))
+            {
+                List<Role> roleList = await GetRoles(subjectUserId, resourcePartyId);
+                if (roleList.Count != 0)
+                {
+                    subjectContextAttributes.Attributes.Add(GetRoleAttribute(roleList));
+                }
+            }
         }
 
         /// <summary>
@@ -312,6 +352,22 @@ namespace Altinn.Platform.Authorization.Services.Implementation
             foreach (Role role in roles)
             {
                 attribute.AttributeValues.Add(new XacmlAttributeValue(new Uri(XacmlConstants.DataTypes.XMLString), role.Value));
+            }
+
+            return attribute;
+        }
+
+        /// <summary>
+        /// Gets a XacmlAttribute model for the list of oed role attributes
+        /// </summary>
+        /// <param name="oedRoleAssignments">The list of oedRoleAssignments</param>
+        /// <returns>XacmlAttribute</returns>
+        protected XacmlAttribute GetOedRoleAttributes(List<OedRoleAssignment> oedRoleAssignments)
+        {
+            XacmlAttribute attribute = new XacmlAttribute(new Uri(XacmlRequestAttribute.OedRoleAttribute), false);
+            foreach (OedRoleAssignment oedRoleAssignment in oedRoleAssignments)
+            {
+                attribute.AttributeValues.Add(new XacmlAttributeValue(new Uri(XacmlConstants.DataTypes.XMLString), oedRoleAssignment.OedRoleCode));
             }
 
             return attribute;
@@ -406,9 +462,74 @@ namespace Altinn.Platform.Authorization.Services.Implementation
             return keyrolePartyIds;
         }
 
+        /// <summary>
+        /// Gets a list of role assignments between to persons (if exists) from the OED Authz PIP API
+        /// </summary>
+        /// <param name="from">the party which the role assignment provides access on behalf of</param>
+        /// <param name="to">the role assignment recipient party</param>
+        /// <returns>list of OED/Digitalt dødsbo Role Assignments</returns>
+        protected async Task<List<OedRoleAssignment>> GetOedRoleAssignments(string from, string to)
+        {
+            string cacheKey = GetOedRoleassignmentCacheKey(from, to);
+
+            if (!_memoryCache.TryGetValue(cacheKey, out List<OedRoleAssignment> oedRoles))
+            {
+                oedRoles = await _oedRolesWrapper.GetOedRoleAssignments(from, to);
+
+                var cacheEntryOptions = new MemoryCacheEntryOptions()
+               .SetPriority(CacheItemPriority.High)
+               .SetAbsoluteExpiration(new TimeSpan(0, _generalSettings.RoleCacheTimeout, 0));
+
+                _memoryCache.Set(cacheKey, oedRoles, cacheEntryOptions);
+            }
+
+            return oedRoles;
+        }
+
         private string GetCacheKey(int userId, int partyId)
         {
             return "rolelist_" + userId + "_" + partyId;
+        }
+
+        private string GetOedRoleassignmentCacheKey(string from, string to)
+        {
+            return $"oed{from}_{to}";
+        }    
+
+        private async Task<string> GetSsnForUser(int userId)
+        {
+            string cacheKey = $"uid:{userId}";
+
+            if (!_memoryCache.TryGetValue(cacheKey, out UserProfile userProfile))
+            {
+                userProfile = await _profileWrapper.GetUserProfile(userId);
+
+                var cacheEntryOptions = new MemoryCacheEntryOptions()
+               .SetPriority(CacheItemPriority.High)
+               .SetAbsoluteExpiration(new TimeSpan(0, _generalSettings.RoleCacheTimeout, 0));
+
+                _memoryCache.Set(cacheKey, userProfile, cacheEntryOptions);
+            }
+
+            return userProfile?.Party?.SSN;
+        }
+
+        private async Task<string> GetSSnForParty(int partyId)
+        {
+            string cacheKey = $"p:{partyId}";
+
+            if (!_memoryCache.TryGetValue(cacheKey, out Party party))
+            {
+                party = await _partiesWrapper.GetParty(partyId);
+
+                var cacheEntryOptions = new MemoryCacheEntryOptions()
+               .SetPriority(CacheItemPriority.High)
+               .SetAbsoluteExpiration(new TimeSpan(0, _generalSettings.RoleCacheTimeout, 0));
+
+                _memoryCache.Set(cacheKey, party, cacheEntryOptions);
+            }
+
+            return party?.SSN;
         }
     }
 }

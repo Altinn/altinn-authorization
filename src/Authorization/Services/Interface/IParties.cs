@@ -18,6 +18,13 @@ namespace Altinn.Platform.Authorization.Services.Interface
         Task<List<Party>> GetParties(int userId);
 
         /// <summary>
+        /// Method that fetches a given party
+        /// </summary>
+        /// <param name="partyId">The party id</param>
+        /// <returns>The party</returns>
+        Task<Party> GetParty(int partyId);
+
+        /// <summary>
         /// Method that fetches a list of PartyIds the given user id has key role access to (where the user inherit delegations to their organization)
         /// </summary>
         /// <param name="userId">The user id</param>
