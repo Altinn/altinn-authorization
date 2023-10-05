@@ -230,6 +230,7 @@ namespace Altinn.Platform.Authorization.Controllers
                     XacmlContextResult delegationResult = delegationContextResponse.Results.First();
                     if (delegationResult.Decision.Equals(XacmlContextDecision.Permit))
                     {
+                        _eventLog.CreateAuthorizationEvent(_featureManager, decisionRequest, HttpContext, delegationContextResponse);
                         return delegationContextResponse;
                     }
                 }

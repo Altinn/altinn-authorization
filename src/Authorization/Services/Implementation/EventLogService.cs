@@ -6,9 +6,8 @@ using Altinn.Platform.Authorization.Configuration;
 using Altinn.Platform.Authorization.Helpers;
 using Altinn.Platform.Authorization.Models.EventLog;
 using Altinn.Platform.Authorization.Services.Interfaces;
-using Azure.Messaging;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.Azure;
 using Microsoft.FeatureManagement;
 
 namespace Altinn.Platform.Authorization.Services.Implementation
@@ -19,14 +18,17 @@ namespace Altinn.Platform.Authorization.Services.Implementation
     public class EventLogService : IEventLog
     {
         private readonly IEventsQueueClient _queueClient;
+        private readonly ISystemClock _systemClock;
 
         /// <summary>
         /// Instantiation for event log servcie
         /// </summary>
         /// <param name="queueClient">queue client to store event in event log</param>
-        public EventLogService(IEventsQueueClient queueClient)
+        /// <param name="systemClock">handler for datetime service</param>
+        public EventLogService(IEventsQueueClient queueClient, ISystemClock systemClock)
         {
             _queueClient = queueClient;
+            _systemClock = systemClock;
         }
 
         /// <summary>
@@ -46,7 +48,7 @@ namespace Altinn.Platform.Authorization.Services.Implementation
         {
             if (await featureManager.IsEnabledAsync(FeatureFlags.AuditLog))
             {
-                AuthorizationEvent authorizationEvent = EventLogHelper.MapAuthorizationEventFromContextRequest(contextRequest, context, contextResponse);
+                AuthorizationEvent authorizationEvent = EventLogHelper.MapAuthorizationEventFromContextRequest(contextRequest, context, contextResponse, _systemClock.UtcNow.DateTime);
 
                 if (authorizationEvent != null)
                 {

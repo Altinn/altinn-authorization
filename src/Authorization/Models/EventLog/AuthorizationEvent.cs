@@ -11,12 +11,12 @@ namespace Altinn.Platform.Authorization.Models.EventLog
         /// <summary>
         /// Date, time of the authorization event. Set by producer of logevents
         /// </summary>
-        public DateTime TimeStamp { get; set; }
+        public DateTime Created { get; set; }
 
         /// <summary>
         /// The userid for the user that requested authorization
         /// </summary>
-        public string SubjectUserId { get; set; }
+        public int? SubjectUserId { get; set; }
 
         /// <summary>
         /// The org code for the org that requested authorization
@@ -26,17 +26,17 @@ namespace Altinn.Platform.Authorization.Models.EventLog
         /// <summary>
         /// The org number for the org that requested authorization
         /// </summary>
-        public string SubjectOrgNumber { get; set; }
+        public int? SubjectOrgNumber { get; set; }
 
         /// <summary>
         /// The partyid for the user that requested authorization
         /// </summary>
-        public string SubjectParty { get; set; }
+        public int? SubjectParty { get; set; }
 
         /// <summary>
         /// The partyId for resource owner when applicable
         /// </summary>
-        public string ResourcePartyId { get; set; }
+        public int? ResourcePartyId { get; set; }
 
         /// <summary>
         /// The Main resource Id (app, external resource +)
@@ -56,7 +56,7 @@ namespace Altinn.Platform.Authorization.Models.EventLog
         /// <summary>
         /// Duration of log retention
         /// </summary>
-        public string TimeToDelete { get; set; }
+        public DateTime TimeToDelete { get; set; }
 
         /// <summary>
         /// The Ip adress of the calling party

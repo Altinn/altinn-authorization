@@ -231,7 +231,7 @@ namespace Altinn.Platform.Authorization.IntegrationTests.Util
             }
             else if (testCase.Contains("ResourceRegistry"))
             {
-                content = File.ReadAllText(Path.Combine(GetResourceRegistryPath(), testCase + "Event.json"));
+                content = File.ReadAllText(Path.Combine(GetResourceRegistryPath(), "eventlog//" + testCase + "Event.json"));
             }
             else
             {

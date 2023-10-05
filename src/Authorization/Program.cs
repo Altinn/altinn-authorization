@@ -31,6 +31,7 @@ using Microsoft.ApplicationInsights.AspNetCore.Extensions;
 using Microsoft.ApplicationInsights.Channel;
 using Microsoft.ApplicationInsights.Extensibility;
 using Microsoft.ApplicationInsights.WindowsServer.TelemetryChannel;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -226,6 +227,7 @@ void ConfigureServices(IServiceCollection services, IConfiguration config)
     services.AddTransient<ISigningCredentialsResolver, SigningCredentialsResolver>();
     services.AddSingleton<IEventsQueueClient, EventsQueueClient>();
     services.AddSingleton<IEventLog, EventLogService>();
+    services.AddSingleton<ISystemClock, SystemClock>();
     GeneralSettings generalSettings = config.GetSection("GeneralSettings").Get<GeneralSettings>();
     services.AddAuthentication(JwtCookieDefaults.AuthenticationScheme)
         .AddJwtCookie(JwtCookieDefaults.AuthenticationScheme, options =>
