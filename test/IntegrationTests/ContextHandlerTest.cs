@@ -6,9 +6,10 @@ using Altinn.Platform.Authorization.IntegrationTests.MockServices;
 using Altinn.Platform.Authorization.IntegrationTests.Util;
 using Altinn.Platform.Authorization.Services.Implementation;
 using Altinn.Platform.Events.Tests.Mocks;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Options;
-
+using Moq;
 using Xunit;
 
 namespace Altinn.Platform.Authorization.IntegrationTests
@@ -19,16 +20,22 @@ namespace Altinn.Platform.Authorization.IntegrationTests
     public class ContextHandlerTest 
     {
         private readonly ContextHandler _contextHandler;
+        private HttpContext _httpContext = new DefaultHttpContext();
 
         public ContextHandlerTest()
         {
+            Mock<IHttpContextAccessor> httpContextAccessorMock = new Mock<IHttpContextAccessor>();
+            httpContextAccessorMock.Setup(h => h.HttpContext).Returns(_httpContext);
             _contextHandler = new ContextHandler(
                 new InstanceMetadataRepositoryMock(),
                 new RolesMock(),
+                new OedRoleAssignmentWrapperMock(),
                 new PartiesMock(),
+                new ProfileMock(),
                 new MemoryCache(new MemoryCacheOptions()),
                 Options.Create(new GeneralSettings { RoleCacheTimeout = 5 }),
-                new RegisterServiceMock());
+                new RegisterServiceMock(),
+                new PolicyRetrievalPointMock(httpContextAccessorMock.Object, null));
         }
 
         /// <summary>
@@ -46,6 +53,7 @@ namespace Altinn.Platform.Authorization.IntegrationTests
         {
             // Arrange
             string testCase = "AltinnApps0021";
+            _httpContext.Request.Headers.Add("testcase", testCase);
 
             XacmlContextRequest request = TestSetupUtil.CreateXacmlContextRequest(testCase);
             XacmlContextRequest expectedEnrichedRequest = TestSetupUtil.GetEnrichedRequest(testCase);
@@ -74,6 +82,7 @@ namespace Altinn.Platform.Authorization.IntegrationTests
         {
             // Arrange
             string testCase = "AltinnApps0022";
+            _httpContext.Request.Headers.Add("testcase", testCase);
 
             XacmlContextRequest request = TestSetupUtil.CreateXacmlContextRequest(testCase);
             XacmlContextRequest expectedEnrichedRequest = TestSetupUtil.GetEnrichedRequest(testCase);
@@ -102,6 +111,7 @@ namespace Altinn.Platform.Authorization.IntegrationTests
         {
             // Arrange
             string testCase = "AltinnApps0023";
+            _httpContext.Request.Headers.Add("testcase", testCase);
 
             XacmlContextRequest request = TestSetupUtil.CreateXacmlContextRequest(testCase);
             XacmlContextRequest expectedEnrichedRequest = TestSetupUtil.GetEnrichedRequest(testCase);
@@ -130,6 +140,7 @@ namespace Altinn.Platform.Authorization.IntegrationTests
         {
             // Arrange
             string testCase = "AltinnApps0024";
+            _httpContext.Request.Headers.Add("testcase", testCase);
 
             XacmlContextRequest request = TestSetupUtil.CreateXacmlContextRequest(testCase);
             XacmlContextRequest expectedEnrichedRequest = TestSetupUtil.GetEnrichedRequest(testCase);
@@ -158,6 +169,7 @@ namespace Altinn.Platform.Authorization.IntegrationTests
         {
             // Arrange
             string testCase = "AltinnApps0025";
+            _httpContext.Request.Headers.Add("testcase", testCase);
 
             XacmlContextRequest request = TestSetupUtil.CreateXacmlContextRequest(testCase);
             XacmlContextRequest expectedEnrichedRequest = TestSetupUtil.GetEnrichedRequest(testCase);
@@ -186,6 +198,7 @@ namespace Altinn.Platform.Authorization.IntegrationTests
         {
             // Arrange
             string testCase = "AltinnApps0026";
+            _httpContext.Request.Headers.Add("testcase", testCase);
 
             XacmlContextRequest request = TestSetupUtil.CreateXacmlContextRequest(testCase);
             XacmlContextRequest expectedEnrichedRequest = TestSetupUtil.GetEnrichedRequest(testCase);

@@ -378,6 +378,36 @@ namespace Altinn.Platform.Authorization.IntegrationTests
             AssertionUtil.AssertEqual(expected, contextResponse);
         }
 
+        [Fact]
+        public async Task PDP_Decision_AltinnApps_OedFormuesfullmakt_Xml_Permit()
+        {
+            string testCase = "AltinnApps_OedFormuesfullmakt_Xml_Permit";
+            HttpClient client = GetTestClient();
+            HttpRequestMessage httpRequestMessage = TestSetupUtil.CreateXacmlRequest(testCase);
+            XacmlContextResponse expected = TestSetupUtil.ReadExpectedResponse(testCase);
+
+            // Act
+            XacmlContextResponse contextResponse = await TestSetupUtil.GetXacmlContextResponseAsync(client, httpRequestMessage);
+
+            // Assert
+            AssertionUtil.AssertEqual(expected, contextResponse);
+        }
+
+        [Fact]
+        public async Task PDP_Decision_AltinnApps_OedFormuesfullmakt_Json_Permit()
+        {
+            string testCase = "AltinnApps_OedFormuesfullmakt_Json_Permit";
+            HttpClient client = GetTestClient();
+            HttpRequestMessage httpRequestMessage = TestSetupUtil.CreateJsonProfileXacmlRequest(testCase);
+            XacmlJsonResponse expected = TestSetupUtil.ReadExpectedJsonProfileResponse(testCase);
+
+            // Act
+            XacmlJsonResponse contextResponse = await TestSetupUtil.GetXacmlJsonProfileContextResponseAsync(client, httpRequestMessage);
+
+            // Assert
+            AssertionUtil.AssertEqual(expected, contextResponse);
+        }
+
         private HttpClient GetTestClient(IEventsQueueClient eventLog = null, IFeatureManager featureManager = null, ISystemClock systemClockMock = null)
         {
             HttpClient client = _factory.WithWebHostBuilder(builder =>
@@ -389,7 +419,9 @@ namespace Altinn.Platform.Authorization.IntegrationTests
                     services.AddSingleton<IPolicyRetrievalPoint, PolicyRetrievalPointMock>();
                     services.AddSingleton<IDelegationMetadataRepository, DelegationMetadataRepositoryMock>();
                     services.AddSingleton<IRoles, RolesMock>();
+                    services.AddSingleton<IOedRoleAssignmentWrapper, OedRoleAssignmentWrapperMock>();
                     services.AddSingleton<IParties, PartiesMock>();
+                    services.AddSingleton<IProfile, ProfileMock>();
                     services.AddSingleton<IPolicyRepository, PolicyRepositoryMock>();
                     services.AddSingleton<IDelegationChangeEventQueue, DelegationChangeEventQueueMock>();
                     services.AddSingleton<IPostConfigureOptions<JwtCookieOptions>, JwtCookiePostConfigureOptionsStub>();

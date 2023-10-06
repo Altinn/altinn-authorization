@@ -2,7 +2,10 @@ using System;
 using System.IO;
 using System.Reflection;
 using System.Threading.Tasks;
-
+using Altinn.ApiClients.Maskinporten.Config;
+using Altinn.ApiClients.Maskinporten.Extensions;
+using Altinn.ApiClients.Maskinporten.Interfaces;
+using Altinn.ApiClients.Maskinporten.Services;
 using Altinn.Authorization.ABAC.Interface;
 using Altinn.Common.AccessTokenClient.Services;
 using Altinn.Common.PEP.Authorization;
@@ -199,7 +202,9 @@ void ConfigureServices(IServiceCollection services, IConfiguration config)
     services.AddHealthChecks().AddCheck<HealthCheck>("authorization_health_check");
     services.AddSingleton(config);
     services.AddSingleton<IParties, PartiesWrapper>();
+    services.AddSingleton<IProfile, ProfileWrapper>();
     services.AddSingleton<IRoles, RolesWrapper>();
+    services.AddSingleton<IOedRoleAssignmentWrapper, OedRoleAssignmentWrapper>();
     services.AddSingleton<IContextHandler, ContextHandler>();
     services.AddSingleton<IDelegationContextHandler, DelegationContextHandler>();
     services.AddSingleton<IPolicyRetrievalPoint, PolicyRetrievalPoint>();
@@ -211,17 +216,23 @@ void ConfigureServices(IServiceCollection services, IConfiguration config)
     services.AddSingleton<IDelegationMetadataRepository, DelegationMetadataRepository>();
     services.AddSingleton<IDelegationChangeEventQueue, DelegationChangeEventQueue>();
     services.AddSingleton<IEventMapperService, EventMapperService>();
+
     services.Configure<GeneralSettings>(config.GetSection("GeneralSettings"));
     services.Configure<AzureStorageConfiguration>(config.GetSection("AzureStorageConfiguration"));
     services.Configure<AzureCosmosSettings>(config.GetSection("AzureCosmosSettings"));
     services.Configure<PostgreSQLSettings>(config.GetSection("PostgreSQLSettings"));
     services.Configure<PlatformSettings>(config.GetSection("PlatformSettings"));
+    OedAuthzMaskinportenClientSettings oedAuthzMaskinportenClientSettings = config.GetSection("OedAuthzMaskinportenClientSettings").Get<OedAuthzMaskinportenClientSettings>();
+    services.Configure<OedAuthzMaskinportenClientSettings>(config.GetSection("OedAuthzMaskinportenClientSettings"));
+    services.AddMaskinportenHttpClient<SettingsJwkClientDefinition, OedAuthzMaskinportenClientDefinition>(oedAuthzMaskinportenClientSettings);
     services.Configure<QueueStorageSettings>(config.GetSection("QueueStorageSettings"));
     services.AddHttpClient<IRegisterService, RegisterService>();
     services.AddHttpClient<PartyClient>();
+    services.AddHttpClient<ProfileClient>();
     services.AddHttpClient<RolesClient>();
     services.AddHttpClient<SBLClient>();
     services.AddHttpClient<ResourceRegistryClient>();
+    services.AddHttpClient<OedAuthzClient>();
     services.TryAddSingleton<IHttpContextAccessor, HttpContextAccessor>();
     services.AddSingleton<IAccessTokenGenerator, AccessTokenGenerator>();
     services.AddTransient<ISigningCredentialsResolver, SigningCredentialsResolver>();
