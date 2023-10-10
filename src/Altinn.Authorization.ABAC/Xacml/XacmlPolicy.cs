@@ -85,6 +85,8 @@ namespace Altinn.Authorization.ABAC.Xacml
     /// </summary>
     public class XacmlPolicy
     {
+        private static readonly object _lockObject = new object();
+
         private readonly ICollection<XacmlAdviceExpression> adviceExpressions = new Collection<XacmlAdviceExpression>();
 
         private readonly ICollection<XacmlCombinerParameter> choiseCombinerParameters = new Collection<XacmlCombinerParameter>();
@@ -324,27 +326,35 @@ namespace Altinn.Authorization.ABAC.Xacml
                 return categoryAttributes[matchAttributeCategory];
             }
 
-            IDictionary<string, ICollection<string>> categoryAttributeDict = new Dictionary<string, ICollection<string>>();
-            categoryAttributes.Add(matchAttributeCategory, categoryAttributeDict);
-
-            foreach (XacmlRule r in Rules.Where(r => r.Target != null))
+            lock (_lockObject)
             {
-                foreach (XacmlAnyOf anyOf in r.Target.AnyOf)
+                if (categoryAttributes.ContainsKey(matchAttributeCategory))
                 {
-                    foreach (XacmlAllOf allOf in anyOf.AllOf)
-                    {
-                        foreach (XacmlMatch xacmlMatch in allOf.Matches.Where(xm => xm.AttributeDesignator.Category.Equals(matchAttributeCategory)))
-                        {
-                            string attributeId = xacmlMatch.AttributeDesignator.AttributeId.AbsoluteUri;
-                            if (!categoryAttributeDict.ContainsKey(attributeId))
-                            {
-                                categoryAttributeDict.Add(attributeId, new Collection<string>());
-                            }
+                    return categoryAttributes[matchAttributeCategory];
+                }
 
-                            categoryAttributeDict[attributeId].Add(xacmlMatch.AttributeValue.Value);
+                IDictionary<string, ICollection<string>> categoryAttributeDict = new Dictionary<string, ICollection<string>>();
+                foreach (XacmlRule r in Rules.Where(r => r.Target != null))
+                {
+                    foreach (XacmlAnyOf anyOf in r.Target.AnyOf)
+                    {
+                        foreach (XacmlAllOf allOf in anyOf.AllOf)
+                        {
+                            foreach (XacmlMatch xacmlMatch in allOf.Matches.Where(xm => xm.AttributeDesignator.Category.Equals(matchAttributeCategory)))
+                            {
+                                string attributeId = xacmlMatch.AttributeDesignator.AttributeId.AbsoluteUri;
+                                if (!categoryAttributeDict.ContainsKey(attributeId))
+                                {
+                                    categoryAttributeDict.Add(attributeId, new Collection<string>());
+                                }
+
+                                categoryAttributeDict[attributeId].Add(xacmlMatch.AttributeValue.Value);
+                            }
                         }
                     }
                 }
+
+                categoryAttributes.Add(matchAttributeCategory, categoryAttributeDict);
             }
 
             return categoryAttributes[matchAttributeCategory];
