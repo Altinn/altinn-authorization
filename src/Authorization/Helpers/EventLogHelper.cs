@@ -27,6 +27,9 @@ namespace Altinn.Platform.Authorization.Helpers
         /// Maps the user, resource information from
         /// </summary>
         /// <param name="contextRequest">the context request</param>
+        /// <param name="context">the http context</param>
+        /// <param name="contextRespsonse">the http context response</param>
+        /// <param name="currentDateTime">the current date time</param>
         /// <returns></returns>
         public static AuthorizationEvent MapAuthorizationEventFromContextRequest(XacmlContextRequest contextRequest, HttpContext context, XacmlContextResponse contextRespsonse, DateTime currentDateTime)
         {
@@ -59,7 +62,7 @@ namespace Altinn.Platform.Authorization.Helpers
         /// </summary>
         /// <param name="request">The requestId</param>
         /// <returns></returns>
-        public static (string resource, string instanceId, int? resourcePartyId) GetResourceAttributes(XacmlContextRequest request)
+        public static (string Resource, string InstanceId, int? ResourcePartyId) GetResourceAttributes(XacmlContextRequest request)
         {
             string resource = string.Empty;
             string instanceId = string.Empty;
@@ -107,7 +110,7 @@ namespace Altinn.Platform.Authorization.Helpers
         /// </summary>
         /// <param name="request">The requestId</param>
         /// <returns></returns>
-        public static (int? userId, int? partyId, string org, int? orgNumber) GetSubjectInformation(XacmlContextRequest request)
+        public static (int? UserId, int? PartyId, string Org, int? OrgNumber) GetSubjectInformation(XacmlContextRequest request)
         {
             int? userId = null;
             int? partyId = null;
