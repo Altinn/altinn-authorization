@@ -1,5 +1,5 @@
 ﻿using System;
-using System.ComponentModel.DataAnnotations;
+using Altinn.Authorization.ABAC.Xacml;
 
 namespace Altinn.Platform.Authorization.Models.EventLog
 {
@@ -8,6 +8,11 @@ namespace Altinn.Platform.Authorization.Models.EventLog
     /// </summary>
     public class AuthorizationEvent
     {
+        /// <summary>
+        /// Session Id of the request
+        /// </summary>
+        public string? SessionId { get; set; }
+
         /// <summary>
         /// Date, time of the authorization event. Set by producer of logevents
         /// </summary>
@@ -61,7 +66,7 @@ namespace Altinn.Platform.Authorization.Models.EventLog
         /// <summary>
         /// The Ip adress of the calling party
         /// </summary>
-        public string IpAdress { get; set; }
+        public string? IpAdress { get; set; }
 
         /// <summary>
         /// The enriched context request
@@ -71,6 +76,6 @@ namespace Altinn.Platform.Authorization.Models.EventLog
         /// <summary>
         /// Decision for the authorization request
         /// </summary>
-        public string Decision { get; set; }
+        public XacmlContextDecision? Decision { get; set; }
     }
 }

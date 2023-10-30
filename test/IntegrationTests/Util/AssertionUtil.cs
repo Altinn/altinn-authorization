@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using Altinn.Authorization.ABAC.Xacml;
 using Altinn.Authorization.ABAC.Xacml.JsonProfile;
 using Altinn.Platform.Authorization.Clients.Interfaces;
@@ -275,7 +276,9 @@ namespace Altinn.Platform.Authorization.IntegrationTests.Util
 
         public static void AssertAuthorizationEvent(Mock<IEventsQueueClient> eventQueue, AuthorizationEvent expectedAuthorizationEvent, Times numberOfTimes)
         {
-            string serializedAuthorizationEvent = JsonSerializer.Serialize(expectedAuthorizationEvent);
+            var options = new JsonSerializerOptions();
+            options.Converters.Add(new JsonStringEnumConverter());
+            string serializedAuthorizationEvent = JsonSerializer.Serialize(expectedAuthorizationEvent, options);
             eventQueue.Verify(
                 e => e.EnqueueAuthorizationEvent(
                     It.Is<string>(q => q == serializedAuthorizationEvent)), 
