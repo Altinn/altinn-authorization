@@ -81,10 +81,5 @@ namespace Altinn.Platform.Authorization.Configuration
         /// Gets or sets a value indicating whether to use the storage component to get instance auth info
         /// </summary>
         public bool UseStorageApiForInstanceAuthInfo { get; set; }
-
-        /// <summary>
-        /// Gets or sets the ProfileApiEndpoint
-        /// </summary>
-        public string ProfileApiEndpoint { get; set; }
     }
 }
