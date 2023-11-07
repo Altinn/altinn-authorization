@@ -25,7 +25,7 @@ namespace Altinn.Platform.Authorization.Clients
         {
             GeneralSettings settings = generalSettings.Value;
             Client = client;
-            Client.BaseAddress = new Uri(settings.GetBridgeApiEndpoint);
+            Client.BaseAddress = new Uri(settings.ProfileApiEndpoint);
             Client.Timeout = new TimeSpan(0, 0, 30);
             Client.DefaultRequestHeaders.Clear();
             Client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
