@@ -51,7 +51,7 @@ namespace Altinn.Platform.Authorization.Helpers
                 authorizationEvent.TimeToDelete = authorizationEvent.Created.AddYears(3);
                 authorizationEvent.IpAdress = GetClientIpAddress(context);
                 authorizationEvent.ContextRequestJson = JsonSerializer.Serialize(contextRequest);
-                authorizationEvent.Decision = contextRespsonse.Results?.FirstOrDefault()?.Decision.ToString();
+                authorizationEvent.Decision = contextRespsonse.Results?.FirstOrDefault()?.Decision;
             }
 
             return authorizationEvent;
