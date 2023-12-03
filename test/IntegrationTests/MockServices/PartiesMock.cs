@@ -63,7 +63,13 @@ namespace Altinn.Platform.Authorization.IntegrationTests.MockServices
 
         public Task<Party> LookupPartyBySSNOrOrgNo(string lookupValue)
         {
-            throw new NotImplementedException();
+            Party party = null;
+            if (lookupValue == "950474084")
+            {
+                party = new Party { PartyId = 500700 };
+            }
+
+            return Task.FromResult(party);
         }
 
         public Task<bool> ValidateSelectedParty(int userId, int partyId)
