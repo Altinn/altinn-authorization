@@ -181,10 +181,10 @@ namespace Altinn.Platform.Authorization.Services.Implementation
         {
             if (string.IsNullOrEmpty(resourceAttributes.ResourcePartyValue) && !string.IsNullOrEmpty(resourceAttributes.OrganizationNumber))
             {
-                int partyId = await _registerService.PartyLookup(resourceAttributes.OrganizationNumber, null);
-                if (partyId != 0)
+                Party party = await _partiesWrapper.LookupPartyBySSNOrOrgNo(resourceAttributes.OrganizationNumber);
+                if (party != null)
                 {
-                    resourceAttributes.ResourcePartyValue = partyId.ToString();
+                    resourceAttributes.ResourcePartyValue = party.PartyId.ToString();
                 }
             }
         }
@@ -467,7 +467,7 @@ namespace Altinn.Platform.Authorization.Services.Implementation
         /// </summary>
         /// <param name="from">the party which the role assignment provides access on behalf of</param>
         /// <param name="to">the role assignment recipient party</param>
-        /// <returns>list of OED/Digitalt dødsbo Role Assignments</returns>
+        /// <returns>list of OED/Digitalt dÃ¸dsbo Role Assignments</returns>
         protected async Task<List<OedRoleAssignment>> GetOedRoleAssignments(string from, string to)
         {
             string cacheKey = GetOedRoleassignmentCacheKey(from, to);

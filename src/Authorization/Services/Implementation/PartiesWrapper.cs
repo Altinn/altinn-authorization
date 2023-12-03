@@ -162,5 +162,34 @@ namespace Altinn.Platform.Authorization.Services.Implementation
 
             return result;
         }
+
+        /// <inheritdoc />
+        public async Task<Party> LookupPartyBySSNOrOrgNo(string lookupValue)
+        {
+            try
+            {
+                Uri endpointUrl = new($"register/api/parties/lookupObject");
+                StringContent requestBody = new(JsonConvert.SerializeObject(lookupValue), Encoding.UTF8, "application/json");
+
+                HttpResponseMessage response = await _partyClient.Client.PostAsync(endpointUrl, requestBody);
+                var responseBody = await response.Content.ReadAsStringAsync();
+
+                if (response.IsSuccessStatusCode)
+                {
+                    return JsonConvert.DeserializeObject<Party>(responseBody);
+                }
+                else
+                {
+                    _logger.LogError("SBL-Bridge // PartiesWrapper // LookupPartyBySSNOrOrgNo // Failed // Unexpected HttpStatusCode: {response.StatusCode}\n {responseBody}", response.StatusCode, responseBody);
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "SBL-Bridge // PartiesWrapper // LookupPartyBySSNOrOrgNo // Failed // Unexpected Exception");
+                throw;
+            }
+
+            return null;
+        }
     }
 }

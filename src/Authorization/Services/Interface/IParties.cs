@@ -45,5 +45,12 @@ namespace Altinn.Platform.Authorization.Services.Interface
         /// <param name="partyId">The party id"</param>
         /// <returns> Boolean indicating whether or not the user can represent the selected party.</returns>
         Task<bool> ValidateSelectedParty(int userId, int partyId);
+
+        /// <summary>
+        /// Method that fetches a party based on social security number or organisation number.
+        /// </summary>
+        /// <param name="lookupValue">SSN or org number</param>
+        /// <returns></returns>
+        Task<Party> LookupPartyBySSNOrOrgNo(string lookupValue);
     }
 }
