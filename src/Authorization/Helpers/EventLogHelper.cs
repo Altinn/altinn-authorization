@@ -51,7 +51,7 @@ namespace Altinn.Platform.Authorization.Helpers
                 authorizationEvent.TimeToDelete = authorizationEvent.Created.AddYears(3);
                 authorizationEvent.IpAdress = GetClientIpAddress(context);
                 authorizationEvent.ContextRequestJson = JsonSerializer.Serialize(contextRequest);
-                authorizationEvent.Decision = contextRespsonse.Results?.FirstOrDefault()?.Decision.ToString();
+                authorizationEvent.Decision = contextRespsonse.Results?.FirstOrDefault()?.Decision;
             }
 
             return authorizationEvent;
@@ -176,15 +176,8 @@ namespace Altinn.Platform.Authorization.Helpers
         /// <returns></returns>
         public static string GetClientIpAddress(HttpContext context)
         {
-            // Try to get the client IP address from the X-Real-IP header
-            var clientIp = context.Request.Headers["X-Real-IP"].FirstOrDefault();
-
-            // If the X-Real-IP header is not present, fall back to the RemoteIpAddress property
-            if (string.IsNullOrEmpty(clientIp))
-            {
-                clientIp = context.Connection.RemoteIpAddress?.ToString();
-            }
-
+            // The first ipaddress in the x-forwarded-for header is the client ipaddress. The ip from x-forwarded-for is read into remoteip depending on the forward limit
+            string clientIp = context?.Connection?.RemoteIpAddress?.ToString();
             return clientIp;
         }
     }
