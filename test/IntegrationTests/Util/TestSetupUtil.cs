@@ -45,6 +45,33 @@ namespace Altinn.Platform.Authorization.IntegrationTests.Util
             return message;
         }
 
+        public static HttpRequestMessage CreateXacmlRequestExternal(string testcase)
+        {
+            string requestText;
+
+            if (testcase.Contains("AltinnApps"))
+            {
+                requestText = File.ReadAllText(Path.Combine(GetAltinnAppsPath(), testcase + "Request.json"));
+            }
+            else if (testcase.Contains("ResourceRegistry"))
+            {
+                requestText = File.ReadAllText(Path.Combine(GetResourceRegistryPath(), testcase + "Request.json"));
+            }
+            else
+            {
+                requestText = File.ReadAllText(Path.Combine(GetConformancePath(), testcase + "Request.json"));
+            }
+
+            HttpRequestMessage message = new HttpRequestMessage(HttpMethod.Post, "authorization/api/v1/Decision/authorize")
+            {
+                Content = new StringContent(requestText, Encoding.UTF8, "application/json")
+            };
+            message.Headers.Add("testcase", testcase);
+            message.Headers.Add("Accept", "application/json");
+
+            return message;
+        }
+
         public static HttpRequestMessage CreateJsonProfileXacmlRequest(string testcase)
         {
             string requestText;

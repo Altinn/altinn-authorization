@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xaml.Permissions;
 using System.Xml;
 
 using Altinn.Authorization.ABAC;
@@ -13,9 +14,10 @@ using Altinn.Authorization.ABAC.Xacml;
 using Altinn.Authorization.ABAC.Xacml.JsonProfile;
 using Altinn.Platform.Authorization.ModelBinding;
 using Altinn.Platform.Authorization.Models;
+using Altinn.Platform.Authorization.Models.External;
 using Altinn.Platform.Authorization.Repositories.Interface;
 using Altinn.Platform.Authorization.Services.Interface;
-
+using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
@@ -39,6 +41,7 @@ namespace Altinn.Platform.Authorization.Controllers
         private readonly IDelegationMetadataRepository _delegationRepository;
         private readonly ILogger _logger;
         private readonly IMemoryCache _memoryCache;
+        private readonly IMapper _mapper;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="DecisionController"/> class.
@@ -49,7 +52,7 @@ namespace Altinn.Platform.Authorization.Controllers
         /// <param name="delegationRepository">The delegation repository</param>
         /// <param name="logger">the logger.</param>
         /// <param name="memoryCache">memory cache</param>
-        public DecisionController(IContextHandler contextHandler, IDelegationContextHandler delegationContextHandler, IPolicyRetrievalPoint policyRetrievalPoint, IDelegationMetadataRepository delegationRepository, ILogger<DecisionController> logger, IMemoryCache memoryCache)
+        public DecisionController(IContextHandler contextHandler, IDelegationContextHandler delegationContextHandler, IPolicyRetrievalPoint policyRetrievalPoint, IDelegationMetadataRepository delegationRepository, ILogger<DecisionController> logger, IMemoryCache memoryCache, IMapper mapper)
         {
             _pdp = new PolicyDecisionPoint();
             _prp = policyRetrievalPoint;
@@ -58,6 +61,7 @@ namespace Altinn.Platform.Authorization.Controllers
             _delegationRepository = delegationRepository;
             _logger = logger;
             _memoryCache = memoryCache;
+            _mapper = mapper;
         }
 
         /// <summary>
@@ -99,6 +103,16 @@ namespace Altinn.Platform.Authorization.Controllers
                     return CreateResponse(xacmlContextResponse);
                 }
             }
+        }
+
+        /// <summary>
+        /// External endpoint for autorization 
+        /// </summary>
+        [HttpPost("authorize")]
+        public async Task<XacmlJsonResponse> AuthorizeExternal([FromBody] XacmlJsonRequestRootExternal authorizationRequest)
+        {
+            XacmlJsonRequest jsonRequest = _mapper.Map<XacmlJsonRequest>(authorizationRequest);
+            return await Authorize(jsonRequest);
         }
 
         private async Task<XacmlJsonResponse> Authorize(XacmlJsonRequest decisionRequest)
