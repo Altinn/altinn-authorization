@@ -254,6 +254,8 @@ namespace Altinn.Platform.Authorization.Controllers
 
         private async Task<XacmlContextResponse> ProcessDelegationResult(XacmlContextRequest decisionRequest, XacmlPolicy resourcePolicy, IEnumerable<DelegationChange> delegations)
         {
+            List<int> keyrolePartyIds = await _delegationContextHandler.GetKeyRolePartyIds(_delegationContextHandler.GetSubjectUserId(decisionRequest));
+            _delegationContextHandler.Enrich(decisionRequest, keyrolePartyIds);
             var delegationContextResponse = await AuthorizeBasedOnDelegations(decisionRequest, delegations, resourcePolicy);
             if (delegationContextResponse.Results.Any(r => r.Decision == XacmlContextDecision.Permit))
             {

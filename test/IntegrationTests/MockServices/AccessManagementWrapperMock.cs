@@ -18,34 +18,37 @@ public class AccessManagementWrapperMock : IAccessManagementWrapper
         var data = new List<Action<DelegationChangeInput, List<DelegationChange>>>()
         {
             ConditionalAdd(
-                DelegationChangesTestData.DefaultApp(DelegationChangesTestData.WithAltinnAppID("org1/app1"), DelegationChangesTestData.WithOfferedByPartyID(50001337), DelegationChangesTestData.WithCoveredByUserID(20001337)),
-                WithDefaultCondition("org1/app1", 50001337, 20001337)),
+                DelegationChangesTestData.Default(DelegationChangesTestData.WithAltinnAppID("org1/app1"), DelegationChangesTestData.WithOfferedByPartyID(50001337), DelegationChangesTestData.WithCoveredByUserID(20001337)),
+                WithDefaultCondition("org1/app1", 50001335, 20001337),
+                WithDefaultCondition("org1/app1", 50001337, 20001337)), // UserDelegation MainUnit Permit
             ConditionalAdd(
-                DelegationChangesTestData.DefaultApp(DelegationChangesTestData.WithAltinnAppID("skd/taxreport"), DelegationChangesTestData.WithOfferedByPartyID(1000), DelegationChangesTestData.WithCoveredByUserID(2)),
-                WithDefaultCondition("skd/taxreport", 1000, 2)),
+                DelegationChangesTestData.Default(DelegationChangesTestData.WithAltinnAppID("skd/taxreport"), DelegationChangesTestData.WithOfferedByPartyID(1000), DelegationChangesTestData.WithCoveredByUserID(20001337)),
+                WithDefaultCondition("skd/taxreport", 1000, 20001337)),
             ConditionalAdd(
-                DelegationChangesTestData.DefaultApp(DelegationChangesTestData.WithAltinnAppID("org1/app1"), DelegationChangesTestData.WithOfferedByPartyID(50001337), DelegationChangesTestData.WithCoveredByUserID(20001338), DelegationChangesTestData.WithDelegationChangeType(DelegationChangeType.RevokeLast)),
+                DelegationChangesTestData.Default(DelegationChangesTestData.WithAltinnAppID("org1/app1"), DelegationChangesTestData.WithOfferedByPartyID(50001337), DelegationChangesTestData.WithCoveredByUserID(20001338), DelegationChangesTestData.WithDelegationChangeType(DelegationChangeType.RevokeLast)),
                 WithDefaultCondition("org1/app1", 50001337, 20001338)),
             ConditionalAdd(
-                DelegationChangesTestData.DefaultApp(DelegationChangesTestData.WithAltinnAppID("org1/app1"), DelegationChangesTestData.WithOfferedByPartyID(50001337), DelegationChangesTestData.WithCoveredByUserID(50001336)),
-                WithDefaultCondition("org1/app1", 50001337, 50001336)),
+                DelegationChangesTestData.Default(DelegationChangesTestData.WithAltinnAppID("org1/app1"), DelegationChangesTestData.WithOfferedByPartyID(50001337), DelegationChangesTestData.WithCoveredByPartyID(50001336)),
+                WithDefaultCondition("org1/app1", 50001337, 50001336),
+                WithDefaultCondition("org1/app1", 50001337, 20001336),
+                WithDefaultCondition("org1/app1", 50001335, 20001336)),
             ConditionalAdd(
-                DelegationChangesTestData.DefaultApp(DelegationChangesTestData.WithAltinnAppID("skd/taxreport"), DelegationChangesTestData.WithOfferedByPartyID(50001337), DelegationChangesTestData.WithCoveredByUserID(20001336), DelegationChangesTestData.WithPerformedByUserID(20001337)),
+                DelegationChangesTestData.Default(DelegationChangesTestData.WithAltinnAppID("skd/taxreport"), DelegationChangesTestData.WithOfferedByPartyID(50001337), DelegationChangesTestData.WithCoveredByUserID(20001336), DelegationChangesTestData.WithPerformedByUserID(20001337)),
                 WithDefaultCondition("skd/taxreport", 50001337, 20001336)),
             ConditionalAdd(
-                DelegationChangesTestData.DefaultApp(DelegationChangesTestData.WithAltinnAppID("skd/taxreport"), DelegationChangesTestData.WithOfferedByPartyID(50001337), DelegationChangesTestData.WithCoveredByUserID(20001335), DelegationChangesTestData.WithPerformedByUserID(20001337)),
+                DelegationChangesTestData.Default(DelegationChangesTestData.WithAltinnAppID("skd/taxreport"), DelegationChangesTestData.WithOfferedByPartyID(50001337), DelegationChangesTestData.WithCoveredByUserID(20001335), DelegationChangesTestData.WithPerformedByUserID(20001337)),
                 WithDefaultCondition("skd/taxreport", 50001337, 20001335)),
             ConditionalAdd(
-                DelegationChangesTestData.DefaultApp(DelegationChangesTestData.WithAltinnAppID("skd/taxreport"), DelegationChangesTestData.WithOfferedByPartyID(50001336), DelegationChangesTestData.WithCoveredByUserID(20001335), DelegationChangesTestData.WithPerformedByUserID(20001337)),
+                DelegationChangesTestData.Default(DelegationChangesTestData.WithAltinnAppID("skd/taxreport"), DelegationChangesTestData.WithOfferedByPartyID(50001336), DelegationChangesTestData.WithCoveredByUserID(20001335), DelegationChangesTestData.WithPerformedByUserID(20001337)),
                 WithDefaultCondition("skd/taxreport", 50001337, 50001336)),
             ConditionalAdd(
-                DelegationChangesTestData.DefaultApp(DelegationChangesTestData.WithAltinnAppID("skd/taxreport"), DelegationChangesTestData.WithOfferedByPartyID(50001338), DelegationChangesTestData.WithCoveredByUserID(50001339), DelegationChangesTestData.WithPerformedByUserID(20001338)),
+                DelegationChangesTestData.Default(DelegationChangesTestData.WithAltinnAppID("skd/taxreport"), DelegationChangesTestData.WithOfferedByPartyID(50001338), DelegationChangesTestData.WithCoveredByUserID(50001339), DelegationChangesTestData.WithPerformedByUserID(20001338)),
                 WithDefaultCondition("skd/taxreport", 50001338, 50001339)),
             ConditionalAdd(
-                DelegationChangesTestData.DefaultApp(DelegationChangesTestData.WithAltinnAppID("skd/taxreport"), DelegationChangesTestData.WithOfferedByPartyID(50001338), DelegationChangesTestData.WithCoveredByUserID(50001340), DelegationChangesTestData.WithPerformedByUserID(20001338)),
+                DelegationChangesTestData.Default(DelegationChangesTestData.WithAltinnAppID("skd/taxreport"), DelegationChangesTestData.WithOfferedByPartyID(50001338), DelegationChangesTestData.WithCoveredByUserID(50001340), DelegationChangesTestData.WithPerformedByUserID(20001338)),
                 WithDefaultCondition("skd/taxreport", 50001338, 50001340)),
             ConditionalAdd(
-                DelegationChangesTestData.DefaultApp(DelegationChangesTestData.WithAltinnAppID("skd/taxreport"), DelegationChangesTestData.WithOfferedByPartyID(50001339), DelegationChangesTestData.WithCoveredByUserID(20001336), DelegationChangesTestData.WithPerformedByUserID(20001339)),
+                DelegationChangesTestData.Default(DelegationChangesTestData.WithAltinnAppID("skd/taxreport"), DelegationChangesTestData.WithOfferedByPartyID(50001339), DelegationChangesTestData.WithCoveredByUserID(20001336), DelegationChangesTestData.WithPerformedByUserID(20001339)),
                 WithDefaultCondition("skd/taxreport", 50001339, 20001336)),
         };
 
@@ -84,7 +87,7 @@ public class AccessManagementWrapperMock : IAccessManagementWrapper
     {
         return (input, result) =>
         {
-            if (actions.All(condtion => condtion(input)))
+            if (actions.Any(condtion => condtion(input)))
             {
                 result.Add(data);
             }

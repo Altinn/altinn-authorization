@@ -26,29 +26,6 @@ public static class DelegationChangesTestData
             action(data);
         }
 
-        return data;
-    }
-
-    public static DelegationChange DefaultApp(params Action<DelegationChange>[] actions)
-    {
-        var data = Default(WithCoveredByPartyID(100), WithCoveredByUserID(100));
-        foreach (var action in actions)
-        {
-            action(data);
-        }
-
-        WithBlobStorage(data);
-        return data;
-    }
-
-    public static DelegationChange DefaultResource(params Action<DelegationChange>[] actions)
-    {
-        var data = Default(WithCoveredByUserID(10), WithOfferedByPartyID(100));
-        foreach (var action in actions)
-        {
-            action(data);
-        }
-
         WithBlobStorage(data);
         return data;
     }
