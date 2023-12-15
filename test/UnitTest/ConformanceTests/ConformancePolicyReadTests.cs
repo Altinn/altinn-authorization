@@ -27,7 +27,7 @@ namespace Altinn.Authorization.ABAC.UnitTest.ConformanceTests
 
             Assert.NotNull(result);
             Assert.Equal("Policy for Conformance Test IIA001.", result.Description.Trim());
-            Assert.Equal(1, result.Rules.Count);
+            Assert.Single(result.Rules);
 
             XacmlRule firstRule = result.Rules.Where(r => r.RuleId.Equals("urn:oasis:names:tc:xacml:2.0:conformance-test:IIA1:rule")).FirstOrDefault();
             Assert.NotNull(firstRule);
@@ -76,7 +76,7 @@ namespace Altinn.Authorization.ABAC.UnitTest.ConformanceTests
             Assert.Equal(XacmlEffectType.Deny, firstRule.Effect);
             Assert.Equal("A subject whose name is J. Hibbert may not\n            read Bart Simpson's medical record.  NOTAPPLICABLE", firstRule.Description.Trim());
             Assert.NotNull(firstRule.Target);
-            Assert.Equal(1, firstRule.Target.AnyOf.Count);
+            Assert.Single(firstRule.Target.AnyOf);
         }
 
         [Fact]
@@ -100,7 +100,7 @@ namespace Altinn.Authorization.ABAC.UnitTest.ConformanceTests
             Assert.Equal(XacmlEffectType.Deny, firstRule.Effect);
             Assert.Equal("A subject whose name is J. Hibbert may not\n            read Bart Simpson's medical record.  NOTAPPLICABLE", firstRule.Description.Trim());
             Assert.NotNull(firstRule.Target);
-            Assert.Equal(1, firstRule.Target.AnyOf.Count);
+            Assert.Single(firstRule.Target.AnyOf);
 
             XacmlRule secondRule = result.Rules.Where(r => r.RuleId.Equals("urn:oasis:names:tc:xacml:2.0:conformance-test:IIIA030:rule2")).FirstOrDefault();
             Assert.NotNull(secondRule);
@@ -123,7 +123,7 @@ namespace Altinn.Authorization.ABAC.UnitTest.ConformanceTests
             }
 
             Assert.NotNull(result);
-            Assert.Equal(1, result.Rules.Count);
+            Assert.Single(result.Rules);
 
             XacmlRule firstRule = result.Rules.Where(r => r.RuleId.Equals("urn:oasis:names:tc:xacml:2.0:conformance-test:IIIE301:rule")).FirstOrDefault();
             Assert.NotNull(firstRule);
@@ -149,7 +149,7 @@ namespace Altinn.Authorization.ABAC.UnitTest.ConformanceTests
             }
 
             Assert.NotNull(result);
-            Assert.Equal(1, result.Rules.Count);
+            Assert.Single(result.Rules);
 
             XacmlRule firstRule = result.Rules.Where(r => r.RuleId.Equals("urn:oasis:names:tc:xacml:2.0:conformance-test:IIIF007:rule")).FirstOrDefault();
             Assert.NotNull(firstRule);

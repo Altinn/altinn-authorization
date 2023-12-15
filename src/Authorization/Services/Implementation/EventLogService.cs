@@ -1,4 +1,5 @@
 ﻿using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using Altinn.Authorization.ABAC.Xacml;
 using Altinn.Platform.Authorization.Clients.Interfaces;
@@ -46,13 +47,15 @@ namespace Altinn.Platform.Authorization.Services.Implementation
         /// <inheritdoc />
         public async Task CreateAuthorizationEvent(IFeatureManager featureManager, XacmlContextRequest contextRequest, HttpContext context, XacmlContextResponse contextResponse)
         {
+            var options = new JsonSerializerOptions();
+            options.Converters.Add(new JsonStringEnumConverter());
             if (await featureManager.IsEnabledAsync(FeatureFlags.AuditLog))
             {
                 AuthorizationEvent authorizationEvent = EventLogHelper.MapAuthorizationEventFromContextRequest(contextRequest, context, contextResponse, _systemClock.UtcNow.DateTime);
 
                 if (authorizationEvent != null)
                 {
-                    _queueClient.EnqueueAuthorizationEvent(JsonSerializer.Serialize(authorizationEvent));
+                    await _queueClient.EnqueueAuthorizationEvent(JsonSerializer.Serialize(authorizationEvent));
                 }
             }
         }

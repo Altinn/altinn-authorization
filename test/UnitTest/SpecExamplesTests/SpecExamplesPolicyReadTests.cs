@@ -27,7 +27,7 @@ namespace Altinn.Authorization.ABAC.UnitTest.SpecExamplesTests
 
             Assert.NotNull(result);
             Assert.Null(result.Description);
-            Assert.Equal(1, result.Rules.Count);
+            Assert.Single(result.Rules);
 
             XacmlRule firstRule = result.Rules.Where(r => r.RuleId.Equals("urn:oasis:names:tc:xacml:3.0:example:ruleid:1")).FirstOrDefault();
             Assert.NotNull(firstRule);

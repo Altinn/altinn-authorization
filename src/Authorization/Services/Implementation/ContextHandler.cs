@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using Altinn.Authorization.ABAC.Constants;
 using Altinn.Authorization.ABAC.Interface;
@@ -398,7 +399,7 @@ namespace Altinn.Platform.Authorization.Services.Implementation
         protected async Task<List<Role>> GetRoles(int subjectUserId, int resourcePartyId)
         {
             string cacheKey = GetCacheKey(subjectUserId, resourcePartyId);
-           
+
             if (!_memoryCache.TryGetValue(cacheKey, out List<Role> roles))
             {
                 // Key not in cache, so get data.
@@ -467,7 +468,7 @@ namespace Altinn.Platform.Authorization.Services.Implementation
         /// </summary>
         /// <param name="from">the party which the role assignment provides access on behalf of</param>
         /// <param name="to">the role assignment recipient party</param>
-        /// <returns>list of OED/Digitalt dødsbo Role Assignments</returns>
+        /// <returns>list of OED/Digitalt dodsbo Role Assignments</returns>
         protected async Task<List<OedRoleAssignment>> GetOedRoleAssignments(string from, string to)
         {
             string cacheKey = GetOedRoleassignmentCacheKey(from, to);
@@ -494,7 +495,7 @@ namespace Altinn.Platform.Authorization.Services.Implementation
         private string GetOedRoleassignmentCacheKey(string from, string to)
         {
             return $"oed{from}_{to}";
-        }    
+        }
 
         private async Task<string> GetSsnForUser(int userId)
         {

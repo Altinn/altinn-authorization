@@ -2,6 +2,7 @@ using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Net;
 using System.Net.Http;
+using System.Net.Http.Json;
 using System.Text.Json;
 using System.Threading.Tasks;
 using Altinn.Platform.Authorization.Clients;
@@ -37,9 +38,9 @@ namespace Altinn.Platform.Authorization.Services.Implementation
         {
             try
             {
-                string endpointUrl = $"profile/api/users/{userId}";
+                string endpointUrl = $"internal/user";
 
-                HttpResponseMessage response = await _profileClient.Client.GetAsync(endpointUrl);
+                var response = await _profileClient.Client.PostAsJsonAsync(endpointUrl, new { UserId = userId });
                 string responseContent = await response.Content.ReadAsStringAsync();
 
                 if (response.StatusCode == HttpStatusCode.OK)
@@ -47,12 +48,12 @@ namespace Altinn.Platform.Authorization.Services.Implementation
                     return JsonSerializer.Deserialize<UserProfile>(responseContent, _serializerOptions);
                 }
 
-                _logger.LogError("SBL-Bridge // ProfileWrapper // GetUserProfile // Failed // Unexpected HttpStatusCode: {statusCode}\n {responseContent}", response.StatusCode, responseContent);
+                _logger.LogError("ProfileAPI // ProfileWrapper // GetUserProfile // Failed // Unexpected HttpStatusCode: {statusCode}\n {responseContent}", response.StatusCode, responseContent);
                 return null;
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "SBL-Bridge // ProfileWrapper // GetUserProfile // Failed // Unexpected Exception");
+                _logger.LogError(ex, "ProfileAPI // ProfileWrapper // GetUserProfile // Failed // Unexpected Exception");
                 throw;
             }
         }

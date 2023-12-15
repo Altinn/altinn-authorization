@@ -20,12 +20,12 @@ namespace Altinn.Platform.Authorization.Clients
         /// Initializes the http client for actor
         /// </summary>
         /// <param name="client">the http client</param>
-        /// <param name="generalSettings">the general settings configured for the authorization component</param>
-        public ProfileClient(HttpClient client, IOptions<GeneralSettings> generalSettings)
+        /// <param name="platformSettings">the platform settings configured for the authorization component</param>
+        public ProfileClient(HttpClient client, IOptions<PlatformSettings> platformSettings)
         {
-            GeneralSettings settings = generalSettings.Value;
+            PlatformSettings settings = platformSettings.Value;
             Client = client;
-            Client.BaseAddress = new Uri(settings.GetBridgeApiEndpoint);
+            Client.BaseAddress = new Uri(settings.ApiProfileEndpoint);
             Client.Timeout = new TimeSpan(0, 0, 30);
             Client.DefaultRequestHeaders.Clear();
             Client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));

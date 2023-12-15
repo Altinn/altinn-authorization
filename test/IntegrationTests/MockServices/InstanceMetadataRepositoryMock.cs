@@ -11,22 +11,22 @@ namespace Altinn.Platform.Authorization.IntegrationTests.MockServices
 {
     public class InstanceMetadataRepositoryMock : IInstanceMetadataRepository
     {
-        public async Task<Instance> GetInstance(string instanceId, int instanceOwnerId)
+        public Task<Instance> GetInstance(string instanceId, int instanceOwnerId)
         {
-            return GetTestInstance(instanceId, instanceOwnerId);
+            return Task.FromResult(GetTestInstance(instanceId, instanceOwnerId));
         }
 
         /// <inheritdoc/>
-        public async Task<Instance> GetInstance(string instanceId)
+        public Task<Instance> GetInstance(string instanceId)
         {
             int instanceOwnerId = Convert.ToInt32(instanceId.Split('/')[0]);
-            return GetTestInstance(instanceId, instanceOwnerId);
+            return Task.FromResult(GetTestInstance(instanceId, instanceOwnerId));
         }
 
         /// <inheritdoc/>
-        public async Task<Application> GetApplication(string app, string org)
+        public Task<Application> GetApplication(string app, string org)
         {
-            return GetTestApplication(app, org);
+            return Task.FromResult(GetTestApplication(app, org));
         }
 
         private string GetAltinnAppsPath()

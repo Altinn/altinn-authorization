@@ -83,7 +83,7 @@ namespace Altinn.Authorization.ABAC.Xacml
         /// <summary>
         /// The attributes.
         /// </summary>
-        public ICollection<XAttribute> Attributes
+        public new ICollection<XAttribute> Attributes
         {
             get { return this.attributes; }
         }
@@ -91,7 +91,7 @@ namespace Altinn.Authorization.ABAC.Xacml
         /// <summary>
         /// Gets the elements.
         /// </summary>
-        public ICollection<XElement> Elements
+        public new ICollection<XElement> Elements
         {
             get { return this.elements; }
         }
