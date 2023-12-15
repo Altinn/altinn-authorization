@@ -13,7 +13,22 @@ namespace Altinn.Platform.Authorization.Models.External
         public RequestMapper()
         {
             AllowNullCollections = true;
-            CreateMap<XacmlJsonRequest, XacmlJsonRequestExternal>();
+            CreateMap<XacmlJsonAttributeAssignmentExternal, XacmlJsonAttributeAssignment>();
+            CreateMap<XacmlJsonAttributeExternal,XacmlJsonAttribute>();
+            CreateMap<XacmlJsonCategoryExternal, XacmlJsonCategory>();
+            CreateMap<XacmlJsonIdReferenceExternal, XacmlJsonIdReference>();
+            CreateMap<XacmlJsonMissingAttributeDetailExternal, XacmlJsonMissingAttributeDetail>();
+            CreateMap<XacmlJsonMultiRequestsExternal, XacmlJsonMultiRequests>();
+            CreateMap<XacmlJsonObligationOrAdviceExternal, XacmlJsonObligationOrAdvice>();
+            CreateMap<XacmlJsonPolicyIdentifierListExternal, XacmlJsonPolicyIdentifierList>();
+            CreateMap<XacmlJsonRequestExternal, XacmlJsonRequest>();
+            CreateMap<XacmlJsonRequestReferenceExternal, XacmlJsonRequestReference>();
+            CreateMap<XacmlJsonRequestRootExternal, XacmlJsonRequestRoot>();
+            CreateMap<XacmlJsonRequestExternal, XacmlJsonRequest>();
+            CreateMap<XacmlJsonResponseExternal, XacmlJsonResponse>();
+            CreateMap<XacmlJsonResultExternal, XacmlJsonResult>();
+            CreateMap<XacmlJsonStatusCodeExternal, XacmlJsonStatusCode>();
+            CreateMap<XacmlJsonStatusExternal, XacmlJsonStatus>();
         }
     }
 }
