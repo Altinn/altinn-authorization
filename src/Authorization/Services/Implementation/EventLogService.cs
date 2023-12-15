@@ -55,7 +55,7 @@ namespace Altinn.Platform.Authorization.Services.Implementation
 
                 if (authorizationEvent != null)
                 {
-                    await _queueClient.EnqueueAuthorizationEvent(JsonSerializer.Serialize(authorizationEvent));
+                    _queueClient.EnqueueAuthorizationEvent(JsonSerializer.Serialize(authorizationEvent, options));
                 }
             }
         }
