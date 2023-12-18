@@ -234,7 +234,7 @@ namespace Altinn.Platform.Authorization.Controllers
             {
                 try
                 {
-                    XacmlContextResponse delegationContextResponse = await AuthorizeBasedOnDelegations(decisionRequest, policy);
+                    XacmlContextResponse delegationContextResponse = await AuthorizeUsingDelegations(decisionRequest, policy);
                     XacmlContextResult delegationResult = delegationContextResponse.Results.First();
                     if (delegationResult.Decision.Equals(XacmlContextDecision.Permit))
                     {
@@ -260,7 +260,7 @@ namespace Altinn.Platform.Authorization.Controllers
                 _delegationContextHandler.Enrich(decisionRequest, keyrolePartyIds);
             }
 
-            var delegationContextResponse = await AuthorizeBasedOnDelegations(decisionRequest, delegations, resourcePolicy);
+            var delegationContextResponse = await MakeContextDecisionUsingDelegations(decisionRequest, delegations, resourcePolicy);
             if (delegationContextResponse.Results.Any(r => r.Decision == XacmlContextDecision.Permit))
             {
                 return delegationContextResponse;
@@ -293,7 +293,7 @@ namespace Altinn.Platform.Authorization.Controllers
             input.Subject = new(AltinnXacmlConstants.MatchAttributeIdentifiers.UserAttribute, _delegationContextHandler.GetSubjectUserId(decisionRequest).ToString());
         };
 
-        private async Task<XacmlContextResponse> AuthorizeBasedOnDelegations(XacmlContextRequest decisionRequest, XacmlPolicy resourcePolicy)
+        private async Task<XacmlContextResponse> AuthorizeUsingDelegations(XacmlContextRequest decisionRequest, XacmlPolicy resourcePolicy)
         {
             var resourceAttributes = _delegationContextHandler.GetResourceAttributes(decisionRequest);
             if (IsInvalidRequest(resourceAttributes, decisionRequest))
@@ -360,9 +360,7 @@ namespace Altinn.Platform.Authorization.Controllers
             return result;
         }
 
-
-
-        private async Task<XacmlContextResponse> AuthorizeBasedOnDelegations(XacmlContextRequest decisionRequest, IEnumerable<DelegationChange> delegations, XacmlPolicy appPolicy)
+        private async Task<XacmlContextResponse> MakeContextDecisionUsingDelegations(XacmlContextRequest decisionRequest, IEnumerable<DelegationChange> delegations, XacmlPolicy appPolicy)
         {
             XacmlContextResponse delegationContextResponse = new XacmlContextResponse(new XacmlContextResult(XacmlContextDecision.NotApplicable)
             {
