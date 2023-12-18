@@ -74,12 +74,12 @@ namespace Altinn.Platform.Authorization.Services.Implementation
         /// <summary>
         /// Ads needed information to the Context Request.
         /// </summary>
-        /// <param name="request">The original Xacml Context Request</param>
+        /// <param name="decisionRequest">The original Xacml Context Request</param>
         /// <returns>The enriched XacmlContextRequest</returns>
-        public async Task<XacmlContextRequest> Enrich(XacmlContextRequest request)
+        public async Task<XacmlContextRequest> Enrich(XacmlContextRequest decisionRequest)
         {
-            await EnrichResourceAttributes(request);
-            return await Task.FromResult(request);
+            await EnrichResourceAttributes(decisionRequest);
+            return await Task.FromResult(decisionRequest);
         }
 
         /// <summary>
