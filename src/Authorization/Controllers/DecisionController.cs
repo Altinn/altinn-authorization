@@ -273,7 +273,7 @@ namespace Altinn.Platform.Authorization.Controllers
         }
 
         private static string CreateCacheKey(params string[] cacheKeys) =>
-            string.Join("-", cacheKeys.Where(c => !c.IsNullOrEmpty() || !c.EndsWith(":")));
+            string.Join("-", cacheKeys.Where(c => !c.IsNullOrEmpty() || !c.EndsWith(':')));
 
         private static bool IsTypeApp(XacmlResourceAttributes resourceAttributes) =>
             !string.IsNullOrEmpty(resourceAttributes.OrgValue) && !string.IsNullOrEmpty(resourceAttributes.AppValue);
@@ -344,8 +344,8 @@ namespace Altinn.Platform.Authorization.Controllers
             var cacheKey = CreateCacheKey(
                 "u:" + delegation.Subject.Value,
                 "p:" + delegation.Party.Value,
-                "a:" + $"{delegation.Resource.Where(s => s.Id == AltinnXacmlConstants.MatchAttributeIdentifiers.OrgAttribute).FirstOrDefault()}/{delegation.Resource.Where(s => s.Id == AltinnXacmlConstants.MatchAttributeIdentifiers.AppAttribute).FirstOrDefault()}",
-                "r:" + delegation.Resource.Where(s => s.Id == AltinnXacmlConstants.MatchAttributeIdentifiers.ResourceRegistry).FirstOrDefault());
+                "a:" + $"{delegation.Resource.FirstOrDefault(r => r.Id == AltinnXacmlConstants.MatchAttributeIdentifiers.OrgAttribute)}/{delegation.Resource.FirstOrDefault(r => r.Id == AltinnXacmlConstants.MatchAttributeIdentifiers.AppAttribute)}",
+                "r:" + delegation.Resource.FirstOrDefault(r => r.Id == AltinnXacmlConstants.MatchAttributeIdentifiers.ResourceRegistry));
 
             if (!_memoryCache.TryGetValue(cacheKey, out IEnumerable<DelegationChange> result))
             {
