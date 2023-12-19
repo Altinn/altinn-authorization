@@ -13,22 +13,32 @@ namespace Altinn.Platform.Authorization.Models.External
         public RequestMapper()
         {
             AllowNullCollections = true;
-            CreateMap<XacmlJsonAttributeAssignmentExternal, XacmlJsonAttributeAssignment>();
-            CreateMap<XacmlJsonAttributeExternal,XacmlJsonAttribute>();
-            CreateMap<XacmlJsonCategoryExternal, XacmlJsonCategory>();
+            CreateMap<XacmlJsonAttributeExternal, XacmlJsonAttribute>();
+
             CreateMap<XacmlJsonIdReferenceExternal, XacmlJsonIdReference>();
-            CreateMap<XacmlJsonMissingAttributeDetailExternal, XacmlJsonMissingAttributeDetail>();
             CreateMap<XacmlJsonMultiRequestsExternal, XacmlJsonMultiRequests>();
-            CreateMap<XacmlJsonObligationOrAdviceExternal, XacmlJsonObligationOrAdvice>();
+
             CreateMap<XacmlJsonPolicyIdentifierListExternal, XacmlJsonPolicyIdentifierList>();
             CreateMap<XacmlJsonRequestExternal, XacmlJsonRequest>();
             CreateMap<XacmlJsonRequestReferenceExternal, XacmlJsonRequestReference>();
             CreateMap<XacmlJsonRequestRootExternal, XacmlJsonRequestRoot>();
             CreateMap<XacmlJsonRequestExternal, XacmlJsonRequest>();
-            CreateMap<XacmlJsonResponseExternal, XacmlJsonResponse>();
-            CreateMap<XacmlJsonResultExternal, XacmlJsonResult>();
+            CreateMap<XacmlJsonObligationOrAdviceExternal, XacmlJsonObligationOrAdvice>();
+            CreateMap<XacmlJsonCategoryExternal, XacmlJsonCategory>();
             CreateMap<XacmlJsonStatusCodeExternal, XacmlJsonStatusCode>();
             CreateMap<XacmlJsonStatusExternal, XacmlJsonStatus>();
+
+            CreateMap<XacmlJsonResponse, XacmlJsonResponseExternal>();
+            CreateMap<XacmlJsonResult, XacmlJsonResultExternal>();
+
+            CreateMap<XacmlJsonObligationOrAdvice, XacmlJsonObligationOrAdviceExternal>();
+            CreateMap<XacmlJsonCategory, XacmlJsonCategoryExternal>();
+            CreateMap<XacmlJsonStatus, XacmlJsonStatusExternal>();
+            CreateMap<XacmlJsonStatusCode, XacmlJsonStatusCodeExternal>();
+            CreateMap<XacmlJsonPolicyIdentifierList, XacmlJsonPolicyIdentifierListExternal>();
+            CreateMap<XacmlJsonAttribute, XacmlJsonAttributeExternal>();
+            CreateMap<XacmlJsonIdReference, XacmlJsonIdReferenceExternal>();
+            CreateMap<XacmlJsonAttributeAssignment, XacmlJsonAttributeAssignmentExternal>();
         }
     }
 }

@@ -109,10 +109,18 @@ namespace Altinn.Platform.Authorization.Controllers
         /// External endpoint for autorization 
         /// </summary>
         [HttpPost("authorize")]
-        public async Task<XacmlJsonResponse> AuthorizeExternal([FromBody] XacmlJsonRequestRootExternal authorizationRequest)
+        public async Task<XacmlJsonResponseExternal> AuthorizeExternal([FromBody] XacmlJsonRequestRootExternal authorizationRequest)
         {
-            XacmlJsonRequestRoot jsonRequest = _mapper.Map<XacmlJsonRequestRoot>(authorizationRequest);
-            return await Authorize(jsonRequest.Request);
+            try
+            {
+                XacmlJsonRequestRoot jsonRequest = _mapper.Map<XacmlJsonRequestRoot>(authorizationRequest);
+                XacmlJsonResponse xacmlResponse = await Authorize(jsonRequest.Request);
+                return _mapper.Map<XacmlJsonResponseExternal>(xacmlResponse);
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
         }
 
         private async Task<XacmlJsonResponse> Authorize(XacmlJsonRequest decisionRequest)

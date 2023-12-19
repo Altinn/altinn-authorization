@@ -4,6 +4,7 @@ namespace Altinn.Platform.Authorization.Models.External
 {
     /// <summary>
     /// The JSON object Result.
+    /// https://docs.oasis-open.org/xacml/xacml-json-http/v1.1/os/xacml-json-http-v1.1-os.html#_Toc5116225
     /// </summary>
     public class XacmlJsonResultExternal
     {

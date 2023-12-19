@@ -5,7 +5,7 @@ namespace Altinn.Platform.Authorization.Models.External
     /// <summary>
     /// 4.2 Representation of the XACML request in JSON
     /// An XACML request is represented as an object with a single member named "Request". The value of the "Request" member is a Request object.
-    /// http://docs.oasis-open.org/xacml/xacml-json-http/v1.1/csprd01/xacml-json-http-v1.1-csprd01.html
+    /// https://docs.oasis-open.org/xacml/xacml-json-http/v1.1/os/xacml-json-http-v1.1-os.html#_Toc5116207
     /// </summary>
     public class XacmlJsonRequestExternal
     {
