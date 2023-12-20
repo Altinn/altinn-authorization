@@ -295,6 +295,7 @@ namespace Altinn.Platform.Authorization.Services.Implementation
 
             int subjectUserId = 0;
             int resourcePartyId = Convert.ToInt32(resourceParty);
+            string ssn = string.Empty;
 
             foreach (XacmlAttribute xacmlAttribute in subjectContextAttributes.Attributes)
             {
@@ -302,6 +303,16 @@ namespace Altinn.Platform.Authorization.Services.Implementation
                 {
                     subjectUserId = Convert.ToInt32(xacmlAttribute.AttributeValues.First().Value);
                 }
+
+                if (xacmlAttribute.AttributeId.OriginalString.Equals(XacmlRequestAttribute.SsnAttribute))
+                {
+                    ssn = xacmlAttribute.AttributeValues.First().Value;
+                }
+            }
+
+            if (!string.IsNullOrEmpty(ssn))
+            {
+                subjectUserId
             }
 
             if (subjectUserId == 0)
