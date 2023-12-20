@@ -9,6 +9,8 @@ using Altinn.Platform.Authorization.IntegrationTests.Util;
 using Altinn.Platform.Authorization.IntegrationTests.Webfactory;
 using Altinn.Platform.Authorization.Repositories.Interface;
 using Altinn.Platform.Authorization.Services.Interface;
+using Altinn.Platform.Authorization.Services.Interfaces;
+using Altinn.Platform.Events.Tests.Mocks;
 using AltinnCore.Authentication.JwtCookie;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.TestHost;
@@ -42,6 +44,22 @@ namespace Altinn.Platform.Authorization.IntegrationTests
             AssertionUtil.AssertEqual(expected, contextResponse);
         }
 
+        [Fact]
+        public async Task PDPExternal_Decision_AltinnResourceRegistry0005()
+        {
+            string testCase = "AltinnResourceRegistry0005";
+            HttpClient client = GetTestClient();
+            HttpRequestMessage httpRequestMessage = TestSetupUtil.CreateXacmlRequestExternal(testCase);
+            XacmlJsonResponse expected = TestSetupUtil.ReadExpectedJsonProfileResponse(testCase);
+
+            // Act
+            XacmlJsonResponse contextResponse = await TestSetupUtil.GetXacmlJsonProfileContextResponseAsync(client, httpRequestMessage);
+
+            // Assert
+            AssertionUtil.AssertEqual(expected, contextResponse);
+        }
+
+
         private HttpClient GetTestClient()
         {
             HttpClient client = _factory.WithWebHostBuilder(builder =>
@@ -58,6 +76,7 @@ namespace Altinn.Platform.Authorization.IntegrationTests
                     services.AddSingleton<IPolicyRepository, PolicyRepositoryMock>();
                     services.AddSingleton<IDelegationChangeEventQueue, DelegationChangeEventQueueMock>();
                     services.AddSingleton<IPostConfigureOptions<JwtCookieOptions>, JwtCookiePostConfigureOptionsStub>();
+                    services.AddSingleton<IRegisterService, RegisterServiceMock>();
                 });
             }).CreateClient(new WebApplicationFactoryClientOptions { AllowAutoRedirect = false });
 
