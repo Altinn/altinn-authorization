@@ -5,7 +5,7 @@
       {
         "Attribute": [
           {
-            "AttributeId": "urn:altinn:orgnr",
+            "AttributeId": "urn:altinn:organizationnumber",
             "Value": "934382404"
           },
           {

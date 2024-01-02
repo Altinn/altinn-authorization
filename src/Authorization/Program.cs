@@ -10,6 +10,7 @@ using Altinn.Authorization.ABAC.Interface;
 using Altinn.Common.AccessTokenClient.Services;
 using Altinn.Common.PEP.Authorization;
 using Altinn.Platform.Authorization.Clients;
+using Altinn.Platform.Authorization.Clients.Interfaces;
 using Altinn.Platform.Authorization.Configuration;
 using Altinn.Platform.Authorization.Constants;
 using Altinn.Platform.Authorization.Filters;
@@ -33,16 +34,19 @@ using Microsoft.ApplicationInsights.AspNetCore.Extensions;
 using Microsoft.ApplicationInsights.Channel;
 using Microsoft.ApplicationInsights.Extensibility;
 using Microsoft.ApplicationInsights.WindowsServer.TelemetryChannel;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Microsoft.FeatureManagement;
 using Microsoft.IdentityModel.Logging;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
@@ -67,6 +71,17 @@ await SetConfigurationProviders(builder.Configuration, builder.Environment.IsDev
 ConfigureLogging(builder.Logging);
 
 ConfigureServices(builder.Services, builder.Configuration);
+
+// Forwardlimit is set to 2 as our infrastructure has 1 proxy forward. The 2nd value from right to left is read into remoteipaddress property which is the client ip
+builder.Services.Configure<ForwardedHeadersOptions>(options =>
+{
+    options.ForwardedHeaders =
+        ForwardedHeaders.XForwardedFor;
+    options.ForwardLimit = 2;
+    options.KnownNetworks.Clear();
+    options.KnownProxies.Clear();
+    options.RequireHeaderSymmetry = false;
+});
 
 var app = builder.Build();
 
@@ -222,6 +237,7 @@ void ConfigureServices(IServiceCollection services, IConfiguration config)
     OedAuthzMaskinportenClientSettings oedAuthzMaskinportenClientSettings = config.GetSection("OedAuthzMaskinportenClientSettings").Get<OedAuthzMaskinportenClientSettings>();
     services.Configure<OedAuthzMaskinportenClientSettings>(config.GetSection("OedAuthzMaskinportenClientSettings"));
     services.AddMaskinportenHttpClient<SettingsJwkClientDefinition, OedAuthzMaskinportenClientDefinition>(oedAuthzMaskinportenClientSettings);
+    services.Configure<QueueStorageSettings>(config.GetSection("QueueStorageSettings"));
     services.AddHttpClient<IRegisterService, RegisterService>();
     services.AddHttpClient<PartyClient>();
     services.AddHttpClient<ProfileClient>();
@@ -232,6 +248,9 @@ void ConfigureServices(IServiceCollection services, IConfiguration config)
     services.TryAddSingleton<IHttpContextAccessor, HttpContextAccessor>();
     services.AddSingleton<IAccessTokenGenerator, AccessTokenGenerator>();
     services.AddTransient<ISigningCredentialsResolver, SigningCredentialsResolver>();
+    services.AddSingleton<IEventsQueueClient, EventsQueueClient>();
+    services.AddSingleton<IEventLog, EventLogService>();
+    services.AddSingleton<ISystemClock, SystemClock>();
     GeneralSettings generalSettings = config.GetSection("GeneralSettings").Get<GeneralSettings>();
     services.AddAuthentication(JwtCookieDefaults.AuthenticationScheme)
         .AddJwtCookie(JwtCookieDefaults.AuthenticationScheme, options =>
@@ -305,6 +324,8 @@ void ConfigureServices(IServiceCollection services, IConfiguration config)
             // catch swashbuckle exception if it doesn't find the generated xml documentation file
         }
     });
+
+    services.AddFeatureManagement();
 }
 
 static string GetXmlCommentsPathForControllers()
@@ -319,6 +340,8 @@ static string GetXmlCommentsPathForControllers()
 void Configure()
 {
     logger.LogInformation("Startup // Configure");
+
+    app.UseForwardedHeaders();
 
     if (app.Environment.IsDevelopment() || app.Environment.IsStaging())
     {

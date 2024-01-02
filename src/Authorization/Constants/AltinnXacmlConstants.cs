@@ -37,6 +37,11 @@ namespace Altinn.Platform.Authorization.Constants
             public const string OrgAttribute = "urn:altinn:org";
 
             /// <summary>
+            /// Org number attribute match indentifier 
+            /// </summary>
+            public const string OrgNumberAttribute = "urn:altinn:organizationnumber";
+
+            /// <summary>
             /// App attribute match indentifier 
             /// </summary>
             public const string AppAttribute = "urn:altinn:app";

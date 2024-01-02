@@ -10,12 +10,12 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" Version="7.0.12" />
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.7.2" />
-    <PackageReference Include="Moq" Version="4.20.69" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" Version="7.0.14" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.8.0" />
+    <PackageReference Include="Moq" Version="4.20.70" />
     <PackageReference Include="MSTest.TestFramework" Version="3.1.1" />
-    <PackageReference Include="xunit" Version="2.5.1" />
-    <PackageReference Include="xunit.runner.visualstudio" Version="2.5.1">
+    <PackageReference Include="xunit" Version="2.6.3" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="2.5.5">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
@@ -107,6 +107,10 @@
     <None Remove="Data\Xacml\3.0\AltinnApps\AltinnApps_OedFormuesfullmakt_Xml_PermitRequest.xml" />
     <None Remove="Data\Xacml\3.0\AltinnApps\AltinnApps_OedFormuesfullmakt_Xml_PermitResponse.xml" />
     <None Remove="Data\Xacml\3.0\AltinnApps\error\delegationeventfail\policy.xml" />
+    <None Remove="Data\Xacml\3.0\AltinnApps\eventlog\AltinnApps0001Event.json" />
+    <None Remove="Data\Xacml\3.0\AltinnApps\eventlog\AltinnApps0004Event.json" />
+    <None Remove="Data\Xacml\3.0\AltinnApps\eventlog\AltinnApps0007Event.json" />
+    <None Remove="Data\Xacml\3.0\AltinnApps\eventlog\AltinnResourceRegistry0001Event.json" />
     <None Remove="Data\Xacml\3.0\ResourceRegistry\AltinnResourceRegistry0001Request.xml" />
     <None Remove="Data\Xacml\3.0\ResourceRegistry\AltinnResourceRegistry0001Response.xml" />
     <None Remove="Data\Xacml\3.0\ResourceRegistry\AltinnResourceRegistry0002Request.json" />
@@ -127,6 +131,7 @@
     <None Remove="Data\Xacml\3.0\ResourceRegistry\ResourceRegistry_OedFormuesfullmakt_Xml_IndeterminateResponse.xml" />
     <None Remove="Data\Xacml\3.0\ResourceRegistry\ResourceRegistry_OedFormuesfullmakt_Xml_PermitRequest.xml" />
     <None Remove="Data\Xacml\3.0\ResourceRegistry\ResourceRegistry_OedFormuesfullmakt_Xml_PermitResponse.xml" />
+    <None Remove="Data\Xacml\3.0\ResourceRegistry\eventlog\AltinnResourceRegistry0004Event.json" />
   </ItemGroup>
 
   <ItemGroup>

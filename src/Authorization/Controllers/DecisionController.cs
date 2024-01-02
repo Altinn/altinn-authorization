@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -12,16 +13,18 @@ using Altinn.Authorization.ABAC.Interface;
 using Altinn.Authorization.ABAC.Utils;
 using Altinn.Authorization.ABAC.Xacml;
 using Altinn.Authorization.ABAC.Xacml.JsonProfile;
+using Altinn.Platform.Authorization.Helpers;
 using Altinn.Platform.Authorization.ModelBinding;
 using Altinn.Platform.Authorization.Models;
 using Altinn.Platform.Authorization.Models.External;
 using Altinn.Platform.Authorization.Repositories.Interface;
 using Altinn.Platform.Authorization.Services.Interface;
 using AutoMapper;
+using Altinn.Platform.Authorization.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
-
+using Microsoft.FeatureManagement;
 using Newtonsoft.Json;
 
 namespace Altinn.Platform.Authorization.Controllers
@@ -41,6 +44,8 @@ namespace Altinn.Platform.Authorization.Controllers
         private readonly IDelegationMetadataRepository _delegationRepository;
         private readonly ILogger _logger;
         private readonly IMemoryCache _memoryCache;
+        private readonly IEventLog _eventLog;
+        private readonly IFeatureManager _featureManager;
         private readonly IMapper _mapper;
 
         /// <summary>
@@ -52,7 +57,9 @@ namespace Altinn.Platform.Authorization.Controllers
         /// <param name="delegationRepository">The delegation repository</param>
         /// <param name="logger">the logger.</param>
         /// <param name="memoryCache">memory cache</param>
-        public DecisionController(IContextHandler contextHandler, IDelegationContextHandler delegationContextHandler, IPolicyRetrievalPoint policyRetrievalPoint, IDelegationMetadataRepository delegationRepository, ILogger<DecisionController> logger, IMemoryCache memoryCache, IMapper mapper)
+        /// <param name="eventLog">the authorization event logger</param>
+        /// <param name="featureManager">the feature manager</param>
+        public DecisionController(IContextHandler contextHandler, IDelegationContextHandler delegationContextHandler, IPolicyRetrievalPoint policyRetrievalPoint, IDelegationMetadataRepository delegationRepository, ILogger<DecisionController> logger, IMemoryCache memoryCache, IEventLog eventLog, IFeatureManager featureManager, IMapper mapper)
         {
             _pdp = new PolicyDecisionPoint();
             _prp = policyRetrievalPoint;
@@ -61,6 +68,8 @@ namespace Altinn.Platform.Authorization.Controllers
             _delegationRepository = delegationRepository;
             _logger = logger;
             _memoryCache = memoryCache;
+            _eventLog = eventLog;
+            _featureManager = featureManager;
             _mapper = mapper;
         }
 
@@ -246,6 +255,7 @@ namespace Altinn.Platform.Authorization.Controllers
                     XacmlContextResult delegationResult = delegationContextResponse.Results.First();
                     if (delegationResult.Decision.Equals(XacmlContextDecision.Permit))
                     {
+                        _eventLog.CreateAuthorizationEvent(_featureManager, decisionRequest, HttpContext, delegationContextResponse);
                         return delegationContextResponse;
                     }
                 }
@@ -255,6 +265,7 @@ namespace Altinn.Platform.Authorization.Controllers
                 }
             }
 
+            _eventLog.CreateAuthorizationEvent(_featureManager, decisionRequest, HttpContext, rolesContextResponse);
             return rolesContextResponse;
         }
 

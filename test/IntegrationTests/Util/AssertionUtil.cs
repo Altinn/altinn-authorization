@@ -2,11 +2,17 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-
+using System.Net;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using Altinn.Authorization.ABAC.Xacml;
 using Altinn.Authorization.ABAC.Xacml.JsonProfile;
+using Altinn.Platform.Authorization.Clients.Interfaces;
 using Altinn.Platform.Authorization.Models;
 using Altinn.Platform.Authorization.Models.DelegationChangeEvent;
+using Altinn.Platform.Authorization.Models.EventLog;
+using Altinn.Platform.Authorization.Services.Interfaces;
+using Moq;
 using Xunit;
 
 namespace Altinn.Platform.Authorization.IntegrationTests.Util
@@ -266,6 +272,17 @@ namespace Altinn.Platform.Authorization.IntegrationTests.Util
             AssertEqual(expected.CoveredBy, actual.CoveredBy);
             AssertEqual(expected.Resource, actual.Resource);
             AssertEqual(expected.Action, actual.Action);
+        }
+
+        public static void AssertAuthorizationEvent(Mock<IEventsQueueClient> eventQueue, AuthorizationEvent expectedAuthorizationEvent, Times numberOfTimes)
+        {
+            var options = new JsonSerializerOptions();
+            options.Converters.Add(new JsonStringEnumConverter());
+            string serializedAuthorizationEvent = JsonSerializer.Serialize(expectedAuthorizationEvent, options);
+            eventQueue.Verify(
+                e => e.EnqueueAuthorizationEvent(
+                    It.Is<string>(q => q == serializedAuthorizationEvent)), 
+                numberOfTimes);
         }
 
         private static void AssertEqual(List<AttributeMatch> expected, List<AttributeMatch> actual)

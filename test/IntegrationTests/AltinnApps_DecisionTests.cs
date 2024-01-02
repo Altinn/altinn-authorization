@@ -1,19 +1,26 @@
+using System;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Altinn.Authorization.ABAC.Interface;
 using Altinn.Authorization.ABAC.Xacml;
 using Altinn.Authorization.ABAC.Xacml.JsonProfile;
+using Altinn.Platform.Authorization.Clients.Interfaces;
 using Altinn.Platform.Authorization.Controllers;
 using Altinn.Platform.Authorization.IntegrationTests.MockServices;
 using Altinn.Platform.Authorization.IntegrationTests.Util;
 using Altinn.Platform.Authorization.IntegrationTests.Webfactory;
+using Altinn.Platform.Authorization.Models.EventLog;
 using Altinn.Platform.Authorization.Repositories.Interface;
 using Altinn.Platform.Authorization.Services.Interface;
+using Altinn.Platform.Authorization.Services.Interfaces;
 using AltinnCore.Authentication.JwtCookie;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
+using Microsoft.FeatureManagement;
+using Moq;
 using Xunit;
 
 namespace Altinn.Platform.Authorization.IntegrationTests
@@ -21,17 +28,29 @@ namespace Altinn.Platform.Authorization.IntegrationTests
     public class AltinnApps_DecisionTests :IClassFixture<CustomWebApplicationFactory<DecisionController>>
     {
         private readonly CustomWebApplicationFactory<DecisionController> _factory;
+        private readonly Mock<IFeatureManager> featureManageMock = new Mock<IFeatureManager>();
+        private readonly Mock<ISystemClock> systemClock = new Mock<ISystemClock>();
 
         public AltinnApps_DecisionTests(CustomWebApplicationFactory<DecisionController> fixture)
         {
             _factory = fixture;
+            SetupFeatureMock(true);
+            SetupDateTimeMock();
         }
 
         [Fact]
         public async Task PDP_Decision_AltinnApps0001()
         {
             string testCase = "AltinnApps0001";
-            HttpClient client = GetTestClient();
+            Mock<IFeatureManager> featureManageMock = new Mock<IFeatureManager>();
+            featureManageMock
+                .Setup(m => m.IsEnabledAsync("AuditLog"))
+                .Returns(Task.FromResult(true));
+            Mock<IEventsQueueClient> eventQueue = new Mock<IEventsQueueClient>();
+            eventQueue.Setup(q => q.EnqueueAuthorizationEvent(It.IsAny<string>()));
+            AuthorizationEvent expectedAuthorizationEvent = TestSetupUtil.GetAuthorizationEvent(testCase);
+
+            HttpClient client = GetTestClient(eventQueue.Object, featureManageMock.Object, systemClock.Object);
             HttpRequestMessage httpRequestMessage = TestSetupUtil.CreateXacmlRequest(testCase);
             XacmlContextResponse expected = TestSetupUtil.ReadExpectedResponse(testCase);
 
@@ -40,13 +59,49 @@ namespace Altinn.Platform.Authorization.IntegrationTests
 
             // Assert
             AssertionUtil.AssertEqual(expected, contextResponse);
+            AssertionUtil.AssertAuthorizationEvent(eventQueue, expectedAuthorizationEvent, Times.Once());
+        }
+
+        [Fact]
+        public async Task PDP_Decision_AltinnApps0001_Auditlog_Off()
+        {
+            string testCase = "AltinnApps0001";
+
+            Mock<IFeatureManager> featureManageMock = new Mock<IFeatureManager>();
+            featureManageMock
+                .Setup(m => m.IsEnabledAsync("AuditLog"))
+                .Returns(Task.FromResult(false));
+
+            Mock<IEventsQueueClient> eventQueue = new Mock<IEventsQueueClient>();
+            eventQueue.Setup(q => q.EnqueueAuthorizationEvent(It.IsAny<string>()));
+            AuthorizationEvent expectedAuthorizationEvent = TestSetupUtil.GetAuthorizationEvent(testCase);
+
+            HttpClient client = GetTestClient(eventQueue.Object, featureManageMock.Object);
+            HttpRequestMessage httpRequestMessage = TestSetupUtil.CreateXacmlRequest(testCase);
+            XacmlContextResponse expected = TestSetupUtil.ReadExpectedResponse(testCase);
+
+            // Act
+            XacmlContextResponse contextResponse = await TestSetupUtil.GetXacmlContextResponseAsync(client, httpRequestMessage);
+
+            // Assert
+            AssertionUtil.AssertEqual(expected, contextResponse);
+            AssertionUtil.AssertAuthorizationEvent(eventQueue, expectedAuthorizationEvent, Times.Never());
         }
 
         [Fact]
         public async Task PDP_Decision_AltinnApps0007()
         {
             string testCase = "AltinnApps0007";
-            HttpClient client = GetTestClient();
+
+            Mock<IFeatureManager> featureManageMock = new Mock<IFeatureManager>();
+            featureManageMock
+                .Setup(m => m.IsEnabledAsync("AuditLog"))
+                .Returns(Task.FromResult(true));
+            Mock<IEventsQueueClient> eventQueue = new Mock<IEventsQueueClient>();
+            eventQueue.Setup(q => q.EnqueueAuthorizationEvent(It.IsAny<string>()));
+            AuthorizationEvent expectedAuthorizationEvent = TestSetupUtil.GetAuthorizationEvent(testCase);
+
+            HttpClient client = GetTestClient(eventQueue.Object, featureManageMock.Object, systemClock.Object);            
             HttpRequestMessage httpRequestMessage = TestSetupUtil.CreateJsonProfileXacmlRequest(testCase);
             XacmlJsonResponse expected = TestSetupUtil.ReadExpectedJsonProfileResponse(testCase);
 
@@ -55,6 +110,7 @@ namespace Altinn.Platform.Authorization.IntegrationTests
 
             // Assert
             AssertionUtil.AssertEqual(expected, contextResponse);
+            AssertionUtil.AssertAuthorizationEvent(eventQueue, expectedAuthorizationEvent, Times.Once());
         }
 
         [Fact]
@@ -91,7 +147,16 @@ namespace Altinn.Platform.Authorization.IntegrationTests
         public async Task PDP_Decision_AltinnApps0004()
         {
             string testCase = "AltinnApps0004";
-            HttpClient client = GetTestClient();
+
+            Mock<IFeatureManager> featureManageMock = new Mock<IFeatureManager>();
+            featureManageMock
+                .Setup(m => m.IsEnabledAsync("AuditLog"))
+                .Returns(Task.FromResult(true));
+            Mock<IEventsQueueClient> eventQueue = new Mock<IEventsQueueClient>();
+            eventQueue.Setup(q => q.EnqueueAuthorizationEvent(It.IsAny<string>()));
+            AuthorizationEvent expectedAuthorizationEvent = TestSetupUtil.GetAuthorizationEvent(testCase);
+
+            HttpClient client = GetTestClient(eventQueue.Object, featureManageMock.Object, systemClock.Object);
             HttpRequestMessage httpRequestMessage = TestSetupUtil.CreateXacmlRequest(testCase);
             XacmlContextResponse expected = TestSetupUtil.ReadExpectedResponse(testCase);
 
@@ -100,6 +165,7 @@ namespace Altinn.Platform.Authorization.IntegrationTests
 
             // Assert
             AssertionUtil.AssertEqual(expected, contextResponse);
+            AssertionUtil.AssertAuthorizationEvent(eventQueue, expectedAuthorizationEvent, Times.Once());
         }
 
         [Fact]
@@ -211,7 +277,7 @@ namespace Altinn.Platform.Authorization.IntegrationTests
         public async Task PDP_Decision_AltinnApps0027()
         {
             string testCase = "AltinnApps0027";
-            HttpClient client = GetTestClient();
+            HttpClient client = GetTestClient(null, featureManageMock.Object);
             HttpRequestMessage httpRequestMessage = TestSetupUtil.CreateJsonProfileXacmlRequest(testCase);
             XacmlJsonResponse expected = TestSetupUtil.ReadExpectedJsonProfileResponse(testCase);
 
@@ -342,7 +408,7 @@ namespace Altinn.Platform.Authorization.IntegrationTests
             AssertionUtil.AssertEqual(expected, contextResponse);
         }
 
-        private HttpClient GetTestClient()
+        private HttpClient GetTestClient(IEventsQueueClient eventLog = null, IFeatureManager featureManager = null, ISystemClock systemClockMock = null)
         {
             HttpClient client = _factory.WithWebHostBuilder(builder =>
             {
@@ -358,10 +424,38 @@ namespace Altinn.Platform.Authorization.IntegrationTests
                     services.AddSingleton<IPolicyRepository, PolicyRepositoryMock>();
                     services.AddSingleton<IDelegationChangeEventQueue, DelegationChangeEventQueueMock>();
                     services.AddSingleton<IPostConfigureOptions<JwtCookieOptions>, JwtCookiePostConfigureOptionsStub>();
+                    if (featureManager != null)
+                    {
+                        services.AddSingleton(featureManager);
+                    }
+
+                    if (eventLog != null)
+                    {
+                        services.AddSingleton(eventLog);
+                    }
+
+                    if (systemClockMock != null)
+                    {
+                        services.AddSingleton(systemClockMock);
+                    }
                 });
             }).CreateClient(new WebApplicationFactoryClientOptions { AllowAutoRedirect = false });
 
             return client;
+        }
+
+        private void SetupFeatureMock(bool featureFlag)
+        {            
+            featureManageMock
+                .Setup(m => m.IsEnabledAsync("AuditLog"))
+                .Returns(Task.FromResult(featureFlag));
+        }
+
+        private void SetupDateTimeMock()
+        {
+            systemClock
+                .Setup(m => m.UtcNow)
+                .Returns(new DateTimeOffset(2018, 05, 15, 02, 05, 00, new TimeSpan(1, 0, 0)));
         }
     }
 }
