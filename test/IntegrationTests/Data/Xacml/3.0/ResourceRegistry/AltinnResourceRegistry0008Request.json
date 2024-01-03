@@ -5,7 +5,7 @@
       {
         "Attribute": [
           {
-            "AttributeId": "urn:altinn:ssn",
+            "AttributeId": "urn:person-no",
             "Value": "01039012345"
           }
         ]
@@ -30,7 +30,7 @@
             "Value": "ttd-externalpdp-resource1"
           },
           {
-            "AttributeId": "urn:altinn:ssn",
+            "AttributeId": "urn:person-no",
             "Value": "01039012345"
           }
         ]

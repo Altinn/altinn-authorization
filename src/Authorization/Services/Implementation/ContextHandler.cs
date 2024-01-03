@@ -4,7 +4,6 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
 using Altinn.Authorization.ABAC.Constants;
-using Altinn.Authorization.ABAC.Interface;
 using Altinn.Authorization.ABAC.Xacml;
 using Altinn.Platform.Authorization.Configuration;
 using Altinn.Platform.Authorization.Constants;
@@ -74,10 +73,11 @@ namespace Altinn.Platform.Authorization.Services.Implementation
         /// Ads needed information to the Context Request.
         /// </summary>
         /// <param name="request">The original Xacml Context Request</param>
+        /// <param name="isExternalRequest">Defines if this is an external request</param>
         /// <returns>The enriched XacmlContextRequest</returns>
-        public async Task<XacmlContextRequest> Enrich(XacmlContextRequest request)
+        public async Task<XacmlContextRequest> Enrich(XacmlContextRequest request, bool isExternalRequest)
         {
-            await EnrichResourceAttributes(request);
+            await EnrichResourceAttributes(request, isExternalRequest);
             return await Task.FromResult(request);
         }
 
@@ -85,11 +85,12 @@ namespace Altinn.Platform.Authorization.Services.Implementation
         /// Enriches the resource attribute collection with additional attributes retrieved based on the instance on the request
         /// </summary>
         /// <param name="request">The original Xacml Context Request</param>
-        protected async Task EnrichResourceAttributes(XacmlContextRequest request)
+        /// <param name="isExternalRequest">Defines if request comes </param>
+        protected async Task EnrichResourceAttributes(XacmlContextRequest request, bool isExternalRequest)
         {
             XacmlContextAttributes resourceContextAttributes = request.GetResourceAttributes();
             XacmlResourceAttributes resourceAttributes = GetResourceAttributeValues(resourceContextAttributes);
-            await EnrichResourceParty(resourceAttributes);
+            await EnrichResourceParty(resourceAttributes, isExternalRequest);
 
             bool resourceAttributeComplete = IsResourceComplete(resourceAttributes);
 
@@ -129,7 +130,7 @@ namespace Altinn.Platform.Authorization.Services.Implementation
                 }
             }
 
-            await EnrichSubjectAttributes(request, resourceAttributes.ResourcePartyValue);
+            await EnrichSubjectAttributes(request, resourceAttributes.ResourcePartyValue, isExternalRequest);
         }
 
         private static bool IsResourceComplete(XacmlResourceAttributes resourceAttributes)
@@ -177,7 +178,7 @@ namespace Altinn.Platform.Authorization.Services.Implementation
         /// Method that adds information about the resource party 
         /// </summary>
         /// <returns></returns>
-        protected async Task EnrichResourceParty(XacmlResourceAttributes resourceAttributes)
+        protected async Task EnrichResourceParty(XacmlResourceAttributes resourceAttributes, bool isExternalRequest)
         {
             if (string.IsNullOrEmpty(resourceAttributes.ResourcePartyValue) && !string.IsNullOrEmpty(resourceAttributes.OrganizationNumber))
             {
@@ -189,6 +190,11 @@ namespace Altinn.Platform.Authorization.Services.Implementation
             }
             else if (string.IsNullOrEmpty(resourceAttributes.ResourcePartyValue) && !string.IsNullOrEmpty(resourceAttributes.Ssn))
             {
+                if (!isExternalRequest)
+                {
+                    throw new ArgumentException("Not allowed to use ssn for internal API");
+                }
+
                 int partyId = await _registerService.PartyLookup(null, resourceAttributes.Ssn);
                 if (partyId != 0)
                 {
@@ -296,7 +302,8 @@ namespace Altinn.Platform.Authorization.Services.Implementation
         /// </summary>
         /// <param name="request">The original Xacml Context Request</param>
         /// <param name="resourceParty">The resource reportee party id</param>
-        protected async Task EnrichSubjectAttributes(XacmlContextRequest request, string resourceParty)
+        /// <param name="isExternalRequest">Used to enforce stricter requirements</param>
+        protected async Task EnrichSubjectAttributes(XacmlContextRequest request, string resourceParty, bool isExternalRequest)
         {
             // If there is no resource party then it is impossible to enrich roles
             if (string.IsNullOrEmpty(resourceParty))
@@ -319,6 +326,11 @@ namespace Altinn.Platform.Authorization.Services.Implementation
 
                 if (xacmlAttribute.AttributeId.OriginalString.Equals(XacmlRequestAttribute.SsnAttribute))
                 {
+                    if (!isExternalRequest)
+                    {
+                        throw new ArgumentException("Not allowed to use ssn for internal API");
+                    }
+
                     subjectSsn = xacmlAttribute.AttributeValues.First().Value;
                 }
             }
@@ -356,7 +368,7 @@ namespace Altinn.Platform.Authorization.Services.Implementation
             IDictionary<string, ICollection<string>> subjectAttributes = xacmlPolicy.GetAttributeDictionaryByCategory(XacmlConstants.MatchAttributeCategory.Subject);
             if (subjectAttributes.ContainsKey(AltinnXacmlConstants.MatchAttributeIdentifiers.OedRoleAttribute))
             {
-                if (!string.IsNullOrEmpty(subjectSsn))
+                if (string.IsNullOrEmpty(subjectSsn))
                 {
                     subjectSsn = await GetSsnForUser(subjectUserId);
                 }

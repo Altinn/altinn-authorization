@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using Altinn.Authorization.ABAC.Xacml;
 using Altinn.Platform.Authorization.Models;
 
-namespace Altinn.Authorization.ABAC.Interface
+namespace Altinn.Platform.Authorization.Services.Interface
 {
     /// <summary>
     /// Defines Interface for the Delegation Context Handler.

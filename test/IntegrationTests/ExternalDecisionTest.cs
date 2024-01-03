@@ -89,7 +89,6 @@ namespace Altinn.Platform.Authorization.IntegrationTests
             AssertionUtil.AssertEqual(expected, contextResponse);
         }
 
-
         [Fact]
         public async Task PDPExternal_Decision_AltinnResourceRegistry0008()
         {

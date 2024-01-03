@@ -6,7 +6,6 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
 using Altinn.Authorization.ABAC;
-using Altinn.Authorization.ABAC.Interface;
 using Altinn.Authorization.ABAC.Utils;
 using Altinn.Authorization.ABAC.Xacml;
 using Altinn.Authorization.ABAC.Xacml.JsonProfile;
@@ -119,7 +118,7 @@ namespace Altinn.Platform.Authorization.Controllers
             try
             {
                 XacmlJsonRequestRoot jsonRequest = _mapper.Map<XacmlJsonRequestRoot>(authorizationRequest);
-                XacmlJsonResponse xacmlResponse = await Authorize(jsonRequest.Request);
+                XacmlJsonResponse xacmlResponse = await Authorize(jsonRequest.Request, true);
                 return _mapper.Map<XacmlJsonResponseExternal>(xacmlResponse);
             }
             catch (Exception ex)
@@ -128,13 +127,13 @@ namespace Altinn.Platform.Authorization.Controllers
             }
         }
 
-        private async Task<XacmlJsonResponse> Authorize(XacmlJsonRequest decisionRequest)
+        private async Task<XacmlJsonResponse> Authorize(XacmlJsonRequest decisionRequest, bool isExternalRequest = false)
         {
             if (decisionRequest.MultiRequests == null || decisionRequest.MultiRequests.RequestReference == null
                 || decisionRequest.MultiRequests.RequestReference.Count < 2)
             {
                 XacmlContextRequest request = XacmlJsonXmlConverter.ConvertRequest(decisionRequest);
-                XacmlContextResponse xmlResponse = await Authorize(request);
+                XacmlContextResponse xmlResponse = await Authorize(request, isExternalRequest);
                 return XacmlJsonXmlConverter.ConvertResponse(xmlResponse);
             }
             else
@@ -183,7 +182,7 @@ namespace Altinn.Platform.Authorization.Controllers
                         }
                     }
 
-                    XacmlContextResponse partResponse = await Authorize(XacmlJsonXmlConverter.ConvertRequest(jsonMultiRequestPart));
+                    XacmlContextResponse partResponse = await Authorize(XacmlJsonXmlConverter.ConvertRequest(jsonMultiRequestPart), isExternalRequest);
                     XacmlJsonResponse xacmlJsonResponsePart = XacmlJsonXmlConverter.ConvertResponse(partResponse);
 
                     if (multiResponse.Response == null)
@@ -206,7 +205,7 @@ namespace Altinn.Platform.Authorization.Controllers
                 request = XacmlParser.ReadContextRequest(reader);
             }
 
-            XacmlContextResponse xacmlContextResponse = await Authorize(request);
+            XacmlContextResponse xacmlContextResponse = await Authorize(request, false);
             return CreateResponse(xacmlContextResponse);
         }
 
@@ -232,9 +231,9 @@ namespace Altinn.Platform.Authorization.Controllers
             return Content(xml);
         }
 
-        private async Task<XacmlContextResponse> Authorize(XacmlContextRequest decisionRequest)
+        private async Task<XacmlContextResponse> Authorize(XacmlContextRequest decisionRequest, bool isExernalRequest)
         {
-            decisionRequest = await this._contextHandler.Enrich(decisionRequest);
+            decisionRequest = await this._contextHandler.Enrich(decisionRequest, isExernalRequest);
 
             ////_logger.LogInformation($"// DecisionController // Authorize // Roles // Enriched request: {JsonConvert.SerializeObject(decisionRequest)}.");
             XacmlPolicy policy = await this._prp.GetPolicyAsync(decisionRequest);
