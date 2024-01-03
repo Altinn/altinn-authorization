@@ -23,7 +23,7 @@ namespace Altinn.Platform.Authorization.IntegrationTests.MockServices
 
         private readonly string _appAttributeId = "urn:altinn:app";
 
-        private readonly string _resourceregistryAttributeId = "urn:altinn:resourceregistry";
+        private readonly string _resourceregistryAttributeId = "urn:altinn:resource";
 
         public PolicyRetrievalPointMock(IHttpContextAccessor httpContextAccessor, ILogger<PolicyRetrievalPointMock> logger)
         {

@@ -27,7 +27,7 @@
         "Attribute": [
           {
             "AttributeId": "urn:altinn:resource",
-            "Value": "apidelegation"
+            "Value": "ttd-externalpdp-resource1"
           },
           {
             "AttributeId": "urn:altinn:organizationnumber",

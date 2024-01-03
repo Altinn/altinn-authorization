@@ -21,19 +21,6 @@
             }
           ]
         }
-      ],
-      "Category": [
-        {
-          "CategoryId": "urn:oasis:names:tc:xacml:3.0:attribute-category:resource",
-          "Attribute": [
-            {
-              "AttributeId": "urn:altinn:event-id",
-              "DataType": "http://www.w3.org/2001/XMLSchema#string",
-              "Value": "12044771-24d3-425f-9b93-6363716ff395"
-            }
-          ]
-
-        }
       ]
     }
   ]

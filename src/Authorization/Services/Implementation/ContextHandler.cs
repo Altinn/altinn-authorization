@@ -187,6 +187,14 @@ namespace Altinn.Platform.Authorization.Services.Implementation
                     resourceAttributes.ResourcePartyValue = partyId.ToString();
                 }
             }
+            else if (string.IsNullOrEmpty(resourceAttributes.ResourcePartyValue) && !string.IsNullOrEmpty(resourceAttributes.Ssn))
+            {
+                int partyId = await _registerService.PartyLookup(null, resourceAttributes.Ssn);
+                if (partyId != 0)
+                {
+                    resourceAttributes.ResourcePartyValue = partyId.ToString();
+                }
+            }
         }
 
         /// <summary>
@@ -238,6 +246,11 @@ namespace Altinn.Platform.Authorization.Services.Implementation
                 if (attribute.AttributeId.OriginalString.Equals(XacmlRequestAttribute.OrganizationNumberAttribute))
                 {
                     resourceAttributes.OrganizationNumber = attribute.AttributeValues.First().Value;
+                }
+
+                if (attribute.AttributeId.OriginalString.Equals(XacmlRequestAttribute.SsnAttribute))
+                {
+                    resourceAttributes.Ssn = attribute.AttributeValues.First().Value;
                 }
             }
 
@@ -295,7 +308,7 @@ namespace Altinn.Platform.Authorization.Services.Implementation
 
             int subjectUserId = 0;
             int resourcePartyId = Convert.ToInt32(resourceParty);
-            string ssn = string.Empty;
+            string subjectSsn = string.Empty;
 
             foreach (XacmlAttribute xacmlAttribute in subjectContextAttributes.Attributes)
             {
@@ -306,13 +319,27 @@ namespace Altinn.Platform.Authorization.Services.Implementation
 
                 if (xacmlAttribute.AttributeId.OriginalString.Equals(XacmlRequestAttribute.SsnAttribute))
                 {
-                    ssn = xacmlAttribute.AttributeValues.First().Value;
+                    subjectSsn = xacmlAttribute.AttributeValues.First().Value;
                 }
             }
 
-            if (!string.IsNullOrEmpty(ssn))
+            if (!string.IsNullOrEmpty(subjectSsn) && subjectUserId != 0)
             {
-                subjectUserId
+                throw new ArgumentException("Not possible to set userid and ssn for subject at the same time");
+            }
+
+            if (!string.IsNullOrEmpty(subjectSsn))
+            {
+                UserProfile subjectProfile = await _profileWrapper.GetUserProfileBySSN(subjectSsn);
+
+                if (subjectProfile != null)
+                {
+                    subjectUserId = subjectProfile.UserId; 
+                }
+                else
+                {
+                    throw new ArgumentException("Invalid SSN");
+                }
             }
 
             if (subjectUserId == 0)
@@ -329,7 +356,11 @@ namespace Altinn.Platform.Authorization.Services.Implementation
             IDictionary<string, ICollection<string>> subjectAttributes = xacmlPolicy.GetAttributeDictionaryByCategory(XacmlConstants.MatchAttributeCategory.Subject);
             if (subjectAttributes.ContainsKey(AltinnXacmlConstants.MatchAttributeIdentifiers.OedRoleAttribute))
             {
-                string subjectSsn = await GetSsnForUser(subjectUserId);
+                if (!string.IsNullOrEmpty(subjectSsn))
+                {
+                    subjectSsn = await GetSsnForUser(subjectUserId);
+                }
+                
                 string resourceSsn = await GetSSnForParty(resourcePartyId);
 
                 if (!string.IsNullOrWhiteSpace(subjectSsn) && !string.IsNullOrWhiteSpace(resourceSsn))

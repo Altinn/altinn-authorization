@@ -1,26 +1,22 @@
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.Xaml.Permissions;
 using System.Xml;
-
 using Altinn.Authorization.ABAC;
 using Altinn.Authorization.ABAC.Interface;
 using Altinn.Authorization.ABAC.Utils;
 using Altinn.Authorization.ABAC.Xacml;
 using Altinn.Authorization.ABAC.Xacml.JsonProfile;
-using Altinn.Platform.Authorization.Helpers;
 using Altinn.Platform.Authorization.ModelBinding;
 using Altinn.Platform.Authorization.Models;
 using Altinn.Platform.Authorization.Models.External;
 using Altinn.Platform.Authorization.Repositories.Interface;
 using Altinn.Platform.Authorization.Services.Interface;
-using AutoMapper;
 using Altinn.Platform.Authorization.Services.Interfaces;
+using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
