@@ -43,7 +43,7 @@ namespace Altinn.Platform.Authorization.Constants
         /// <summary>
         /// xacml string that represents organization number 
         /// </summary>
-        public const string OrganizationNumberAttribute = "urn:iso6523-actorid-upi:0192";
+        public const string OrganizationNumberAttribute = "urn:altinn:party-identifier:organization-no";
 
         /// <summary>
         /// xacml string that represents user
@@ -68,6 +68,6 @@ namespace Altinn.Platform.Authorization.Constants
         /// <summary>
         /// xacml string that represents ssn for 
         /// </summary>
-        public const string SsnAttribute = "urn:person-no";
+        public const string SsnAttribute = "urn:altinn:party-identifier:person-no";
     }
 }
