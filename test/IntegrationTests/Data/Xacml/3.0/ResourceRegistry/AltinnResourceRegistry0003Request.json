@@ -30,7 +30,7 @@
             "Value": "apidelegation"
           },
           {
-            "AttributeId": "urn:altinn:organizationnumber",
+            "AttributeId": "urn:altinn:party-identifier:organization-no",
             "Value": "950474084"
           }
         ]
