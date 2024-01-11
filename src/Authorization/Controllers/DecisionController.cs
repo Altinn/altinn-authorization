@@ -111,15 +111,17 @@ namespace Altinn.Platform.Authorization.Controllers
 
         private async Task<XacmlJsonResponse> Authorize(XacmlJsonRequest decisionRequest)
         {
+            bool logEvent = true;
             if (decisionRequest.MultiRequests == null || decisionRequest.MultiRequests.RequestReference == null
                 || decisionRequest.MultiRequests.RequestReference.Count < 2)
             {
                 XacmlContextRequest request = XacmlJsonXmlConverter.ConvertRequest(decisionRequest);
-                XacmlContextResponse xmlResponse = await Authorize(request);
+                XacmlContextResponse xmlResponse = await Authorize(request, logEvent);
                 return XacmlJsonXmlConverter.ConvertResponse(xmlResponse);
             }
             else
             {
+                logEvent = false;
                 XacmlJsonResponse multiResponse = new XacmlJsonResponse();
                 foreach (XacmlJsonRequestReference xacmlJsonRequestReference in decisionRequest.MultiRequests.RequestReference)
                 {
@@ -164,7 +166,7 @@ namespace Altinn.Platform.Authorization.Controllers
                         }
                     }
 
-                    XacmlContextResponse partResponse = await Authorize(XacmlJsonXmlConverter.ConvertRequest(jsonMultiRequestPart));
+                    XacmlContextResponse partResponse = await Authorize(XacmlJsonXmlConverter.ConvertRequest(jsonMultiRequestPart), logEvent);
                     XacmlJsonResponse xacmlJsonResponsePart = XacmlJsonXmlConverter.ConvertResponse(partResponse);
 
                     if (multiResponse.Response == null)
@@ -187,7 +189,7 @@ namespace Altinn.Platform.Authorization.Controllers
                 request = XacmlParser.ReadContextRequest(reader);
             }
 
-            XacmlContextResponse xacmlContextResponse = await Authorize(request);
+            XacmlContextResponse xacmlContextResponse = await Authorize(request, true);
             return CreateResponse(xacmlContextResponse);
         }
 
@@ -213,7 +215,7 @@ namespace Altinn.Platform.Authorization.Controllers
             return Content(xml);
         }
 
-        private async Task<XacmlContextResponse> Authorize(XacmlContextRequest decisionRequest)
+        private async Task<XacmlContextResponse> Authorize(XacmlContextRequest decisionRequest, bool logEvent = true)
         {
             decisionRequest = await this._contextHandler.Enrich(decisionRequest);
 
@@ -232,7 +234,11 @@ namespace Altinn.Platform.Authorization.Controllers
                     XacmlContextResult delegationResult = delegationContextResponse.Results.First();
                     if (delegationResult.Decision.Equals(XacmlContextDecision.Permit))
                     {
-                        _eventLog.CreateAuthorizationEvent(_featureManager, decisionRequest, HttpContext, delegationContextResponse);
+                        if (logEvent)
+                        {
+                            _eventLog.CreateAuthorizationEvent(_featureManager, decisionRequest, HttpContext, delegationContextResponse);
+                        }
+
                         return delegationContextResponse;
                     }
                 }
@@ -242,7 +248,11 @@ namespace Altinn.Platform.Authorization.Controllers
                 }
             }
 
-            _eventLog.CreateAuthorizationEvent(_featureManager, decisionRequest, HttpContext, rolesContextResponse);
+            if (logEvent)
+            {
+                _eventLog.CreateAuthorizationEvent(_featureManager, decisionRequest, HttpContext, rolesContextResponse);
+            }
+            
             return rolesContextResponse;
         }
 
