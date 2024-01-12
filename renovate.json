@@ -5,8 +5,12 @@
   ],
   "packageRules": [
     {
-      "matchPackageNames": [ "Altinn.Common.AccessTokenClient" ],
-      "matchPaths": [ "src/Functions/**" ],
+      "matchPackageNames": [
+        "Altinn.Common.AccessTokenClient"
+      ],
+      "matchFileNames": [
+        "src/Functions/**"
+      ],
       "allowedVersions": "<=1.1.3"
     }
   ]
