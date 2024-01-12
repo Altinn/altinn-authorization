@@ -2,5 +2,12 @@
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": [
     "local>Altinn/renovate-config"
+  ],
+  "packageRules": [
+    {
+      "matchPackageNames": [ "Altinn.Common.AccessTokenClient" ],
+      "matchPaths": [ "src/Functions/**" ],
+      "allowedVersions": "<=1.1.3"
+    }
   ]
 }
