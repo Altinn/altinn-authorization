@@ -255,6 +255,15 @@ namespace Altinn.Platform.Authorization.Services.Implementation
                     resourceAttributes.OrganizationNumber = attribute.AttributeValues.First().Value;
                 }
 
+                if (attribute.AttributeId.OriginalString.Equals(XacmlRequestAttribute.LegacyOrganizationNumberAttribute))
+                {
+                    // For supporting legacy use of this attribute. (old PEPS)
+                    if (string.IsNullOrEmpty(resourceAttributes.OrganizationNumber))
+                    { 
+                        resourceAttributes.OrganizationNumber = attribute.AttributeValues.First().Value;
+                    }
+                }
+
                 if (attribute.AttributeId.OriginalString.Equals(XacmlRequestAttribute.SsnAttribute))
                 {
                     resourceAttributes.Ssn = attribute.AttributeValues.First().Value;
