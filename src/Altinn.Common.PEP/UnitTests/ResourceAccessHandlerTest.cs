@@ -44,7 +44,7 @@ namespace Altinn.Common.PEP.Authorization
             AuthorizationHandlerContext context = CreateAuthorizationHandlerContext();
             _httpContextAccessorMock.Setup(h => h.HttpContext).Returns(CreateHttpContext("23453546", null, null));
             XacmlJsonResponse response = CreateResponse(XacmlContextDecision.Permit.ToString());
-            _pdpMock.Setup(a => a.GetDecisionForRequest(It.IsAny<XacmlJsonRequestRoot>())).Returns(Task.FromResult(response));
+            _pdpMock.Setup(a => a.GetDecisionForRequest(It.IsAny<XacmlJsonRequestRoot>(), It.IsAny<string>()).Returns(Task.FromResult(response));
 
             // Act
             await _rah.HandleAsync(context);

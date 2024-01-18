@@ -21,6 +21,7 @@ namespace Altinn.Common.PEP.Clients
     public class AuthorizationApiClient
     {
         private const string SubscriptionKeyHeaderName = "Ocp-Apim-Subscription-Key";
+        private const string ForwardedForHeaderName = "x-forwarded-for";
         private readonly HttpClient _httpClient;
         private readonly ILogger _logger;
 
@@ -44,12 +45,13 @@ namespace Altinn.Common.PEP.Clients
         /// </summary>
         /// <param name="xacmlJsonRequest">An authorization request.</param>
         /// <returns>The result of the authorization request.</returns>
-        public async Task<XacmlJsonResponse> AuthorizeRequest(XacmlJsonRequestRoot xacmlJsonRequest)
+        public async Task<XacmlJsonResponse> AuthorizeRequest(XacmlJsonRequestRoot xacmlJsonRequest, string forwardedForHeader)
         {
             XacmlJsonResponse xacmlJsonResponse = null;
             string apiUrl = $"decision";
             string requestJson = JsonConvert.SerializeObject(xacmlJsonRequest);
             StringContent httpContent = new StringContent(requestJson, Encoding.UTF8, "application/json");
+            _httpClient.DefaultRequestHeaders.Add(ForwardedForHeaderName, forwardedForHeader);
 
             Stopwatch stopWatch = new Stopwatch();
             stopWatch.Start();

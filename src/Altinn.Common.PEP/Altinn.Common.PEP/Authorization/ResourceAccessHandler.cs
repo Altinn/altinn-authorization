@@ -48,9 +48,13 @@ namespace Altinn.Common.PEP.Authorization
         /// <returns>A Task</returns>
         protected override async Task HandleRequirementAsync(AuthorizationHandlerContext context, ResourceAccessRequirement requirement)
         {
+            HttpContext httpContext = _httpContextAccessor.HttpContext;
+
+            string forwardedForHeader = httpContext.Request.Headers["x-forwarded-for"];
+
             XacmlJsonRequestRoot request = DecisionHelper.CreateDecisionRequest(context, requirement, _httpContextAccessor.HttpContext.GetRouteData(), _httpContextAccessor.HttpContext.Request.Headers);
 
-            XacmlJsonResponse response = await _pdp.GetDecisionForRequest(request);
+            XacmlJsonResponse response = await _pdp.GetDecisionForRequest(request, forwardedForHeader);
 
             if (response?.Response == null)
             {
