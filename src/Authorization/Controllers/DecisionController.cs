@@ -9,6 +9,7 @@ using Altinn.Authorization.ABAC;
 using Altinn.Authorization.ABAC.Utils;
 using Altinn.Authorization.ABAC.Xacml;
 using Altinn.Authorization.ABAC.Xacml.JsonProfile;
+using Altinn.Platform.Authorization.Constants;
 using Altinn.Platform.Authorization.ModelBinding;
 using Altinn.Platform.Authorization.Models;
 using Altinn.Platform.Authorization.Models.External;
@@ -16,6 +17,7 @@ using Altinn.Platform.Authorization.Repositories.Interface;
 using Altinn.Platform.Authorization.Services.Interface;
 using Altinn.Platform.Authorization.Services.Interfaces;
 using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
@@ -112,6 +114,7 @@ namespace Altinn.Platform.Authorization.Controllers
         /// <summary>
         /// External endpoint for autorization 
         /// </summary>
+        [Authorize(Policy = AuthzConstants.PDPSCOPEACCESS)]
         [HttpPost("authorize")]
         public async Task<XacmlJsonResponseExternal> AuthorizeExternal([FromBody] XacmlJsonRequestRootExternal authorizationRequest)
         {
