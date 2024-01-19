@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Text.Json.Serialization;
 
 namespace Altinn.Authorization.ABAC.Xacml.JsonProfile
 {
@@ -68,6 +69,7 @@ namespace Altinn.Authorization.ABAC.Xacml.JsonProfile
         /// <summary>
         /// Gets the x-forwarded-for header value from the request headers of app
         /// </summary>
+        [JsonIgnore(Condition = JsonIgnoreCondition.Always)]
         public string XForwardedForHeader { get; set; }
     }
 }
