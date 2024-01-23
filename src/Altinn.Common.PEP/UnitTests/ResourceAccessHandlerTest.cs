@@ -44,10 +44,10 @@ namespace Altinn.Common.PEP.Authorization
             AuthorizationHandlerContext context = CreateAuthorizationHandlerContext();
             _httpContextAccessorMock.Setup(h => h.HttpContext).Returns(CreateHttpContext("23453546", null, null));
             XacmlJsonResponse response = CreateResponse(XacmlContextDecision.Permit.ToString());
-            _pdpMock.Setup(a => a.GetDecisionForRequest(It.IsAny<XacmlJsonRequestRoot>(), It.IsAny<string>()).Returns(Task.FromResult(response));
+            _pdpMock.Setup(a => a.GetDecisionForRequest(It.IsAny<XacmlJsonRequestRoot>())).Returns(Task.FromResult(response));
 
             // Act
-            await _rah.HandleAsync(context);
+            await _rah.HandleAsync(context); 
 
             // Assert
             Assert.True(context.HasSucceeded);
@@ -139,7 +139,7 @@ namespace Altinn.Common.PEP.Authorization
             AuthorizationHandlerContext context = CreateAuthorizationHandlerContext();
             _httpContextAccessorMock.Setup(h => h.HttpContext).Returns(CreateHttpContext("person", null, "a01014922047"));
             XacmlJsonResponse response = CreateResponse(XacmlContextDecision.Permit.ToString());
-            _pdpMock.Setup(a => a.GetDecisionForRequest(It.IsAny<XacmlJsonRequestRoot>())).Returns(Task.FromResult(response));
+            _pdpMock.Setup(a => a.GetDecisionForRequest(It.Is<XacmlJsonRequestRoot>(xj => xj.Request.XForwardedForHeader == "10.12.34.56"))).Returns(Task.FromResult(response));
 
             // Act
             Task Act() => _rah.HandleAsync(context);
@@ -147,6 +147,45 @@ namespace Altinn.Common.PEP.Authorization
             // Assert
             ArgumentException exception = await Assert.ThrowsAsync<ArgumentException>(Act);
             Assert.Equal("invalid party person", exception.Message);
+        }
+
+        /// <summary>
+        /// Test case: Send request and verify the XForwardedForHeader property in request
+        /// Expected: Request header does not have a xforwardedforheader and therefore the header property in xacmljsonrequest will be null
+        /// </summary>
+        [Fact]
+        public async Task HandleRequirementAsync_TC06Async()
+        {
+            // Arrange 
+            AuthorizationHandlerContext context = CreateAuthorizationHandlerContext();
+            _httpContextAccessorMock.Setup(h => h.HttpContext).Returns(CreateHttpContext("23453546", null, null));
+            XacmlJsonResponse response = CreateResponse(XacmlContextDecision.Permit.ToString());
+
+            // Verify
+            _pdpMock.Setup(a => a.GetDecisionForRequest(It.Is<XacmlJsonRequestRoot>(xr => xr.Request.XForwardedForHeader == null))).Returns(Task.FromResult(response));
+
+            // Act
+            await _rah.HandleAsync(context);
+        }
+
+        /// <summary>
+        /// Test case: Send request verify if the ipaddress from the x-forwarded-for header is received
+        /// Expected: XForwardedForHeader proeprty in request receives the ipaddress from the header
+        /// </summary>
+        [Fact]
+        public async Task HandleRequirementAsync_TC07Async()
+        {
+            // Arrange 
+            AuthorizationHandlerContext context = CreateAuthorizationHandlerContext();
+            string ipaddress = "18.203.138.153";
+            _httpContextAccessorMock.Setup(h => h.HttpContext).Returns(CreateHttpContext("organization", "991825827", null, ipaddress));
+            XacmlJsonResponse response = CreateResponse(XacmlContextDecision.Permit.ToString());
+            
+            // verify
+            _pdpMock.Setup(a => a.GetDecisionForRequest(It.Is<XacmlJsonRequestRoot>(xr => xr.Request.XForwardedForHeader == ipaddress))).Returns(Task.FromResult(response));
+
+            // Act
+            await _rah.HandleAsync(context);
         }
 
         private ClaimsPrincipal CreateUser()
@@ -163,7 +202,7 @@ namespace Altinn.Common.PEP.Authorization
             return user;
         }
 
-        private HttpContext CreateHttpContext(string party, string orgHeader, string ssnHeader)
+        private HttpContext CreateHttpContext(string party, string orgHeader, string ssnHeader, string xForwardedForHeader = null)
         {
             HttpContext httpContext = new DefaultHttpContext();
             httpContext.Request.RouteValues.Add("party", party);
@@ -175,6 +214,11 @@ namespace Altinn.Common.PEP.Authorization
             if (!string.IsNullOrEmpty(ssnHeader))
             {
                 httpContext.Request.Headers.Add("Altinn-Party-SocialSecurityNumber", ssnHeader);
+            }
+
+            if (!string.IsNullOrEmpty(xForwardedForHeader))
+            {
+                httpContext.Request.Headers.Add("x-forwarded-for", xForwardedForHeader);
             }
 
             return httpContext;

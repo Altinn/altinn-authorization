@@ -31,13 +31,13 @@ namespace Altinn.Common.PEP.Implementation
         }
 
         /// <inheritdoc/>
-        public async Task<XacmlJsonResponse> GetDecisionForRequest(XacmlJsonRequestRoot xacmlJsonRequest, string forwardedForHeader)
+        public async Task<XacmlJsonResponse> GetDecisionForRequest(XacmlJsonRequestRoot xacmlJsonRequest)
         {
             XacmlJsonResponse xacmlJsonResponse = null;
 
             try
             {
-                xacmlJsonResponse = await _authorizationApiClient.AuthorizeRequest(xacmlJsonRequest, forwardedForHeader);
+                xacmlJsonResponse = await _authorizationApiClient.AuthorizeRequest(xacmlJsonRequest);
             }
             catch (Exception e)
             {
@@ -48,9 +48,9 @@ namespace Altinn.Common.PEP.Implementation
         }
 
         /// <inheritdoc/>
-        public async Task<bool> GetDecisionForUnvalidateRequest(XacmlJsonRequestRoot xacmlJsonRequest, ClaimsPrincipal user, string forwardedForHeader)
+        public async Task<bool> GetDecisionForUnvalidateRequest(XacmlJsonRequestRoot xacmlJsonRequest, ClaimsPrincipal user)
         {
-            XacmlJsonResponse response = await GetDecisionForRequest(xacmlJsonRequest, forwardedForHeader);
+            XacmlJsonResponse response = await GetDecisionForRequest(xacmlJsonRequest);
 
             if (response?.Response == null)
             {

@@ -14,17 +14,15 @@ namespace Altinn.Common.PEP.Interfaces
         /// Sends in a request and get response with result of the request
         /// </summary>
         /// <param name="xacmlJsonRequest">The Xacml Json Request</param>
-        /// <param name="forwardedForHeader">x-forwarded-for header value from the client(app)</param>
         /// <returns>The Xacml Json response contains the result of the request</returns>
-        Task<XacmlJsonResponse> GetDecisionForRequest(XacmlJsonRequestRoot xacmlJsonRequest, string forwardedForHeader);
+        Task<XacmlJsonResponse> GetDecisionForRequest(XacmlJsonRequestRoot xacmlJsonRequest);
 
         /// <summary>
         /// Change this to a better one???????
         /// </summary>
         /// <param name="xacmlJsonRequest">The Xacml Json Request</param>
         /// <param name="user">The claims principal</param>
-        /// <param name="forwardedForHeader">x-forwarded-for header value from the client(app)</param>
         /// <returns>Returns true if request is permitted and false if not</returns>
-        Task<bool> GetDecisionForUnvalidateRequest(XacmlJsonRequestRoot xacmlJsonRequest, ClaimsPrincipal user, string forwardedForHeader);
+        Task<bool> GetDecisionForUnvalidateRequest(XacmlJsonRequestRoot xacmlJsonRequest, ClaimsPrincipal user);
     }
 }

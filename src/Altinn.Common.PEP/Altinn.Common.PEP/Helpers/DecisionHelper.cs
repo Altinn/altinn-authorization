@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
 using System.Security.Claims;
 using System.Text.RegularExpressions;
 
@@ -35,6 +36,7 @@ namespace Altinn.Common.PEP.Helpers
         private const string OrganizationHeaderTrigger = "organization";
         private const string PersonHeader = "Altinn-Party-SocialSecurityNumber";
         private const string OrganizationNumberHeader = "Altinn-Party-OrganizationNumber";
+        private const string XForwardedForHeader = "x-forwarded-for";
 
         private const string PolicyObligationMinAuthnLevel = "urn:altinn:minimum-authenticationlevel";
         private const string PolicyObligationMinAuthnLevelOrg = "urn:altinn:minimum-authenticationlevel-org";
@@ -136,6 +138,11 @@ namespace Altinn.Common.PEP.Helpers
             else
             {
                 throw new ArgumentException("invalid party " + party);
+            }
+
+            if (headers.ContainsKey(XForwardedForHeader))
+            {
+                request.XForwardedForHeader = headers[XForwardedForHeader];
             }
 
             XacmlJsonRequestRoot jsonRequest = new XacmlJsonRequestRoot() { Request = request };
