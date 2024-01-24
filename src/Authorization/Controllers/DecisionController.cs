@@ -1,8 +1,8 @@
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Net.Mime;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
@@ -12,23 +12,29 @@ using Altinn.Authorization.ABAC.Interface;
 using Altinn.Authorization.ABAC.Utils;
 using Altinn.Authorization.ABAC.Xacml;
 using Altinn.Authorization.ABAC.Xacml.JsonProfile;
-using Altinn.Platform.Authorization.Helpers;
+using Altinn.Platform.Authorization.Constants;
 using Altinn.Platform.Authorization.ModelBinding;
 using Altinn.Platform.Authorization.Models;
+using Altinn.Platform.Authorization.Models.AccessManagement;
 using Altinn.Platform.Authorization.Repositories.Interface;
 using Altinn.Platform.Authorization.Services.Interface;
 using Altinn.Platform.Authorization.Services.Interfaces;
+using Azure.Core;
+using Microsoft.AspNetCore.Components.Forms;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
 using Microsoft.FeatureManagement;
+using Microsoft.IdentityModel.Tokens;
+using Microsoft.VisualBasic;
 using Newtonsoft.Json;
 
 namespace Altinn.Platform.Authorization.Controllers
 {
     /// <summary>
     /// This is the controller responsible for Policy Enformcent Point endpoint.
-    /// It returns a Xacml Context Reponse based on a Context Request
+    /// It returns a Xacml Context Response based on a Context Request
     /// </summary>
     [Route("authorization/api/v1/[controller]")]
     [ApiController]
@@ -38,34 +44,34 @@ namespace Altinn.Platform.Authorization.Controllers
         private readonly IPolicyRetrievalPoint _prp;
         private readonly IContextHandler _contextHandler;
         private readonly IDelegationContextHandler _delegationContextHandler;
-        private readonly IDelegationMetadataRepository _delegationRepository;
         private readonly ILogger _logger;
         private readonly IMemoryCache _memoryCache;
         private readonly IEventLog _eventLog;
         private readonly IFeatureManager _featureManager;
+        private readonly IAccessManagementWrapper _accessManagement;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="DecisionController"/> class.
         /// </summary>
+        /// <param name="accessManagement">Service for making request the to Access Management API (PIP)</param>
         /// <param name="contextHandler">The Context handler</param>
         /// <param name="delegationContextHandler">The delegation context handler</param>
         /// <param name="policyRetrievalPoint">The policy Retrieval point</param>
-        /// <param name="delegationRepository">The delegation repository</param>
-        /// <param name="logger">the logger.</param>
+        /// <param name="logger">the logger</param>
         /// <param name="memoryCache">memory cache</param>
         /// <param name="eventLog">the authorization event logger</param>
         /// <param name="featureManager">the feature manager</param>
-        public DecisionController(IContextHandler contextHandler, IDelegationContextHandler delegationContextHandler, IPolicyRetrievalPoint policyRetrievalPoint, IDelegationMetadataRepository delegationRepository, ILogger<DecisionController> logger, IMemoryCache memoryCache, IEventLog eventLog, IFeatureManager featureManager)
+        public DecisionController(IAccessManagementWrapper accessManagement, IContextHandler contextHandler, IDelegationContextHandler delegationContextHandler, IPolicyRetrievalPoint policyRetrievalPoint, ILogger<DecisionController> logger, IMemoryCache memoryCache, IEventLog eventLog, IFeatureManager featureManager)
         {
             _pdp = new PolicyDecisionPoint();
             _prp = policyRetrievalPoint;
             _contextHandler = contextHandler;
             _delegationContextHandler = delegationContextHandler;
-            _delegationRepository = delegationRepository;
             _logger = logger;
             _memoryCache = memoryCache;
             _eventLog = eventLog;
             _featureManager = featureManager;
+            _accessManagement = accessManagement;
         }
 
         /// <summary>
@@ -195,7 +201,7 @@ namespace Altinn.Platform.Authorization.Controllers
 
         private async Task<ActionResult> AuthorizeJsonRequest(XacmlRequestApiModel model)
         {
-            XacmlJsonRequestRoot jsonRequest = (XacmlJsonRequestRoot)JsonConvert.DeserializeObject(model.BodyContent, typeof(XacmlJsonRequestRoot));
+            XacmlJsonRequestRoot jsonRequest = JsonConvert.DeserializeObject<XacmlJsonRequestRoot>(model.BodyContent);
 
             XacmlJsonResponse jsonResponse = await Authorize(jsonRequest.Request);
 
@@ -217,10 +223,10 @@ namespace Altinn.Platform.Authorization.Controllers
 
         private async Task<XacmlContextResponse> Authorize(XacmlContextRequest decisionRequest, bool logEvent = true)
         {
-            decisionRequest = await this._contextHandler.Enrich(decisionRequest);
+            decisionRequest = await _contextHandler.Enrich(decisionRequest);
 
             ////_logger.LogInformation($"// DecisionController // Authorize // Roles // Enriched request: {JsonConvert.SerializeObject(decisionRequest)}.");
-            XacmlPolicy policy = await this._prp.GetPolicyAsync(decisionRequest);
+            XacmlPolicy policy = await _prp.GetPolicyAsync(decisionRequest);
 
             XacmlContextResponse rolesContextResponse = _pdp.Authorize(decisionRequest, policy);
             ////_logger.LogInformation($"// DecisionController // Authorize // Roles // XACML ContextResponse: {JsonConvert.SerializeObject(rolesContextResponse)}.");
@@ -230,13 +236,13 @@ namespace Altinn.Platform.Authorization.Controllers
             {
                 try
                 {
-                    XacmlContextResponse delegationContextResponse = await AuthorizeBasedOnDelegations(decisionRequest, policy);
+                    XacmlContextResponse delegationContextResponse = await AuthorizeUsingDelegations(decisionRequest, policy);
                     XacmlContextResult delegationResult = delegationContextResponse.Results.First();
                     if (delegationResult.Decision.Equals(XacmlContextDecision.Permit))
                     {
                         if (logEvent)
                         {
-                            _eventLog.CreateAuthorizationEvent(_featureManager, decisionRequest, HttpContext, delegationContextResponse);
+                            await _eventLog.CreateAuthorizationEvent(_featureManager, decisionRequest, HttpContext, delegationContextResponse);
                         }
 
                         return delegationContextResponse;
@@ -250,29 +256,58 @@ namespace Altinn.Platform.Authorization.Controllers
 
             if (logEvent)
             {
-                _eventLog.CreateAuthorizationEvent(_featureManager, decisionRequest, HttpContext, rolesContextResponse);
+                await _eventLog.CreateAuthorizationEvent(_featureManager, decisionRequest, HttpContext, rolesContextResponse);
             }
             
             return rolesContextResponse;
         }
 
-        private async Task<XacmlContextResponse> AuthorizeBasedOnDelegations(XacmlContextRequest decisionRequest, XacmlPolicy appPolicy)
+        private async Task<XacmlContextResponse> ProcessDelegationResult(XacmlContextRequest decisionRequest, XacmlPolicy resourcePolicy, IEnumerable<DelegationChange> delegations)
         {
-            XacmlContextResponse delegationContextResponse = new XacmlContextResponse(new XacmlContextResult(XacmlContextDecision.NotApplicable)
+            if (!delegations.IsNullOrEmpty())
+            {
+                List<int> keyrolePartyIds = await _delegationContextHandler.GetKeyRolePartyIds(_delegationContextHandler.GetSubjectUserId(decisionRequest));
+                _delegationContextHandler.Enrich(decisionRequest, keyrolePartyIds);
+            }
+
+            var delegationContextResponse = await MakeContextDecisionUsingDelegations(decisionRequest, delegations, resourcePolicy);
+            if (delegationContextResponse.Results.Any(r => r.Decision == XacmlContextDecision.Permit))
+            {
+                return delegationContextResponse;
+            }
+
+            return new XacmlContextResponse(new XacmlContextResult(XacmlContextDecision.NotApplicable)
             {
                 Status = new XacmlContextStatus(XacmlContextStatusCode.Success)
             });
+        }
 
-            XacmlResourceAttributes resourceAttributes = _delegationContextHandler.GetResourceAttributes(decisionRequest);
-            int subjectUserId = _delegationContextHandler.GetSubjectUserId(decisionRequest);
+        private static string CreateCacheKey(params string[] cacheKeys) =>
+            string.Join("-", cacheKeys.Where(c => !c.IsNullOrEmpty() || !c.EndsWith(':')));
 
-            if (resourceAttributes == null ||
-                string.IsNullOrEmpty(resourceAttributes.OrgValue) ||
-                string.IsNullOrEmpty(resourceAttributes.AppValue) ||
-                subjectUserId == 0 ||
-                !int.TryParse(resourceAttributes.ResourcePartyValue, out int reporteePartyId))
+        private static bool IsTypeApp(XacmlResourceAttributes resourceAttributes) =>
+            !string.IsNullOrEmpty(resourceAttributes.OrgValue) && !string.IsNullOrEmpty(resourceAttributes.AppValue);
+
+        private static bool IsTypeResource(XacmlResourceAttributes resourceAttributes) =>
+            !string.IsNullOrEmpty(resourceAttributes.ResourceRegistryId);
+
+        private bool IsInvalidRequest(XacmlResourceAttributes resourceAttributes, XacmlContextRequest decisionRequest) =>
+            resourceAttributes == null ||
+            _delegationContextHandler.GetSubjectUserId(decisionRequest) == 0 ||
+            !int.TryParse(resourceAttributes.ResourcePartyValue, out var _) ||
+            !(IsTypeApp(resourceAttributes) || IsTypeResource(resourceAttributes));
+
+        private Action<DelegationChangeInput> WithDefaultGetAllDelegationChangesInput(XacmlResourceAttributes resourceAttributes, XacmlContextRequest decisionRequest) => (input) =>
+        {
+            input.Party = new(AltinnXacmlConstants.MatchAttributeIdentifiers.PartyAttribute, resourceAttributes.ResourcePartyValue);
+            input.Subject = new(AltinnXacmlConstants.MatchAttributeIdentifiers.UserAttribute, _delegationContextHandler.GetSubjectUserId(decisionRequest).ToString());
+        };
+
+        private async Task<XacmlContextResponse> AuthorizeUsingDelegations(XacmlContextRequest decisionRequest, XacmlPolicy resourcePolicy)
+        {
+            var resourceAttributes = _delegationContextHandler.GetResourceAttributes(decisionRequest);
+            if (IsInvalidRequest(resourceAttributes, decisionRequest))
             {
-                // Not able to continue authorization based on delegations because of incomplete decision request
                 string request = JsonConvert.SerializeObject(decisionRequest);
                 _logger.LogWarning("// DecisionController // Authorize // Delegations // Incomplete request: {request}", request);
                 return new XacmlContextResponse(new XacmlContextResult(XacmlContextDecision.Indeterminate)
@@ -281,104 +316,61 @@ namespace Altinn.Platform.Authorization.Controllers
                 });
             }
 
-            List<string> appIds = new List<string> { $"{resourceAttributes.OrgValue}/{resourceAttributes.AppValue}" };
-            List<int> offeredByPartyIds = new List<int> { reporteePartyId };
-            List<int> coveredByUserIds = new List<int> { subjectUserId };
-
-            // 1. Direct user delegations
-            List<DelegationChange> delegations = await GetAllCachedDelegationChanges(offeredByPartyIds, appIds, coveredByUserIds: coveredByUserIds);
-            if (delegations.Any())
+            if (IsTypeApp(resourceAttributes))
             {
-                delegationContextResponse = await AuthorizeBasedOnDelegations(decisionRequest, delegations, appPolicy);
-
-                if (delegationContextResponse.Results.Any(r => r.Decision == XacmlContextDecision.Permit))
-                {
-                    return delegationContextResponse;
-                }
-            }
-
-            // 2. Direct user delegations from mainunit
-            List<MainUnit> mainunits = await _delegationContextHandler.GetMainUnits(reporteePartyId);
-            List<int> mainunitPartyIds = mainunits.Where(m => m.PartyId.HasValue).Select(m => m.PartyId.Value).ToList();
-
-            if (mainunitPartyIds.Any())
-            {
-                offeredByPartyIds.AddRange(mainunitPartyIds);
-                delegations = await GetAllCachedDelegationChanges(mainunitPartyIds, appIds, coveredByUserIds: coveredByUserIds);
-
-                if (delegations.Any())
-                {
-                    delegationContextResponse = await AuthorizeBasedOnDelegations(decisionRequest, delegations, appPolicy);
-
-                    if (delegationContextResponse.Results.Any(r => r.Decision == XacmlContextDecision.Permit))
+                var delegations = await GetAllCachedDelegationChanges(WithDefaultGetAllDelegationChangesInput(resourceAttributes, decisionRequest), input => input.Resource = new List<AttributeMatch>()
                     {
-                        return delegationContextResponse;
-                    }
-                }                
+                        new(AltinnXacmlConstants.MatchAttributeIdentifiers.OrgAttribute, resourceAttributes.OrgValue),
+                        new(AltinnXacmlConstants.MatchAttributeIdentifiers.AppAttribute, resourceAttributes.AppValue),
+                    });
+
+                return await ProcessDelegationResult(decisionRequest, resourcePolicy, delegations);
             }
 
-            // 3. Direct party delegations to keyrole units
-            List<int> keyrolePartyIds = await _delegationContextHandler.GetKeyRolePartyIds(subjectUserId);
-            if (keyrolePartyIds.Any())
+            if (IsTypeResource(resourceAttributes))
             {
-                delegations = await GetAllCachedDelegationChanges(offeredByPartyIds, appIds, coveredByPartyIds: keyrolePartyIds);
-
-                if (delegations.Any())
+                var delegations = await GetAllCachedDelegationChanges(WithDefaultGetAllDelegationChangesInput(resourceAttributes, decisionRequest), input => input.Resource = new List<AttributeMatch>()
                 {
-                    _delegationContextHandler.Enrich(decisionRequest, keyrolePartyIds);
-                    delegationContextResponse = await AuthorizeBasedOnDelegations(decisionRequest, delegations, appPolicy);
-                }
+                    new(AltinnXacmlConstants.MatchAttributeIdentifiers.ResourceRegistry, resourceAttributes.ResourceRegistryId)
+                });
+
+                return await ProcessDelegationResult(decisionRequest, resourcePolicy, delegations);
             }
 
-            return delegationContextResponse;
+            return new XacmlContextResponse(new XacmlContextResult(XacmlContextDecision.NotApplicable)
+            {
+                Status = new XacmlContextStatus(XacmlContextStatusCode.Success)
+            });
         }
 
-        private async Task<List<DelegationChange>> GetAllCachedDelegationChanges(List<int> offeredByPartyIds, List<string> altinnAppIds = null, List<int> coveredByPartyIds = null, List<int> coveredByUserIds = null)
+        private async Task<IEnumerable<DelegationChange>> GetAllCachedDelegationChanges(params Action<DelegationChangeInput>[] actions)
         {
-            List<DelegationChange> delegationChanges;
-            string cacheKey = GetDlgChangeCacheKey(offeredByPartyIds, altinnAppIds, coveredByPartyIds, coveredByUserIds);
-            if (!_memoryCache.TryGetValue(cacheKey, out delegationChanges))
+            var delegation = new DelegationChangeInput();
+            foreach (var action in actions)
             {
-                // Key not in cache, so get data.
-                delegationChanges = await _delegationRepository.GetAllCurrentDelegationChanges(offeredByPartyIds, altinnAppIds, coveredByPartyIds, coveredByUserIds);
+                action(delegation);
+            }
 
+            var cacheKey = CreateCacheKey(
+                "u:" + delegation.Subject.Value,
+                "p:" + delegation.Party.Value,
+                "a:" + $"{delegation.Resource.FirstOrDefault(r => r.Id == AltinnXacmlConstants.MatchAttributeIdentifiers.OrgAttribute)}/{delegation.Resource.FirstOrDefault(r => r.Id == AltinnXacmlConstants.MatchAttributeIdentifiers.AppAttribute)}",
+                "r:" + delegation.Resource.FirstOrDefault(r => r.Id == AltinnXacmlConstants.MatchAttributeIdentifiers.ResourceRegistry));
+
+            if (!_memoryCache.TryGetValue(cacheKey, out IEnumerable<DelegationChange> result))
+            {
+                result = await _accessManagement.GetAllDelegationChanges(actions);
                 var cacheEntryOptions = new MemoryCacheEntryOptions()
-               .SetPriority(CacheItemPriority.High)
-               .SetAbsoluteExpiration(new TimeSpan(0, 0, 5, 0));
+                    .SetPriority(CacheItemPriority.High)
+                    .SetAbsoluteExpiration(new TimeSpan(0, 0, 5, 0));
 
-                _memoryCache.Set(cacheKey, delegationChanges, cacheEntryOptions);
+                _memoryCache.Set(cacheKey, result, cacheEntryOptions);
             }
 
-            return delegationChanges;
+            return result;
         }
 
-        private string GetDlgChangeCacheKey(List<int> offeredByPartyIds, List<string> altinnAppIds = null, List<int> coveredByPartyIds = null, List<int> coveredByUserIds = null)
-        {
-            string cacheKey = null;
-            foreach (int id in offeredByPartyIds ?? Enumerable.Empty<int>())
-            {
-                cacheKey += $"o:{id};";
-            }
-
-            foreach (string id in altinnAppIds ?? Enumerable.Empty<string>())
-            {
-                cacheKey += $"a:{id};";
-            }
-
-            foreach (int id in coveredByPartyIds ?? Enumerable.Empty<int>())
-            {
-                cacheKey += $"p:{id};";
-            }
-
-            foreach (int id in coveredByUserIds ?? Enumerable.Empty<int>())
-            {
-                cacheKey += $"u:{id};";
-            }
-
-            return cacheKey;
-        }
-
-        private async Task<XacmlContextResponse> AuthorizeBasedOnDelegations(XacmlContextRequest decisionRequest, List<DelegationChange> delegations, XacmlPolicy appPolicy)
+        private async Task<XacmlContextResponse> MakeContextDecisionUsingDelegations(XacmlContextRequest decisionRequest, IEnumerable<DelegationChange> delegations, XacmlPolicy appPolicy)
         {
             XacmlContextResponse delegationContextResponse = new XacmlContextResponse(new XacmlContextResult(XacmlContextDecision.NotApplicable)
             {

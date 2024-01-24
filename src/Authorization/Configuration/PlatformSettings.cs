@@ -34,6 +34,11 @@ namespace Altinn.Platform.Authorization.Configuration
         public string AppsDomain { get; set; }
 
         /// <summary>
+        /// Gets or sets the url for the Access Management API endpoint
+        /// </summary>
+        public string ApiAccessManagementEndpoint { get; set; }
+
+        /// <summary>
         /// The lifetime to cache subscriptions
         /// </summary>
         public int SubscriptionCachingLifetimeInSeconds { get; set; }

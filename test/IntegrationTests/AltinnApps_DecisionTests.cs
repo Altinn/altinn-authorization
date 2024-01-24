@@ -424,6 +424,7 @@ namespace Altinn.Platform.Authorization.IntegrationTests
             {
                 builder.ConfigureTestServices(services =>
                 {
+                    services.AddSingleton<IAccessManagementWrapper, AccessManagementWrapperMock>();
                     services.AddSingleton<IInstanceMetadataRepository, InstanceMetadataRepositoryMock>();
                     services.AddSingleton<IPolicyRetrievalPoint, PolicyRetrievalPointMock>();
                     services.AddSingleton<IDelegationMetadataRepository, DelegationMetadataRepositoryMock>();
