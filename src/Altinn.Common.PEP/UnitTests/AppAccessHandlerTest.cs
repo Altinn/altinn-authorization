@@ -180,6 +180,27 @@ namespace Altinn.Common.PEP.Authorization
             await Assert.ThrowsAsync<ArgumentNullException>(() => _aah.HandleAsync(context));
         }
 
+        /// <summary>
+        /// Test case: Send request verify if the ipaddress from the x-forwarded-for header is received
+        /// Expected: XForwardedForHeader proeprty in request receives the ipaddress from the header
+        /// </summary>
+        [Fact]
+        public async Task HandleRequirementAsync_TC08Async()
+        {
+            // Arrange 
+            AuthorizationHandlerContext context = CreateAuthorizationHandlerContext();
+            string ipaddress = "18.203.138.153";
+            _httpContextAccessorMock.Setup(h => h.HttpContext).Returns(CreateHttpContext(ipaddress));
+            XacmlJsonResponse response = CreateResponse(XacmlContextDecision.Permit.ToString());
+            AddObligationWithMinAuthLv(response, "2");
+            
+            // verify
+            _pdpMock.Setup(a => a.GetDecisionForRequest(It.Is<XacmlJsonRequestRoot>(xr => xr.Request.XForwardedForHeader == ipaddress))).Returns(Task.FromResult(response));
+
+            // Act
+            await _aah.HandleAsync(context);
+        }
+
         private ClaimsPrincipal CreateUser()
         {
             // Create the user
@@ -201,6 +222,22 @@ namespace Altinn.Common.PEP.Authorization
             httpContext.Request.RouteValues.Add("app", "myApp");
             httpContext.Request.RouteValues.Add("instanceGuid", "asdfg");
             httpContext.Request.RouteValues.Add("InstanceOwnerId", "1000");
+
+            return httpContext;
+        }
+
+        private HttpContext CreateHttpContext(string xForwardedForHeader)
+        {
+            HttpContext httpContext = new DefaultHttpContext();
+            httpContext.Request.RouteValues.Add("org", "myOrg");
+            httpContext.Request.RouteValues.Add("app", "myApp");
+            httpContext.Request.RouteValues.Add("instanceGuid", "asdfg");
+            httpContext.Request.RouteValues.Add("InstanceOwnerId", "1000");
+
+            if (!string.IsNullOrEmpty(xForwardedForHeader))
+            {
+                httpContext.Request.Headers.Add("x-forwarded-for", xForwardedForHeader);
+            }
 
             return httpContext;
         }
