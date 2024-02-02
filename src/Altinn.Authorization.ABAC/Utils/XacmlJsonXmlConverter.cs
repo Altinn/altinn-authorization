@@ -219,7 +219,7 @@ namespace Altinn.Authorization.ABAC.Utils
                 case XacmlConstants.DataTypes.XMLInteger:
                     return XacmlConstants.DataTypes.XMLInteger;
                 default:
-                    throw new Exception("Not supported");
+                    throw new ArgumentException($"Given data type; {jsonAttribute.DataType}, is not supported.", nameof(jsonAttribute));
             }
         }
     }

@@ -46,9 +46,7 @@ public class EventPusherServiceTest
         // Arrange
         EventPusherService eventPusherService = new EventPusherService(_logger.Object, _bridgeClient.Object, _eventMapperService.Object);
 
-        // Act and assert exception thrown
-        await Assert.ThrowsAsync<BridgeRequestFailedException>(
-            async () => await eventPusherService.PushEvents(null));
+        await Assert.ThrowsAsync<BridgeRequestFailedException>(() => eventPusherService.PushEvents(null));
     }
 
     [Fact]
@@ -72,8 +70,7 @@ public class EventPusherServiceTest
             .ReturnsAsync(new HttpResponseMessage(HttpStatusCode.BadRequest));
 
         // Act and assert exception thrown
-        await Assert.ThrowsAsync<BridgeRequestFailedException>(
-            async () => await eventPusherService.PushEvents(GetDelegationChangeList()));
+        await Assert.ThrowsAsync<BridgeRequestFailedException>(() => eventPusherService.PushEvents(GetDelegationChangeList()));
     }
 
     [Fact]
@@ -85,8 +82,7 @@ public class EventPusherServiceTest
             .ThrowsAsync(new HttpRequestException());
 
         // Act and assert exception thrown
-        await Assert.ThrowsAsync<BridgeRequestFailedException>(
-            async () => await eventPusherService.PushEvents(GetDelegationChangeList()));
+        await Assert.ThrowsAsync<BridgeRequestFailedException>(() => eventPusherService.PushEvents(GetDelegationChangeList()));
     }
 
     private static DelegationChangeEventList GetDelegationChangeList()

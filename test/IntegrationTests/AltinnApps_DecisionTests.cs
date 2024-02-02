@@ -232,6 +232,15 @@ namespace Altinn.Platform.Authorization.IntegrationTests
         public async Task PDP_Decision_AltinnApps0010()
         {
             string testCase = "AltinnApps0010";
+
+            Mock<IFeatureManager> featureManageMock = new Mock<IFeatureManager>();
+            featureManageMock
+                .Setup(m => m.IsEnabledAsync("AuditLog"))
+                .Returns(Task.FromResult(true));
+            Mock<IEventsQueueClient> eventQueue = new Mock<IEventsQueueClient>();
+            eventQueue.Setup(q => q.EnqueueAuthorizationEvent(It.IsAny<string>()));
+            AuthorizationEvent expectedAuthorizationEvent = null;
+
             HttpClient client = GetTestClient();
             HttpRequestMessage httpRequestMessage = TestSetupUtil.CreateJsonProfileXacmlRequest(testCase);
             XacmlJsonResponse expected = TestSetupUtil.ReadExpectedJsonProfileResponse(testCase);
@@ -241,6 +250,7 @@ namespace Altinn.Platform.Authorization.IntegrationTests
 
             // Assert
             AssertionUtil.AssertEqual(expected, contextResponse);
+            AssertionUtil.AssertAuthorizationEvent(eventQueue, expectedAuthorizationEvent, Times.Never());
         }
 
         [Fact]
@@ -414,6 +424,7 @@ namespace Altinn.Platform.Authorization.IntegrationTests
             {
                 builder.ConfigureTestServices(services =>
                 {
+                    services.AddSingleton<IAccessManagementWrapper, AccessManagementWrapperMock>();
                     services.AddSingleton<IInstanceMetadataRepository, InstanceMetadataRepositoryMock>();
                     services.AddSingleton<IPolicyRetrievalPoint, PolicyRetrievalPointMock>();
                     services.AddSingleton<IDelegationMetadataRepository, DelegationMetadataRepositoryMock>();

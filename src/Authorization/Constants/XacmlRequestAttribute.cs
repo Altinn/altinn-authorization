@@ -61,14 +61,14 @@ namespace Altinn.Platform.Authorization.Constants
         public const string RoleAttribute = "urn:altinn:rolecode";
 
         /// <summary>
-        /// Digitalt Dødsbo Role Code Attribute match identifier
+        /// Digitalt Dodsbo Role Code Attribute match identifier
         /// </summary>
         public const string OedRoleAttribute = "urn:digitaltdodsbo:rolecode";
 
         /// <summary>
         /// xacml string that represents resource
         /// </summary>
-        public const string ResourceRegistryAttribute = "urn:altinn:resourceregistry";
+        public const string ResourceRegistryAttribute = "urn:altinn:resource";
 
         /// <summary>
         /// xacml string that represents ssn for 
