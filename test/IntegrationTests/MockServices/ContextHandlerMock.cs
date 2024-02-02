@@ -53,7 +53,7 @@ namespace Altinn.Platform.Authorization.IntegrationTests.MockServices
             string testID = GetTestId(_httpContextAccessor.HttpContext);
             if (!string.IsNullOrEmpty(testID) && testID.ToLower().Contains("altinnapps"))
             {
-                await EnrichResourceAttributes(decisionRequest);
+                await EnrichResourceAttributes(request);
             }
             else
             {
@@ -66,7 +66,7 @@ namespace Altinn.Platform.Authorization.IntegrationTests.MockServices
                 }
             }
 
-            return decisionRequest;
+            return request;
         }
 
         private async Task EnrichResourceAttributes(XacmlContextRequest request)

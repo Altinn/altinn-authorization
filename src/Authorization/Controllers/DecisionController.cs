@@ -19,8 +19,8 @@ using Altinn.Platform.Authorization.Repositories.Interface;
 using Altinn.Platform.Authorization.Services.Interface;
 using Altinn.Platform.Authorization.Services.Interfaces;
 using AutoMapper;
-using Microsoft.AspNetCore.Authorization;
 using Azure.Core;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -63,8 +63,8 @@ namespace Altinn.Platform.Authorization.Controllers
         /// <param name="memoryCache">memory cache</param>
         /// <param name="eventLog">the authorization event logger</param>
         /// <param name="featureManager">the feature manager</param>
-        public DecisionController(IAccessManagementWrapper accessManagement, IContextHandler contextHandler, IDelegationContextHandler delegationContextHandler, IPolicyRetrievalPoint policyRetrievalPoint, ILogger<DecisionController> logger, IMemoryCache memoryCache, IEventLog eventLog, IFeatureManager featureManager)
-        public DecisionController(IContextHandler contextHandler, IDelegationContextHandler delegationContextHandler, IPolicyRetrievalPoint policyRetrievalPoint, IDelegationMetadataRepository delegationRepository, ILogger<DecisionController> logger, IMemoryCache memoryCache, IEventLog eventLog, IFeatureManager featureManager, IMapper mapper)
+        /// <param name="mapper">The model mapper</param>
+        public DecisionController(IAccessManagementWrapper accessManagement, IContextHandler contextHandler, IDelegationContextHandler delegationContextHandler, IPolicyRetrievalPoint policyRetrievalPoint, IDelegationMetadataRepository delegationRepository, ILogger<DecisionController> logger, IMemoryCache memoryCache, IEventLog eventLog, IFeatureManager featureManager, IMapper mapper)
         {
             _pdp = new PolicyDecisionPoint();
             _prp = policyRetrievalPoint;
