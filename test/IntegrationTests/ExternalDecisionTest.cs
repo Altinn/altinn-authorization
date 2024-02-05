@@ -141,13 +141,33 @@ namespace Altinn.Platform.Authorization.IntegrationTests
         }
 
         /// <summary>
-        /// Scenario where org is listed in policy. Should work. Policy org is digir. Authz subject org is digdir
+        /// Scenario where org is listed in policy. Should not work. Policy org is digir. Authz subject org is nav
         /// </summary>
         [Fact]
         public async Task PDPExternal_Decision_AltinnResourceRegistry0010()
         {
             string token = PrincipalUtil.GetOrgToken("skd", "974761076", "altinn:authorization:pdp");
             string testCase = "AltinnResourceRegistry0010";
+            HttpClient client = GetTestClient();
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("bearer", token);
+            HttpRequestMessage httpRequestMessage = TestSetupUtil.CreateXacmlRequestExternal(testCase);
+            XacmlJsonResponse expected = TestSetupUtil.ReadExpectedJsonProfileResponse(testCase);
+
+            // Act
+            XacmlJsonResponse contextResponse = await TestSetupUtil.GetXacmlJsonProfileContextResponseAsync(client, httpRequestMessage);
+
+            // Assert
+            AssertionUtil.AssertEqual(expected, contextResponse);
+        }
+
+        /// <summary>
+        /// Scenario where org is listed in policy. Should work. Policy org is digir. Authz subject org is digdir. Uses old attribute id
+        /// </summary>
+        [Fact]
+        public async Task PDPExternal_Decision_AltinnResourceRegistry0011()
+        {
+            string token = PrincipalUtil.GetOrgToken("skd", "974761076", "altinn:authorization:pdp");
+            string testCase = "AltinnResourceRegistry0011";
             HttpClient client = GetTestClient();
             client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("bearer", token);
             HttpRequestMessage httpRequestMessage = TestSetupUtil.CreateXacmlRequestExternal(testCase);
