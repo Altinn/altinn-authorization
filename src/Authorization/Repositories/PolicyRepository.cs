@@ -178,7 +178,7 @@ namespace Altinn.Platform.Authorization.Repositories
             {
                 Stream memoryStream = new MemoryStream();
 
-                if (await blobClient.ExistsAsync())
+                if (await blobClient.ExistsAsync(cancellationToken))
                 {
                     await blobClient.DownloadToAsync(memoryStream, cancellationToken);
                     memoryStream.Position = 0;

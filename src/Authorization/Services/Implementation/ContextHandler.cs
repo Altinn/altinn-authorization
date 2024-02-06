@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Altinn.Authorization.ABAC.Constants;
 using Altinn.Authorization.ABAC.Xacml;
@@ -479,15 +480,16 @@ namespace Altinn.Platform.Authorization.Services.Implementation
         /// Gets the list of mainunits for a subunit
         /// </summary>
         /// <param name="subUnitPartyId">The subunit partyId to check and retrieve mainunits for</param>
+        /// <param name="cancellationToken">The cancellationToken</param>
         /// <returns>List of mainunits</returns>
-        protected async Task<List<MainUnit>> GetMainUnits(int subUnitPartyId)
+        protected async Task<List<MainUnit>> GetMainUnits(int subUnitPartyId, CancellationToken cancellationToken = default)
         {
             string cacheKey = $"GetMainUnitsFor:{subUnitPartyId}";
 
             if (!_memoryCache.TryGetValue(cacheKey, out List<MainUnit> mainUnits))
             {
                 // Key not in cache, so get data.
-                mainUnits = await _partiesWrapper.GetMainUnits(new MainUnitQuery { PartyIds = new List<int> { subUnitPartyId } });
+                mainUnits = await _partiesWrapper.GetMainUnits(new MainUnitQuery { PartyIds = new List<int> { subUnitPartyId } }, cancellationToken);
 
                 var cacheEntryOptions = new MemoryCacheEntryOptions()
                .SetPriority(CacheItemPriority.High)
@@ -503,15 +505,16 @@ namespace Altinn.Platform.Authorization.Services.Implementation
         /// Gets the list of keyrole unit partyIds for a user
         /// </summary>
         /// <param name="subjectUserId">The userid to retrieve keyrole unit for</param>
+        /// <param name="cancellationToken">The cancellationToken</param>
         /// <returns>List of partyIds for units where user has keyrole</returns>
-        protected async Task<List<int>> GetKeyRolePartyIds(int subjectUserId)
+        protected async Task<List<int>> GetKeyRolePartyIds(int subjectUserId, CancellationToken cancellationToken = default)
         {
             string cacheKey = $"GetKeyRolePartyIdsFor:{subjectUserId}";
 
             if (!_memoryCache.TryGetValue(cacheKey, out List<int> keyrolePartyIds))
             {
                 // Key not in cache, so get data.
-                keyrolePartyIds = await _partiesWrapper.GetKeyRoleParties(subjectUserId);
+                keyrolePartyIds = await _partiesWrapper.GetKeyRoleParties(subjectUserId, cancellationToken);
 
                 var cacheEntryOptions = new MemoryCacheEntryOptions()
                .SetPriority(CacheItemPriority.High)

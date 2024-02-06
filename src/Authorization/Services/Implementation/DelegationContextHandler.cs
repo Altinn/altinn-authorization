@@ -86,7 +86,7 @@ namespace Altinn.Platform.Authorization.Services.Implementation
         /// <returns>List of mainunits</returns>
         public async new Task<List<MainUnit>> GetMainUnits(int subUnitPartyId, CancellationToken cancellationToken = default)
         {
-            return await base.GetMainUnits(subUnitPartyId);
+            return await base.GetMainUnits(subUnitPartyId, cancellationToken);
         }
 
         /// <summary>
@@ -97,7 +97,7 @@ namespace Altinn.Platform.Authorization.Services.Implementation
         /// <returns>List of partyIds for units where user has keyrole</returns>
         public async new Task<List<int>> GetKeyRolePartyIds(int subjectUserId, CancellationToken cancellationToken = default)
         {
-            return await base.GetKeyRolePartyIds(subjectUserId);
+            return await base.GetKeyRolePartyIds(subjectUserId, cancellationToken);
         }
     }
 }

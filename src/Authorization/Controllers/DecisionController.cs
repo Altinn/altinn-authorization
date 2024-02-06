@@ -291,7 +291,7 @@ namespace Altinn.Platform.Authorization.Controllers
 
             if (logEvent)
             {
-                await _eventLog.CreateAuthorizationEvent(_featureManager, decisionRequest, HttpContext, rolesContextResponse);
+                await _eventLog.CreateAuthorizationEvent(_featureManager, decisionRequest, HttpContext, rolesContextResponse, cancellationToken);
             }
             
             return rolesContextResponse;
