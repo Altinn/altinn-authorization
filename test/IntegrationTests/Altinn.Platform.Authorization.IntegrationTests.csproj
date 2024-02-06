@@ -126,6 +126,7 @@
     <None Remove="Data\Xacml\3.0\ResourceRegistry\AltinnResourceRegistry0007Request.json" />
     <None Remove="Data\Xacml\3.0\ResourceRegistry\AltinnResourceRegistry0007Response.json" />
     <None Remove="Data\Xacml\3.0\ResourceRegistry\AltinnResourceRegistry0008Request.json" />
+    <None Remove="Data\Xacml\3.0\ResourceRegistry\AltinnResourceRegistry0008Response.json" />
     <None Remove="Data\Xacml\3.0\ResourceRegistry\AltinnResourceRegistry0009Request.json" />
     <None Remove="Data\Xacml\3.0\ResourceRegistry\AltinnResourceRegistry0009Response.json" />
     <None Remove="Data\Xacml\3.0\ResourceRegistry\AltinnResourceRegistry0010Request.json" />
@@ -148,6 +149,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Content Update="Data\Xacml\3.0\ResourceRegistry\AltinnResourceRegistry0008Response.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Update="Data\Xacml\3.0\ResourceRegistry\AltinnResourceRegistry0011Request.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

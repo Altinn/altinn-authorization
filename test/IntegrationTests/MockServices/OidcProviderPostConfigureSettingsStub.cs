@@ -14,7 +14,7 @@ namespace Altinn.ResourceRegistry.Tests.Mocks
 
             options = new OidcProviderSettings()
             {
-                { "altinn", provider}
+                { "altinn", provider }
             };
         }
     }

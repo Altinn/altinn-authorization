@@ -36,7 +36,7 @@ namespace Altinn.Platform.Authorization.IntegrationTests.MockServices
             }
             else if (ssn == "01039012345")
             {
-                userProfile = new UserProfile { Party = new Party { SSN = "01039012345", PartyId = 1337}, UserId = 1337 };
+                userProfile = new UserProfile { Party = new Party { SSN = "01039012345", PartyId = 1337 }, UserId = 1337 };
             }
 
             return Task.FromResult(userProfile);
