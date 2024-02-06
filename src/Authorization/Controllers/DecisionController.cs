@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Net.Mime;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Xml;
 using Altinn.Authorization.ABAC;
@@ -37,7 +38,6 @@ namespace Altinn.Platform.Authorization.Controllers
     /// This is the controller responsible for Policy Enformcent Point endpoint.
     /// It returns a Xacml Context Response based on a Context Request
     /// </summary>
-    [Route("authorization/api/v1/[controller]")]
     [ApiController]
     public class DecisionController : ControllerBase
     {
@@ -84,6 +84,7 @@ namespace Altinn.Platform.Authorization.Controllers
         /// </summary>
         /// <param name="model">A Generic model</param>
         [HttpPost]
+        [Route("authorization/api/v1/[controller]")]
         public async Task<ActionResult> Post([FromBody] XacmlRequestApiModel model)
         {
             try
@@ -124,13 +125,13 @@ namespace Altinn.Platform.Authorization.Controllers
         /// External endpoint for autorization 
         /// </summary>
         [Authorize(Policy = AuthzConstants.PDPSCOPEACCESS)]
-        [HttpPost("authorize")]
-        public async Task<ActionResult<XacmlJsonResponseExternal>> AuthorizeExternal([FromBody] XacmlJsonRequestRootExternal authorizationRequest)
+        [Route("authorization/api/v1/authorize")]
+        public async Task<ActionResult<XacmlJsonResponseExternal>> AuthorizeExternal([FromBody] XacmlJsonRequestRootExternal authorizationRequest, CancellationToken cancellationToken = default)
         {
             try
             {
                 XacmlJsonRequestRoot jsonRequest = _mapper.Map<XacmlJsonRequestRoot>(authorizationRequest);
-                XacmlJsonResponse xacmlResponse = await Authorize(jsonRequest.Request, true);
+                XacmlJsonResponse xacmlResponse = await Authorize(jsonRequest.Request, true, cancellationToken);
                 return _mapper.Map<XacmlJsonResponseExternal>(xacmlResponse);
             }
             catch (Exception ex)
@@ -148,14 +149,14 @@ namespace Altinn.Platform.Authorization.Controllers
             }
         }
 
-        private async Task<XacmlJsonResponse> Authorize(XacmlJsonRequest decisionRequest, bool isExternalRequest = false)
+        private async Task<XacmlJsonResponse> Authorize(XacmlJsonRequest decisionRequest, bool isExternalRequest = false, CancellationToken cancellationToken = default)
         {
             bool logEvent = true;
             if (decisionRequest.MultiRequests == null || decisionRequest.MultiRequests.RequestReference == null
                 || decisionRequest.MultiRequests.RequestReference.Count < 2)
             {
                 XacmlContextRequest request = XacmlJsonXmlConverter.ConvertRequest(decisionRequest);
-                XacmlContextResponse xmlResponse = await Authorize(request, isExternalRequest, logEvent);
+                XacmlContextResponse xmlResponse = await Authorize(request, isExternalRequest, logEvent, cancellationToken);
                 return XacmlJsonXmlConverter.ConvertResponse(xmlResponse);
             }
             else
@@ -205,7 +206,7 @@ namespace Altinn.Platform.Authorization.Controllers
                         }
                     }
 
-                    XacmlContextResponse partResponse = await Authorize(XacmlJsonXmlConverter.ConvertRequest(jsonMultiRequestPart), isExternalRequest, logEvent);
+                    XacmlContextResponse partResponse = await Authorize(XacmlJsonXmlConverter.ConvertRequest(jsonMultiRequestPart), isExternalRequest, logEvent, cancellationToken);
                     XacmlJsonResponse xacmlJsonResponsePart = XacmlJsonXmlConverter.ConvertResponse(partResponse);
 
                     if (multiResponse.Response == null)
@@ -255,7 +256,7 @@ namespace Altinn.Platform.Authorization.Controllers
             return Content(xml);
         }
 
-        private async Task<XacmlContextResponse> Authorize(XacmlContextRequest decisionRequest, bool isExernalRequest, bool logEvent = true)
+        private async Task<XacmlContextResponse> Authorize(XacmlContextRequest decisionRequest, bool isExernalRequest, bool logEvent = true, CancellationToken cancellationToken = default)
         {
             decisionRequest = await this._contextHandler.Enrich(decisionRequest, isExernalRequest);
 

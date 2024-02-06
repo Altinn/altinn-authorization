@@ -63,7 +63,7 @@ namespace Altinn.Platform.Authorization.IntegrationTests.Util
                 requestText = File.ReadAllText(Path.Combine(GetConformancePath(), testcase + "Request.json"));
             }
 
-            HttpRequestMessage message = new HttpRequestMessage(HttpMethod.Post, "authorization/api/v1/Decision/authorize")
+            HttpRequestMessage message = new HttpRequestMessage(HttpMethod.Post, "authorization/api/v1/authorize")
             {
                 Content = new StringContent(requestText, Encoding.UTF8, "application/json")
             };
