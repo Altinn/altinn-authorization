@@ -51,8 +51,12 @@ namespace Altinn.Common.PEP.Clients
             string apiUrl = $"decision";
             string requestJson = JsonConvert.SerializeObject(xacmlJsonRequest);
             StringContent httpContent = new StringContent(requestJson, Encoding.UTF8, "application/json");
-            _httpClient.DefaultRequestHeaders.Add(ForwardedForHeaderName, xacmlJsonRequest.Request.XForwardedForHeader);
 
+            if (!_httpClient.DefaultRequestHeaders.Contains(ForwardedForHeaderName))
+            {
+                _httpClient.DefaultRequestHeaders.Add(ForwardedForHeaderName, xacmlJsonRequest.Request.XForwardedForHeader);
+            }
+            
             Stopwatch stopWatch = new Stopwatch();
             stopWatch.Start();
             HttpResponseMessage response = await _httpClient.PostAsync(apiUrl, httpContent);
