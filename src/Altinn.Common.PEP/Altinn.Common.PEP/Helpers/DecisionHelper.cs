@@ -192,15 +192,15 @@ namespace Altinn.Common.PEP.Helpers
             {
                 if (IsCamelCaseOrgnumberClaim(claim.Type))
                 {
-                    attributes.Add(CreateXacmlJsonAttribute(AltinnXacmlUrns.OrganizationNumber, claim.Value, claim.ValueType, claim.Issuer));
+                    attributes.Add(CreateXacmlJsonAttribute(AltinnXacmlUrns.OrganizationNumber, claim.Value, DefaultType, claim.Issuer));
                 }
                 else if (IsScopeClaim(claim.Type))
                 {
-                    attributes.Add(CreateXacmlJsonAttribute(AltinnXacmlUrns.Scope, claim.Value, claim.ValueType, claim.Issuer));
+                    attributes.Add(CreateXacmlJsonAttribute(AltinnXacmlUrns.Scope, claim.Value, DefaultType, claim.Issuer));
                 }
                 else if (IsValidUrn(claim.Type))
                 {
-                    attributes.Add(CreateXacmlJsonAttribute(claim.Type, claim.Value, claim.ValueType, claim.Issuer));
+                    attributes.Add(CreateXacmlJsonAttribute(claim.Type, claim.Value, DefaultType, claim.Issuer));
                 }
             }
 

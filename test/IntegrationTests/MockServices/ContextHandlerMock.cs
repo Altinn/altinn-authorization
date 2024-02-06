@@ -49,12 +49,12 @@ namespace Altinn.Platform.Authorization.IntegrationTests.MockServices
             _rolesWrapper = rolesWrapper;
         }
 
-        public async Task<XacmlContextRequest> Enrich(XacmlContextRequest request)
+        public async Task<XacmlContextRequest> Enrich(XacmlContextRequest decisionRequest)
         {
             string testID = GetTestId(_httpContextAccessor.HttpContext);
             if (!string.IsNullOrEmpty(testID) && testID.ToLower().Contains("altinnapps"))
             {
-                await EnrichResourceAttributes(request);
+                await EnrichResourceAttributes(decisionRequest);
             }
             else
             {
@@ -67,7 +67,7 @@ namespace Altinn.Platform.Authorization.IntegrationTests.MockServices
                 }
             }
 
-            return request;
+            return decisionRequest;
         }
 
         private async Task EnrichResourceAttributes(XacmlContextRequest request)

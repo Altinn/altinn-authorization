@@ -46,8 +46,7 @@ public class EventReplayServiceTest
             .ReturnsAsync(mockedResponse);
 
         // Act and assert no exceptions thrown
-        await Assert.ThrowsAsync<AuthorizationRequestFailedException>(
-          async () => await eventReplayService.ReplayEvents(0, 0));
+        await Assert.ThrowsAsync<AuthorizationRequestFailedException>(() => eventReplayService.ReplayEvents(0, 0));
     }
 
     [Fact]
@@ -61,8 +60,7 @@ public class EventReplayServiceTest
             .ReturnsAsync(mockedResponse);
 
         // Act and assert no exceptions thrown
-        await Assert.ThrowsAsync<AuthorizationRequestFailedException>(
-          async () => await eventReplayService.ReplayEvents(100000, 10));
+        await Assert.ThrowsAsync<AuthorizationRequestFailedException>(() => eventReplayService.ReplayEvents(100000, 10));
     }
 
     [Fact]
@@ -76,8 +74,7 @@ public class EventReplayServiceTest
             .ReturnsAsync(mockedResponse);
 
         // Act and assert no exceptions thrown
-        await Assert.ThrowsAsync<AuthorizationRequestFailedException>(
-          async () => await eventReplayService.ReplayEvents(10, 10));
+        await Assert.ThrowsAsync<AuthorizationRequestFailedException>(() => eventReplayService.ReplayEvents(10, 10));
     }
 
     [Fact]
@@ -89,7 +86,6 @@ public class EventReplayServiceTest
             .ThrowsAsync(new HttpRequestException());
 
         // Act and assert no exceptions thrown
-        await Assert.ThrowsAsync<HttpRequestException>(
-          async () => await eventReplayService.ReplayEvents(10, 10));
+        await Assert.ThrowsAsync<HttpRequestException>(() => eventReplayService.ReplayEvents(10, 10));
     }
 }

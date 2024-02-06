@@ -4,6 +4,7 @@ using System.Linq;
 using Altinn.Authorization.ABAC.Constants;
 using Altinn.Platform.Authorization.Constants;
 using Altinn.Platform.Authorization.Models;
+using Microsoft.AspNetCore.Mvc.ActionConstraints;
 
 namespace Altinn.Platform.Authorization.IntegrationTests.Data
 {
@@ -65,10 +66,10 @@ namespace Altinn.Platform.Authorization.IntegrationTests.Data
             return requestToDelete;
         }
 
-        public static DelegationChange GetDelegationChange(string altinnAppId, int offeredByPartyId, int? coveredByUserId = null, int? coveredByPartyId = null, int performedByUserId = 20001336, DelegationChangeType changeType = DelegationChangeType.Grant, int changeId = 1337)
+        public static DelegationChange GetDelegationChange(string altinnAppId, int offeredByPartyId, int? coveredByUserId = null, int? coveredByPartyId = null, int performedByUserId = 20001336, DelegationChangeType changeType = DelegationChangeType.Grant, int changeId = 1337, params Action<DelegationChange>[] mutations)
         {
             string coveredBy = coveredByPartyId != null ? $"p{coveredByPartyId}" : $"u{coveredByUserId}";
-            return new DelegationChange
+            var change = new DelegationChange
             {
                 DelegationChangeId = changeId,
                 DelegationChangeType = changeType,
@@ -81,6 +82,13 @@ namespace Altinn.Platform.Authorization.IntegrationTests.Data
                 BlobStorageVersionId = "CorrectLeaseId",
                 Created = DateTime.Now
             };
+
+            foreach (var mutation in mutations)
+            {
+                mutation(change);
+            }
+
+            return change;
         }
 
         public static ResourceAction GetResourceActionModel(string action, IEnumerable<string> roles)

@@ -87,7 +87,7 @@ namespace Altinn.Platform.Authorization.IntegrationTests
         /// Test case: Get from cosmos a exsisting instance
         /// Expected: GetInstance returns instance that is not null
         /// </summary>
-        //[Fact]
+        // [Fact]
         public async Task GetInstance_TC01()
         {
             // Arrange
@@ -107,7 +107,7 @@ namespace Altinn.Platform.Authorization.IntegrationTests
         /// Test case: Get from cosmos a instance that do not exist
         /// Expected: GetInstance returns null
         /// </summary>
-        //[Fact]
+        // [Fact]
         public async Task GetInstance_TC02()
         {
             // Arrange
@@ -127,7 +127,7 @@ namespace Altinn.Platform.Authorization.IntegrationTests
         /// Test case: Get instance from cosmos where instanceId is null
         /// Expected: GetInstance throws ArgumentNullException
         /// </summary>
-        //[Fact]
+        // [Fact]
         public async Task GetInstance_TC03()
         {
             // Arrange
@@ -144,7 +144,7 @@ namespace Altinn.Platform.Authorization.IntegrationTests
         /// Test case: Get instance from cosmos where instanceOwnerId is negative or 0
         /// Expected: GetInstance throws ArgumentException
         /// </summary>
-        //[Fact]
+        // [Fact]
         public async Task GetInstance_TC04()
         {
             // Arrange
@@ -182,7 +182,7 @@ namespace Altinn.Platform.Authorization.IntegrationTests
         /// Test case: Get from cosmos an exsisting application
         /// Expected: GetInstance returns application that is not null
         /// </summary>
-        //[Fact]
+        // [Fact]
         public async Task GetApplication_TC01()
         {
             // Arrange
@@ -202,7 +202,7 @@ namespace Altinn.Platform.Authorization.IntegrationTests
         /// Test case: Get from cosmos an application that do not exist
         /// Expected: GetInstance returns null
         /// </summary>
-        //[Fact]
+        // [Fact]
         public async Task GetApplication_TC02()
         {
             // Arrange
@@ -222,7 +222,7 @@ namespace Altinn.Platform.Authorization.IntegrationTests
         /// Test case: Get from cosmos an application where app is null
         /// Expected: GetInstance throws ArgumentNullException
         /// </summary>
-        //[Fact]
+        // [Fact]
         public async Task GetApplication_TC03()
         {
             // Arrange
@@ -239,7 +239,7 @@ namespace Altinn.Platform.Authorization.IntegrationTests
         /// Test case: Get from cosmos an application where org is null
         /// Expected: GetInstance throws ArgumentNullException
         /// </summary>
-        //[Fact]
+        // [Fact]
         public async Task GetApplication_TC04()
         {
             // Arrange
@@ -256,7 +256,7 @@ namespace Altinn.Platform.Authorization.IntegrationTests
         /// Test case: Get from cosmos an exsisting application
         /// Expected: GetApplication returns application with the same app and org as sent in
         /// </summary>
-        //[Fact]
+        // [Fact]
         public async Task GetApplication_TC05()
         {
             // Arrange
@@ -293,7 +293,7 @@ namespace Altinn.Platform.Authorization.IntegrationTests
                 await _client.CreateDocumentAsync(uri, jsonObject);
                 databasePopulatedInstances = true;
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 databasePopulatedInstances = false;
             }
@@ -319,7 +319,7 @@ namespace Altinn.Platform.Authorization.IntegrationTests
                 await _client.CreateDocumentAsync(uri, jsonObject);
                 databasePopulatedApplications = true;
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 databasePopulatedApplications = false;
             }
