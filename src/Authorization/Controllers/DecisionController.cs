@@ -125,11 +125,27 @@ namespace Altinn.Platform.Authorization.Controllers
         /// </summary>
         [Authorize(Policy = AuthzConstants.PDPSCOPEACCESS)]
         [HttpPost("authorize")]
-        public async Task<XacmlJsonResponseExternal> AuthorizeExternal([FromBody] XacmlJsonRequestRootExternal authorizationRequest)
+        public async Task<ActionResult<XacmlJsonResponseExternal>> AuthorizeExternal([FromBody] XacmlJsonRequestRootExternal authorizationRequest)
         {
-            XacmlJsonRequestRoot jsonRequest = _mapper.Map<XacmlJsonRequestRoot>(authorizationRequest);
-            XacmlJsonResponse xacmlResponse = await Authorize(jsonRequest.Request, true);
-            return _mapper.Map<XacmlJsonResponseExternal>(xacmlResponse);
+            try
+            {
+                XacmlJsonRequestRoot jsonRequest = _mapper.Map<XacmlJsonRequestRoot>(authorizationRequest);
+                XacmlJsonResponse xacmlResponse = await Authorize(jsonRequest.Request, true);
+                return _mapper.Map<XacmlJsonResponseExternal>(xacmlResponse);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "// DecisionController // External Decision // Unexpected Exception");
+
+                XacmlContextResult result = new XacmlContextResult(XacmlContextDecision.Indeterminate)
+                {
+                    Status = new XacmlContextStatus(XacmlContextStatusCode.SyntaxError)
+                };
+
+                XacmlContextResponse xacmlContextResponse = new XacmlContextResponse(result);
+                XacmlJsonResponse jsonResult = XacmlJsonXmlConverter.ConvertResponse(xacmlContextResponse);
+                return _mapper.Map<XacmlJsonResponseExternal>(jsonResult);
+            }
         }
 
         private async Task<XacmlJsonResponse> Authorize(XacmlJsonRequest decisionRequest, bool isExternalRequest = false)
