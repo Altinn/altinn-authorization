@@ -46,6 +46,11 @@ namespace Altinn.Platform.Authorization.Clients
                 QueueClient client = await GetAuthorizationEventQueueClient();
                 await client.SendMessageAsync(Convert.ToBase64String(Encoding.UTF8.GetBytes(content)), cancellationToken);      
             }
+            catch (OperationCanceledException ex)
+            {
+                _logger.LogError(ex, ex.Message);
+                throw;
+            }
             catch (Exception ex)
             {
                 _logger.LogError(ex, ex.Message);
