@@ -1,5 +1,6 @@
 ﻿using System.Text.Json;
 using System.Text.Json.Serialization;
+using System.Threading;
 using System.Threading.Tasks;
 using Altinn.Authorization.ABAC.Xacml;
 using Altinn.Platform.Authorization.Clients.Interfaces;
@@ -36,16 +37,17 @@ namespace Altinn.Platform.Authorization.Services.Implementation
         /// Queues an authorization event to the logqueue
         /// </summary>
         /// <param name="authorizationEvent">authorization event</param>
-        public void CreateAuthorizationEvent(AuthorizationEvent authorizationEvent)
+        /// <param name="cancellationToken">The cancellationToken</param>
+        public void CreateAuthorizationEvent(AuthorizationEvent authorizationEvent, CancellationToken cancellationToken = default)
         {
             if (authorizationEvent != null)
             {
-                _queueClient.EnqueueAuthorizationEvent(JsonSerializer.Serialize(authorizationEvent));
+                _queueClient.EnqueueAuthorizationEvent(JsonSerializer.Serialize(authorizationEvent), cancellationToken);
             }
         }
 
         /// <inheritdoc />
-        public async Task CreateAuthorizationEvent(IFeatureManager featureManager, XacmlContextRequest contextRequest, HttpContext context, XacmlContextResponse contextResponse)
+        public async Task CreateAuthorizationEvent(IFeatureManager featureManager, XacmlContextRequest contextRequest, HttpContext context, XacmlContextResponse contextResponse, CancellationToken cancellationToken = default)
         {
             var options = new JsonSerializerOptions();
             options.Converters.Add(new JsonStringEnumConverter());
@@ -56,7 +58,7 @@ namespace Altinn.Platform.Authorization.Services.Implementation
                 if (authorizationEvent != null)
                 {
 #pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
-                    _queueClient.EnqueueAuthorizationEvent(JsonSerializer.Serialize(authorizationEvent, options));
+                    _queueClient.EnqueueAuthorizationEvent(JsonSerializer.Serialize(authorizationEvent, options), cancellationToken);
 #pragma warning restore CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
                 }
             }

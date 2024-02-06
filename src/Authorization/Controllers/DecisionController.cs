@@ -271,13 +271,13 @@ namespace Altinn.Platform.Authorization.Controllers
             {
                 try
                 {
-                    XacmlContextResponse delegationContextResponse = await AuthorizeUsingDelegations(decisionRequest, policy);
+                    XacmlContextResponse delegationContextResponse = await AuthorizeUsingDelegations(decisionRequest, policy, cancellationToken);
                     XacmlContextResult delegationResult = delegationContextResponse.Results.First();
                     if (delegationResult.Decision.Equals(XacmlContextDecision.Permit))
                     {
                         if (logEvent)
                         {
-                            await _eventLog.CreateAuthorizationEvent(_featureManager, decisionRequest, HttpContext, delegationContextResponse);
+                            await _eventLog.CreateAuthorizationEvent(_featureManager, decisionRequest, HttpContext, delegationContextResponse, cancellationToken);
                         }
 
                         return delegationContextResponse;
@@ -297,15 +297,15 @@ namespace Altinn.Platform.Authorization.Controllers
             return rolesContextResponse;
         }
 
-        private async Task<XacmlContextResponse> ProcessDelegationResult(XacmlContextRequest decisionRequest, XacmlPolicy resourcePolicy, IEnumerable<DelegationChange> delegations)
+        private async Task<XacmlContextResponse> ProcessDelegationResult(XacmlContextRequest decisionRequest, XacmlPolicy resourcePolicy, IEnumerable<DelegationChange> delegations, CancellationToken cancellationToken = default)
         {
             if (!delegations.IsNullOrEmpty())
             {
-                List<int> keyrolePartyIds = await _delegationContextHandler.GetKeyRolePartyIds(_delegationContextHandler.GetSubjectUserId(decisionRequest));
+                List<int> keyrolePartyIds = await _delegationContextHandler.GetKeyRolePartyIds(_delegationContextHandler.GetSubjectUserId(decisionRequest), cancellationToken);
                 _delegationContextHandler.Enrich(decisionRequest, keyrolePartyIds);
             }
 
-            var delegationContextResponse = await MakeContextDecisionUsingDelegations(decisionRequest, delegations, resourcePolicy);
+            var delegationContextResponse = await MakeContextDecisionUsingDelegations(decisionRequest, delegations, resourcePolicy, cancellationToken);
             if (delegationContextResponse.Results.Any(r => r.Decision == XacmlContextDecision.Permit))
             {
                 return delegationContextResponse;
@@ -338,7 +338,7 @@ namespace Altinn.Platform.Authorization.Controllers
             input.Subject = new(AltinnXacmlConstants.MatchAttributeIdentifiers.UserAttribute, _delegationContextHandler.GetSubjectUserId(decisionRequest).ToString());
         };
 
-        private async Task<XacmlContextResponse> AuthorizeUsingDelegations(XacmlContextRequest decisionRequest, XacmlPolicy resourcePolicy)
+        private async Task<XacmlContextResponse> AuthorizeUsingDelegations(XacmlContextRequest decisionRequest, XacmlPolicy resourcePolicy, CancellationToken cancellationToken = default)
         {
             var resourceAttributes = _delegationContextHandler.GetResourceAttributes(decisionRequest);
             if (IsInvalidRequest(resourceAttributes, decisionRequest))
@@ -359,7 +359,7 @@ namespace Altinn.Platform.Authorization.Controllers
                         new(AltinnXacmlConstants.MatchAttributeIdentifiers.AppAttribute, resourceAttributes.AppValue),
                     });
 
-                return await ProcessDelegationResult(decisionRequest, resourcePolicy, delegations);
+                return await ProcessDelegationResult(decisionRequest, resourcePolicy, delegations, cancellationToken);
             }
 
             if (IsTypeResource(resourceAttributes))
@@ -369,7 +369,7 @@ namespace Altinn.Platform.Authorization.Controllers
                     new(AltinnXacmlConstants.MatchAttributeIdentifiers.ResourceRegistry, resourceAttributes.ResourceRegistryId)
                 });
 
-                return await ProcessDelegationResult(decisionRequest, resourcePolicy, delegations);
+                return await ProcessDelegationResult(decisionRequest, resourcePolicy, delegations, cancellationToken);
             }
 
             return new XacmlContextResponse(new XacmlContextResult(XacmlContextDecision.NotApplicable)
@@ -405,7 +405,7 @@ namespace Altinn.Platform.Authorization.Controllers
             return result;
         }
 
-        private async Task<XacmlContextResponse> MakeContextDecisionUsingDelegations(XacmlContextRequest decisionRequest, IEnumerable<DelegationChange> delegations, XacmlPolicy appPolicy)
+        private async Task<XacmlContextResponse> MakeContextDecisionUsingDelegations(XacmlContextRequest decisionRequest, IEnumerable<DelegationChange> delegations, XacmlPolicy appPolicy, CancellationToken cancellationToken = default)
         {
             XacmlContextResponse delegationContextResponse = new XacmlContextResponse(new XacmlContextResult(XacmlContextDecision.NotApplicable)
             {
@@ -414,7 +414,7 @@ namespace Altinn.Platform.Authorization.Controllers
 
             foreach (DelegationChange delegation in delegations.Where(d => d.DelegationChangeType != DelegationChangeType.RevokeLast))
             {
-                XacmlPolicy delegationPolicy = await _prp.GetPolicyVersionAsync(delegation.BlobStoragePolicyPath, delegation.BlobStorageVersionId);
+                XacmlPolicy delegationPolicy = await _prp.GetPolicyVersionAsync(delegation.BlobStoragePolicyPath, delegation.BlobStorageVersionId, cancellationToken);
                 foreach (XacmlObligationExpression obligationExpression in appPolicy.ObligationExpressions)
                 {
                     delegationPolicy.ObligationExpressions.Add(obligationExpression);

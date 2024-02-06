@@ -1,3 +1,4 @@
+using System.Threading;
 using System.Threading.Tasks;
 using Altinn.Platform.Authorization.Models;
 
@@ -12,7 +13,8 @@ namespace Altinn.Platform.Authorization.Clients.Interfaces
         /// Enqueues the provided content to the Event Log queue
         /// </summary>
         /// <param name="content">The content to push to the queue in string format</param>
+        /// <param name="cancellationToken">The cancellation token</param>
         /// <returns>Returns a queue receipt</returns>
-        public Task<QueuePostReceipt> EnqueueAuthorizationEvent(string content);
+        public Task<QueuePostReceipt> EnqueueAuthorizationEvent(string content, CancellationToken cancellationToken = default);
     }
 }

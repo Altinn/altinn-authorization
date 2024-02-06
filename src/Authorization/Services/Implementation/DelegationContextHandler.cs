@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Altinn.Authorization.ABAC.Interface;
 using Altinn.Authorization.ABAC.Xacml;
@@ -81,8 +82,9 @@ namespace Altinn.Platform.Authorization.Services.Implementation
         /// Gets the list of mainunits for a subunit
         /// </summary>
         /// <param name="subUnitPartyId">The subunit partyIds to check and retrieve mainunits for</param>
+        /// <param name="cancellationToken">The cancellationToken</param>
         /// <returns>List of mainunits</returns>
-        public async new Task<List<MainUnit>> GetMainUnits(int subUnitPartyId)
+        public async new Task<List<MainUnit>> GetMainUnits(int subUnitPartyId, CancellationToken cancellationToken = default)
         {
             return await base.GetMainUnits(subUnitPartyId);
         }
@@ -91,8 +93,9 @@ namespace Altinn.Platform.Authorization.Services.Implementation
         /// Gets the list of keyrole unit partyIds for a user
         /// </summary>
         /// <param name="subjectUserId">The userid to retrieve keyrole unit for</param>
+        /// <param name="cancellationToken">The cancellationToken</param>
         /// <returns>List of partyIds for units where user has keyrole</returns>
-        public async new Task<List<int>> GetKeyRolePartyIds(int subjectUserId)
+        public async new Task<List<int>> GetKeyRolePartyIds(int subjectUserId, CancellationToken cancellationToken = default)
         {
             return await base.GetKeyRolePartyIds(subjectUserId);
         }

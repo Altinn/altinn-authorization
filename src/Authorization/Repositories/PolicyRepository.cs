@@ -2,6 +2,7 @@ using System;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Net;
+using System.Threading;
 using System.Threading.Tasks;
 using Altinn.Platform.Authorization.Configuration;
 using Altinn.Platform.Authorization.Repositories.Interface;
@@ -48,31 +49,31 @@ namespace Altinn.Platform.Authorization.Repositories
         }
 
         /// <inheritdoc/>
-        public async Task<Stream> GetPolicyAsync(string filepath)
+        public async Task<Stream> GetPolicyAsync(string filepath, CancellationToken cancellationToken = default)
         {
             BlobClient blobClient = CreateBlobClient(filepath);
 
-            return await GetBlobStreamInternal(blobClient);
+            return await GetBlobStreamInternal(blobClient, cancellationToken);
         }
 
         /// <inheritdoc/>
-        public async Task<Stream> GetPolicyVersionAsync(string filepath, string version)
+        public async Task<Stream> GetPolicyVersionAsync(string filepath, string version, CancellationToken cancellationToken = default)
         {
             BlobClient blobClient = CreateBlobClient(filepath).WithVersion(version);
 
-            return await GetBlobStreamInternal(blobClient);
+            return await GetBlobStreamInternal(blobClient, cancellationToken);
         }
 
         /// <inheritdoc/>
-        public async Task<Response<BlobContentInfo>> WritePolicyAsync(string filepath, Stream fileStream)
+        public async Task<Response<BlobContentInfo>> WritePolicyAsync(string filepath, Stream fileStream, CancellationToken cancellationToken = default)
         {
             BlobClient blobClient = CreateBlobClient(filepath);
 
-            return await WriteBlobStreamInternal(blobClient, fileStream);
+            return await WriteBlobStreamInternal(blobClient, fileStream, cancellationToken: cancellationToken);
         }
 
         /// <inheritdoc/>
-        public async Task<Response<BlobContentInfo>> WritePolicyConditionallyAsync(string filepath, Stream fileStream, string blobLeaseId)
+        public async Task<Response<BlobContentInfo>> WritePolicyConditionallyAsync(string filepath, Stream fileStream, string blobLeaseId, CancellationToken cancellationToken = default)
         {
             BlobClient blobClient = CreateBlobClient(filepath);
 
@@ -84,18 +85,18 @@ namespace Altinn.Platform.Authorization.Repositories
                 }
             };
 
-            return await WriteBlobStreamInternal(blobClient, fileStream, blobUploadOptions);
+            return await WriteBlobStreamInternal(blobClient, fileStream, blobUploadOptions, cancellationToken);
         }
 
         /// <inheritdoc/>
-        public async Task<string> TryAcquireBlobLease(string filepath)
+        public async Task<string> TryAcquireBlobLease(string filepath, CancellationToken cancellationToken = default)
         {
             BlobClient blobClient = CreateBlobClient(filepath);
             BlobLeaseClient blobLeaseClient = blobClient.GetBlobLeaseClient();
 
             try
             {
-                BlobLease blobLease = await blobLeaseClient.AcquireAsync(TimeSpan.FromSeconds(_storageConfig.BlobLeaseTimeout));
+                BlobLease blobLease = await blobLeaseClient.AcquireAsync(TimeSpan.FromSeconds(_storageConfig.BlobLeaseTimeout), cancellationToken: cancellationToken);
                 return blobLease.LeaseId;
             }
             catch (RequestFailedException ex)
@@ -119,12 +120,12 @@ namespace Altinn.Platform.Authorization.Repositories
         }
 
         /// <inheritdoc/>
-        public async Task<bool> PolicyExistsAsync(string filepath)
+        public async Task<bool> PolicyExistsAsync(string filepath, CancellationToken cancellationToken = default)
         {
             try
             {
                 BlobClient blobClient = CreateBlobClient(filepath);
-                return await blobClient.ExistsAsync();
+                return await blobClient.ExistsAsync(cancellationToken);
             }
             catch (RequestFailedException ex)
             {
@@ -135,13 +136,13 @@ namespace Altinn.Platform.Authorization.Repositories
         }
 
         /// <inheritdoc/>
-        public async Task<Response> DeletePolicyVersionAsync(string filepath, string version)
+        public async Task<Response> DeletePolicyVersionAsync(string filepath, string version, CancellationToken cancellationToken = default)
         {
             try
             {
                 BlobClient blockBlob = CreateBlobClient(filepath);
 
-                return await blockBlob.WithVersion(version).DeleteAsync();
+                return await blockBlob.WithVersion(version).DeleteAsync(cancellationToken: cancellationToken);
             }
             catch (RequestFailedException ex)
             {
@@ -171,7 +172,7 @@ namespace Altinn.Platform.Authorization.Repositories
             return _metadataContainerClient.GetBlobClient(blobName);
         }
 
-        private async Task<Stream> GetBlobStreamInternal(BlobClient blobClient)
+        private async Task<Stream> GetBlobStreamInternal(BlobClient blobClient, CancellationToken cancellationToken)
         {
             try
             {
@@ -179,7 +180,7 @@ namespace Altinn.Platform.Authorization.Repositories
 
                 if (await blobClient.ExistsAsync())
                 {
-                    await blobClient.DownloadToAsync(memoryStream);
+                    await blobClient.DownloadToAsync(memoryStream, cancellationToken);
                     memoryStream.Position = 0;
 
                     return memoryStream;
@@ -194,16 +195,16 @@ namespace Altinn.Platform.Authorization.Repositories
             }
         }
 
-        private async Task<Response<BlobContentInfo>> WriteBlobStreamInternal(BlobClient blobClient, Stream fileStream, BlobUploadOptions blobUploadOptions = null)
+        private async Task<Response<BlobContentInfo>> WriteBlobStreamInternal(BlobClient blobClient, Stream fileStream, BlobUploadOptions blobUploadOptions = null, CancellationToken cancellationToken = default)
         {
             try
             {
                 if (blobUploadOptions != null)
                 {
-                    return await blobClient.UploadAsync(fileStream, blobUploadOptions);
+                    return await blobClient.UploadAsync(fileStream, blobUploadOptions, cancellationToken);
                 }
 
-                return await blobClient.UploadAsync(fileStream, true);
+                return await blobClient.UploadAsync(fileStream, true, cancellationToken);
             }
             catch (RequestFailedException ex)
             {
