@@ -47,7 +47,7 @@ namespace Altinn.Platform.Authorization.Services.Implementation
             {
                 string endpointUrl = $"authorization/api/parties?userid={userId}";
                 HttpResponseMessage response = await _partyClient.Client.GetAsync(endpointUrl, cancellationToken);
-                string partiesDataList = await response.Content.ReadAsStringAsync();
+                string partiesDataList = await response.Content.ReadAsStringAsync(cancellationToken);
                 if (response.IsSuccessStatusCode)
                 {
                     return JsonConvert.DeserializeObject<List<Party>>(partiesDataList);
@@ -72,7 +72,7 @@ namespace Altinn.Platform.Authorization.Services.Implementation
                 string endpointUrl = $"register/api/parties/{partyId}";
 
                 HttpResponseMessage response = await _partyClient.Client.GetAsync(endpointUrl, cancellationToken);
-                string responseContent = await response.Content.ReadAsStringAsync();
+                string responseContent = await response.Content.ReadAsStringAsync(cancellationToken);
 
                 if (response.StatusCode == HttpStatusCode.OK)
                 {
@@ -98,7 +98,7 @@ namespace Altinn.Platform.Authorization.Services.Implementation
             {
                 string endpointUrl = $"authorization/api/partieswithkeyroleaccess?userid={userId}";
                 HttpResponseMessage response = await _partyClient.Client.GetAsync(endpointUrl, cancellationToken);
-                string responseBody = await response.Content.ReadAsStringAsync();
+                string responseBody = await response.Content.ReadAsStringAsync(cancellationToken);
 
                 if (response.IsSuccessStatusCode)
                 {
@@ -130,8 +130,8 @@ namespace Altinn.Platform.Authorization.Services.Implementation
                     Content = new StringContent(JsonConvert.SerializeObject(subunitPartyIds), Encoding.UTF8, "application/json")
                 };
 
-                HttpResponseMessage response = await _partyClient.Client.SendAsync(request);
-                var responseBody = await response.Content.ReadAsStringAsync();
+                HttpResponseMessage response = await _partyClient.Client.SendAsync(request, cancellationToken);
+                var responseBody = await response.Content.ReadAsStringAsync(cancellationToken);
 
                 if (response.IsSuccessStatusCode)
                 {
