@@ -51,6 +51,7 @@ namespace Altinn.Platform.Authorization.IntegrationTests
             AuthorizationEvent expectedAuthorizationEvent = TestSetupUtil.GetAuthorizationEvent(testCase);
 
             HttpClient client = GetTestClient(eventQueue.Object, featureManageMock.Object, systemClock.Object);
+            client.DefaultRequestHeaders.Add("x-forwarded-for", "51.120.0.114, 10.122.16.225");
             HttpRequestMessage httpRequestMessage = TestSetupUtil.CreateXacmlRequest(testCase);
             XacmlContextResponse expected = TestSetupUtil.ReadExpectedResponse(testCase);
 
@@ -157,6 +158,7 @@ namespace Altinn.Platform.Authorization.IntegrationTests
             AuthorizationEvent expectedAuthorizationEvent = TestSetupUtil.GetAuthorizationEvent(testCase);
 
             HttpClient client = GetTestClient(eventQueue.Object, featureManageMock.Object, systemClock.Object);
+            client.DefaultRequestHeaders.Add("x-forwarded-for", "51.120.0.114,20.251.13.24, 10.122.16.225");
             HttpRequestMessage httpRequestMessage = TestSetupUtil.CreateXacmlRequest(testCase);
             XacmlContextResponse expected = TestSetupUtil.ReadExpectedResponse(testCase);
 

@@ -176,21 +176,8 @@ namespace Altinn.Platform.Authorization.Helpers
         /// <returns></returns>
         public static string GetClientIpAddress(HttpContext context)
         {
-            // The first ipaddress in the x-forwarded-for header is the client ipaddress. The ip from x-forwarded-for is read into remoteip depending on the forward limit
-            //string clientIp = context?.Connection?.RemoteIpAddress?.ToString();
-            string clientIp = null;
-            string clientIpList = context?.Request?.Headers?["x-forwarded-for"];
-            string[] ipAddress = clientIpList?.Split(',');
-            if (ipAddress?.Length == 3)
-            {
-                clientIp = ipAddress[0];
-            }
-            else if (ipAddress?.Length == 2)
-            {
-                clientIp = ipAddress[1];
-            }
-
-            return clientIp;
+            string[] clientIpList = context?.Request?.Headers?.GetCommaSeparatedValues("x-forwarded-for");
+            return clientIpList?.Length > 0 ? clientIpList[0] : null;
         }
     }
 }
