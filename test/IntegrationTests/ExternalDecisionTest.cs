@@ -51,6 +51,23 @@ namespace Altinn.Platform.Authorization.IntegrationTests
         }
 
         [Fact]
+        public async Task PDPExternal_Decision_AltinnApps0010()
+        {
+            string token = PrincipalUtil.GetOrgToken("skd", "974761076", "altinn:authorization:pdp");
+            string testCase = "AltinnApps0010";
+            HttpClient client = GetTestClient();
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("bearer", token);
+            HttpRequestMessage httpRequestMessage = TestSetupUtil.CreateXacmlRequestExternal(testCase);
+            XacmlJsonResponse expected = TestSetupUtil.ReadExpectedJsonProfileResponse(testCase);
+
+            // Act
+            XacmlJsonResponse contextResponse = await TestSetupUtil.GetXacmlJsonProfileContextResponseAsync(client, httpRequestMessage);
+
+            // Assert
+            AssertionUtil.AssertEqual(expected, contextResponse);
+        }
+
+        [Fact]
         public async Task PDPExternal_Decision_AltinnResourceRegistry0005()
         {
             string token = PrincipalUtil.GetOrgToken("skd", "974761076", "altinn:authorization:pdp");
