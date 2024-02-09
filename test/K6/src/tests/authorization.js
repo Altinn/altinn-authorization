@@ -79,6 +79,7 @@ export default function (data) {
     Resource: ['urn:altinn:app', 'urn:altinn:org'],
   };
   res = authz.postGetDecision(pdpInputJson, jsonPermitData, appOwner, appName, userId, partyId, altinnTask);
+  
   success = check(res, {
     'Get PDP Decision for appOwner Status is 200': (r) => r.status === 200,
     'Get PDP Decision for appOwner Decision is Permit': (r) => JSON.parse(r.body).response[0].decision === 'Permit',

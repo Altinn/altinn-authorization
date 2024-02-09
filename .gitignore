@@ -43,3 +43,5 @@ TestResults
 ######### Testdata created by testrun #########
 src/test/IntegrationTests/Data/blobs/output/
 /test/IntegrationTests/Data/blobs/output
+test/Bruno/Altinn.Authorization/results.json
+test/Bruno/Altinn.Authorization/results.xml

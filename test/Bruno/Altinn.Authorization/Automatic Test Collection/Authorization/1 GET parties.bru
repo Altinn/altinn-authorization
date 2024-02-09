@@ -1,0 +1,60 @@
+meta {
+  name: 1 GET Parties
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{baseUrl}}/authorization/api/v1/parties?userId={{auth_userId}}
+  body: none
+  auth: none
+}
+
+headers {
+  Accept: application/json
+  Ocp-Apim-Subscription-Key: {{appsAccessKey}}
+}
+
+vars:pre-request {
+  scope: altinn:instances.read
+  auth_tokenType: Personal
+  auth_userId: 
+  auth_scopes: altinn:instances.read
+  auth_partyId: 
+  auth_ssn: 
+  party: 
+  apps_access_key: 
+}
+
+assert {
+  ~res.status: eq 200
+}
+
+script:pre-request {
+  const testdata = require(`./Testdata/Authorization/${bru.getEnvVar("tokenEnv")}testdata.json`);
+  bru.setVar("auth_userId", testdata.org1.dagl.userid);
+  bru.setVar("auth_partyId", testdata.org1.dagl.partyid);
+  bru.setVar("auth_ssn", testdata.org1.dagl.pid);
+  bru.setVar("party", testdata.org1.partyid);
+  bru.setVar("to_partyid", testdata.org2.partyid);
+  bru.setVar("appsAccessKey", bru.getEnvVar("appsAccessKey"));
+  
+  await testTokenGenerator.getToken();
+}
+
+script:post-response {
+  console.log("request url (after): " + req.getUrl());
+}
+
+tests {
+  test("Get parties of an user and validate response", function() {
+    const testdata = require(`./Testdata/Authorization/${bru.getEnvVar("tokenEnv")}testdata.json`);
+    const data = res.getBody();
+    expect(res.status).to.equal(200);
+    expect(data).to.not.be.empty;
+  });
+}
+
+docs {
+  Get parties of an user and validate response
+}
