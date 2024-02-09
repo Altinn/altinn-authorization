@@ -23,7 +23,6 @@ export function generateToken(tokenFor, userName, userPwd, queryParams) {
   if (tokenFor === 'personal') endpoint = config.tokenGenerator.getPersonalToken;
   if (tokenFor === 'platform') endpoint = config.tokenGenerator.getPlatformToken;
   endpoint += support.buildQueryParametersForEndpoint(queryParams);
-  console.log('token endpoint: ' + endpoint);
 
   var params = {
     headers: {

@@ -31,8 +31,6 @@ exports.getToken = async function () {
     tokenUrl = `${tokenBaseUrl}/api/Get${tokenType}Token?env=${tokenEnv}&scopes=${tokenScopes}&orgNo=${tokenOrgNo}&userId=${tokenUser}&partyId=${tokenParty}&userName=${tokenUserName}&ttl=30`;
   }
 
-  console.log("tokenUrl:" +  tokenUrl);
-
   const response = await axios.get(tokenUrl, {
     headers: { Authorization }
   });

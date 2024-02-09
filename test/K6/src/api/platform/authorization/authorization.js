@@ -39,10 +39,6 @@ export function postGetDecision(pdpInputJson, jsonPermitData, appOwner, testappN
   var pdpJson = buildPdpJson(pdpInputJson, jsonPermitData, appOwner, testappName, userId, partyId, altinnTask);
   var requestBody = JSON.stringify(pdpJson);
   var params = header.buildHeaderWithJson('platform');
-  // console.log("POST GetDecision endpoint: " + endpoint);
-  // console.log("POST GetDecision params" + JSON.stringify(params));
-  console.log('POST GetDecision requestBody: ');
-  console.log(requestBody);
   return http.post(endpoint, requestBody, params);
 }
 
