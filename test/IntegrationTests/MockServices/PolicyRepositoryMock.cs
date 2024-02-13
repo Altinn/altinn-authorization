@@ -1,6 +1,7 @@
 using System;
 using System.IO;
 using System.Net;
+using System.Threading;
 using System.Threading.Tasks;
 
 using Altinn.Platform.Authorization.Repositories.Interface;
@@ -20,27 +21,27 @@ namespace Altinn.Platform.Authorization.IntegrationTests.MockServices
             _logger = logger;
         }
 
-        public Task<Stream> GetPolicyAsync(string filepath)
+        public Task<Stream> GetPolicyAsync(string filepath, CancellationToken cancellationToken = default)
         {
             return Task.FromResult(GetTestDataStream(filepath));
         }
 
-        public Task<Stream> GetPolicyVersionAsync(string filepath, string version)
+        public Task<Stream> GetPolicyVersionAsync(string filepath, string version, CancellationToken cancellationToken = default)
         {
             return Task.FromResult(GetTestDataStream(filepath));
         }
 
-        public Task<Response<BlobContentInfo>> WritePolicyAsync(string filepath, Stream fileStream)
+        public Task<Response<BlobContentInfo>> WritePolicyAsync(string filepath, Stream fileStream, CancellationToken cancellationToken = default)
         {
             return WriteStreamToTestDataFolder(filepath, fileStream);            
         }
 
-        public Task<Response> DeletePolicyVersionAsync(string filepath, string version)
+        public Task<Response> DeletePolicyVersionAsync(string filepath, string version, CancellationToken cancellationToken = default)
         {
             throw new NotImplementedException();
         }
 
-        public async Task<Response<BlobContentInfo>> WritePolicyConditionallyAsync(string filepath, Stream fileStream, string blobLeaseId)
+        public async Task<Response<BlobContentInfo>> WritePolicyConditionallyAsync(string filepath, Stream fileStream, string blobLeaseId, CancellationToken cancellationToken = default)
         {
             if (blobLeaseId == "CorrectLeaseId" && !filepath.Contains("error/blobstorageleaselockwritefail"))
             {
@@ -50,7 +51,7 @@ namespace Altinn.Platform.Authorization.IntegrationTests.MockServices
             throw new RequestFailedException((int)HttpStatusCode.PreconditionFailed, "The condition specified using HTTP conditional header(s) is not met.");
         }
 
-        public Task<string> TryAcquireBlobLease(string filepath)
+        public Task<string> TryAcquireBlobLease(string filepath, CancellationToken cancellationToken = default)
         {
             if (filepath.Contains("error/blobstoragegetleaselockfail"))
             {
@@ -64,7 +65,7 @@ namespace Altinn.Platform.Authorization.IntegrationTests.MockServices
         {
         }
 
-        public Task<bool> PolicyExistsAsync(string filepath)
+        public Task<bool> PolicyExistsAsync(string filepath, CancellationToken cancellationToken = default)
         {
             string fullpath = Path.Combine(GetDataInputBlobPath(), filepath);
 

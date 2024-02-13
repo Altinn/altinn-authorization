@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Xml;
 
@@ -23,7 +24,7 @@ namespace Altinn.Platform.Authorization.IntegrationTests.MockServices
 
         private readonly string _appAttributeId = "urn:altinn:app";
 
-        private readonly string _resourceregistryAttributeId = "urn:altinn:resourceregistry";
+        private readonly string _resourceregistryAttributeId = "urn:altinn:resource";
 
         public PolicyRetrievalPointMock(IHttpContextAccessor httpContextAccessor, ILogger<PolicyRetrievalPointMock> logger)
         {
@@ -68,7 +69,7 @@ namespace Altinn.Platform.Authorization.IntegrationTests.MockServices
             return null;
         }
 
-        public async Task<XacmlPolicy> GetPolicyVersionAsync(string policyPath, string version)
+        public async Task<XacmlPolicy> GetPolicyVersionAsync(string policyPath, string version, CancellationToken cancellationToken = default)
         {
             string path = GetAltinnAppsDelegationPolicyPath(policyPath);
             if (File.Exists(path))

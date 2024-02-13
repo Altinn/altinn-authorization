@@ -57,5 +57,30 @@ namespace Altinn.Platform.Authorization.Services.Implementation
                 throw;
             }
         }
+
+        /// <inheritdoc/>
+        public async Task<UserProfile> GetUserProfileBySSN(string ssn)
+        {
+            try
+            {
+                string endpointUrl = $"internal/user";
+
+                var response = await _profileClient.Client.PostAsJsonAsync(endpointUrl, new { Ssn = ssn });
+                string responseContent = await response.Content.ReadAsStringAsync();
+
+                if (response.StatusCode == HttpStatusCode.OK)
+                {
+                    return JsonSerializer.Deserialize<UserProfile>(responseContent, _serializerOptions);
+                }
+
+                _logger.LogError("ProfileAPI // ProfileWrapper // GetUserProfile // Failed // Unexpected HttpStatusCode: {statusCode}\n {responseContent}", response.StatusCode, responseContent);
+                return null;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "ProfileAPI // ProfileWrapper // GetUserProfile // Failed // Unexpected Exception");
+                throw;
+            }
+        }
     }
 }

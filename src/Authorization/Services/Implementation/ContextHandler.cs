@@ -1,15 +1,12 @@
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Linq;
-using System.Net.Http.Headers;
+using System.Threading;
 using System.Threading.Tasks;
 using Altinn.Authorization.ABAC.Constants;
-using Altinn.Authorization.ABAC.Interface;
 using Altinn.Authorization.ABAC.Xacml;
 using Altinn.Platform.Authorization.Configuration;
 using Altinn.Platform.Authorization.Constants;
-using Altinn.Platform.Authorization.Helpers;
 using Altinn.Platform.Authorization.Models;
 using Altinn.Platform.Authorization.Models.Oed;
 using Altinn.Platform.Authorization.Repositories.Interface;
@@ -74,23 +71,25 @@ namespace Altinn.Platform.Authorization.Services.Implementation
         /// <summary>
         /// Ads needed information to the Context Request.
         /// </summary>
-        /// <param name="decisionRequest">The original Xacml Context Request</param>
+        /// <param name="request">The original Xacml Context Request</param>
+        /// <param name="isExternalRequest">Defines if this is an external request</param>
         /// <returns>The enriched XacmlContextRequest</returns>
-        public async Task<XacmlContextRequest> Enrich(XacmlContextRequest decisionRequest)
+        public async Task<XacmlContextRequest> Enrich(XacmlContextRequest request, bool isExternalRequest)
         {
-            await EnrichResourceAttributes(decisionRequest);
-            return await Task.FromResult(decisionRequest);
+            await EnrichResourceAttributes(request, isExternalRequest);
+            return await Task.FromResult(request);
         }
 
         /// <summary>
         /// Enriches the resource attribute collection with additional attributes retrieved based on the instance on the request
         /// </summary>
         /// <param name="request">The original Xacml Context Request</param>
-        protected async Task EnrichResourceAttributes(XacmlContextRequest request)
+        /// <param name="isExternalRequest">Defines if request comes </param>
+        protected async Task EnrichResourceAttributes(XacmlContextRequest request, bool isExternalRequest)
         {
             XacmlContextAttributes resourceContextAttributes = request.GetResourceAttributes();
             XacmlResourceAttributes resourceAttributes = GetResourceAttributeValues(resourceContextAttributes);
-            await EnrichResourceParty(resourceAttributes);
+            await EnrichResourceParty(resourceAttributes, isExternalRequest);
 
             bool resourceAttributeComplete = IsResourceComplete(resourceAttributes);
 
@@ -130,7 +129,7 @@ namespace Altinn.Platform.Authorization.Services.Implementation
                 }
             }
 
-            await EnrichSubjectAttributes(request, resourceAttributes.ResourcePartyValue);
+            await EnrichSubjectAttributes(request, resourceAttributes.ResourcePartyValue, isExternalRequest);
         }
 
         private static bool IsResourceComplete(XacmlResourceAttributes resourceAttributes)
@@ -178,11 +177,24 @@ namespace Altinn.Platform.Authorization.Services.Implementation
         /// Method that adds information about the resource party 
         /// </summary>
         /// <returns></returns>
-        protected async Task EnrichResourceParty(XacmlResourceAttributes resourceAttributes)
+        protected async Task EnrichResourceParty(XacmlResourceAttributes resourceAttributes, bool isExternalRequest)
         {
             if (string.IsNullOrEmpty(resourceAttributes.ResourcePartyValue) && !string.IsNullOrEmpty(resourceAttributes.OrganizationNumber))
             {
                 int partyId = await _registerService.PartyLookup(resourceAttributes.OrganizationNumber, null);
+                if (partyId != 0)
+                {
+                    resourceAttributes.ResourcePartyValue = partyId.ToString();
+                }
+            }
+            else if (string.IsNullOrEmpty(resourceAttributes.ResourcePartyValue) && !string.IsNullOrEmpty(resourceAttributes.Ssn))
+            {
+                if (!isExternalRequest)
+                {
+                    throw new ArgumentException("Not allowed to use ssn for internal API");
+                }
+
+                int partyId = await _registerService.PartyLookup(null, resourceAttributes.Ssn);
                 if (partyId != 0)
                 {
                     resourceAttributes.ResourcePartyValue = partyId.ToString();
@@ -240,6 +252,20 @@ namespace Altinn.Platform.Authorization.Services.Implementation
                 {
                     resourceAttributes.OrganizationNumber = attribute.AttributeValues.First().Value;
                 }
+
+                if (attribute.AttributeId.OriginalString.Equals(XacmlRequestAttribute.LegacyOrganizationNumberAttribute))
+                {
+                    // For supporting legacy use of this attribute. (old PEPS)
+                    if (string.IsNullOrEmpty(resourceAttributes.OrganizationNumber))
+                    { 
+                        resourceAttributes.OrganizationNumber = attribute.AttributeValues.First().Value;
+                    }
+                }
+
+                if (attribute.AttributeId.OriginalString.Equals(XacmlRequestAttribute.SsnAttribute))
+                {
+                    resourceAttributes.Ssn = attribute.AttributeValues.First().Value;
+                }
             }
 
             return resourceAttributes;
@@ -284,7 +310,8 @@ namespace Altinn.Platform.Authorization.Services.Implementation
         /// </summary>
         /// <param name="request">The original Xacml Context Request</param>
         /// <param name="resourceParty">The resource reportee party id</param>
-        protected async Task EnrichSubjectAttributes(XacmlContextRequest request, string resourceParty)
+        /// <param name="isExternalRequest">Used to enforce stricter requirements</param>
+        protected async Task EnrichSubjectAttributes(XacmlContextRequest request, string resourceParty, bool isExternalRequest)
         {
             // If there is no resource party then it is impossible to enrich roles
             if (string.IsNullOrEmpty(resourceParty))
@@ -296,12 +323,42 @@ namespace Altinn.Platform.Authorization.Services.Implementation
 
             int subjectUserId = 0;
             int resourcePartyId = Convert.ToInt32(resourceParty);
+            string subjectSsn = string.Empty;
 
             foreach (XacmlAttribute xacmlAttribute in subjectContextAttributes.Attributes)
             {
                 if (xacmlAttribute.AttributeId.OriginalString.Equals(XacmlRequestAttribute.UserAttribute))
                 {
                     subjectUserId = Convert.ToInt32(xacmlAttribute.AttributeValues.First().Value);
+                }
+
+                if (xacmlAttribute.AttributeId.OriginalString.Equals(XacmlRequestAttribute.SsnAttribute))
+                {
+                    if (!isExternalRequest)
+                    {
+                        throw new ArgumentException("Not allowed to use ssn for internal API");
+                    }
+
+                    subjectSsn = xacmlAttribute.AttributeValues.First().Value;
+                }
+            }
+
+            if (!string.IsNullOrEmpty(subjectSsn) && subjectUserId != 0)
+            {
+                throw new ArgumentException("Not possible to set userid and ssn for subject at the same time");
+            }
+
+            if (!string.IsNullOrEmpty(subjectSsn))
+            {
+                UserProfile subjectProfile = await _profileWrapper.GetUserProfileBySSN(subjectSsn);
+
+                if (subjectProfile != null)
+                {
+                    subjectUserId = subjectProfile.UserId; 
+                }
+                else
+                {
+                    throw new ArgumentException("Invalid SSN");
                 }
             }
 
@@ -319,7 +376,11 @@ namespace Altinn.Platform.Authorization.Services.Implementation
             IDictionary<string, ICollection<string>> subjectAttributes = xacmlPolicy.GetAttributeDictionaryByCategory(XacmlConstants.MatchAttributeCategory.Subject);
             if (subjectAttributes.ContainsKey(AltinnXacmlConstants.MatchAttributeIdentifiers.OedRoleAttribute))
             {
-                string subjectSsn = await GetSsnForUser(subjectUserId);
+                if (string.IsNullOrEmpty(subjectSsn))
+                {
+                    subjectSsn = await GetSsnForUser(subjectUserId);
+                }
+                
                 string resourceSsn = await GetSSnForParty(resourcePartyId);
 
                 if (!string.IsNullOrWhiteSpace(subjectSsn) && !string.IsNullOrWhiteSpace(resourceSsn))
@@ -419,15 +480,16 @@ namespace Altinn.Platform.Authorization.Services.Implementation
         /// Gets the list of mainunits for a subunit
         /// </summary>
         /// <param name="subUnitPartyId">The subunit partyId to check and retrieve mainunits for</param>
+        /// <param name="cancellationToken">The cancellationToken</param>
         /// <returns>List of mainunits</returns>
-        protected async Task<List<MainUnit>> GetMainUnits(int subUnitPartyId)
+        protected async Task<List<MainUnit>> GetMainUnits(int subUnitPartyId, CancellationToken cancellationToken = default)
         {
             string cacheKey = $"GetMainUnitsFor:{subUnitPartyId}";
 
             if (!_memoryCache.TryGetValue(cacheKey, out List<MainUnit> mainUnits))
             {
                 // Key not in cache, so get data.
-                mainUnits = await _partiesWrapper.GetMainUnits(new MainUnitQuery { PartyIds = new List<int> { subUnitPartyId } });
+                mainUnits = await _partiesWrapper.GetMainUnits(new MainUnitQuery { PartyIds = new List<int> { subUnitPartyId } }, cancellationToken);
 
                 var cacheEntryOptions = new MemoryCacheEntryOptions()
                .SetPriority(CacheItemPriority.High)
@@ -443,15 +505,16 @@ namespace Altinn.Platform.Authorization.Services.Implementation
         /// Gets the list of keyrole unit partyIds for a user
         /// </summary>
         /// <param name="subjectUserId">The userid to retrieve keyrole unit for</param>
+        /// <param name="cancellationToken">The cancellationToken</param>
         /// <returns>List of partyIds for units where user has keyrole</returns>
-        protected async Task<List<int>> GetKeyRolePartyIds(int subjectUserId)
+        protected async Task<List<int>> GetKeyRolePartyIds(int subjectUserId, CancellationToken cancellationToken = default)
         {
             string cacheKey = $"GetKeyRolePartyIdsFor:{subjectUserId}";
 
             if (!_memoryCache.TryGetValue(cacheKey, out List<int> keyrolePartyIds))
             {
                 // Key not in cache, so get data.
-                keyrolePartyIds = await _partiesWrapper.GetKeyRoleParties(subjectUserId);
+                keyrolePartyIds = await _partiesWrapper.GetKeyRoleParties(subjectUserId, cancellationToken);
 
                 var cacheEntryOptions = new MemoryCacheEntryOptions()
                .SetPriority(CacheItemPriority.High)

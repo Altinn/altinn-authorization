@@ -1,6 +1,7 @@
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using Altinn.Platform.Authorization.Clients.Interfaces;
 using Altinn.Platform.Authorization.Configuration;
@@ -38,12 +39,17 @@ namespace Altinn.Platform.Authorization.Clients
         }
 
         /// <inheritdoc/>
-        public async Task<QueuePostReceipt> EnqueueAuthorizationEvent(string content)
+        public async Task<QueuePostReceipt> EnqueueAuthorizationEvent(string content, CancellationToken cancellationToken = default)
         {
             try
             {
                 QueueClient client = await GetAuthorizationEventQueueClient();
-                await client.SendMessageAsync(Convert.ToBase64String(Encoding.UTF8.GetBytes(content)));      
+                await client.SendMessageAsync(Convert.ToBase64String(Encoding.UTF8.GetBytes(content)), cancellationToken);      
+            }
+            catch (OperationCanceledException ex)
+            {
+                _logger.LogError(ex, ex.Message);
+                throw;
             }
             catch (Exception ex)
             {

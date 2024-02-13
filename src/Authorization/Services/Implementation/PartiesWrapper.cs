@@ -6,6 +6,7 @@ using System.Net;
 using System.Net.Http;
 using System.Text;
 using System.Text.Json;
+using System.Threading;
 using System.Threading.Tasks;
 using Altinn.Platform.Authorization.Clients;
 using Altinn.Platform.Authorization.Models;
@@ -38,15 +39,15 @@ namespace Altinn.Platform.Authorization.Services.Implementation
         }
 
         /// <inheritdoc />
-        public async Task<List<Party>> GetParties(int userId)
+        public async Task<List<Party>> GetParties(int userId, CancellationToken cancellationToken = default)
         {
             List<Party> partiesList = null;
 
             try
             {
                 string endpointUrl = $"authorization/api/parties?userid={userId}";
-                HttpResponseMessage response = await _partyClient.Client.GetAsync(endpointUrl);
-                string partiesDataList = await response.Content.ReadAsStringAsync();
+                HttpResponseMessage response = await _partyClient.Client.GetAsync(endpointUrl, cancellationToken);
+                string partiesDataList = await response.Content.ReadAsStringAsync(cancellationToken);
                 if (response.IsSuccessStatusCode)
                 {
                     return JsonConvert.DeserializeObject<List<Party>>(partiesDataList);
@@ -64,14 +65,14 @@ namespace Altinn.Platform.Authorization.Services.Implementation
         }
 
         /// <inheritdoc/>
-        public async Task<Party> GetParty(int partyId)
+        public async Task<Party> GetParty(int partyId, CancellationToken cancellationToken = default)
         {
             try
             {
                 string endpointUrl = $"register/api/parties/{partyId}";
 
-                HttpResponseMessage response = await _partyClient.Client.GetAsync(endpointUrl);
-                string responseContent = await response.Content.ReadAsStringAsync();
+                HttpResponseMessage response = await _partyClient.Client.GetAsync(endpointUrl, cancellationToken);
+                string responseContent = await response.Content.ReadAsStringAsync(cancellationToken);
 
                 if (response.StatusCode == HttpStatusCode.OK)
                 {
@@ -89,15 +90,15 @@ namespace Altinn.Platform.Authorization.Services.Implementation
         }
 
         /// <inheritdoc/>
-        public async Task<List<int>> GetKeyRoleParties(int userId)
+        public async Task<List<int>> GetKeyRoleParties(int userId, CancellationToken cancellationToken = default)
         {
             List<int> keyroleParties = null;
 
             try
             {
                 string endpointUrl = $"authorization/api/partieswithkeyroleaccess?userid={userId}";
-                HttpResponseMessage response = await _partyClient.Client.GetAsync(endpointUrl);
-                string responseBody = await response.Content.ReadAsStringAsync();
+                HttpResponseMessage response = await _partyClient.Client.GetAsync(endpointUrl, cancellationToken);
+                string responseBody = await response.Content.ReadAsStringAsync(cancellationToken);
 
                 if (response.IsSuccessStatusCode)
                 {
@@ -116,7 +117,7 @@ namespace Altinn.Platform.Authorization.Services.Implementation
         }
 
         /// <inheritdoc/>
-        public async Task<List<MainUnit>> GetMainUnits(MainUnitQuery subunitPartyIds)
+        public async Task<List<MainUnit>> GetMainUnits(MainUnitQuery subunitPartyIds, CancellationToken cancellationToken = default)
         {
             List<MainUnit> mainUnits = null;
 
@@ -129,8 +130,8 @@ namespace Altinn.Platform.Authorization.Services.Implementation
                     Content = new StringContent(JsonConvert.SerializeObject(subunitPartyIds), Encoding.UTF8, "application/json")
                 };
 
-                HttpResponseMessage response = await _partyClient.Client.SendAsync(request);
-                var responseBody = await response.Content.ReadAsStringAsync();
+                HttpResponseMessage response = await _partyClient.Client.SendAsync(request, cancellationToken);
+                var responseBody = await response.Content.ReadAsStringAsync(cancellationToken);
 
                 if (response.IsSuccessStatusCode)
                 {
@@ -149,11 +150,11 @@ namespace Altinn.Platform.Authorization.Services.Implementation
         }
 
         /// <inheritdoc />
-        public async Task<bool> ValidateSelectedParty(int userId, int partyId)
+        public async Task<bool> ValidateSelectedParty(int userId, int partyId, CancellationToken cancellationToken = default)
         {
             bool result = false;
 
-            List<Party> partyList = await GetParties(userId);
+            List<Party> partyList = await GetParties(userId, cancellationToken);
 
             if (partyList.Count > 0)
             {

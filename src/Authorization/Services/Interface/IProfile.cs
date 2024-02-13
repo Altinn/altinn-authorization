@@ -14,5 +14,10 @@ namespace Altinn.Platform.Authorization.Services.Interface
         /// <param name="userId">The user id</param>
         /// <returns>The user profile</returns>
         Task<UserProfile> GetUserProfile(int userId);
+
+        /// <summary>
+        /// Method that fetches the user profile for a given ssn
+        /// </summary>
+        Task<UserProfile> GetUserProfileBySSN(string ssn);
     }
 }

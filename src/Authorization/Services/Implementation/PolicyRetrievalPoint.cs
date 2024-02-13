@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using System.Threading;
 using System.Threading.Tasks;
 using Altinn.Authorization.ABAC.Xacml;
 using Altinn.Platform.Authorization.Configuration;
@@ -61,19 +62,19 @@ namespace Altinn.Platform.Authorization.Services.Implementation
         }
 
         /// <inheritdoc/>
-        public async Task<XacmlPolicy> GetPolicyVersionAsync(string policyPath, string version)
+        public async Task<XacmlPolicy> GetPolicyVersionAsync(string policyPath, string version, CancellationToken cancellationToken = default)
         {
-            return await GetPolicyInternalAsync(policyPath, version);
+            return await GetPolicyInternalAsync(policyPath, version, cancellationToken);
         }
 
-        private async Task<XacmlPolicy> GetPolicyInternalAsync(string policyPath, string version = "")
+        private async Task<XacmlPolicy> GetPolicyInternalAsync(string policyPath, string version = "", CancellationToken cancellationToken = default)
         {
             string cacheKey = policyPath + version;
             if (!_memoryCache.TryGetValue(cacheKey, out XacmlPolicy policy))
             {
                 Stream policyBlob = string.IsNullOrEmpty(version) ?
-                    await _repository.GetPolicyAsync(policyPath) :
-                    await _repository.GetPolicyVersionAsync(policyPath, version);
+                    await _repository.GetPolicyAsync(policyPath, cancellationToken) :
+                    await _repository.GetPolicyVersionAsync(policyPath, version, cancellationToken);
                 using (policyBlob)
                 {
                     policy = (policyBlob.Length > 0) ? PolicyHelper.ParsePolicy(policyBlob) : null;

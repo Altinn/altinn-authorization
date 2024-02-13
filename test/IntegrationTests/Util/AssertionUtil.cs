@@ -5,6 +5,7 @@ using System.Linq;
 using System.Net;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using System.Threading;
 using Altinn.Authorization.ABAC.Xacml;
 using Altinn.Authorization.ABAC.Xacml.JsonProfile;
 using Altinn.Platform.Authorization.Clients.Interfaces;
@@ -281,7 +282,7 @@ namespace Altinn.Platform.Authorization.IntegrationTests.Util
             string serializedAuthorizationEvent = JsonSerializer.Serialize(expectedAuthorizationEvent, options);
             eventQueue.Verify(
                 e => e.EnqueueAuthorizationEvent(
-                    It.Is<string>(q => q == serializedAuthorizationEvent)), 
+                    It.Is<string>(q => q == serializedAuthorizationEvent), It.IsAny<CancellationToken>()), 
                 numberOfTimes);
         }
 

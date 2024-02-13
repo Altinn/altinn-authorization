@@ -1,3 +1,4 @@
+using System.Threading;
 using System.Threading.Tasks;
 using Altinn.Authorization.ABAC.Xacml;
 
@@ -28,7 +29,8 @@ namespace Altinn.Platform.Authorization.Services.Interface
         /// </summary>
         /// <param name="policyPath">The blobstorage path to the policy file</param>
         /// <param name="version">The specific blob storage version to get</param>
+        /// <param name="cancellationToken">The cancellationToken</param>
         /// <returns>XacmlPolicy and ETag tuple</returns>
-        Task<XacmlPolicy> GetPolicyVersionAsync(string policyPath, string version);
+        Task<XacmlPolicy> GetPolicyVersionAsync(string policyPath, string version, CancellationToken cancellationToken = default);
     }
 }

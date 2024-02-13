@@ -19,5 +19,15 @@ namespace Altinn.Platform.Authorization.Constants
         /// Policy tag for authorizing Altinn.Platform.Authorization API access from the DelegationEvent Azure function
         /// </summary>
         public const string DELEGATIONEVENT_FUNCTION_AUTHORIZATION = "DelegationEventFunctionAccess";
+
+        /// <summary>
+        /// Policy scope access
+        /// </summary>
+        public const string PDPSCOPEACCESS = "PDPScopeAccess";
+
+        /// <summary>
+        /// Scope that gives access to 
+        /// </summary>
+        public const string PDP_SCOPE = "altinn:authorization:pdp";
     }
 }

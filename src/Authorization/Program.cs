@@ -6,7 +6,6 @@ using Altinn.ApiClients.Maskinporten.Config;
 using Altinn.ApiClients.Maskinporten.Extensions;
 using Altinn.ApiClients.Maskinporten.Interfaces;
 using Altinn.ApiClients.Maskinporten.Services;
-using Altinn.Authorization.ABAC.Interface;
 using Altinn.Common.AccessTokenClient.Services;
 using Altinn.Common.PEP.Authorization;
 using Altinn.Platform.Authorization.Clients;
@@ -198,7 +197,7 @@ async Task ConnectToKeyVaultAndSetApplicationInsights(ConfigurationManager confi
 void ConfigureServices(IServiceCollection services, IConfiguration config)
 {
     logger.LogInformation("Startup // ConfigureServices");
-
+    services.AddAutoMapper(typeof(Program));
     services.AddControllers().AddXmlSerializerFormatters();
     services.AddHealthChecks().AddCheck<HealthCheck>("authorization_health_check");
     services.AddSingleton(config);
@@ -269,9 +268,11 @@ void ConfigureServices(IServiceCollection services, IConfiguration config)
         options.AddPolicy(AuthzConstants.POLICY_STUDIO_DESIGNER, policy => policy.Requirements.Add(new ClaimAccessRequirement("urn:altinn:app", "studio.designer")));
         options.AddPolicy(AuthzConstants.ALTINNII_AUTHORIZATION, policy => policy.Requirements.Add(new ClaimAccessRequirement("urn:altinn:app", "sbl.authorization")));
         options.AddPolicy(AuthzConstants.DELEGATIONEVENT_FUNCTION_AUTHORIZATION, policy => policy.Requirements.Add(new ClaimAccessRequirement("urn:altinn:app", "platform.authorization")));
+        options.AddPolicy(AuthzConstants.PDPSCOPEACCESS, policy => policy.Requirements.Add(new ScopeAccessRequirement(AuthzConstants.PDP_SCOPE)));
     });
 
     services.AddTransient<IAuthorizationHandler, ClaimAccessHandler>();
+    services.AddTransient<IAuthorizationHandler, ScopeAccessHandler>();
 
     services.Configure<KestrelServerOptions>(options =>
     {

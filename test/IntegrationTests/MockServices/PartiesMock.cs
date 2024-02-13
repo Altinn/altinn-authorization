@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text.Json;
+using System.Threading;
 using System.Threading.Tasks;
 using Altinn.Platform.Authorization.Models;
 using Altinn.Platform.Authorization.Services.Interface;
@@ -12,7 +13,7 @@ namespace Altinn.Platform.Authorization.IntegrationTests.MockServices
 {
     public class PartiesMock : IParties
     {
-        public Task<List<int>> GetKeyRoleParties(int userId)
+        public Task<List<int>> GetKeyRoleParties(int userId, CancellationToken cancellationToken = default)
         {
             List<int> result = new List<int>();
             switch (userId)
@@ -27,7 +28,7 @@ namespace Altinn.Platform.Authorization.IntegrationTests.MockServices
             return Task.FromResult(result);
         }
 
-        public Task<List<MainUnit>> GetMainUnits(MainUnitQuery subunitPartyIds)
+        public Task<List<MainUnit>> GetMainUnits(MainUnitQuery subunitPartyIds, CancellationToken cancellationToken = default)
         {
             List<MainUnit> result = new List<MainUnit>();
             foreach (int subunitPartyId in subunitPartyIds.PartyIds)
@@ -45,12 +46,12 @@ namespace Altinn.Platform.Authorization.IntegrationTests.MockServices
             return Task.FromResult(result);
         }
 
-        public Task<List<Party>> GetParties(int userId)
+        public Task<List<Party>> GetParties(int userId, CancellationToken cancellationToken = default)
         {
             throw new NotImplementedException();
         }
 
-        public Task<Party> GetParty(int partyId)
+        public Task<Party> GetParty(int partyId, CancellationToken cancellationToken = default)
         {
             Party party = null;
             if (partyId == 50740574)
@@ -61,7 +62,7 @@ namespace Altinn.Platform.Authorization.IntegrationTests.MockServices
             return Task.FromResult(party);
         }
 
-        public Task<bool> ValidateSelectedParty(int userId, int partyId)
+        public Task<bool> ValidateSelectedParty(int userId, int partyId, CancellationToken cancellationToken = default)
         {
             throw new NotImplementedException();
         }
