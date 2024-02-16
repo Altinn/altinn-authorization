@@ -124,6 +124,7 @@ namespace Altinn.Platform.Authorization.Controllers
         /// <summary>
         /// External endpoint for autorization 
         /// </summary>
+        [HttpPost]
         [Authorize(Policy = AuthzConstants.PDPSCOPEACCESS)]
         [Route("authorization/api/v1/authorize")]
         public async Task<ActionResult<XacmlJsonResponseExternal>> AuthorizeExternal([FromBody] XacmlJsonRequestRootExternal authorizationRequest, CancellationToken cancellationToken = default)
