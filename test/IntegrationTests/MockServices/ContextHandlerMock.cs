@@ -6,7 +6,6 @@ using System.Threading.Tasks;
 using System.Xml;
 
 using Altinn.Authorization.ABAC.Constants;
-using Altinn.Authorization.ABAC.Interface;
 using Altinn.Authorization.ABAC.Utils;
 using Altinn.Authorization.ABAC.Xacml;
 
@@ -49,7 +48,7 @@ namespace Altinn.Platform.Authorization.IntegrationTests.MockServices
             _rolesWrapper = rolesWrapper;
         }
 
-        public async Task<XacmlContextRequest> Enrich(XacmlContextRequest request)
+        public async Task<XacmlContextRequest> Enrich(XacmlContextRequest request, bool isExternalRequest)
         {
             string testID = GetTestId(_httpContextAccessor.HttpContext);
             if (!string.IsNullOrEmpty(testID) && testID.ToLower().Contains("altinnapps"))

@@ -6,7 +6,6 @@ using Altinn.ApiClients.Maskinporten.Config;
 using Altinn.ApiClients.Maskinporten.Extensions;
 using Altinn.ApiClients.Maskinporten.Interfaces;
 using Altinn.ApiClients.Maskinporten.Services;
-using Altinn.Authorization.ABAC.Interface;
 using Altinn.Common.AccessTokenClient.Services;
 using Altinn.Common.PEP.Authorization;
 using Altinn.Platform.Authorization.Clients;
@@ -71,17 +70,6 @@ await SetConfigurationProviders(builder.Configuration, builder.Environment.IsDev
 ConfigureLogging(builder.Logging);
 
 ConfigureServices(builder.Services, builder.Configuration);
-
-// Forwardlimit is set to 2 as our infrastructure has 1 proxy forward. The 2nd value from right to left is read into remoteipaddress property which is the client ip
-builder.Services.Configure<ForwardedHeadersOptions>(options =>
-{
-    options.ForwardedHeaders =
-        ForwardedHeaders.XForwardedFor;
-    options.ForwardLimit = 2;
-    options.KnownNetworks.Clear();
-    options.KnownProxies.Clear();
-    options.RequireHeaderSymmetry = false;
-});
 
 var app = builder.Build();
 
@@ -209,7 +197,7 @@ async Task ConnectToKeyVaultAndSetApplicationInsights(ConfigurationManager confi
 void ConfigureServices(IServiceCollection services, IConfiguration config)
 {
     logger.LogInformation("Startup // ConfigureServices");
-
+    services.AddAutoMapper(typeof(Program));
     services.AddControllers().AddXmlSerializerFormatters();
     services.AddHealthChecks().AddCheck<HealthCheck>("authorization_health_check");
     services.AddSingleton(config);
@@ -228,6 +216,7 @@ void ConfigureServices(IServiceCollection services, IConfiguration config)
     services.AddSingleton<IDelegationMetadataRepository, DelegationMetadataRepository>();
     services.AddSingleton<IDelegationChangeEventQueue, DelegationChangeEventQueue>();
     services.AddSingleton<IEventMapperService, EventMapperService>();
+    services.AddSingleton<IAccessManagementWrapper, AccessManagementWrapper>();
 
     services.Configure<GeneralSettings>(config.GetSection("GeneralSettings"));
     services.Configure<AzureStorageConfiguration>(config.GetSection("AzureStorageConfiguration"));
@@ -238,6 +227,7 @@ void ConfigureServices(IServiceCollection services, IConfiguration config)
     services.Configure<OedAuthzMaskinportenClientSettings>(config.GetSection("OedAuthzMaskinportenClientSettings"));
     services.AddMaskinportenHttpClient<SettingsJwkClientDefinition, OedAuthzMaskinportenClientDefinition>(oedAuthzMaskinportenClientSettings);
     services.Configure<QueueStorageSettings>(config.GetSection("QueueStorageSettings"));
+    services.AddHttpClient<AccessManagementClient>();
     services.AddHttpClient<IRegisterService, RegisterService>();
     services.AddHttpClient<PartyClient>();
     services.AddHttpClient<ProfileClient>();
@@ -278,9 +268,11 @@ void ConfigureServices(IServiceCollection services, IConfiguration config)
         options.AddPolicy(AuthzConstants.POLICY_STUDIO_DESIGNER, policy => policy.Requirements.Add(new ClaimAccessRequirement("urn:altinn:app", "studio.designer")));
         options.AddPolicy(AuthzConstants.ALTINNII_AUTHORIZATION, policy => policy.Requirements.Add(new ClaimAccessRequirement("urn:altinn:app", "sbl.authorization")));
         options.AddPolicy(AuthzConstants.DELEGATIONEVENT_FUNCTION_AUTHORIZATION, policy => policy.Requirements.Add(new ClaimAccessRequirement("urn:altinn:app", "platform.authorization")));
+        options.AddPolicy(AuthzConstants.PDPSCOPEACCESS, policy => policy.Requirements.Add(new ScopeAccessRequirement(AuthzConstants.PDP_SCOPE)));
     });
 
     services.AddTransient<IAuthorizationHandler, ClaimAccessHandler>();
+    services.AddTransient<IAuthorizationHandler, ScopeAccessHandler>();
 
     services.Configure<KestrelServerOptions>(options =>
     {
@@ -341,8 +333,6 @@ void Configure()
 {
     logger.LogInformation("Startup // Configure");
 
-    app.UseForwardedHeaders();
-
     if (app.Environment.IsDevelopment() || app.Environment.IsStaging())
     {
         logger.LogInformation("IsDevelopment || IsStaging");
@@ -392,9 +382,6 @@ void Configure()
 
     app.UseAuthentication();
     app.UseAuthorization();
-    app.UseEndpoints(endpoints =>
-    {
-        endpoints.MapControllers();
-        endpoints.MapHealthChecks("/health");
-    });
+    app.MapControllers();
+    app.MapHealthChecks("/health");
 }

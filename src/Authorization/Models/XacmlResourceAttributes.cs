@@ -44,5 +44,10 @@ namespace Altinn.Platform.Authorization.Models
         /// Gets or sets the OrganizationNumber for the org owning the resource
         /// </summary>
         public string OrganizationNumber { get; set; }
+
+        /// <summary>
+        /// Gets or sets the ssn for the person owning the resource
+        /// </summary>
+        public string Ssn { get; set; }
     }
 }

@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Threading;
+using System.Threading.Tasks;
 using Altinn.Authorization.ABAC.Xacml;
 using Altinn.Platform.Authorization.Models.EventLog;
 using Microsoft.AspNetCore.Http;
@@ -15,7 +16,8 @@ namespace Altinn.Platform.Authorization.Services.Interfaces
         /// Creates an authorization event in storage queue
         /// </summary>
         /// <param name="authorizationEvent">authorization event</param>
-        public void CreateAuthorizationEvent(AuthorizationEvent authorizationEvent);
+        /// <param name="cancellationToken">The cancellationToken</param>
+        public void CreateAuthorizationEvent(AuthorizationEvent authorizationEvent, CancellationToken cancellationToken = default);
 
         /// <summary>
         /// Creates an authorization event in storage queue
@@ -24,6 +26,7 @@ namespace Altinn.Platform.Authorization.Services.Interfaces
         /// <param name="contextRequest">the enriched context request</param>
         /// <param name="context">the http context</param>
         /// <param name="contextResponse">the decision after the request process</param>
-        public Task CreateAuthorizationEvent(IFeatureManager featureManager, XacmlContextRequest contextRequest, HttpContext context, XacmlContextResponse contextResponse);
+        /// <param name="cancellationToken">The cancellationToken</param>
+        public Task CreateAuthorizationEvent(IFeatureManager featureManager, XacmlContextRequest contextRequest, HttpContext context, XacmlContextResponse contextResponse, CancellationToken cancellationToken = default);
     }
 }

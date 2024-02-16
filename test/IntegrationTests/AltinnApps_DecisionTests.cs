@@ -1,5 +1,6 @@
 using System;
 using System.Net.Http;
+using System.Threading;
 using System.Threading.Tasks;
 using Altinn.Authorization.ABAC.Interface;
 using Altinn.Authorization.ABAC.Xacml;
@@ -47,10 +48,11 @@ namespace Altinn.Platform.Authorization.IntegrationTests
                 .Setup(m => m.IsEnabledAsync("AuditLog"))
                 .Returns(Task.FromResult(true));
             Mock<IEventsQueueClient> eventQueue = new Mock<IEventsQueueClient>();
-            eventQueue.Setup(q => q.EnqueueAuthorizationEvent(It.IsAny<string>()));
+            eventQueue.Setup(q => q.EnqueueAuthorizationEvent(It.IsAny<string>(), It.IsAny<CancellationToken>()));
             AuthorizationEvent expectedAuthorizationEvent = TestSetupUtil.GetAuthorizationEvent(testCase);
 
             HttpClient client = GetTestClient(eventQueue.Object, featureManageMock.Object, systemClock.Object);
+            client.DefaultRequestHeaders.Add("x-forwarded-for", "51.120.0.114, 10.122.16.225");
             HttpRequestMessage httpRequestMessage = TestSetupUtil.CreateXacmlRequest(testCase);
             XacmlContextResponse expected = TestSetupUtil.ReadExpectedResponse(testCase);
 
@@ -73,7 +75,7 @@ namespace Altinn.Platform.Authorization.IntegrationTests
                 .Returns(Task.FromResult(false));
 
             Mock<IEventsQueueClient> eventQueue = new Mock<IEventsQueueClient>();
-            eventQueue.Setup(q => q.EnqueueAuthorizationEvent(It.IsAny<string>()));
+            eventQueue.Setup(q => q.EnqueueAuthorizationEvent(It.IsAny<string>(), It.IsAny<CancellationToken>()));
             AuthorizationEvent expectedAuthorizationEvent = TestSetupUtil.GetAuthorizationEvent(testCase);
 
             HttpClient client = GetTestClient(eventQueue.Object, featureManageMock.Object);
@@ -98,7 +100,7 @@ namespace Altinn.Platform.Authorization.IntegrationTests
                 .Setup(m => m.IsEnabledAsync("AuditLog"))
                 .Returns(Task.FromResult(true));
             Mock<IEventsQueueClient> eventQueue = new Mock<IEventsQueueClient>();
-            eventQueue.Setup(q => q.EnqueueAuthorizationEvent(It.IsAny<string>()));
+            eventQueue.Setup(q => q.EnqueueAuthorizationEvent(It.IsAny<string>(), It.IsAny<CancellationToken>()));
             AuthorizationEvent expectedAuthorizationEvent = TestSetupUtil.GetAuthorizationEvent(testCase);
 
             HttpClient client = GetTestClient(eventQueue.Object, featureManageMock.Object, systemClock.Object);            
@@ -153,10 +155,11 @@ namespace Altinn.Platform.Authorization.IntegrationTests
                 .Setup(m => m.IsEnabledAsync("AuditLog"))
                 .Returns(Task.FromResult(true));
             Mock<IEventsQueueClient> eventQueue = new Mock<IEventsQueueClient>();
-            eventQueue.Setup(q => q.EnqueueAuthorizationEvent(It.IsAny<string>()));
+            eventQueue.Setup(q => q.EnqueueAuthorizationEvent(It.IsAny<string>(), It.IsAny<CancellationToken>()));
             AuthorizationEvent expectedAuthorizationEvent = TestSetupUtil.GetAuthorizationEvent(testCase);
 
             HttpClient client = GetTestClient(eventQueue.Object, featureManageMock.Object, systemClock.Object);
+            client.DefaultRequestHeaders.Add("x-forwarded-for", "51.120.0.114,20.251.13.24, 10.122.16.225");
             HttpRequestMessage httpRequestMessage = TestSetupUtil.CreateXacmlRequest(testCase);
             XacmlContextResponse expected = TestSetupUtil.ReadExpectedResponse(testCase);
 
@@ -238,7 +241,7 @@ namespace Altinn.Platform.Authorization.IntegrationTests
                 .Setup(m => m.IsEnabledAsync("AuditLog"))
                 .Returns(Task.FromResult(true));
             Mock<IEventsQueueClient> eventQueue = new Mock<IEventsQueueClient>();
-            eventQueue.Setup(q => q.EnqueueAuthorizationEvent(It.IsAny<string>()));
+            eventQueue.Setup(q => q.EnqueueAuthorizationEvent(It.IsAny<string>(), It.IsAny<CancellationToken>()));
             AuthorizationEvent expectedAuthorizationEvent = null;
 
             HttpClient client = GetTestClient();
@@ -424,6 +427,7 @@ namespace Altinn.Platform.Authorization.IntegrationTests
             {
                 builder.ConfigureTestServices(services =>
                 {
+                    services.AddSingleton<IAccessManagementWrapper, AccessManagementWrapperMock>();
                     services.AddSingleton<IInstanceMetadataRepository, InstanceMetadataRepositoryMock>();
                     services.AddSingleton<IPolicyRetrievalPoint, PolicyRetrievalPointMock>();
                     services.AddSingleton<IDelegationMetadataRepository, DelegationMetadataRepositoryMock>();

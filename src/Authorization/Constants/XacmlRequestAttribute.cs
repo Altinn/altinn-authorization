@@ -43,7 +43,12 @@ namespace Altinn.Platform.Authorization.Constants
         /// <summary>
         /// xacml string that represents organization number 
         /// </summary>
-        public const string OrganizationNumberAttribute = "urn:altinn:organizationnumber";
+        public const string OrganizationNumberAttribute = "urn:altinn:organization:identifier-no";
+
+        /// <summary>
+        /// Legacu xacml string that represents organization number. Can be removed when all peps are updated
+        /// </summary>
+        public const string LegacyOrganizationNumberAttribute = "urn:altinn:organizationnumber";
 
         /// <summary>
         /// xacml string that represents user
@@ -56,13 +61,18 @@ namespace Altinn.Platform.Authorization.Constants
         public const string RoleAttribute = "urn:altinn:rolecode";
 
         /// <summary>
-        /// Digitalt Dødsbo Role Code Attribute match identifier
+        /// Digitalt Dodsbo Role Code Attribute match identifier
         /// </summary>
         public const string OedRoleAttribute = "urn:digitaltdodsbo:rolecode";
 
         /// <summary>
         /// xacml string that represents resource
         /// </summary>
-        public const string ResourceRegistryAttribute = "urn:altinn:resourceregistry";
+        public const string ResourceRegistryAttribute = "urn:altinn:resource";
+
+        /// <summary>
+        /// xacml string that represents ssn for 
+        /// </summary>
+        public const string SsnAttribute = "urn:altinn:person:identifier-no";
     }
 }

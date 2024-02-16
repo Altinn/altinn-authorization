@@ -9,6 +9,22 @@ namespace Altinn.Platform.Authorization.Models
     public class AttributeMatch
     {
         /// <summary>
+        /// // Initializes a new instance of the <see cref="AttributeMatch"/> class
+        /// </summary>
+        public AttributeMatch()
+        {
+        }
+
+        /// <summary>
+        /// // Initializes a new instance of the <see cref="AttributeMatch"/> class
+        /// </summary>
+        public AttributeMatch(string id, string value)
+        {
+            Id = id;
+            Value = value;
+        }
+
+        /// <summary>
         /// Gets or sets the attribute id for the match
         /// </summary>
         [Required]

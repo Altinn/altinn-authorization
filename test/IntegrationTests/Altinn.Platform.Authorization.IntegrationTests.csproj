@@ -1,7 +1,7 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net7.0</TargetFramework>
+    <TargetFramework>net8.0</TargetFramework>
     <IsPackable>false</IsPackable>
   </PropertyGroup>
 
@@ -10,10 +10,10 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" Version="7.0.15" />
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.8.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" Version="8.0.2" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.9.0" />
     <PackageReference Include="Moq" Version="4.20.70" />
-    <PackageReference Include="MSTest.TestFramework" Version="3.1.1" />
+    <PackageReference Include="MSTest.TestFramework" Version="3.2.0" />
     <PackageReference Include="xunit" Version="2.6.6" />
     <PackageReference Include="xunit.runner.visualstudio" Version="2.5.6">
       <PrivateAssets>all</PrivateAssets>
@@ -119,6 +119,20 @@
     <None Remove="Data\Xacml\3.0\ResourceRegistry\AltinnResourceRegistry0003Response.json" />
     <None Remove="Data\Xacml\3.0\ResourceRegistry\AltinnResourceRegistry0004Request.json" />
     <None Remove="Data\Xacml\3.0\ResourceRegistry\AltinnResourceRegistry0004Response.json" />
+    <None Remove="Data\Xacml\3.0\ResourceRegistry\AltinnResourceRegistry0005Request.json" />
+    <None Remove="Data\Xacml\3.0\ResourceRegistry\AltinnResourceRegistry0005Response.json" />
+    <None Remove="Data\Xacml\3.0\ResourceRegistry\AltinnResourceRegistry0006Request.json" />
+    <None Remove="Data\Xacml\3.0\ResourceRegistry\AltinnResourceRegistry0006Response.json" />
+    <None Remove="Data\Xacml\3.0\ResourceRegistry\AltinnResourceRegistry0007Request.json" />
+    <None Remove="Data\Xacml\3.0\ResourceRegistry\AltinnResourceRegistry0007Response.json" />
+    <None Remove="Data\Xacml\3.0\ResourceRegistry\AltinnResourceRegistry0008Request.json" />
+    <None Remove="Data\Xacml\3.0\ResourceRegistry\AltinnResourceRegistry0008Response.json" />
+    <None Remove="Data\Xacml\3.0\ResourceRegistry\AltinnResourceRegistry0009Request.json" />
+    <None Remove="Data\Xacml\3.0\ResourceRegistry\AltinnResourceRegistry0009Response.json" />
+    <None Remove="Data\Xacml\3.0\ResourceRegistry\AltinnResourceRegistry0010Request.json" />
+    <None Remove="Data\Xacml\3.0\ResourceRegistry\AltinnResourceRegistry0010Response.json" />
+    <None Remove="Data\Xacml\3.0\ResourceRegistry\AltinnResourceRegistry0011Request.json" />
+    <None Remove="Data\Xacml\3.0\ResourceRegistry\AltinnResourceRegistry0011Response.json" />
     <None Remove="Data\Xacml\3.0\ResourceRegistry\oed-role-formuesfullmakt\policy.xml" />
     <None Remove="Data\Xacml\3.0\ResourceRegistry\apidelegation\policy.xml" />
     <None Remove="Data\Xacml\3.0\ResourceRegistry\ResourceRegistry_OedFormuesfullmakt_Json_IndeterminateRequest.json" />
@@ -130,9 +144,53 @@
     <None Remove="Data\Xacml\3.0\ResourceRegistry\ResourceRegistry_OedFormuesfullmakt_Xml_PermitRequest.xml" />
     <None Remove="Data\Xacml\3.0\ResourceRegistry\ResourceRegistry_OedFormuesfullmakt_Xml_PermitResponse.xml" />
     <None Remove="Data\Xacml\3.0\ResourceRegistry\eventlog\AltinnResourceRegistry0004Event.json" />
+    <None Remove="Data\Xacml\3.0\ResourceRegistry\ttd-externalpdp-resource2\policy.xml" />
+    <None Remove="Data\Xacml\3.0\ResourceRegistry\ttd-externalpdp-resource1\policy.xml" />
   </ItemGroup>
 
   <ItemGroup>
+    <Content Update="Data\Xacml\3.0\ResourceRegistry\AltinnResourceRegistry0008Response.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Update="Data\Xacml\3.0\ResourceRegistry\AltinnResourceRegistry0011Request.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Update="Data\Xacml\3.0\ResourceRegistry\AltinnResourceRegistry0010Request.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Update="Data\Xacml\3.0\ResourceRegistry\AltinnResourceRegistry0010Response.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Update="Data\Xacml\3.0\ResourceRegistry\AltinnResourceRegistry0009Response.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Update="Data\Xacml\3.0\ResourceRegistry\AltinnResourceRegistry0009Request.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Update="Data\Xacml\3.0\ResourceRegistry\AltinnResourceRegistry0011Response.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Update="Data\Xacml\3.0\ResourceRegistry\AltinnResourceRegistry0008Request.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Update="Data\Xacml\3.0\ResourceRegistry\AltinnResourceRegistry0007Response.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Update="Data\Xacml\3.0\ResourceRegistry\AltinnResourceRegistry0007Request.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Update="Data\Xacml\3.0\ResourceRegistry\AltinnResourceRegistry0006Response.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Update="Data\Xacml\3.0\ResourceRegistry\AltinnResourceRegistry0006Request.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Update="Data\Xacml\3.0\ResourceRegistry\AltinnResourceRegistry0005Response.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Update="Data\Xacml\3.0\ResourceRegistry\AltinnResourceRegistry0005Request.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Update="Data\Xacml\3.0\ResourceRegistry\oed-role-formuesfullmakt\policy.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

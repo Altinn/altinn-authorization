@@ -79,7 +79,7 @@ namespace Altinn.Authorization.ABAC.UnitTests
             {
                 AssertionUtil.AssertPolicyEqual(originalPolicy, serializedPolicy);
             }
-            catch (EqualException e)
+            catch (EqualException)
             {
                 Assert.Equal(expectedMessage, originalAttributeValue);
                 Assert.Equal(actualMessage, actualAttributeValue);
