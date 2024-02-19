@@ -27,6 +27,7 @@ namespace Altinn.Platform.Authorization.Services
         private readonly GeneralSettings _generalSettings;
         private readonly IAccessTokenGenerator _accessTokenGenerator;
         private readonly ILogger<IRegisterService> _logger;
+        private readonly JsonSerializerOptions _serializerOptions = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
 
         /// <summary>
         /// Initializes a new instance of the <see cref="RegisterService"/> class.
@@ -61,7 +62,7 @@ namespace Altinn.Platform.Authorization.Services
             if (response.StatusCode == HttpStatusCode.OK)
             {
                 string responseContent = await response.Content.ReadAsStringAsync();
-                party = JsonSerializer.Deserialize<Party>(responseContent);
+                party = JsonSerializer.Deserialize<Party>(responseContent, _serializerOptions);
             }
             else
             {
@@ -88,7 +89,7 @@ namespace Altinn.Platform.Authorization.Services
             if (response.StatusCode == HttpStatusCode.OK)
             {
                 string responseContent = await response.Content.ReadAsStringAsync();
-                Party party = JsonSerializer.Deserialize<Party>(responseContent);
+                Party party = JsonSerializer.Deserialize<Party>(responseContent, _serializerOptions);
                 return party.PartyId;
             }
             else
