@@ -43,6 +43,8 @@ namespace Altinn.Platform.Authorization.IntegrationTests
         public async Task PDP_Decision_AltinnApps0001()
         {
             string testCase = "AltinnApps0001";
+            string bearerToken = "eyJhbGciOiJSUzI1NiIsImtpZCI6IjM4OTJENDgyRTYyMDI2NzI1MTJBRTBDMkQ5REJBQzBERTRBNEVDMzciLCJ4NXQiOiJPSkxVZ3VZZ0puSlJLdURDMmR1c0RlU2s3RGMiLCJ0eXAiOiJKV1QifQ.eyJuYW1laWQiOiIyMDAxMDM3NyIsInVybjphbHRpbm46dXNlcmlkIjoiMjAwMTAzNzciLCJ1cm46YWx0aW5uOnBhcnR5aWQiOjUwOTExMTQzLCJ1cm46YWx0aW5uOmF1dGhlbnRpY2F0ZW1ldGhvZCI6IlZpcmtzb21oZXRzQnJ1a2VyIiwidXJuOmFsdGlubjphdXRobGV2ZWwiOjMsImp0aSI6IjA1ZWRiYzA0LWEzYWMtNDRhMy1hMjQyLTJjMWUzNTRkMzAzMiIsIm5iZiI6MTcwNzI5MzI0NiwiZXhwIjoxNzA3Mjk1MDQ2LCJpYXQiOjE3MDcyOTMyNDZ9.vuiYB8kqR0wXRjRuChlSpnPy4FDEyqRWSOf9tkNHNWaeyutpnmQCF8hnKodZd5vuwQTSW53FRqab0by4vN-W0YhU-NSDEQSlI75ING5uHKrw5l-D9uuA58jk35cr4cY_tcfamogAdISBBnRi5kqo7b8f_3yFfYVGlnhO3EYzRQl5gaJLi3OY9q8O6bdyPtJ78O_ksoYKiAT-N3WQqs0uHP6u5MXANKmVd7NRZiYaAPO2W7bS_KfMLolDLymX0hULjJc_DdAGfRhCaWxkPowdQToDKfL0vCgpHmPndwXQF7H_Yp7L9fiZIVr3ojwMNe0UI6-tI3LVf3pZ_c95u-eVCA";
+            
             Mock<IFeatureManager> featureManageMock = new Mock<IFeatureManager>();
             featureManageMock
                 .Setup(m => m.IsEnabledAsync("AuditLog"))
@@ -53,6 +55,7 @@ namespace Altinn.Platform.Authorization.IntegrationTests
 
             HttpClient client = GetTestClient(eventQueue.Object, featureManageMock.Object, systemClock.Object);
             client.DefaultRequestHeaders.Add("x-forwarded-for", "51.120.0.114, 10.122.16.225");
+            client.DefaultRequestHeaders.Add("Authorization", $"Bearer {bearerToken}");
             HttpRequestMessage httpRequestMessage = TestSetupUtil.CreateXacmlRequest(testCase);
             XacmlContextResponse expected = TestSetupUtil.ReadExpectedResponse(testCase);
 

@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
+using System.Security.Claims;
 using System.Text.Json;
 using System.Threading.Tasks;
 using Altinn.Authorization.ABAC.Constants;
@@ -39,6 +41,7 @@ namespace Altinn.Platform.Authorization.Helpers
                 authorizationEvent = new AuthorizationEvent();
                 (string resource, string instanceId, int? resourcePartyId) = GetResourceAttributes(contextRequest);
                 (int? userId, int? partyId, string org, int? orgNumber) = GetSubjectInformation(contextRequest);
+                authorizationEvent.SessionId = GetSessionId(context?.Request?.Headers?["Authorization"]);
                 authorizationEvent.Created = currentDateTime;
                 authorizationEvent.Resource = resource;
                 authorizationEvent.SubjectUserId = userId;
@@ -56,7 +59,7 @@ namespace Altinn.Platform.Authorization.Helpers
 
             return authorizationEvent;
         }
-
+        
         /// <summary>
         /// Returens the policy resource type based on XacmlContextRequest
         /// </summary>
@@ -178,6 +181,40 @@ namespace Altinn.Platform.Authorization.Helpers
         {
             string[] clientIpList = context?.Request?.Headers?.GetCommaSeparatedValues("x-forwarded-for");
             return clientIpList?.Length > 0 ? clientIpList[0] : null;
+        }
+
+        /// <summary>
+        /// Gets the session id from the token
+        /// </summary>
+        /// <param name="authorizationHeader">the authorizaion header from the request</param>
+        /// <returns></returns>
+        public static string GetSessionId(string authorizationHeader)
+        {
+            string jwtToken = authorizationHeader?.ToString().Substring("Bearer ".Length).Trim();
+
+            string? sessionId = null;
+            JwtSecurityTokenHandler tokenHandler = new JwtSecurityTokenHandler();
+
+            if (!string.IsNullOrEmpty(jwtToken))
+            {
+                JwtSecurityToken token = tokenHandler.ReadJwtToken(jwtToken);
+
+                if (token != null)
+                {
+                    foreach (Claim claim in token.Claims)
+                    {
+                        // Handle various claim types
+                        switch (claim.Type)
+                        {
+                            case "jti":
+                                sessionId = claim.Value;
+                                break;
+                        }
+                    }
+                }
+            }
+
+            return sessionId;
         }
     }
 }
