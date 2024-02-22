@@ -185,6 +185,10 @@ namespace Altinn.Common.PEP.Helpers
                 {
                     attributes.Add(CreateXacmlJsonAttribute(AltinnXacmlUrns.Scope, claim.Value, DefaultType, claim.Issuer));
                 }
+                else if (IsJtiClaim(claim.Type))
+                {
+                    attributes.Add(CreateXacmlJsonAttribute(AltinnXacmlUrns.Jti, claim.Value, DefaultType, claim.Issuer));
+                }
                 else if (IsValidUrn(claim.Type))
                 {
                     attributes.Add(CreateXacmlJsonAttribute(claim.Type, claim.Value, DefaultType, claim.Issuer));
@@ -289,6 +293,11 @@ namespace Altinn.Common.PEP.Helpers
         private static bool IsScopeClaim(string value)
         {
             return value.Equals("scope");
+        }
+
+        private static bool IsJtiClaim(string value)
+        {
+            return value.Equals("jti");
         }
 
         /// <summary>
