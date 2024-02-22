@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
+using System.Reflection.PortableExecutable;
 using System.Security.Claims;
 using System.Text.RegularExpressions;
 
@@ -35,6 +37,7 @@ namespace Altinn.Common.PEP.Helpers
         private const string OrganizationHeaderTrigger = "organization";
         private const string PersonHeader = "Altinn-Party-SocialSecurityNumber";
         private const string OrganizationNumberHeader = "Altinn-Party-OrganizationNumber";
+        private const string XForwardedForHeader = "x-forwarded-for";
 
         private const string PolicyObligationMinAuthnLevel = "urn:altinn:minimum-authenticationlevel";
         private const string PolicyObligationMinAuthnLevelOrg = "urn:altinn:minimum-authenticationlevel-org";
@@ -73,7 +76,7 @@ namespace Altinn.Common.PEP.Helpers
         /// <param name="requirement">The access requirements</param>
         /// <param name="routeData">The route data from a request.</param>
         /// <returns>A decision request</returns>
-        public static XacmlJsonRequestRoot CreateDecisionRequest(AuthorizationHandlerContext context, AppAccessRequirement requirement, RouteData routeData)
+        public static XacmlJsonRequestRoot CreateDecisionRequest(AuthorizationHandlerContext context, AppAccessRequirement requirement, RouteData routeData, IHeaderDictionary headers)
         {
             XacmlJsonRequest request = new XacmlJsonRequest();
             request.AccessSubject = new List<XacmlJsonCategory>();
@@ -98,6 +101,11 @@ namespace Altinn.Common.PEP.Helpers
             request.AccessSubject.Add(CreateSubjectCategory(context.User.Claims));
             request.Action.Add(CreateActionCategory(requirement.ActionType));
             request.Resource.Add(CreateResourceCategory(org, app, instanceOwnerPartyId, instanceGuid, null));
+
+            if (headers.ContainsKey(XForwardedForHeader))
+            {
+                request.XForwardedForHeader = headers[XForwardedForHeader];
+            }
 
             XacmlJsonRequestRoot jsonRequest = new XacmlJsonRequestRoot() { Request = request };
 
@@ -136,6 +144,11 @@ namespace Altinn.Common.PEP.Helpers
             else
             {
                 throw new ArgumentException("invalid party " + party);
+            }
+
+            if (headers.ContainsKey(XForwardedForHeader))
+            {
+                request.XForwardedForHeader = headers[XForwardedForHeader];
             }
 
             XacmlJsonRequestRoot jsonRequest = new XacmlJsonRequestRoot() { Request = request };

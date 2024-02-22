@@ -5,6 +5,7 @@ using Altinn.Common.PEP.Helpers;
 using Altinn.Common.PEP.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.Logging;
 
@@ -47,7 +48,9 @@ namespace Altinn.Common.PEP.Authorization
         /// <returns>A Task</returns>
         protected override async Task HandleRequirementAsync(AuthorizationHandlerContext context, AppAccessRequirement requirement)
         {
-            XacmlJsonRequestRoot request = DecisionHelper.CreateDecisionRequest(context, requirement, _httpContextAccessor.HttpContext.GetRouteData());
+            HttpContext httpContext = _httpContextAccessor.HttpContext;
+
+            XacmlJsonRequestRoot request = DecisionHelper.CreateDecisionRequest(context, requirement, _httpContextAccessor.HttpContext.GetRouteData(), _httpContextAccessor.HttpContext.Request.Headers);
 
             XacmlJsonResponse response = await _pdp.GetDecisionForRequest(request);
 
