@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
+using System.Security.Claims;
 using System.Text.Json;
 using System.Threading.Tasks;
 using Altinn.Authorization.ABAC.Constants;
@@ -38,7 +40,8 @@ namespace Altinn.Platform.Authorization.Helpers
             {
                 authorizationEvent = new AuthorizationEvent();
                 (string resource, string instanceId, int? resourcePartyId) = GetResourceAttributes(contextRequest);
-                (int? userId, int? partyId, string org, int? orgNumber) = GetSubjectInformation(contextRequest);
+                (int? userId, int? partyId, string org, int? orgNumber, string? sessionId) = GetSubjectInformation(contextRequest);
+                authorizationEvent.SessionId = sessionId;
                 authorizationEvent.Created = currentDateTime;
                 authorizationEvent.Resource = resource;
                 authorizationEvent.SubjectUserId = userId;
@@ -56,7 +59,7 @@ namespace Altinn.Platform.Authorization.Helpers
 
             return authorizationEvent;
         }
-
+        
         /// <summary>
         /// Returens the policy resource type based on XacmlContextRequest
         /// </summary>
@@ -110,12 +113,13 @@ namespace Altinn.Platform.Authorization.Helpers
         /// </summary>
         /// <param name="request">The requestId</param>
         /// <returns></returns>
-        public static (int? UserId, int? PartyId, string Org, int? OrgNumber) GetSubjectInformation(XacmlContextRequest request)
+        public static (int? UserId, int? PartyId, string Org, int? OrgNumber, string? sessionId) GetSubjectInformation(XacmlContextRequest request)
         {
             int? userId = null;
             int? partyId = null;
             string org = string.Empty;
             int? orgNumber = null;
+            string? sessionId = null;
 
             foreach (XacmlContextAttributes attr in request.Attributes.Where(attr => attr.Category.OriginalString.Equals(XacmlConstants.MatchAttributeCategory.Subject)))
             {
@@ -140,10 +144,15 @@ namespace Altinn.Platform.Authorization.Helpers
                     {
                         orgNumber = Convert.ToInt32(xacmlAtr.AttributeValues.First().Value);
                     }
+
+                    if (xacmlAtr.AttributeId.OriginalString.Equals(AltinnXacmlConstants.MatchAttributeIdentifiers.SessionIdAttribute))
+                    {
+                        sessionId = xacmlAtr.AttributeValues.First().Value;
+                    }
                 }
             }
 
-            return (userId, partyId, org, orgNumber);
+            return (userId, partyId, org, orgNumber, sessionId);
         }
 
         /// <summary>

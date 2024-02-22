@@ -3,14 +3,14 @@
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
     <OutputType>Library</OutputType>
-    <AssemblyVersion>1.4.0.0</AssemblyVersion>
-    <FileVersion>1.4.0.0</FileVersion>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <FileVersion>2.0.0.0</FileVersion>
     <!-- SonarCloud needs this -->
     <ProjectGuid>{92f10f90-79c5-459f-8238-0ec4d02aa93c}</ProjectGuid>
     <IsPackable>true</IsPackable>
     <!-- NuGet package properties -->
     <PackageId>Altinn.Common.PEP</PackageId>
-    <PackageVersion>1.4.0</PackageVersion>
+    <PackageVersion>2.0.0</PackageVersion>
     <PackageTags>Altinn;Studio;Authorization;Policy;Enforcement;Point</PackageTags>
     <Description>
 		Policy Enforcement Point for Attribute-based authorization using Altinn.Authorization.ABAC in ASP.Net apps.

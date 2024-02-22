@@ -75,8 +75,9 @@ namespace Altinn.Common.PEP.Helpers
         /// <param name="context">The current <see cref="AuthorizationHandlerContext"/></param>
         /// <param name="requirement">The access requirements</param>
         /// <param name="routeData">The route data from a request.</param>
+        /// <param name="headers">Request headers</param>
         /// <returns>A decision request</returns>
-        public static XacmlJsonRequestRoot CreateDecisionRequest(AuthorizationHandlerContext context, AppAccessRequirement requirement, RouteData routeData, IHeaderDictionary headers)
+        public static XacmlJsonRequestRoot CreateDecisionRequest(AuthorizationHandlerContext context, AppAccessRequirement requirement, RouteData routeData, IHeaderDictionary? headers)
         {
             XacmlJsonRequest request = new XacmlJsonRequest();
             request.AccessSubject = new List<XacmlJsonCategory>();
@@ -102,7 +103,7 @@ namespace Altinn.Common.PEP.Helpers
             request.Action.Add(CreateActionCategory(requirement.ActionType));
             request.Resource.Add(CreateResourceCategory(org, app, instanceOwnerPartyId, instanceGuid, null));
 
-            if (headers.ContainsKey(XForwardedForHeader))
+            if (headers != null && headers.ContainsKey(XForwardedForHeader))
             {
                 request.XForwardedForHeader = headers[XForwardedForHeader];
             }
@@ -146,7 +147,7 @@ namespace Altinn.Common.PEP.Helpers
                 throw new ArgumentException("invalid party " + party);
             }
 
-            if (headers.ContainsKey(XForwardedForHeader))
+            if (headers != null && headers.ContainsKey(XForwardedForHeader))
             {
                 request.XForwardedForHeader = headers[XForwardedForHeader];
             }
@@ -197,6 +198,10 @@ namespace Altinn.Common.PEP.Helpers
                 else if (IsScopeClaim(claim.Type))
                 {
                     attributes.Add(CreateXacmlJsonAttribute(AltinnXacmlUrns.Scope, claim.Value, DefaultType, claim.Issuer));
+                }
+                else if (IsJtiClaim(claim.Type))
+                {
+                    attributes.Add(CreateXacmlJsonAttribute(AltinnXacmlUrns.SessionId, claim.Value, DefaultType, claim.Issuer));
                 }
                 else if (IsValidUrn(claim.Type))
                 {
@@ -302,6 +307,11 @@ namespace Altinn.Common.PEP.Helpers
         private static bool IsScopeClaim(string value)
         {
             return value.Equals("scope");
+        }
+
+        private static bool IsJtiClaim(string value)
+        {
+            return value.Equals("jti");
         }
 
         /// <summary>

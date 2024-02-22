@@ -74,5 +74,10 @@ namespace Altinn.Common.PEP.Constants
         /// Get the value scope
         /// </summary>
         public const string Scope = "urn:scope";
+
+        /// <summary>
+        /// Get the value sessionid
+        /// </summary>
+        public const string SessionId = "urn:altinn:sessionid";
     }
 }
