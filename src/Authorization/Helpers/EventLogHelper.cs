@@ -40,8 +40,8 @@ namespace Altinn.Platform.Authorization.Helpers
             {
                 authorizationEvent = new AuthorizationEvent();
                 (string resource, string instanceId, int? resourcePartyId) = GetResourceAttributes(contextRequest);
-                (int? userId, int? partyId, string org, int? orgNumber) = GetSubjectInformation(contextRequest);
-                authorizationEvent.SessionId = GetSessionId(context?.Request?.Headers?["Authorization"]);
+                (int? userId, int? partyId, string org, int? orgNumber, string? sessionId) = GetSubjectInformation(contextRequest);
+                authorizationEvent.SessionId = sessionId;
                 authorizationEvent.Created = currentDateTime;
                 authorizationEvent.Resource = resource;
                 authorizationEvent.SubjectUserId = userId;
@@ -113,12 +113,13 @@ namespace Altinn.Platform.Authorization.Helpers
         /// </summary>
         /// <param name="request">The requestId</param>
         /// <returns></returns>
-        public static (int? UserId, int? PartyId, string Org, int? OrgNumber) GetSubjectInformation(XacmlContextRequest request)
+        public static (int? UserId, int? PartyId, string Org, int? OrgNumber, string? sessionId) GetSubjectInformation(XacmlContextRequest request)
         {
             int? userId = null;
             int? partyId = null;
             string org = string.Empty;
             int? orgNumber = null;
+            string? sessionId = null;
 
             foreach (XacmlContextAttributes attr in request.Attributes.Where(attr => attr.Category.OriginalString.Equals(XacmlConstants.MatchAttributeCategory.Subject)))
             {
@@ -143,10 +144,15 @@ namespace Altinn.Platform.Authorization.Helpers
                     {
                         orgNumber = Convert.ToInt32(xacmlAtr.AttributeValues.First().Value);
                     }
+
+                    if (xacmlAtr.AttributeId.OriginalString.Equals(AltinnXacmlConstants.MatchAttributeIdentifiers.SessionIdAttribute))
+                    {
+                        sessionId = xacmlAtr.AttributeValues.First().Value;
+                    }
                 }
             }
 
-            return (userId, partyId, org, orgNumber);
+            return (userId, partyId, org, orgNumber, sessionId);
         }
 
         /// <summary>
@@ -181,40 +187,6 @@ namespace Altinn.Platform.Authorization.Helpers
         {
             string[] clientIpList = context?.Request?.Headers?.GetCommaSeparatedValues("x-forwarded-for");
             return clientIpList?.Length > 0 ? clientIpList[0] : null;
-        }
-
-        /// <summary>
-        /// Gets the session id from the token
-        /// </summary>
-        /// <param name="authorizationHeader">the authorizaion header from the request</param>
-        /// <returns></returns>
-        public static string GetSessionId(string authorizationHeader)
-        {
-            string jwtToken = authorizationHeader?.ToString().Substring("Bearer ".Length).Trim();
-
-            string? sessionId = null;
-            JwtSecurityTokenHandler tokenHandler = new JwtSecurityTokenHandler();
-
-            if (!string.IsNullOrEmpty(jwtToken))
-            {
-                JwtSecurityToken token = tokenHandler.ReadJwtToken(jwtToken);
-
-                if (token != null)
-                {
-                    foreach (Claim claim in token.Claims)
-                    {
-                        // Handle various claim types
-                        switch (claim.Type)
-                        {
-                            case "jti":
-                                sessionId = claim.Value;
-                                break;
-                        }
-                    }
-                }
-            }
-
-            return sessionId;
         }
     }
 }

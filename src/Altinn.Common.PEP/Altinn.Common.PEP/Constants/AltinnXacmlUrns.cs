@@ -78,6 +78,6 @@ namespace Altinn.Common.PEP.Constants
         /// <summary>
         /// Get the value sessionid
         /// </summary>
-        public const string Jti = "urn:jti";
+        public const string SessionId = "urn:altinn:sessionid";
     }
 }

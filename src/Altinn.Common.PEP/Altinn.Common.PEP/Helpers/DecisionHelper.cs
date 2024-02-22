@@ -187,7 +187,7 @@ namespace Altinn.Common.PEP.Helpers
                 }
                 else if (IsJtiClaim(claim.Type))
                 {
-                    attributes.Add(CreateXacmlJsonAttribute(AltinnXacmlUrns.Jti, claim.Value, DefaultType, claim.Issuer));
+                    attributes.Add(CreateXacmlJsonAttribute(AltinnXacmlUrns.SessionId, claim.Value, DefaultType, claim.Issuer));
                 }
                 else if (IsValidUrn(claim.Type))
                 {

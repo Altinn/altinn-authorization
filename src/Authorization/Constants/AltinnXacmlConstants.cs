@@ -90,6 +90,11 @@ namespace Altinn.Platform.Authorization.Constants
             /// Digitalt Dødsbo Role Code Attribute match identifier
             /// </summary>
             public const string OedRoleAttribute = "urn:digitaltdodsbo:rolecode";
+
+            /// <summary>
+            /// SessionId Attribute match identifier
+            /// </summary>
+            public const string SessionIdAttribute = "urn:altinn:sessionid";
         }
 
         /// <summary>
