@@ -10,7 +10,7 @@
     <IsPackable>true</IsPackable>
     <!-- NuGet package properties -->
     <PackageId>Altinn.Common.PEP</PackageId>
-    <PackageVersion>2.0.0-alpha</PackageVersion>
+    <PackageVersion>2.0.0</PackageVersion>
     <PackageTags>Altinn;Studio;Authorization;Policy;Enforcement;Point</PackageTags>
     <Description>
 		Policy Enforcement Point for Attribute-based authorization using Altinn.Authorization.ABAC in ASP.Net apps.
