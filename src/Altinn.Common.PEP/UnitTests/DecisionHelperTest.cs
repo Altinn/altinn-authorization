@@ -27,7 +27,7 @@ namespace UnitTests
         public void CreateXacmlJsonRequest_TC01()
         {
             // Arrange & Act
-            XacmlJsonRequestRoot requestRoot = DecisionHelper.CreateDecisionRequest(Org, App, CreateUserClaims(false), ActionType, PartyId, null);
+            XacmlJsonRequestRoot requestRoot = DecisionHelper.CreateDecisionRequest(Org, App, CreateUserClaims(false), ActionType, PartyId, null, null);
             XacmlJsonRequest request = requestRoot.Request;
 
             // Assert
@@ -44,7 +44,7 @@ namespace UnitTests
         public void CreateXacmlJsonRequest_TC02()
         {
             // Arrange & Act
-            XacmlJsonRequestRoot requestRoot = DecisionHelper.CreateDecisionRequest(Org, App, CreateUserClaims(true), ActionType, PartyId, null);
+            XacmlJsonRequestRoot requestRoot = DecisionHelper.CreateDecisionRequest(Org, App, CreateUserClaims(true), ActionType, PartyId, null, null);
             XacmlJsonRequest request = requestRoot.Request;
 
             // Assert
@@ -61,7 +61,7 @@ namespace UnitTests
         public void CreateXacmlJsonRequest_TC03()
         {
             // Arrange & Act
-            XacmlJsonRequestRoot requestRoot = DecisionHelper.CreateDecisionRequest(Org, App, CreateMaskinportenClaims("12313", "altinn.master"), ActionType, PartyId, null);
+            XacmlJsonRequestRoot requestRoot = DecisionHelper.CreateDecisionRequest(Org, App, CreateMaskinportenClaims("12313", "altinn.master"), ActionType, PartyId, null, null);
             XacmlJsonRequest request = requestRoot.Request;
 
             // Assert
