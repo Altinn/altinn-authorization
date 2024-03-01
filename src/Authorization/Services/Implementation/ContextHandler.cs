@@ -69,7 +69,7 @@ namespace Altinn.Platform.Authorization.Services.Implementation
         }
 
         /// <inheritdoc/>
-        public async Task<XacmlContextRequest> Enrich(XacmlContextRequest request, bool isExternalRequest, SortedDictionary<string, AuthInfo> authInfoForOneDecReq)
+        public async Task<XacmlContextRequest> Enrich(XacmlContextRequest request, bool isExternalRequest, SortedDictionary<string, AuthInfo> appInstanceInfo)
         {
             await EnrichResourceAttributes(request, isExternalRequest, appInstanceInfo);
             return await Task.FromResult(request);
@@ -80,8 +80,8 @@ namespace Altinn.Platform.Authorization.Services.Implementation
         /// </summary>
         /// <param name="request">The original Xacml Context Request</param>
         /// <param name="isExternalRequest">Defines if request comes </param>
-        /// <param name="authInfoForOneDecReq">Cache of auto info for this request</param>
-        protected async Task EnrichResourceAttributes(XacmlContextRequest request, bool isExternalRequest, SortedDictionary<string, AuthInfo> authInfoForOneDecReq)
+        /// <param name="appInstanceInfo">Cache of auto info for this request</param>
+        protected async Task EnrichResourceAttributes(XacmlContextRequest request, bool isExternalRequest, SortedDictionary<string, AuthInfo> appInstanceInfo)
         {
             XacmlContextAttributes resourceContextAttributes = request.GetResourceAttributes();
             XacmlResourceAttributes resourceAttributes = GetResourceAttributeValues(resourceContextAttributes);
@@ -100,10 +100,10 @@ namespace Altinn.Platform.Authorization.Services.Implementation
                 {
                     instanceData = new();
                     
-                    if (!authInfoForOneDecReq.TryGetValue(resourceAttributes.InstanceValue, out AuthInfo authInfo))
+                    if (!appInstanceInfo.TryGetValue(resourceAttributes.InstanceValue, out AuthInfo authInfo))
                     {
                         authInfo = await _policyInformationRepository.GetAuthInfo(resourceAttributes.InstanceValue);
-                        authInfoForOneDecReq[resourceAttributes.InstanceValue] = authInfo;
+                        appInstanceInfo[resourceAttributes.InstanceValue] = authInfo;
                     }
 
                     instanceData.Process = authInfo.Process;
