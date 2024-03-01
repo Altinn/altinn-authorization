@@ -71,7 +71,7 @@ namespace Altinn.Platform.Authorization.Services.Implementation
         /// <inheritdoc/>
         public async Task<XacmlContextRequest> Enrich(XacmlContextRequest request, bool isExternalRequest, SortedDictionary<string, AuthInfo> authInfoForOneDecReq)
         {
-            await EnrichResourceAttributes(request, isExternalRequest, authInfoForOneDecReq);
+            await EnrichResourceAttributes(request, isExternalRequest, appInstanceInfo);
             return await Task.FromResult(request);
         }
 
