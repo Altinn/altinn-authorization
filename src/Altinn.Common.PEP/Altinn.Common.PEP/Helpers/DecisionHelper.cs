@@ -51,9 +51,10 @@ namespace Altinn.Common.PEP.Helpers
         /// <param name="actionType">Policy action type i.e. read, write, delete, instantiate.</param>
         /// <param name="instanceOwnerPartyId">Unique id of the party that is the owner of the instance.</param>
         /// <param name="instanceGuid">Unique id to identify the instance.</param>
+        /// <param name="headers">request headers from client</param>
         /// <param name="taskid">The taskid. Will override contexthandler if present</param>
         /// <returns>The decision request.</returns>
-        public static XacmlJsonRequestRoot CreateDecisionRequest(string org, string app, ClaimsPrincipal user, string actionType, int instanceOwnerPartyId, Guid? instanceGuid, string taskid = null)
+        public static XacmlJsonRequestRoot CreateDecisionRequest(string org, string app, ClaimsPrincipal user, string actionType, int instanceOwnerPartyId, Guid? instanceGuid, IHeaderDictionary? headers, string taskid = null)
         {
             XacmlJsonRequest request = new XacmlJsonRequest();
             request.AccessSubject = new List<XacmlJsonCategory>();
@@ -63,6 +64,11 @@ namespace Altinn.Common.PEP.Helpers
             request.AccessSubject.Add(CreateSubjectCategory(user.Claims));
             request.Action.Add(CreateActionCategory(actionType));
             request.Resource.Add(CreateResourceCategory(org, app, instanceOwnerPartyId.ToString(), instanceGuid.ToString(), taskid));
+
+            if (headers != null && headers.ContainsKey(XForwardedForHeader))
+            {
+                request.XForwardedForHeader = headers[XForwardedForHeader];
+            }
 
             XacmlJsonRequestRoot jsonRequest = new XacmlJsonRequestRoot() { Request = request };
 
@@ -75,8 +81,9 @@ namespace Altinn.Common.PEP.Helpers
         /// <param name="context">The current <see cref="AuthorizationHandlerContext"/></param>
         /// <param name="requirement">The access requirements</param>
         /// <param name="routeData">The route data from a request.</param>
+        /// <param name="headers">Request headers</param>
         /// <returns>A decision request</returns>
-        public static XacmlJsonRequestRoot CreateDecisionRequest(AuthorizationHandlerContext context, AppAccessRequirement requirement, RouteData routeData, IHeaderDictionary headers)
+        public static XacmlJsonRequestRoot CreateDecisionRequest(AuthorizationHandlerContext context, AppAccessRequirement requirement, RouteData routeData, IHeaderDictionary? headers)
         {
             XacmlJsonRequest request = new XacmlJsonRequest();
             request.AccessSubject = new List<XacmlJsonCategory>();
@@ -102,7 +109,7 @@ namespace Altinn.Common.PEP.Helpers
             request.Action.Add(CreateActionCategory(requirement.ActionType));
             request.Resource.Add(CreateResourceCategory(org, app, instanceOwnerPartyId, instanceGuid, null));
 
-            if (headers.ContainsKey(XForwardedForHeader))
+            if (headers != null && headers.ContainsKey(XForwardedForHeader))
             {
                 request.XForwardedForHeader = headers[XForwardedForHeader];
             }
@@ -146,7 +153,7 @@ namespace Altinn.Common.PEP.Helpers
                 throw new ArgumentException("invalid party " + party);
             }
 
-            if (headers.ContainsKey(XForwardedForHeader))
+            if (headers != null && headers.ContainsKey(XForwardedForHeader))
             {
                 request.XForwardedForHeader = headers[XForwardedForHeader];
             }
@@ -197,6 +204,10 @@ namespace Altinn.Common.PEP.Helpers
                 else if (IsScopeClaim(claim.Type))
                 {
                     attributes.Add(CreateXacmlJsonAttribute(AltinnXacmlUrns.Scope, claim.Value, DefaultType, claim.Issuer));
+                }
+                else if (IsJtiClaim(claim.Type))
+                {
+                    attributes.Add(CreateXacmlJsonAttribute(AltinnXacmlUrns.SessionId, claim.Value, DefaultType, claim.Issuer));
                 }
                 else if (IsValidUrn(claim.Type))
                 {
@@ -302,6 +313,11 @@ namespace Altinn.Common.PEP.Helpers
         private static bool IsScopeClaim(string value)
         {
             return value.Equals("scope");
+        }
+
+        private static bool IsJtiClaim(string value)
+        {
+            return value.Equals("jti");
         }
 
         /// <summary>
