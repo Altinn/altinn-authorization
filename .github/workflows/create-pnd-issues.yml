@@ -1,0 +1,20 @@
+on:
+  schedule:
+    - cron: "0 5 * * 1"
+  workflow_dispatch: {}
+
+jobs:
+  tilgangsinfo:
+    name: Create Deploy'n'Patch issue for tilgangsinfo
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+      issues: write
+    
+    steps:
+      - uses: actions/checkout@v3
+      - id: create
+        uses: JasonEtco/create-an-issue@v2
+        with:
+          filename: .github/templates/tilgangsinfo-pnd.md
