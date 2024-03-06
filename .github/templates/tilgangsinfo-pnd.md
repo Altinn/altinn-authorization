@@ -34,6 +34,12 @@ labels: 'kind/deploy_patch, team/tilgangsinfo'
 - [ ] [Authentication UI](https://github.com/Altinn/altinn-authentication-frontend).
 - [ ] [Resource Registry](https://github.com/Altinn/altinn-resource-registry).
 
+#### Go through all github pull-requests from the dependency bots in all repos.
+
+- [ ] [Authentication](https://github.com/Altinn/altinn-authentication).
+- [ ] [Authentication UI](https://github.com/Altinn/altinn-authentication-frontend).
+- [ ] [Resource Registry](https://github.com/Altinn/altinn-resource-registry).
+
 [Authentication]: https://dev.azure.com/brreg/altinn-studio/_release?_a=releases&view=all&definitionId=20
 [Resource Registry]: https://dev.azure.com/brreg/altinn-studio/_release?_a=releases&view=all&definitionId=36
 
