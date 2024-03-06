@@ -68,15 +68,10 @@ namespace Altinn.Platform.Authorization.Services.Implementation
             _prp = prp;
         }
 
-        /// <summary>
-        /// Ads needed information to the Context Request.
-        /// </summary>
-        /// <param name="request">The original Xacml Context Request</param>
-        /// <param name="isExternalRequest">Defines if this is an external request</param>
-        /// <returns>The enriched XacmlContextRequest</returns>
-        public async Task<XacmlContextRequest> Enrich(XacmlContextRequest request, bool isExternalRequest)
+        /// <inheritdoc/>
+        public async Task<XacmlContextRequest> Enrich(XacmlContextRequest request, bool isExternalRequest, SortedDictionary<string, AuthInfo> appInstanceInfo)
         {
-            await EnrichResourceAttributes(request, isExternalRequest);
+            await EnrichResourceAttributes(request, isExternalRequest, appInstanceInfo);
             return await Task.FromResult(request);
         }
 
@@ -85,7 +80,8 @@ namespace Altinn.Platform.Authorization.Services.Implementation
         /// </summary>
         /// <param name="request">The original Xacml Context Request</param>
         /// <param name="isExternalRequest">Defines if request comes </param>
-        protected async Task EnrichResourceAttributes(XacmlContextRequest request, bool isExternalRequest)
+        /// <param name="appInstanceInfo">Cache of auto info for this request</param>
+        protected async Task EnrichResourceAttributes(XacmlContextRequest request, bool isExternalRequest, SortedDictionary<string, AuthInfo> appInstanceInfo)
         {
             XacmlContextAttributes resourceContextAttributes = request.GetResourceAttributes();
             XacmlResourceAttributes resourceAttributes = GetResourceAttributeValues(resourceContextAttributes);
@@ -103,7 +99,13 @@ namespace Altinn.Platform.Authorization.Services.Implementation
                 else
                 {
                     instanceData = new();
-                    AuthInfo authInfo = await _policyInformationRepository.GetAuthInfo(resourceAttributes.InstanceValue);
+                    
+                    if (!appInstanceInfo.TryGetValue(resourceAttributes.InstanceValue, out AuthInfo authInfo))
+                    {
+                        authInfo = await _policyInformationRepository.GetAuthInfo(resourceAttributes.InstanceValue);
+                        appInstanceInfo[resourceAttributes.InstanceValue] = authInfo;
+                    }
+
                     instanceData.Process = authInfo.Process;
                     instanceData.AppId = authInfo.AppId;
                     instanceData.Org = instanceData.AppId.Split('/')[0];

@@ -1,5 +1,7 @@
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Altinn.Authorization.ABAC.Xacml;
+using Altinn.Platform.Storage.Interface.Models;
 
 namespace Altinn.Platform.Authorization.Services.Interface
 {
@@ -13,7 +15,8 @@ namespace Altinn.Platform.Authorization.Services.Interface
         /// </summary>
         /// <param name="decisionRequest">The XacmlContextRequest.</param>
         /// <param name="isExternalRequest">Defines if call is comming from external source</param>
+        /// <param name="appInstanceInfo">Cache of auth info for this request</param>
         /// <returns>Enriched context.</returns>
-        Task<XacmlContextRequest> Enrich(XacmlContextRequest decisionRequest, bool isExternalRequest);
+        Task<XacmlContextRequest> Enrich(XacmlContextRequest decisionRequest, bool isExternalRequest, SortedDictionary<string, AuthInfo> appInstanceInfo);
     }
 }

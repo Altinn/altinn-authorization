@@ -48,12 +48,12 @@ namespace Altinn.Platform.Authorization.IntegrationTests.MockServices
             _rolesWrapper = rolesWrapper;
         }
 
-        public async Task<XacmlContextRequest> Enrich(XacmlContextRequest request, bool isExternalRequest)
+        public async Task<XacmlContextRequest> Enrich(XacmlContextRequest request, bool isExternalRequest, SortedDictionary<string, AuthInfo> appInstanceInfo)
         {
             string testID = GetTestId(_httpContextAccessor.HttpContext);
             if (!string.IsNullOrEmpty(testID) && testID.ToLower().Contains("altinnapps"))
             {
-                await EnrichResourceAttributes(request);
+                await EnrichResourceAttributes(request, appInstanceInfo);
             }
             else
             {
@@ -69,7 +69,7 @@ namespace Altinn.Platform.Authorization.IntegrationTests.MockServices
             return request;
         }
 
-        private async Task EnrichResourceAttributes(XacmlContextRequest request)
+        private async Task EnrichResourceAttributes(XacmlContextRequest request, SortedDictionary<string, AuthInfo> appInstanceInfo)
         {
             string orgAttributeValue = string.Empty;
             string appAttributeValue = string.Empty;

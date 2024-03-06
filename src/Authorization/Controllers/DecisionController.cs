@@ -19,6 +19,7 @@ using Altinn.Platform.Authorization.Models.External;
 using Altinn.Platform.Authorization.Repositories.Interface;
 using Altinn.Platform.Authorization.Services.Interface;
 using Altinn.Platform.Authorization.Services.Interfaces;
+using Altinn.Platform.Storage.Interface.Models;
 using AutoMapper;
 using Azure.Core;
 using Microsoft.AspNetCore.Authorization;
@@ -51,6 +52,8 @@ namespace Altinn.Platform.Authorization.Controllers
         private readonly IFeatureManager _featureManager;
         private readonly IAccessManagementWrapper _accessManagement;
         private readonly IMapper _mapper;
+
+        private readonly SortedDictionary<string, AuthInfo> _appInstanceInfo = new();
 
         /// <summary>
         /// Initializes a new instance of the <see cref="DecisionController"/> class.
@@ -259,7 +262,7 @@ namespace Altinn.Platform.Authorization.Controllers
 
         private async Task<XacmlContextResponse> Authorize(XacmlContextRequest decisionRequest, bool isExernalRequest, bool logEvent = true, CancellationToken cancellationToken = default)
         {
-            decisionRequest = await this._contextHandler.Enrich(decisionRequest, isExernalRequest);
+            decisionRequest = await this._contextHandler.Enrich(decisionRequest, isExernalRequest, _appInstanceInfo);
 
             ////_logger.LogInformation($"// DecisionController // Authorize // Roles // Enriched request: {JsonConvert.SerializeObject(decisionRequest)}.");
             XacmlPolicy policy = await _prp.GetPolicyAsync(decisionRequest);
