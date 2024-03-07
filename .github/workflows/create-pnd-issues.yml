@@ -1,3 +1,5 @@
+name: Create Deploy'n'Patch Issues
+
 on:
   schedule:
     - cron: "0 5 * * 1"
