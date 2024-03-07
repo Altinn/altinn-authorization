@@ -1,3 +1,5 @@
+name: Create Deploy'n'Patch Issues
+
 on:
   schedule:
     - cron: "0 5 * * 1"
@@ -26,5 +28,30 @@ jobs:
           github-token: ${{ secrets.ASSIGN_PROJECT_TOKEN }}
           project-owner: 'Altinn'
           project-number: 75
+          issue-repository: '${{ github.repository }}'
+          issue-number: ${{ steps.create.outputs.number }}
+  
+  tilgangsstyring:
+    name: Create Deploy'n'Patch issue for tilgangsstyring
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+      issues: write
+    
+    steps:
+      - uses: actions/checkout@v4
+      - id: create
+        uses: JasonEtco/create-an-issue@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          filename: .github/templates/tilgangsstyring-pnd.md
+      - uses: monry/actions-add-issue-to-project@v2
+        with:
+          # Personal Access Token that with `repo`, `project`, `org:read` and `org:write` are granted.
+          github-token: ${{ secrets.ASSIGN_PROJECT_TOKEN }}
+          project-owner: 'Altinn'
+          project-number: 50
           issue-repository: '${{ github.repository }}'
           issue-number: ${{ steps.create.outputs.number }}
