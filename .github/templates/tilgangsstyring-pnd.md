@@ -66,3 +66,49 @@ labels: 'kind/deploy_patch, team/tilgangsstyring'
 [^1]: Approve pending prod releases by clicking the blue production chip and clicking approve. ![image-20240306133832594](https://raw.githubusercontent.com/Altinn/altinn-authorization/main/.github/images/ado-pending-approval-screen.png)
 [^2]: Look for any blue production chips. ![image-20240306133137061](https://raw.githubusercontent.com/Altinn/altinn-authorization/main/.github/images/ado-prod-button.png)
 [^3]: Look for any blue TT02 chips. ![tt02-button](https://raw.githubusercontent.com/Altinn/altinn-authorization/main/.github/images/ado-tt02-button.png)
+
+---
+
+## Deployrutine
+Det som skal deployes til PROD skal ha vært ute i TT02 i en uke. Før man deployer må man sørge for at man ikke introduserer nye feil, så da må man sjekke et par steder:
+
+### Sjekk Slack-kanalene
+
+<img width="481" alt="Pasted image 20231115133133" src="https://github.com/Altinn/altinn-authorization/assets/59682632/b2e42023-6e37-4252-be49-cc0432c752ed">
+
+For deploy til PROD må du gå gjennom kanalene "alerts-prod" og "alerts-prod-critical" for å se om det er noen feil som berører eller er forårsaket av repoet som skal deployes. For TT02 sjekkes "alerts-test". Hvis det ser greit ut her kan du gå videre og sjekke ut https://portal.azure.com.
+
+### Sjekk failures i portal.azure.com
+Gå til https://portal.azure.com -> Application Insights -> tt02-platform-ai/prod-platform-ai -> failures. 
+
+![Pasted image 20231116092702](https://github.com/Altinn/altinn-authorization/assets/59682632/df69a09e-81fc-454a-8567-8d5f3f775446)
+
+Klikk på *Roles*, så *Clear selection*, og velg rollen som tilsvarer komponenten du skal deploye. Hvis det er feil her, skriv på Slack (team-autorisasjon eller utviklere-autorisasjon) og hør om det er noe de kjenner til, og om det er en stopper for deploy. Hvis svaret er at det er OK, eller om du ikke finner noen feil, gå videre til neste steg.
+
+### Pre-deploy approval
+Når alt er klart går du til https://dev.azure.com/brreg/altinn-studio. Klikk deg inn på Pipelines -> Releases -> komponenten som skal deployes (Access Management i dette tilfellet) -> Production (på tirsdager, ellers TT02 på onsdager). Klikk på den nyligste blå knappen.
+
+![Pasted image 20231116093419](https://github.com/Altinn/altinn-authorization/assets/59682632/f2e015e6-e77c-4aaa-a7b7-4fb546292098)
+
+Når du klikker på *Approve* starter deploy.
+
+![Pasted image 20231116093836](https://github.com/Altinn/altinn-authorization/assets/59682632/34587f8b-d384-4a80-9366-e61130e7c9e1)
+
+### Post-deploy approval
+Deploy tar noen minutter. Når den er ferdig må man Approve Post-Deployment. Før du gjør dette må du sjekke et par ting.
+
+### Sjekk pods i portal.azure.com
+Gå til https://portal.azure.com/  og velg Kubernetes services.
+
+![Pasted image 20231116115431](https://github.com/Altinn/altinn-authorization/assets/59682632/d578b965-5d15-433a-b139-2293a3ff2601)
+
+Klikk på platform-prod-02-aks (eller tt02 hvis deployet til TT02) -> Workloads -> Pods. Her kan du sortere på *Age* så alle de nyeste pod'ene kommer først. I dette skjermbildet ble Access Management deployet, man ser at alle fire Access Management pod'ene har en grønn hake under Ready og *Running* som status. Hvis noen av pod'ene ikke er Ready, kan det hende du må vente noen minutter og sjekke igjen.
+
+#### Unntak for Delegation Events: sjekk functions i stedet for pods
+TODO
+
+### Post-deploy Approval
+Hvis alt ser bra ut kan du gå tilbake til https://dev.azure.com/brreg/altinn-studio og finne Releasen som som ble deployet og approve post-deployment.
+
+![Pasted image 20231116115125](https://github.com/Altinn/altinn-authorization/assets/59682632/e1191132-4504-4a5f-ba30-f8cb955e5b07)
+<img width="321" alt="Pasted image 20231116120748" src="https://github.com/Altinn/altinn-authorization/assets/59682632/67e5fa96-2d1d-45af-b4f5-9fd31316598d">
