@@ -51,7 +51,6 @@ namespace Altinn.Platform.Authorization.Helpers
                 authorizationEvent.SubjectParty = partyId;
                 authorizationEvent.ResourcePartyId = resourcePartyId;
                 authorizationEvent.Operation = GetActionInformation(contextRequest);
-                authorizationEvent.TimeToDelete = authorizationEvent.Created.AddYears(3);
                 authorizationEvent.IpAdress = GetClientIpAddress(context);
                 authorizationEvent.ContextRequestJson = JsonSerializer.Serialize(contextRequest);
                 authorizationEvent.Decision = contextRespsonse.Results?.FirstOrDefault()?.Decision;

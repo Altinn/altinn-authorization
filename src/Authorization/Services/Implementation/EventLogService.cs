@@ -53,7 +53,7 @@ namespace Altinn.Platform.Authorization.Services.Implementation
             options.Converters.Add(new JsonStringEnumConverter());
             if (await featureManager.IsEnabledAsync(FeatureFlags.AuditLog))
             {
-                AuthorizationEvent authorizationEvent = EventLogHelper.MapAuthorizationEventFromContextRequest(contextRequest, context, contextResponse, _systemClock.UtcNow.DateTime);
+                AuthorizationEvent authorizationEvent = EventLogHelper.MapAuthorizationEventFromContextRequest(contextRequest, context, contextResponse, _systemClock.UtcNow.UtcDateTime);
 
                 if (authorizationEvent != null)
                 {

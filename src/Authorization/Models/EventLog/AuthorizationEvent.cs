@@ -59,11 +59,6 @@ namespace Altinn.Platform.Authorization.Models.EventLog
         public string Operation { get; set; }
 
         /// <summary>
-        /// Duration of log retention
-        /// </summary>
-        public DateTime TimeToDelete { get; set; }
-
-        /// <summary>
         /// The Ip adress of the calling party
         /// </summary>
         public string? IpAdress { get; set; }
