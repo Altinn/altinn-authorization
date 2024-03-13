@@ -58,15 +58,6 @@ labels: 'kind/deploy_patch, team/tilgangsstyring'
 - [ ] [Access Management](https://github.com/Altinn/altinn-access-management/pulls)
 - [ ] [Access Management Frontend](https://github.com/Altinn/altinn-access-managment-frontend/pulls)
 
-[Authorization]: https://dev.azure.com/brreg/altinn-studio/_release?_a=releases&view=mine&definitionId=23
-[Delegation Events]: https://dev.azure.com/brreg/altinn-studio/_release?_a=releases&view=mine&definitionId=33
-[Access Management]: https://dev.azure.com/brreg/altinn-studio/_release?_a=releases&view=mine&definitionId=37
-[Access Management Frontend]: https://github.com/Altinn/altinn-access-management-frontend/actions/workflows/deploy-to-environment.yml
-
-[^1]: Approve pending prod releases by clicking the blue production chip and clicking approve. ![image-20240306133832594](https://raw.githubusercontent.com/Altinn/altinn-authorization/main/.github/images/ado-pending-approval-screen.png)
-[^2]: Look for any blue production chips. ![image-20240306133137061](https://raw.githubusercontent.com/Altinn/altinn-authorization/main/.github/images/ado-prod-button.png)
-[^3]: Look for any blue TT02 chips. ![tt02-button](https://raw.githubusercontent.com/Altinn/altinn-authorization/main/.github/images/ado-tt02-button.png)
-
 ---
 
 ## Deployrutine
@@ -112,3 +103,12 @@ Hvis alt ser bra ut kan du gå tilbake til https://dev.azure.com/brreg/altinn-st
 
 ![Pasted image 20231116115125](https://github.com/Altinn/altinn-authorization/assets/59682632/e1191132-4504-4a5f-ba30-f8cb955e5b07)
 <img width="321" alt="Pasted image 20231116120748" src="https://github.com/Altinn/altinn-authorization/assets/59682632/67e5fa96-2d1d-45af-b4f5-9fd31316598d">
+
+[Authorization]: https://dev.azure.com/brreg/altinn-studio/_release?_a=releases&view=mine&definitionId=23
+[Delegation Events]: https://dev.azure.com/brreg/altinn-studio/_release?_a=releases&view=mine&definitionId=33
+[Access Management]: https://dev.azure.com/brreg/altinn-studio/_release?_a=releases&view=mine&definitionId=37
+[Access Management Frontend]: https://github.com/Altinn/altinn-access-management-frontend/actions/workflows/deploy-to-environment.yml
+
+[^1]: Approve pending prod releases by clicking the blue production chip and clicking approve. ![image-20240306133832594](https://raw.githubusercontent.com/Altinn/altinn-authorization/main/.github/images/ado-pending-approval-screen.png)
+[^2]: Look for any blue production chips. ![image-20240306133137061](https://raw.githubusercontent.com/Altinn/altinn-authorization/main/.github/images/ado-prod-button.png)
+[^3]: Look for any blue TT02 chips. ![tt02-button](https://raw.githubusercontent.com/Altinn/altinn-authorization/main/.github/images/ado-tt02-button.png)
