@@ -33,7 +33,7 @@ namespace Altinn.Platform.Authorization.Helpers
         /// <param name="contextRespsonse">the http context response</param>
         /// <param name="currentDateTime">the current date time</param>
         /// <returns></returns>
-        public static AuthorizationEvent MapAuthorizationEventFromContextRequest(XacmlContextRequest contextRequest, HttpContext context, XacmlContextResponse contextRespsonse, DateTime currentDateTime)
+        public static AuthorizationEvent MapAuthorizationEventFromContextRequest(XacmlContextRequest contextRequest, HttpContext context, XacmlContextResponse contextRespsonse, DateTimeOffset currentDateTime)
         {
             AuthorizationEvent authorizationEvent = null;
             if (contextRequest != null)
