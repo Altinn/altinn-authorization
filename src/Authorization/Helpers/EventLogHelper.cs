@@ -1,4 +1,6 @@
-﻿using System;
+﻿#nullable enable
+
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IdentityModel.Tokens.Jwt;
@@ -112,7 +114,7 @@ namespace Altinn.Platform.Authorization.Helpers
         /// </summary>
         /// <param name="request">The requestId</param>
         /// <returns></returns>
-        public static (int? UserId, int? PartyId, string Org, int? OrgNumber, string? sessionId) GetSubjectInformation(XacmlContextRequest request)
+        public static (int? UserId, int? PartyId, string Org, int? OrgNumber, string? SessionId) GetSubjectInformation(XacmlContextRequest request)
         {
             int? userId = null;
             int? partyId = null;

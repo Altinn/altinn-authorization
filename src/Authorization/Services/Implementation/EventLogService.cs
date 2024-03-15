@@ -27,7 +27,7 @@ namespace Altinn.Platform.Authorization.Services.Implementation
         /// Instantiation for event log servcie
         /// </summary>
         /// <param name="queueClient">queue client to store event in event log</param>
-        /// <param name="systemClock">handler for datetime service</param>
+        /// <param name="timeProvider">handler for datetime service</param>
         public EventLogService(IEventsQueueClient queueClient, TimeProvider timeProvider)
         {
             _queueClient = queueClient;
