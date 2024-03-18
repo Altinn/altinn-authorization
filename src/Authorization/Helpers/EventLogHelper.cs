@@ -37,26 +37,24 @@ namespace Altinn.Platform.Authorization.Helpers
         /// <returns></returns>
         public static AuthorizationEvent MapAuthorizationEventFromContextRequest(XacmlContextRequest contextRequest, HttpContext context, XacmlContextResponse contextRespsonse, DateTimeOffset currentDateTime)
         {
-            AuthorizationEvent authorizationEvent = null;
-            if (contextRequest != null)
+            (string resource, string instanceId, int? resourcePartyId) = GetResourceAttributes(contextRequest);
+            (int? userId, int? partyId, string org, int? orgNumber, string? sessionId) = GetSubjectInformation(contextRequest);
+            AuthorizationEvent authorizationEvent = new AuthorizationEvent
             {
-                authorizationEvent = new AuthorizationEvent();
-                (string resource, string instanceId, int? resourcePartyId) = GetResourceAttributes(contextRequest);
-                (int? userId, int? partyId, string org, int? orgNumber, string? sessionId) = GetSubjectInformation(contextRequest);
-                authorizationEvent.SessionId = sessionId;
-                authorizationEvent.Created = currentDateTime;
-                authorizationEvent.Resource = resource;
-                authorizationEvent.SubjectUserId = userId;
-                authorizationEvent.SubjectOrgCode = org;
-                authorizationEvent.SubjectOrgNumber = orgNumber;
-                authorizationEvent.InstanceId = instanceId;
-                authorizationEvent.SubjectParty = partyId;
-                authorizationEvent.ResourcePartyId = resourcePartyId;
-                authorizationEvent.Operation = GetActionInformation(contextRequest);
-                authorizationEvent.IpAdress = GetClientIpAddress(context);
-                authorizationEvent.ContextRequestJson = JsonSerializer.Serialize(contextRequest);
-                authorizationEvent.Decision = contextRespsonse.Results?.FirstOrDefault()?.Decision;
-            }
+                SessionId = sessionId,
+                Created = currentDateTime,
+                Resource = resource,
+                SubjectUserId = userId,
+                SubjectOrgCode = org,
+                SubjectOrgNumber = orgNumber,
+                InstanceId = instanceId,
+                SubjectParty = partyId,
+                ResourcePartyId = resourcePartyId,
+                Operation = GetActionInformation(contextRequest),
+                IpAdress = GetClientIpAddress(context),
+                ContextRequestJson = JsonSerializer.Serialize(contextRequest),
+                Decision = contextRespsonse.Results?.FirstOrDefault()?.Decision,
+            };
 
             return authorizationEvent;
         }
@@ -74,36 +72,39 @@ namespace Altinn.Platform.Authorization.Helpers
             string org = string.Empty;
             string app = string.Empty;
 
-            foreach (XacmlContextAttributes attr in request.Attributes.Where(attr => attr.Category.OriginalString.Equals(XacmlConstants.MatchAttributeCategory.Resource)))
+            if (request != null)
             {
-                foreach (XacmlAttribute xacmlAtr in attr.Attributes)
+                foreach (XacmlContextAttributes attr in request.Attributes.Where(attr => attr.Category.OriginalString.Equals(XacmlConstants.MatchAttributeCategory.Resource)))
                 {
-                    if (xacmlAtr.AttributeId.OriginalString.Equals(AltinnXacmlConstants.MatchAttributeIdentifiers.ResourceRegistry))
+                    foreach (XacmlAttribute xacmlAtr in attr.Attributes)
                     {
-                        resource = xacmlAtr.AttributeValues.First().Value;
-                    }
-                    
-                    if (xacmlAtr.AttributeId.OriginalString.Equals(AltinnXacmlConstants.MatchAttributeIdentifiers.AppAttribute))
-                    {
-                        app = xacmlAtr.AttributeValues.First().Value;
-                    }
+                        if (xacmlAtr.AttributeId.OriginalString.Equals(AltinnXacmlConstants.MatchAttributeIdentifiers.ResourceRegistry))
+                        {
+                            resource = xacmlAtr.AttributeValues.First().Value;
+                        }
 
-                    if (xacmlAtr.AttributeId.OriginalString.Equals(AltinnXacmlConstants.MatchAttributeIdentifiers.OrgAttribute))
-                    {
-                        org = xacmlAtr.AttributeValues.First().Value;
-                    }
+                        if (xacmlAtr.AttributeId.OriginalString.Equals(AltinnXacmlConstants.MatchAttributeIdentifiers.AppAttribute))
+                        {
+                            app = xacmlAtr.AttributeValues.First().Value;
+                        }
 
-                    if (xacmlAtr.AttributeId.OriginalString.Equals(AltinnXacmlConstants.MatchAttributeIdentifiers.InstanceAttribute))
-                    {
-                        instanceId = xacmlAtr.AttributeValues.First().Value;
-                    }
+                        if (xacmlAtr.AttributeId.OriginalString.Equals(AltinnXacmlConstants.MatchAttributeIdentifiers.OrgAttribute))
+                        {
+                            org = xacmlAtr.AttributeValues.First().Value;
+                        }
 
-                    if (xacmlAtr.AttributeId.OriginalString.Equals(AltinnXacmlConstants.MatchAttributeIdentifiers.PartyAttribute))
-                    {
-                        resourcePartyId = Convert.ToInt32(xacmlAtr.AttributeValues.First().Value);
+                        if (xacmlAtr.AttributeId.OriginalString.Equals(AltinnXacmlConstants.MatchAttributeIdentifiers.InstanceAttribute))
+                        {
+                            instanceId = xacmlAtr.AttributeValues.First().Value;
+                        }
+
+                        if (xacmlAtr.AttributeId.OriginalString.Equals(AltinnXacmlConstants.MatchAttributeIdentifiers.PartyAttribute))
+                        {
+                            resourcePartyId = Convert.ToInt32(xacmlAtr.AttributeValues.First().Value);
+                        }
                     }
                 }
-            }
+            }           
 
             resource = string.IsNullOrEmpty(resource) ? $"app_{org}_{app}" : resource;
             return (resource, instanceId, resourcePartyId);
@@ -122,36 +123,39 @@ namespace Altinn.Platform.Authorization.Helpers
             int? orgNumber = null;
             string? sessionId = null;
 
-            foreach (XacmlContextAttributes attr in request.Attributes.Where(attr => attr.Category.OriginalString.Equals(XacmlConstants.MatchAttributeCategory.Subject)))
+            if (request != null)
             {
-                foreach (XacmlAttribute xacmlAtr in attr.Attributes)
+                foreach (XacmlContextAttributes attr in request.Attributes.Where(attr => attr.Category.OriginalString.Equals(XacmlConstants.MatchAttributeCategory.Subject)))
                 {
-                    if (xacmlAtr.AttributeId.OriginalString.Equals(AltinnXacmlConstants.MatchAttributeIdentifiers.UserAttribute))
+                    foreach (XacmlAttribute xacmlAtr in attr.Attributes)
                     {
-                        userId = Convert.ToInt32(xacmlAtr.AttributeValues.First().Value);
-                    }
+                        if (xacmlAtr.AttributeId.OriginalString.Equals(AltinnXacmlConstants.MatchAttributeIdentifiers.UserAttribute))
+                        {
+                            userId = Convert.ToInt32(xacmlAtr.AttributeValues.First().Value);
+                        }
 
-                    if (xacmlAtr.AttributeId.OriginalString.Equals(AltinnXacmlConstants.MatchAttributeIdentifiers.PartyAttribute))
-                    {
-                        partyId = Convert.ToInt32(xacmlAtr.AttributeValues.First().Value);
-                    }
+                        if (xacmlAtr.AttributeId.OriginalString.Equals(AltinnXacmlConstants.MatchAttributeIdentifiers.PartyAttribute))
+                        {
+                            partyId = Convert.ToInt32(xacmlAtr.AttributeValues.First().Value);
+                        }
 
-                    if (xacmlAtr.AttributeId.OriginalString.Equals(AltinnXacmlConstants.MatchAttributeIdentifiers.OrgAttribute))
-                    {
-                        org = xacmlAtr.AttributeValues.First().Value;
-                    }
+                        if (xacmlAtr.AttributeId.OriginalString.Equals(AltinnXacmlConstants.MatchAttributeIdentifiers.OrgAttribute))
+                        {
+                            org = xacmlAtr.AttributeValues.First().Value;
+                        }
 
-                    if (xacmlAtr.AttributeId.OriginalString.Equals(AltinnXacmlConstants.MatchAttributeIdentifiers.OrgNumberAttribute))
-                    {
-                        orgNumber = Convert.ToInt32(xacmlAtr.AttributeValues.First().Value);
-                    }
+                        if (xacmlAtr.AttributeId.OriginalString.Equals(AltinnXacmlConstants.MatchAttributeIdentifiers.OrgNumberAttribute))
+                        {
+                            orgNumber = Convert.ToInt32(xacmlAtr.AttributeValues.First().Value);
+                        }
 
-                    if (xacmlAtr.AttributeId.OriginalString.Equals(AltinnXacmlConstants.MatchAttributeIdentifiers.SessionIdAttribute))
-                    {
-                        sessionId = xacmlAtr.AttributeValues.First().Value;
+                        if (xacmlAtr.AttributeId.OriginalString.Equals(AltinnXacmlConstants.MatchAttributeIdentifiers.SessionIdAttribute))
+                        {
+                            sessionId = xacmlAtr.AttributeValues.First().Value;
+                        }
                     }
                 }
-            }
+            }                
 
             return (userId, partyId, org, orgNumber, sessionId);
         }
@@ -165,17 +169,20 @@ namespace Altinn.Platform.Authorization.Helpers
         {
             string actionId = string.Empty;
 
-            foreach (XacmlContextAttributes attr in request.Attributes.Where(attr => attr.Category.OriginalString.Equals(XacmlConstants.MatchAttributeCategory.Action)))
+            if (request != null)
             {
-                foreach (XacmlAttribute xacmlAtr in attr.Attributes)
+                foreach (XacmlContextAttributes attr in request.Attributes.Where(attr => attr.Category.OriginalString.Equals(XacmlConstants.MatchAttributeCategory.Action)))
                 {
-                    if (xacmlAtr.AttributeId.OriginalString.Equals(XacmlConstants.MatchAttributeIdentifiers.ActionId))
+                    foreach (XacmlAttribute xacmlAtr in attr.Attributes)
                     {
-                        actionId = xacmlAtr.AttributeValues.First().Value;
+                        if (xacmlAtr.AttributeId.OriginalString.Equals(XacmlConstants.MatchAttributeIdentifiers.ActionId))
+                        {
+                            actionId = xacmlAtr.AttributeValues.First().Value;
+                        }
                     }
                 }
             }
-
+            
             return actionId;
         }
 

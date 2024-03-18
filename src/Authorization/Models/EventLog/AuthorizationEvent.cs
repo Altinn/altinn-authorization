@@ -58,7 +58,7 @@ namespace Altinn.Platform.Authorization.Models.EventLog
         /// <summary>
         /// Type of operation
         /// </summary>
-        public string Operation { get; set; }
+        public required string Operation { get; set; }
 
         /// <summary>
         /// The Ip adress of the calling party
@@ -68,7 +68,7 @@ namespace Altinn.Platform.Authorization.Models.EventLog
         /// <summary>
         /// The enriched context request
         /// </summary>
-        public string ContextRequestJson { get; set; }
+        public required string ContextRequestJson { get; set; }
 
         /// <summary>
         /// Decision for the authorization request
