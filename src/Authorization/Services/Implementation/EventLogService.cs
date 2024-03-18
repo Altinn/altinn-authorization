@@ -1,4 +1,5 @@
-﻿using System.Text.Json;
+﻿using System;
+using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Threading;
 using System.Threading.Tasks;
@@ -20,17 +21,17 @@ namespace Altinn.Platform.Authorization.Services.Implementation
     public class EventLogService : IEventLog
     {
         private readonly IEventsQueueClient _queueClient;
-        private readonly ISystemClock _systemClock;
+        private readonly TimeProvider _timeProvider;
 
         /// <summary>
         /// Instantiation for event log servcie
         /// </summary>
         /// <param name="queueClient">queue client to store event in event log</param>
-        /// <param name="systemClock">handler for datetime service</param>
-        public EventLogService(IEventsQueueClient queueClient, ISystemClock systemClock)
+        /// <param name="timeProvider">handler for datetime service</param>
+        public EventLogService(IEventsQueueClient queueClient, TimeProvider timeProvider)
         {
             _queueClient = queueClient;
-            _systemClock = systemClock;
+            _timeProvider = timeProvider;
         }
 
         /// <summary>
@@ -53,7 +54,7 @@ namespace Altinn.Platform.Authorization.Services.Implementation
             options.Converters.Add(new JsonStringEnumConverter());
             if (await featureManager.IsEnabledAsync(FeatureFlags.AuditLog))
             {
-                AuthorizationEvent authorizationEvent = EventLogHelper.MapAuthorizationEventFromContextRequest(contextRequest, context, contextResponse, _systemClock.UtcNow.DateTime);
+                AuthorizationEvent authorizationEvent = EventLogHelper.MapAuthorizationEventFromContextRequest(contextRequest, context, contextResponse, _timeProvider.GetUtcNow());
 
                 if (authorizationEvent != null)
                 {

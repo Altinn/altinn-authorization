@@ -240,7 +240,7 @@ void ConfigureServices(IServiceCollection services, IConfiguration config)
     services.AddTransient<ISigningCredentialsResolver, SigningCredentialsResolver>();
     services.AddSingleton<IEventsQueueClient, EventsQueueClient>();
     services.AddSingleton<IEventLog, EventLogService>();
-    services.AddSingleton<ISystemClock, SystemClock>();
+    services.TryAddSingleton(TimeProvider.System);
     GeneralSettings generalSettings = config.GetSection("GeneralSettings").Get<GeneralSettings>();
     services.AddAuthentication(JwtCookieDefaults.AuthenticationScheme)
         .AddJwtCookie(JwtCookieDefaults.AuthenticationScheme, options =>
