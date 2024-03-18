@@ -173,12 +173,9 @@ namespace Altinn.Platform.Authorization.Helpers
             {
                 foreach (XacmlContextAttributes attr in request.Attributes.Where(attr => attr.Category.OriginalString.Equals(XacmlConstants.MatchAttributeCategory.Action)))
                 {
-                    foreach (XacmlAttribute xacmlAtr in attr.Attributes)
+                    foreach (XacmlAttribute xacmlAtr in attr.Attributes.Where(attr => attr.AttributeId.OriginalString.Equals(XacmlConstants.MatchAttributeIdentifiers.ActionId, StringComparison.Ordinal)))
                     {
-                        if (xacmlAtr.AttributeId.OriginalString.Equals(XacmlConstants.MatchAttributeIdentifiers.ActionId))
-                        {
-                            actionId = xacmlAtr.AttributeValues.First().Value;
-                        }
+                        actionId = xacmlAtr.AttributeValues.First().Value;
                     }
                 }
             }
