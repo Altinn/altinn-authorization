@@ -1,4 +1,4 @@
-FROM mcr.microsoft.com/dotnet/sdk:8.0.201-alpine3.18 AS build
+FROM mcr.microsoft.com/dotnet/sdk:8.0.203-alpine3.18 AS build
 WORKDIR Authorization/
 
 COPY src/Authorization ./Authorization
