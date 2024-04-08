@@ -45,10 +45,10 @@ labels: 'kind/deploy_patch, team/tilgangsinfo'
 
 [^1]: Approve pending prod releases by clicking the blue production chip and clicking approve. ![image-20240306133832594](https://raw.githubusercontent.com/Altinn/altinn-authorization/main/.github/images/ado-pending-approval-screen.png)
 [^2]: Look for any blue production chips. ![image-20240306133137061](https://raw.githubusercontent.com/Altinn/altinn-authorization/main/.github/images/ado-prod-button.png)
-[^3]: This is done after checking that everything is running as it should.
+[^3]: This is done after checking that everything is running as it should.  
 [^4]: Check if there are any awaiting deployments to production for [Auditlog]  
-![Awaiting deployment of Prod](../images/awaiting-deploy.png)
-Click on the awaiting deployment. You can see that a deployment to TT02 was successfull last week. Click on Review deployments  
+![Awaiting deployment of Prod](../images/awaiting-deploy.png)  
+Click on the awaiting deployment. You can see that a deployment to TT02 was successfull last week. Click on Review deployments   
 ![Detailed view of Awaiting deployment of prod](../images/awaiting-deploy-prod-detail.png)  
 Click on the prod checkbox and then click approve and deploy. This will trigger a deployment to production.  
 ![Review deployment of prod](../images/review-deploy-prod.png)  
