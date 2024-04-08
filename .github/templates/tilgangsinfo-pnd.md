@@ -46,32 +46,32 @@ labels: 'kind/deploy_patch, team/tilgangsinfo'
 [^1]: Approve pending prod releases by clicking the blue production chip and clicking approve. ![image-20240306133832594](https://raw.githubusercontent.com/Altinn/altinn-authorization/main/.github/images/ado-pending-approval-screen.png)
 [^2]: Look for any blue production chips. ![image-20240306133137061](https://raw.githubusercontent.com/Altinn/altinn-authorization/main/.github/images/ado-prod-button.png)
 [^3]: This is done after checking that everything is running as it should.
-[^4]: Check if there are any awaiting deployments to production for [Auditlog]
-![Awaiting deployment of Prod](../images/awaiting-deploy.png)
+[^4]: Check if there are any awaiting deployments to production for [Auditlog]  
+![Awaiting deployment of Prod](https://raw.githubusercontent.com/Altinn/altinn-authorization/main/.github/images/awaiting-deploy.png)
 Click on the awaiting deployment. You can see that a deployment to TT02 was successfull last week. Click on Review deployments
-![Detailed view of Awaiting deployment of prod](../images/awaiting-deploy-prod-detail.png)
+![Detailed view of Awaiting deployment of prod](https://raw.githubusercontent.com/Altinn/altinn-authorization/main/.github/images/awaiting-deploy-prod-detail.png)
 Click on the prod checkbox and then click approve and deploy. This will trigger a deployment to production.
-![Review deployment of prod](../images/review-deploy-prod.png)
+![Review deployment of prod](https://raw.githubusercontent.com/Altinn/altinn-authorization/main/.github/images/review-deploy-prod.png)
 [^5]: The new components are deployed via github actions. For auditlog, a release is scheduled every wednesday. Go to https://github.com/Altinn/altinn-auth-audit-log/releases and check if there are any draft release is found. 
-![Releases list](../images/release-draft.png)
+![Releases list](https://raw.githubusercontent.com/Altinn/altinn-authorization/main/.github/images/release-draft.png)
 click on Edit Draft and set the release title as the tag version f.eks in the picture you can see that the tag is 2024.4.3 and the release title therefore should be set as 2024.4.3.
-![Edit release notes draft](../images/edit-draft-releasenotes.png)
+![Edit release notes draft](https://raw.githubusercontent.com/Altinn/altinn-authorization/main/.github/images/edit-draft-releasenotes.png)
 Scroll down and you will find the button "Publish Release"
-![Publish release](../images/publishrelease.png)
+![Publish release](https://raw.githubusercontent.com/Altinn/altinn-authorization/main/.github/images/publishrelease.png)
 once the publish release is clicked, release notes will be published and a deploy will be triggered to TT02.
-![Published release](../images/publishedrelease.png)
+![Published release](https://raw.githubusercontent.com/Altinn/altinn-authorization/main/.github/images/publishedrelease.png)
 You can see that the deploy is triggered and the approvers are notified about the awaiting deployment of [Auditlog]
-![Awaiting deployment of TT02](../images/awaiting-deploy-tt02.png)
+![Awaiting deployment of TT02](https://raw.githubusercontent.com/Altinn/altinn-authorization/main/.github/images/awaiting-deploy-tt02.png)
 Click on the awaiting deployment
-![Detailed view of Awaiting deployment of TT02](../images/awaiting-deploy-tt02-detail.png)
+![Detailed view of Awaiting deployment of TT02](https://raw.githubusercontent.com/Altinn/altinn-authorization/main/.github/images/awaiting-deploy-tt02-detail.png)
 Click on review deployments. Click the tt02 checkbox and click approve and deploy button
-![Review of TT02 deployment](../images/review-deploy-tt02.png)
+![Review of TT02 deployment](https://raw.githubusercontent.com/Altinn/altinn-authorization/main/.github/images/review-deploy-tt02.png)
 Now you can see that a deployment is triggered to TT02
-![deploy progress of TT02](../images/deploy-progress-tt02.png)
+![deploy progress of TT02](https://raw.githubusercontent.com/Altinn/altinn-authorization/main/.github/images/deploy-progress-tt02.png)
 Once the package is successfully deployed to TT02, you can see that a deployment to production is triggered. This will be approved by the deployer on the following Tuesday
-![Image showing tt02 deployed and producntion deployment is triggered](../images/deploy-prod-triggered.png)
-[^6]: Verify that the newly deployed package has the right image tag ![Properties of container app](../images/containerapp-props.png)
+![Image showing tt02 deployed and producntion deployment is triggered](https://raw.githubusercontent.com/Altinn/altinn-authorization/main/.github/images/deploy-prod-triggered.png)
+[^6]: Verify that the newly deployed package has the right image tag ![Properties of container app](https://raw.githubusercontent.com/Altinn/altinn-authorization/main/.github/images/containerapp-props.png)
 Check the provisioning status in the container apps overview page
-![provision status of container app](../images/containerapp-provision-status.png)
+![provision status of container app](https://raw.githubusercontent.com/Altinn/altinn-authorization/main/.github/images/containerapp-provision-status.png)
 [^7]: Verify the function app deployment status in the deployment logs in deployment center of the function app
-![deployment status of function app](../images/functionapp-deploy-status.png)
+![deployment status of function app](https://raw.githubusercontent.com/Altinn/altinn-authorization/main/.github/images/functionapp-deploy-status.png)
