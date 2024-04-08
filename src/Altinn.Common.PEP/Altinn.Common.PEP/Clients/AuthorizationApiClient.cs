@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 using Altinn.Authorization.ABAC.Xacml.JsonProfile;
 using Altinn.Common.PEP.Configuration;
-
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
@@ -24,17 +24,31 @@ namespace Altinn.Common.PEP.Clients
         private const string ForwardedForHeaderName = "x-forwarded-for";
         private readonly HttpClient _httpClient;
         private readonly ILogger _logger;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
         /// <summary>
         /// Initialize a new instance of the <see cref="AuthorizationApiClient"/> class.
         /// </summary>
+        /// <param name="httpContextAccessor">the heep context accessor</param>
         /// <param name="client">A HttpClient provided by the built in HttpClientFactory.</param>
         /// <param name="platformSettings">The current platform settings</param>
         /// <param name="logger">A logger provided by the built in LoggerFactory.</param>
-        public AuthorizationApiClient(HttpClient client, IOptions<PlatformSettings> platformSettings, ILogger<AuthorizationApiClient> logger)
+        public AuthorizationApiClient(
+            IHttpContextAccessor httpContextAccessor,
+            HttpClient client, 
+            IOptions<PlatformSettings> platformSettings, 
+            ILogger<AuthorizationApiClient> logger)
         {
+            _httpContextAccessor = httpContextAccessor;
             _httpClient = client;
             _logger = logger;
+
+            if (!_httpClient.DefaultRequestHeaders.Contains(ForwardedForHeaderName))
+            {
+                string? clientIpAddress = _httpContextAccessor?.HttpContext?.Request?.Headers?[ForwardedForHeaderName];
+                _httpClient.DefaultRequestHeaders.Add(ForwardedForHeaderName, clientIpAddress);
+            }
+
             client.BaseAddress = new Uri($"{platformSettings.Value.ApiAuthorizationEndpoint}");
             client.DefaultRequestHeaders.Add(SubscriptionKeyHeaderName, platformSettings.Value.SubscriptionKey);
             client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
@@ -51,11 +65,6 @@ namespace Altinn.Common.PEP.Clients
             string apiUrl = $"decision";
             string requestJson = JsonConvert.SerializeObject(xacmlJsonRequest);
             StringContent httpContent = new StringContent(requestJson, Encoding.UTF8, "application/json");
-
-            if (!_httpClient.DefaultRequestHeaders.Contains(ForwardedForHeaderName))
-            {
-                _httpClient.DefaultRequestHeaders.Add(ForwardedForHeaderName, xacmlJsonRequest.Request.XForwardedForHeader);
-            }
             
             Stopwatch stopWatch = new Stopwatch();
             stopWatch.Start();
