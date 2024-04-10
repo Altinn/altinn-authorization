@@ -182,7 +182,7 @@ namespace Altinn.Common.PEP.Authorization
             XacmlJsonResponse response = CreateResponse(XacmlContextDecision.Permit.ToString());
             
             // verify
-            _pdpMock.Setup(a => a.GetDecisionForRequest(It.Is<XacmlJsonRequestRoot>(xr => xr.Request.XForwardedForHeader == ipaddress))).Returns(Task.FromResult(response));
+            _pdpMock.Setup(a => a.GetDecisionForRequest(It.IsAny<XacmlJsonRequestRoot>())).Returns(Task.FromResult(response));
 
             // Act
             await _rah.HandleAsync(context);

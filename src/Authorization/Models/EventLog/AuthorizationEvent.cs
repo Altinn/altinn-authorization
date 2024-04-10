@@ -1,4 +1,6 @@
-﻿using System;
+﻿#nullable enable
+
+using System;
 using Altinn.Authorization.ABAC.Xacml;
 
 namespace Altinn.Platform.Authorization.Models.EventLog
@@ -14,9 +16,9 @@ namespace Altinn.Platform.Authorization.Models.EventLog
         public string? SessionId { get; set; }
 
         /// <summary>
-        /// Date, time of the authorization event. Set by producer of logevents
+        /// Date and time of the authorization event. Set by producer of logevents
         /// </summary>
-        public DateTime Created { get; set; }
+        public DateTimeOffset? Created { get; set; }
 
         /// <summary>
         /// The userid for the user that requested authorization
@@ -26,7 +28,7 @@ namespace Altinn.Platform.Authorization.Models.EventLog
         /// <summary>
         /// The org code for the org that requested authorization
         /// </summary>
-        public string SubjectOrgCode { get; set; }
+        public string? SubjectOrgCode { get; set; }
 
         /// <summary>
         /// The org number for the org that requested authorization
@@ -46,22 +48,17 @@ namespace Altinn.Platform.Authorization.Models.EventLog
         /// <summary>
         /// The Main resource Id (app, external resource +)
         /// </summary>
-        public string Resource { get; set; }
+        public string? Resource { get; set; }
 
         /// <summary>
         /// Instance Id when applicable
         /// </summary>
-        public string InstanceId { get; set; }
+        public string? InstanceId { get; set; }
 
         /// <summary>
         /// Type of operation
         /// </summary>
-        public string Operation { get; set; }
-
-        /// <summary>
-        /// Duration of log retention
-        /// </summary>
-        public DateTime TimeToDelete { get; set; }
+        public required string Operation { get; set; }
 
         /// <summary>
         /// The Ip adress of the calling party
@@ -71,7 +68,7 @@ namespace Altinn.Platform.Authorization.Models.EventLog
         /// <summary>
         /// The enriched context request
         /// </summary>
-        public string ContextRequestJson { get; set; }
+        public required string ContextRequestJson { get; set; }
 
         /// <summary>
         /// Decision for the authorization request

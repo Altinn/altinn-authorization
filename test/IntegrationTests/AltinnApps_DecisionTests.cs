@@ -30,7 +30,7 @@ namespace Altinn.Platform.Authorization.IntegrationTests
     {
         private readonly CustomWebApplicationFactory<DecisionController> _factory;
         private readonly Mock<IFeatureManager> featureManageMock = new Mock<IFeatureManager>();
-        private readonly Mock<ISystemClock> systemClock = new Mock<ISystemClock>();
+        private readonly Mock<TimeProvider> timeProviderMock = new Mock<TimeProvider>();
 
         public AltinnApps_DecisionTests(CustomWebApplicationFactory<DecisionController> fixture)
         {
@@ -51,7 +51,7 @@ namespace Altinn.Platform.Authorization.IntegrationTests
             eventQueue.Setup(q => q.EnqueueAuthorizationEvent(It.IsAny<string>(), It.IsAny<CancellationToken>()));
             AuthorizationEvent expectedAuthorizationEvent = TestSetupUtil.GetAuthorizationEvent(testCase);
 
-            HttpClient client = GetTestClient(eventQueue.Object, featureManageMock.Object, systemClock.Object);
+            HttpClient client = GetTestClient(eventQueue.Object, featureManageMock.Object, timeProviderMock.Object);
             client.DefaultRequestHeaders.Add("x-forwarded-for", "51.120.0.114, 10.122.16.225");
             HttpRequestMessage httpRequestMessage = TestSetupUtil.CreateXacmlRequest(testCase);
             XacmlContextResponse expected = TestSetupUtil.ReadExpectedResponse(testCase);
@@ -103,7 +103,7 @@ namespace Altinn.Platform.Authorization.IntegrationTests
             eventQueue.Setup(q => q.EnqueueAuthorizationEvent(It.IsAny<string>(), It.IsAny<CancellationToken>()));
             AuthorizationEvent expectedAuthorizationEvent = TestSetupUtil.GetAuthorizationEvent(testCase);
 
-            HttpClient client = GetTestClient(eventQueue.Object, featureManageMock.Object, systemClock.Object);            
+            HttpClient client = GetTestClient(eventQueue.Object, featureManageMock.Object, timeProviderMock.Object);            
             HttpRequestMessage httpRequestMessage = TestSetupUtil.CreateJsonProfileXacmlRequest(testCase);
             XacmlJsonResponse expected = TestSetupUtil.ReadExpectedJsonProfileResponse(testCase);
 
@@ -158,7 +158,7 @@ namespace Altinn.Platform.Authorization.IntegrationTests
             eventQueue.Setup(q => q.EnqueueAuthorizationEvent(It.IsAny<string>(), It.IsAny<CancellationToken>()));
             AuthorizationEvent expectedAuthorizationEvent = TestSetupUtil.GetAuthorizationEvent(testCase);
 
-            HttpClient client = GetTestClient(eventQueue.Object, featureManageMock.Object, systemClock.Object);
+            HttpClient client = GetTestClient(eventQueue.Object, featureManageMock.Object, timeProviderMock.Object);
             client.DefaultRequestHeaders.Add("x-forwarded-for", "51.120.0.114,20.251.13.24, 10.122.16.225");
             HttpRequestMessage httpRequestMessage = TestSetupUtil.CreateXacmlRequest(testCase);
             XacmlContextResponse expected = TestSetupUtil.ReadExpectedResponse(testCase);
@@ -421,7 +421,7 @@ namespace Altinn.Platform.Authorization.IntegrationTests
             AssertionUtil.AssertEqual(expected, contextResponse);
         }
 
-        private HttpClient GetTestClient(IEventsQueueClient eventLog = null, IFeatureManager featureManager = null, ISystemClock systemClockMock = null)
+        private HttpClient GetTestClient(IEventsQueueClient eventLog = null, IFeatureManager featureManager = null, TimeProvider timeProviderMock = null)
         {
             HttpClient client = _factory.WithWebHostBuilder(builder =>
             {
@@ -448,9 +448,9 @@ namespace Altinn.Platform.Authorization.IntegrationTests
                         services.AddSingleton(eventLog);
                     }
 
-                    if (systemClockMock != null)
+                    if (timeProviderMock != null)
                     {
-                        services.AddSingleton(systemClockMock);
+                        services.AddSingleton(timeProviderMock);
                     }
                 });
             }).CreateClient(new WebApplicationFactoryClientOptions { AllowAutoRedirect = false });
@@ -467,9 +467,7 @@ namespace Altinn.Platform.Authorization.IntegrationTests
 
         private void SetupDateTimeMock()
         {
-            systemClock
-                .Setup(m => m.UtcNow)
-                .Returns(new DateTimeOffset(2018, 05, 15, 02, 05, 00, new TimeSpan(1, 0, 0)));
+            timeProviderMock.Setup(x => x.GetUtcNow()).Returns(new DateTimeOffset(2018, 05, 15, 02, 05, 00, TimeSpan.Zero));
         }
     }
 }
