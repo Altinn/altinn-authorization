@@ -30,12 +30,12 @@ jobs:
       - name: Build
         working-directory: src/Altinn.Authorization.ABAC
         run: |
-          dotnet build --configuration Release --no-restore -p:Deterministic=true
+          dotnet build --configuration Release --no-restore -p:Deterministic=true -p:BuildNumber=${{ github.run_number }}
 
       - name: Pack Altinn.Authorization.ABAC
         working-directory: src/Altinn.Authorization.ABAC
         run: |
-          dotnet pack --configuration Release --no-restore --no-build -p:Deterministic=true
+          dotnet pack --configuration Release --no-restore --no-build -p:Deterministic=true -p:BuildNumber=${{ github.run_number }}
            
       - name: publish Altinn.Authorization.ABAC
         working-directory: src/Altinn.Authorization.ABAC
