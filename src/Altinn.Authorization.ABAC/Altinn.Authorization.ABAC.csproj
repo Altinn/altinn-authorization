@@ -8,7 +8,7 @@
 
     <!-- NuGet package properties -->
     <PackageId>Altinn.Authorization.ABAC</PackageId>
-    <Version>0.0.9-alpha.8</Version>
+    <Version>0.0.8</Version>
     <PackageTags>Altinn;Authorization;ABAC</PackageTags>
     <Description>
       Attribute Based Access Control library for .Net Core implementing XACML 3.0 xml and JSON Profile.
