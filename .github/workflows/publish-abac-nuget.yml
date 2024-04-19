@@ -1,7 +1,7 @@
 name: Pack and publish Altinn.Authorization.ABAC nuget package
 
 on:
-  pull_request:
+  push:
     branches: infrastructure/publish-nuget-action
   release:
     types:
