@@ -25,17 +25,24 @@ jobs:
       - name: Install deps
         working-directory: src/Altinn.Authorization.ABAC
         run: |
-          dotnet restore
+          dotnet restore --configuration Release
 
       - name: Build
         working-directory: src/Altinn.Authorization.ABAC
         run: |
-          dotnet build --configuration Release --no-restore -p:Deterministic=true -p:BuildNumber=${{ github.run_number }}
+          dotnet build --configuration Release --no-restore
 
       - name: Pack Altinn.Authorization.ABAC
         working-directory: src/Altinn.Authorization.ABAC
         run: |
-          dotnet pack --configuration Release --no-restore --no-build -p:Deterministic=true -p:BuildNumber=${{ github.run_number }}
+          dotnet pack --configuration Release --no-restore --no-build
+
+      - name: Create artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: nuget package
+          path: src/Altinn.Authorization.ABAC/bin/Release/*.nupkg
+          if-no-files-found: error
            
       - name: publish Altinn.Authorization.ABAC
         env:
