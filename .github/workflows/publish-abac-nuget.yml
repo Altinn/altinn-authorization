@@ -22,20 +22,15 @@ jobs:
           dotnet-version: |
             2.0.x
 
-      - name: Install deps
-        working-directory: src/Altinn.Authorization.ABAC
-        run: |
-          dotnet restore --configuration Release
-
       - name: Build
         working-directory: src/Altinn.Authorization.ABAC
         run: |
-          dotnet build --configuration Release --no-restore
+          dotnet build --configuration Release
 
       - name: Pack Altinn.Authorization.ABAC
         working-directory: src/Altinn.Authorization.ABAC
         run: |
-          dotnet pack --configuration Release --no-restore --no-build
+          dotnet pack --configuration Release --no-build
 
       - name: Create artifact
         uses: actions/upload-artifact@v4
