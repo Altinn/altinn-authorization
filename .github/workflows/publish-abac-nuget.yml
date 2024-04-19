@@ -38,6 +38,8 @@ jobs:
           dotnet pack --configuration Release --no-restore --no-build -p:Deterministic=true -p:BuildNumber=${{ github.run_number }}
            
       - name: publish Altinn.Authorization.ABAC
+        env:
+          NUGET_APIKEY: ${{ secrets.NUGET_APIKEY }}
         working-directory: src/Altinn.Authorization.ABAC
         run: |
-          dotnet nuget push bin/Release/*.nupkg --source https://api.nuget.org/v3/index.json --api-key ${{ secrets.NUGET_API_KEY }}
+          dotnet nuget push bin/Release/*.nupkg --source https://api.nuget.org/v3/index.json --api-key ${{ env.NUGET_API_KEY }}

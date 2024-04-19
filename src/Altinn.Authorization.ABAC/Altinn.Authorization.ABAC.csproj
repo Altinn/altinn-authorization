@@ -20,7 +20,7 @@
     </PackageReleaseNotes>
     <Authors>Altinn Platform Contributors</Authors>
     <RepositoryType>git</RepositoryType>
-    <RepositoryUrl>https://github.com/Altinn/altinn-studio</RepositoryUrl>
+    <RepositoryUrl>https://github.com/Altinn/altinn-authorization</RepositoryUrl>
     <IncludeSymbols>true</IncludeSymbols>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
   </PropertyGroup>
