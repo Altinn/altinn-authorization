@@ -42,4 +42,4 @@ jobs:
           NUGET_APIKEY: ${{ secrets.NUGET_APIKEY }}
         working-directory: src/Altinn.Authorization.ABAC
         run: |
-          dotnet nuget push bin/Release/*.nupkg --source https://api.nuget.org/v3/index.json --api-key ${{ env.NUGET_API_KEY }}
+          dotnet nuget push bin/Release/*.nupkg --source https://api.nuget.org/v3/index.json --api-key ${{ env.NUGET_APIKEY }}
