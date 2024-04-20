@@ -71,8 +71,8 @@ namespace Altinn.Platform.Authorization.Constants
         public const string ResourceRegistryAttribute = "urn:altinn:resource";
 
         /// <summary>
-        /// xacml string that represents ssn for 
+        /// xacml string that represents person identifier
         /// </summary>
-        public const string SsnAttribute = "urn:altinn:person:identifier-no";
+        public const string PersonIdAttribute = "urn:altinn:person:identifier-no";
     }
 }

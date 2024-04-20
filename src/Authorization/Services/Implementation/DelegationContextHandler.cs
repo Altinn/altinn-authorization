@@ -68,6 +68,18 @@ namespace Altinn.Platform.Authorization.Services.Implementation
         }
 
         /// <summary>
+        /// Gets the party id from the XacmlContextRequest subject attribute
+        /// </summary>
+        /// <param name="request">The Xacml Context Request</param>
+        /// <returns>The party id of the subject</returns>
+        public int GetSubjectPartyId(XacmlContextRequest request)
+        {
+            XacmlContextAttributes subjectContextAttributes = request.GetSubjectAttributes();
+            XacmlAttribute subjectAttribute = subjectContextAttributes.Attributes.FirstOrDefault(a => a.AttributeId.OriginalString.Equals(XacmlRequestAttribute.PartyAttribute));
+            return Convert.ToInt32(subjectAttribute?.AttributeValues.FirstOrDefault()?.Value);
+        }
+
+        /// <summary>
         /// Gets a XacmlResourceAttributes model from the XacmlContextRequest
         /// </summary>
         /// <param name="request">The Xacml Context Request</param>

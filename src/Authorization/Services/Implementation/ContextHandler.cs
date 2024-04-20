@@ -85,7 +85,7 @@ namespace Altinn.Platform.Authorization.Services.Implementation
         {
             XacmlContextAttributes resourceContextAttributes = request.GetResourceAttributes();
             XacmlResourceAttributes resourceAttributes = GetResourceAttributeValues(resourceContextAttributes);
-            await EnrichResourceParty(resourceAttributes, isExternalRequest);
+            await EnrichResourceParty(resourceContextAttributes, resourceAttributes, isExternalRequest);
 
             bool resourceAttributeComplete = IsResourceComplete(resourceAttributes);
 
@@ -179,7 +179,7 @@ namespace Altinn.Platform.Authorization.Services.Implementation
         /// Method that adds information about the resource party 
         /// </summary>
         /// <returns></returns>
-        protected async Task EnrichResourceParty(XacmlResourceAttributes resourceAttributes, bool isExternalRequest)
+        protected async Task EnrichResourceParty(XacmlContextAttributes requestResourceAttributes, XacmlResourceAttributes resourceAttributes, bool isExternalRequest)
         {
             if (string.IsNullOrEmpty(resourceAttributes.ResourcePartyValue) && !string.IsNullOrEmpty(resourceAttributes.OrganizationNumber))
             {
@@ -187,19 +187,21 @@ namespace Altinn.Platform.Authorization.Services.Implementation
                 if (partyId != 0)
                 {
                     resourceAttributes.ResourcePartyValue = partyId.ToString();
+                    requestResourceAttributes.Attributes.Add(GetAttribute(XacmlRequestAttribute.PartyAttribute, partyId.ToString()));
                 }
             }
-            else if (string.IsNullOrEmpty(resourceAttributes.ResourcePartyValue) && !string.IsNullOrEmpty(resourceAttributes.Ssn))
+            else if (string.IsNullOrEmpty(resourceAttributes.ResourcePartyValue) && !string.IsNullOrEmpty(resourceAttributes.PersonId))
             {
                 if (!isExternalRequest)
                 {
                     throw new ArgumentException("Not allowed to use ssn for internal API");
                 }
 
-                int partyId = await _registerService.PartyLookup(null, resourceAttributes.Ssn);
+                int partyId = await _registerService.PartyLookup(null, resourceAttributes.PersonId);
                 if (partyId != 0)
                 {
                     resourceAttributes.ResourcePartyValue = partyId.ToString();
+                    requestResourceAttributes.Attributes.Add(GetAttribute(XacmlRequestAttribute.PartyAttribute, partyId.ToString()));
                 }
             }
         }
@@ -264,9 +266,9 @@ namespace Altinn.Platform.Authorization.Services.Implementation
                     }
                 }
 
-                if (attribute.AttributeId.OriginalString.Equals(XacmlRequestAttribute.SsnAttribute))
+                if (attribute.AttributeId.OriginalString.Equals(XacmlRequestAttribute.PersonIdAttribute))
                 {
-                    resourceAttributes.Ssn = attribute.AttributeValues.First().Value;
+                    resourceAttributes.PersonId = attribute.AttributeValues.First().Value;
                 }
             }
 
@@ -326,6 +328,8 @@ namespace Altinn.Platform.Authorization.Services.Implementation
             int subjectUserId = 0;
             int resourcePartyId = Convert.ToInt32(resourceParty);
             string subjectSsn = string.Empty;
+            string subjectOrgnNo = string.Empty;
+            bool foundLegacyOrgNoAttribute = false;
 
             foreach (XacmlAttribute xacmlAttribute in subjectContextAttributes.Attributes)
             {
@@ -334,20 +338,41 @@ namespace Altinn.Platform.Authorization.Services.Implementation
                     subjectUserId = Convert.ToInt32(xacmlAttribute.AttributeValues.First().Value);
                 }
 
-                if (xacmlAttribute.AttributeId.OriginalString.Equals(XacmlRequestAttribute.SsnAttribute))
+                if (xacmlAttribute.AttributeId.OriginalString.Equals(XacmlRequestAttribute.PersonIdAttribute))
                 {
                     if (!isExternalRequest)
                     {
-                        throw new ArgumentException("Not allowed to use ssn for internal API");
+                        throw new ArgumentException($"Not allowed to use attribute {XacmlRequestAttribute.PersonIdAttribute} for internal API");
                     }
 
                     subjectSsn = xacmlAttribute.AttributeValues.First().Value;
                 }
+
+                if (xacmlAttribute.AttributeId.OriginalString.Equals(XacmlRequestAttribute.LegacyOrganizationNumberAttribute))
+                {
+                    foundLegacyOrgNoAttribute = true;
+                    subjectOrgnNo = xacmlAttribute.AttributeValues.First().Value;
+                }
+
+                if (xacmlAttribute.AttributeId.OriginalString.Equals(XacmlRequestAttribute.OrganizationNumberAttribute))
+                {
+                    subjectOrgnNo = xacmlAttribute.AttributeValues.First().Value;
+                }
+            }
+
+            if (foundLegacyOrgNoAttribute)
+            {
+                subjectContextAttributes.Attributes.Add(GetOrganizationIdentifierAttribute(subjectOrgnNo));
             }
 
             if (!string.IsNullOrEmpty(subjectSsn) && subjectUserId != 0)
             {
-                throw new ArgumentException("Not possible to set userid and ssn for subject at the same time");
+                throw new ArgumentException("Not allowed to set userid and person-id for subject at the same time");
+            }
+
+            if (!string.IsNullOrEmpty(subjectOrgnNo) && (subjectUserId != 0 || !string.IsNullOrEmpty(subjectSsn)))
+            {
+                throw new ArgumentException("Not allowed to set organization number and person-id or userid for subject at the same time");
             }
 
             if (!string.IsNullOrEmpty(subjectSsn))
@@ -356,14 +381,22 @@ namespace Altinn.Platform.Authorization.Services.Implementation
 
                 if (subjectProfile != null)
                 {
-                    subjectUserId = subjectProfile.UserId; 
+                    subjectUserId = subjectProfile.UserId;
+                    subjectContextAttributes.Attributes.Add(GetUserIdAttribute(subjectUserId));
                 }
                 else
                 {
-                    throw new ArgumentException("Invalid SSN");
+                    throw new ArgumentException("Invalid person-id");
                 }
             }
 
+            if (!string.IsNullOrEmpty(subjectOrgnNo))
+            {
+                int partyId = await _registerService.PartyLookup(subjectOrgnNo, null);
+                subjectContextAttributes.Attributes.Add(GetPartyIdsAttribute(new List<int> { partyId }));
+            }
+
+            // No need for further enrichment of roles of no user subject exists
             if (subjectUserId == 0)
             {
                 return;
@@ -375,8 +408,8 @@ namespace Altinn.Platform.Authorization.Services.Implementation
                 return;
             }
 
-            IDictionary<string, ICollection<string>> subjectAttributes = xacmlPolicy.GetAttributeDictionaryByCategory(XacmlConstants.MatchAttributeCategory.Subject);
-            if (subjectAttributes.ContainsKey(AltinnXacmlConstants.MatchAttributeIdentifiers.OedRoleAttribute))
+            IDictionary<string, ICollection<string>> policySubjectAttributes = xacmlPolicy.GetAttributeDictionaryByCategory(XacmlConstants.MatchAttributeCategory.Subject);
+            if (policySubjectAttributes.ContainsKey(AltinnXacmlConstants.MatchAttributeIdentifiers.OedRoleAttribute))
             {
                 if (string.IsNullOrEmpty(subjectSsn))
                 {
@@ -395,7 +428,7 @@ namespace Altinn.Platform.Authorization.Services.Implementation
                 }
             }
 
-            if (subjectAttributes.ContainsKey(AltinnXacmlConstants.MatchAttributeIdentifiers.RoleAttribute))
+            if (policySubjectAttributes.ContainsKey(AltinnXacmlConstants.MatchAttributeIdentifiers.RoleAttribute))
             {
                 List<Role> roleList = await GetRoles(subjectUserId, resourcePartyId);
                 if (roleList.Count != 0)
@@ -450,6 +483,30 @@ namespace Altinn.Platform.Authorization.Services.Implementation
                 attribute.AttributeValues.Add(new XacmlAttributeValue(new Uri(XacmlConstants.DataTypes.XMLString), partyId.ToString()));
             }
 
+            return attribute;
+        }
+
+        /// <summary>
+        /// Gets a XacmlAttribute model for a userId
+        /// </summary>
+        /// <param name="userId">UserId</param>
+        /// <returns>XacmlAttribute</returns>
+        protected XacmlAttribute GetUserIdAttribute(int userId)
+        {
+            XacmlAttribute attribute = new XacmlAttribute(new Uri(XacmlRequestAttribute.UserAttribute), false);
+            attribute.AttributeValues.Add(new XacmlAttributeValue(new Uri(XacmlConstants.DataTypes.XMLString), userId.ToString()));
+            return attribute;
+        }
+
+        /// <summary>
+        /// Gets a XacmlAttribute model for a organization identifier (organization number)
+        /// </summary>
+        /// <param name="orgNo">The organization number</param>
+        /// <returns>XacmlAttribute</returns>
+        protected XacmlAttribute GetOrganizationIdentifierAttribute(string orgNo)
+        {
+            XacmlAttribute attribute = new XacmlAttribute(new Uri(XacmlRequestAttribute.OrganizationNumberAttribute), false);
+            attribute.AttributeValues.Add(new XacmlAttributeValue(new Uri(XacmlConstants.DataTypes.XMLString), orgNo));
             return attribute;
         }
 

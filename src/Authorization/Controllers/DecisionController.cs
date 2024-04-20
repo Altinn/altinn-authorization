@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Net.Mime;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -23,14 +22,11 @@ using Altinn.Platform.Storage.Interface.Models;
 using AutoMapper;
 using Azure.Core;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Components.Forms;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
 using Microsoft.FeatureManagement;
 using Microsoft.IdentityModel.Tokens;
-using Microsoft.VisualBasic;
 using Newtonsoft.Json;
 
 namespace Altinn.Platform.Authorization.Controllers
@@ -128,7 +124,7 @@ namespace Altinn.Platform.Authorization.Controllers
         /// External endpoint for autorization 
         /// </summary>
         [HttpPost]
-        [Authorize(Policy = AuthzConstants.PDPSCOPEACCESS)]
+        [Authorize(Policy = AuthzConstants.AUTHORIZESCOPEACCESS)]
         [Route("authorization/api/v1/authorize")]
         public async Task<ActionResult<XacmlJsonResponseExternal>> AuthorizeExternal([FromBody] XacmlJsonRequestRootExternal authorizationRequest, CancellationToken cancellationToken = default)
         {
@@ -330,22 +326,26 @@ namespace Altinn.Platform.Authorization.Controllers
         private static bool IsTypeResource(XacmlResourceAttributes resourceAttributes) =>
             !string.IsNullOrEmpty(resourceAttributes.ResourceRegistryId);
 
-        private bool IsInvalidRequest(XacmlResourceAttributes resourceAttributes, XacmlContextRequest decisionRequest) =>
+        private bool IsIncompleteRequestForDelegation(XacmlResourceAttributes resourceAttributes, XacmlContextRequest decisionRequest) =>
             resourceAttributes == null ||
-            _delegationContextHandler.GetSubjectUserId(decisionRequest) == 0 ||
+            (_delegationContextHandler.GetSubjectUserId(decisionRequest) == 0 && _delegationContextHandler.GetSubjectPartyId(decisionRequest) == 0) ||
             !int.TryParse(resourceAttributes.ResourcePartyValue, out var _) ||
             !(IsTypeApp(resourceAttributes) || IsTypeResource(resourceAttributes));
 
         private Action<DelegationChangeInput> WithDefaultGetAllDelegationChangesInput(XacmlResourceAttributes resourceAttributes, XacmlContextRequest decisionRequest) => (input) =>
         {
             input.Party = new(AltinnXacmlConstants.MatchAttributeIdentifiers.PartyAttribute, resourceAttributes.ResourcePartyValue);
-            input.Subject = new(AltinnXacmlConstants.MatchAttributeIdentifiers.UserAttribute, _delegationContextHandler.GetSubjectUserId(decisionRequest).ToString());
+
+            int subjectUserId = _delegationContextHandler.GetSubjectUserId(decisionRequest);
+            input.Subject = subjectUserId != 0 ?
+                new(AltinnXacmlConstants.MatchAttributeIdentifiers.UserAttribute, subjectUserId.ToString()) :
+                new(AltinnXacmlConstants.MatchAttributeIdentifiers.PartyAttribute, _delegationContextHandler.GetSubjectPartyId(decisionRequest).ToString());
         };
 
         private async Task<XacmlContextResponse> AuthorizeUsingDelegations(XacmlContextRequest decisionRequest, XacmlPolicy resourcePolicy, CancellationToken cancellationToken = default)
         {
             var resourceAttributes = _delegationContextHandler.GetResourceAttributes(decisionRequest);
-            if (IsInvalidRequest(resourceAttributes, decisionRequest))
+            if (IsIncompleteRequestForDelegation(resourceAttributes, decisionRequest))
             {
                 string request = JsonConvert.SerializeObject(decisionRequest);
                 _logger.LogWarning("// DecisionController // Authorize // Delegations // Incomplete request: {request}", request);
