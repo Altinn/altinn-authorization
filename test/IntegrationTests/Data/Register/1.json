@@ -78,6 +78,19 @@
     "childParties": null
   },
   {
+    "partyId": "500800",
+    "partyTypeName": 2,
+    "orgNumber": "934382404",
+    "ssn": null,
+    "unitType": "AS",
+    "name": "AltinnApps0011 SubjectOrg",
+    "isDeleted": false,
+    "onlyHierarchyElementWithNoAccess": false,
+    "person": null,
+    "organisation": null,
+    "childParties": null
+  },
+  {
     "partyId": "1337",
     "partyTypeName": 1,
     "orgNumber": "null",
@@ -103,6 +116,4 @@
     "organisation": null,
     "childParties": null
   }
-
-
 ]
