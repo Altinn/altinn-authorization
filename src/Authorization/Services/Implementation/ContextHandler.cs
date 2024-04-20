@@ -187,7 +187,7 @@ namespace Altinn.Platform.Authorization.Services.Implementation
                 if (partyId != 0)
                 {
                     resourceAttributes.ResourcePartyValue = partyId.ToString();
-                    requestResourceAttributes.Attributes.Add(GetAttribute(XacmlRequestAttribute.PartyAttribute, partyId.ToString()));
+                    requestResourceAttributes.Attributes.Add(GetPartyIdsAttribute(new List<int> { partyId }));
                 }
             }
             else if (string.IsNullOrEmpty(resourceAttributes.ResourcePartyValue) && !string.IsNullOrEmpty(resourceAttributes.PersonId))
@@ -201,7 +201,7 @@ namespace Altinn.Platform.Authorization.Services.Implementation
                 if (partyId != 0)
                 {
                     resourceAttributes.ResourcePartyValue = partyId.ToString();
-                    requestResourceAttributes.Attributes.Add(GetAttribute(XacmlRequestAttribute.PartyAttribute, partyId.ToString()));
+                    requestResourceAttributes.Attributes.Add(GetPartyIdsAttribute(new List<int> { partyId }));
                 }
             }
         }

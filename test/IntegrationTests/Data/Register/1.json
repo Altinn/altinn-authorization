@@ -91,6 +91,32 @@
     "childParties": null
   },
   {
+    "partyId": "500900",
+    "partyTypeName": 2,
+    "orgNumber": "889640782",
+    "ssn": null,
+    "unitType": "AS",
+    "name": "NAV",
+    "isDeleted": false,
+    "onlyHierarchyElementWithNoAccess": false,
+    "person": null,
+    "organisation": null,
+    "childParties": null
+  },
+  {
+    "partyId": "50004706",
+    "partyTypeName": 2,
+    "orgNumber": "991825827",
+    "ssn": null,
+    "unitType": "AS",
+    "name": "DIGITALISERINGSDIREKTORATET",
+    "isDeleted": false,
+    "onlyHierarchyElementWithNoAccess": false,
+    "person": null,
+    "organisation": null,
+    "childParties": null
+  },
+  {
     "partyId": "1337",
     "partyTypeName": 1,
     "orgNumber": "null",
