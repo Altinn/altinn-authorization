@@ -65,11 +65,5 @@ namespace Altinn.Authorization.ABAC.Xacml.JsonProfile
         /// Gets or sets references to multiple requests.
         /// </summary>
         public XacmlJsonMultiRequests MultiRequests { get; set; }
-
-        /// <summary>
-        /// Gets the x-forwarded-for header value from the request headers of app
-        /// </summary>
-        [JsonIgnore(Condition = JsonIgnoreCondition.Always)]
-        public string XForwardedForHeader { get; set; }
     }
 }
