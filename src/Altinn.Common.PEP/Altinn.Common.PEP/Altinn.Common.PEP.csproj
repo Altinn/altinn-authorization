@@ -25,8 +25,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="8.0.0" PrivateAssets="all"/>
-    <PackageReference Include="DotNet.ReproducibleBuilds" Version="1.1.1" PrivateAssets="all"/>
+    <PackageReference Include="Altinn.Authorization.ABAC" Version="0.0.8" />
+    <!-- More about this dependency in issue #5706 -->
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="6.0.28" />
   </ItemGroup>
 
   <ItemGroup Condition="'$(Configuration)'=='Debug'">
