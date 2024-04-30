@@ -21,13 +21,23 @@ namespace Altinn.Platform.Authorization.Constants
         public const string DELEGATIONEVENT_FUNCTION_AUTHORIZATION = "DelegationEventFunctionAccess";
 
         /// <summary>
-        /// Policy scope access
+        /// Policy for scope access to Authorize API
         /// </summary>
-        public const string PDPSCOPEACCESS = "PDPScopeAccess";
+        public const string AUTHORIZESCOPEACCESS = "AuthorizeScopeAccess";
 
         /// <summary>
-        /// Scope that gives access to 
+        /// (deprecated) Scope that gives access to Authorize API
         /// </summary>
         public const string PDP_SCOPE = "altinn:authorization:pdp";
+
+        /// <summary>
+        /// Scope that gives access to external Authorize API for service/resource owners
+        /// </summary>
+        public const string AUTHORIZE_SCOPE = "altinn:authorization/authorize";
+
+        /// <summary>
+        /// SScope that gives access to external Authorize API for decision requests across service/resource owners
+        /// </summary>
+        public const string AUTHORIZE_ADMIN_SCOPE = "altinn:authorization/authorize.admin";
     }
 }
