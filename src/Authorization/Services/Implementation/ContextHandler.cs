@@ -370,7 +370,7 @@ namespace Altinn.Platform.Authorization.Services.Implementation
                 throw new ArgumentException("Not allowed to set userid and person-id for subject at the same time");
             }
 
-            if (!string.IsNullOrEmpty(subjectOrgnNo) && (subjectUserId != 0 || !string.IsNullOrEmpty(subjectSsn)))
+            if (isExternalRequest && !string.IsNullOrEmpty(subjectOrgnNo) && (subjectUserId != 0 || !string.IsNullOrEmpty(subjectSsn)))
             {
                 throw new ArgumentException("Not allowed to set organization number and person-id or userid for subject at the same time");
             }
@@ -390,7 +390,7 @@ namespace Altinn.Platform.Authorization.Services.Implementation
                 }
             }
 
-            if (!string.IsNullOrEmpty(subjectOrgnNo))
+            if (isExternalRequest && !string.IsNullOrEmpty(subjectOrgnNo))
             {
                 int partyId = await _registerService.PartyLookup(subjectOrgnNo, null);
                 subjectContextAttributes.Attributes.Add(GetPartyIdsAttribute(new List<int> { partyId }));
