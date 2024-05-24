@@ -7,7 +7,7 @@ meta {
 post {
   url: {{baseUrl}}/authorization/api/v1/decision
   body: json
-  auth: none
+  auth: inherit
 }
 
 headers {
@@ -89,8 +89,6 @@ script:pre-request {
   bru.setVar("auth_ssn", testdata.org1.dagl.pid);
   bru.setVar("party", testdata.org1.partyid);
   bru.setVar("appsAccessKey", bru.getEnvVar("appsAccessKey"));
-  
-  await testTokenGenerator.getToken();
 }
 
 script:post-response {
