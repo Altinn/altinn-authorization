@@ -7,7 +7,7 @@ labels: 'kind/deploy_patch, team/tilgangsinfo'
 - [ ] Deploy[^1] all components to production[^2].
   - [ ] Deploy [Authentication] to production.
   - [ ] Deploy [Resource Registry] to production.
-  - [ ] Deploy [^4] Auditlog to production.
+  - [ ] Deploy [Auditlog] to production[^4].
 - [ ] Deploy updates to APIM (if updated since last deploy)
   - [ ] Check [apim deploys to tt](https://dev.azure.com/brreg/altinn-studio-ops/_build?definitionId=125) for updates to `#resourceregistry` and `#authentication`. If none of them have been deployed the last week, no change needed.
 - [ ] Go grab a coffee
@@ -21,7 +21,7 @@ labels: 'kind/deploy_patch, team/tilgangsinfo'
 - [ ] Deploy[^1] all components to TT02.
   - [ ] Deploy [Authentication] to TT02.
   - [ ] Deploy [Resource Registry] to TT02.
-  - [ ] Deploy [^5] Auditlog to TT02.
+  - [ ] Deploy [Auditlog][Auditlog Releases] to TT02[^5].
 - [ ] Deploy updates to APIM (if updated since last deploy)
   - [ ] Check [apim deploys to at](https://dev.azure.com/brreg/altinn-studio-ops/_build?definitionId=124) for updates to `#resourceregistry` and `#authentication`. If none of them have been deployed the last week, no change needed.
 - [ ] Go grab a coffee
@@ -42,6 +42,7 @@ labels: 'kind/deploy_patch, team/tilgangsinfo'
 [Authentication]: https://dev.azure.com/brreg/altinn-studio/_release?_a=releases&view=all&definitionId=20
 [Resource Registry]: https://dev.azure.com/brreg/altinn-studio/_release?_a=releases&view=all&definitionId=36
 [Auditlog]: https://github.com/Altinn/altinn-auth-audit-log/actions/workflows/deploy-after-release.yml
+[Auditlog Releases]: https://github.com/Altinn/altinn-auth-audit-log/releases
 
 [^1]: Approve pending prod releases by clicking the blue production chip and clicking approve. ![image-20240306133832594](https://raw.githubusercontent.com/Altinn/altinn-authorization/main/.github/images/ado-pending-approval-screen.png)
 [^2]: Look for any blue production chips. ![image-20240306133137061](https://raw.githubusercontent.com/Altinn/altinn-authorization/main/.github/images/ado-prod-button.png)  
@@ -52,7 +53,7 @@ Click on the awaiting deployment. You can see that a deployment to TT02 was succ
 ![Detailed view of Awaiting deployment of prod](https://raw.githubusercontent.com/Altinn/altinn-authorization/main/.github/images/awaiting-deploy-prod-detail.png)  
 Click on the prod checkbox and then click approve and deploy. This will trigger a deployment to production.  
 ![Review deployment of prod](https://raw.githubusercontent.com/Altinn/altinn-authorization/main/.github/images/review-deploy-prod.png)  
-[^5]: The new components are deployed via github actions. For auditlog, a release is scheduled every wednesday. Go to https://github.com/Altinn/altinn-auth-audit-log/releases and check if there are any draft release is found.  
+[^5]: The new components are deployed via github actions. For auditlog, a release is scheduled every wednesday. Go to [Auditlog Releases] and check if there are any draft release is found.  
 ![Releases list](https://raw.githubusercontent.com/Altinn/altinn-authorization/main/.github/images/release-draft.png)  
 click on Edit Draft and set the release title as the tag version f.eks in the picture you can see that the tag is 2024.4.3 and the release title therefore should be set as 2024.4.3.  
 ![Edit release notes draft](https://raw.githubusercontent.com/Altinn/altinn-authorization/main/.github/images/edit-draft-releasenotes.png)  
