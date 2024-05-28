@@ -133,6 +133,8 @@
     <None Remove="Data\Xacml\3.0\ResourceRegistry\AltinnResourceRegistry0010Response.json" />
     <None Remove="Data\Xacml\3.0\ResourceRegistry\AltinnResourceRegistry0011Request.json" />
     <None Remove="Data\Xacml\3.0\ResourceRegistry\AltinnResourceRegistry0011Response.json" />
+    <None Remove="Data\Xacml\3.0\ResourceRegistry\AltinnResourceRegistryMulti0012Request.json" />
+    <None Remove="Data\Xacml\3.0\ResourceRegistry\AltinnResourceRegistryMulti0012Response.json" />
     <None Remove="Data\Xacml\3.0\ResourceRegistry\oed-role-formuesfullmakt\policy.xml" />
     <None Remove="Data\Xacml\3.0\ResourceRegistry\apidelegation\policy.xml" />
     <None Remove="Data\Xacml\3.0\ResourceRegistry\ResourceRegistry_OedFormuesfullmakt_Json_IndeterminateRequest.json" />
@@ -144,6 +146,7 @@
     <None Remove="Data\Xacml\3.0\ResourceRegistry\ResourceRegistry_OedFormuesfullmakt_Xml_PermitRequest.xml" />
     <None Remove="Data\Xacml\3.0\ResourceRegistry\ResourceRegistry_OedFormuesfullmakt_Xml_PermitResponse.xml" />
     <None Remove="Data\Xacml\3.0\ResourceRegistry\eventlog\AltinnResourceRegistry0004Event.json" />
+    <None Remove="Data\Xacml\3.0\ResourceRegistry\ttd-externalpdp-resource3\policy.xml" />
     <None Remove="Data\Xacml\3.0\ResourceRegistry\ttd-externalpdp-resource2\policy.xml" />
     <None Remove="Data\Xacml\3.0\ResourceRegistry\ttd-externalpdp-resource1\policy.xml" />
   </ItemGroup>
