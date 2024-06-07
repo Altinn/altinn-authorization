@@ -138,9 +138,16 @@ namespace Altinn.Platform.Authorization.Controllers
             {
                 _logger.LogError(ex, "// DecisionController // External Decision // Unexpected Exception");
 
+                XacmlContextStatus status = new XacmlContextStatus(XacmlContextStatusCode.SyntaxError);
+                if (ex is ArgumentException)
+                {
+                    status = new XacmlContextStatus(XacmlContextStatusCode.ProcessingError);
+                    status.StatusMessage = ex.Message;
+                }
+
                 XacmlContextResult result = new XacmlContextResult(XacmlContextDecision.Indeterminate)
                 {
-                    Status = new XacmlContextStatus(XacmlContextStatusCode.SyntaxError)
+                    Status = status
                 };
 
                 XacmlContextResponse xacmlContextResponse = new XacmlContextResponse(result);
@@ -391,10 +398,10 @@ namespace Altinn.Platform.Authorization.Controllers
             }
 
             var cacheKey = CreateCacheKey(
-                "u:" + delegation.Subject.Value,
-                "p:" + delegation.Party.Value,
-                "a:" + $"{delegation.Resource.FirstOrDefault(r => r.Id == AltinnXacmlConstants.MatchAttributeIdentifiers.OrgAttribute)}/{delegation.Resource.FirstOrDefault(r => r.Id == AltinnXacmlConstants.MatchAttributeIdentifiers.AppAttribute)}",
-                "r:" + delegation.Resource.FirstOrDefault(r => r.Id == AltinnXacmlConstants.MatchAttributeIdentifiers.ResourceRegistry));
+                $"s:{delegation.Subject.Id}:{delegation.Subject.Value}",
+                $"p:{delegation.Party.Value}",
+                $"a:{delegation.Resource.FirstOrDefault(r => r.Id == AltinnXacmlConstants.MatchAttributeIdentifiers.OrgAttribute)}/{delegation.Resource.FirstOrDefault(r => r.Id == AltinnXacmlConstants.MatchAttributeIdentifiers.AppAttribute)}",
+                $"r:{delegation.Resource.FirstOrDefault(r => r.Id == AltinnXacmlConstants.MatchAttributeIdentifiers.ResourceRegistry)}");
 
             if (!_memoryCache.TryGetValue(cacheKey, out IEnumerable<DelegationChange> result))
             {
