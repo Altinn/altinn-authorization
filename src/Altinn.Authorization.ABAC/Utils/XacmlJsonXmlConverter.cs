@@ -50,6 +50,7 @@ namespace Altinn.Authorization.ABAC.Utils
                 jsonResult.Status = new XacmlJsonStatus();
                 jsonResult.Status.StatusCode = new XacmlJsonStatusCode();
                 jsonResult.Status.StatusCode.Value = xacmlResult.Status.StatusCode.Value.OriginalString;
+                jsonResult.Status.StatusMessage = xacmlResult.Status.StatusMessage;
 
                 jsonResult.Obligations = ConvertObligations(xacmlResult.Obligations);
                 jsonResult.Category = ConvertAttributes(xacmlResult.Attributes);
