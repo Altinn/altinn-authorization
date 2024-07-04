@@ -335,18 +335,14 @@ namespace Altinn.Platform.Authorization.Controllers
 
         private bool IsIncompleteRequestForDelegation(XacmlResourceAttributes resourceAttributes, XacmlContextRequest decisionRequest) =>
             resourceAttributes == null ||
-            (_delegationContextHandler.GetSubjectUserId(decisionRequest) == 0 && _delegationContextHandler.GetSubjectPartyId(decisionRequest) == 0) ||
+            (_delegationContextHandler.GetSubjectAttributeMatch(decisionRequest, [XacmlRequestAttribute.UserAttribute, XacmlRequestAttribute.PartyAttribute, XacmlRequestAttribute.SystemUserIdAttribute]) == null) ||
             !int.TryParse(resourceAttributes.ResourcePartyValue, out var _) ||
             !(IsTypeApp(resourceAttributes) || IsTypeResource(resourceAttributes));
 
         private Action<DelegationChangeInput> WithDefaultGetAllDelegationChangesInput(XacmlResourceAttributes resourceAttributes, XacmlContextRequest decisionRequest) => (input) =>
         {
+            input.Subject = _delegationContextHandler.GetSubjectAttributeMatch(decisionRequest, [XacmlRequestAttribute.UserAttribute, XacmlRequestAttribute.PartyAttribute, XacmlRequestAttribute.SystemUserIdAttribute]);
             input.Party = new(AltinnXacmlConstants.MatchAttributeIdentifiers.PartyAttribute, resourceAttributes.ResourcePartyValue);
-
-            int subjectUserId = _delegationContextHandler.GetSubjectUserId(decisionRequest);
-            input.Subject = subjectUserId != 0 ?
-                new(AltinnXacmlConstants.MatchAttributeIdentifiers.UserAttribute, subjectUserId.ToString()) :
-                new(AltinnXacmlConstants.MatchAttributeIdentifiers.PartyAttribute, _delegationContextHandler.GetSubjectPartyId(decisionRequest).ToString());
         };
 
         private async Task<XacmlContextResponse> AuthorizeUsingDelegations(XacmlContextRequest decisionRequest, XacmlPolicy resourcePolicy, CancellationToken cancellationToken = default)
