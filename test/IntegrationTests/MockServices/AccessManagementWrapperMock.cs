@@ -61,24 +61,31 @@ public class AccessManagementWrapperMock : IAccessManagementWrapper
         return Task.FromResult(result as IEnumerable<DelegationChange>);
     }
 
-    public static Func<DelegationChangeInput, bool> WithDefaultCondition(string appID, int partyID, int userID) => delegation =>
-        IfAltinnAppID(appID)(delegation) && IfOfferedPartyID(partyID)(delegation) && IfCoveredByUserID(userID)(delegation);
+    public static Func<DelegationChangeInput, bool> WithDefaultCondition(string resourceId, int partyID, int userID) => delegation =>
+        (IfAltinnAppID(resourceId)(delegation) || IfResourceID(resourceId)(delegation)) && IfOfferedPartyID(partyID)(delegation) && (IfCoveredByUserID(userID)(delegation) || IfCoveredByUserID(userID)(delegation));
 
     public static Func<DelegationChangeInput, bool> IfAltinnAppID(string appID) => delegation =>
     {
         var app = Strings.Join(
-            new string[]
-            {
+            [
                 delegation.Resource.FirstOrDefault(resource => resource.Id == AltinnXacmlConstants.MatchAttributeIdentifiers.OrgAttribute)?.Value,
                 delegation.Resource.FirstOrDefault(resource => resource.Id == AltinnXacmlConstants.MatchAttributeIdentifiers.AppAttribute)?.Value
-            },
+            ],
             "/");
 
         return app == appID;
     };
 
+    public static Func<DelegationChangeInput, bool> IfResourceID(string resourceId) => delegation =>
+    {
+        return delegation.Resource.FirstOrDefault(resource => resource.Id == AltinnXacmlConstants.MatchAttributeIdentifiers.ResourceRegistry)?.Value == resourceId;
+    };
+
     public static Func<DelegationChangeInput, bool> IfCoveredByUserID(int userID) => delegation =>
         delegation.Subject.Value == userID.ToString();
+
+    public static Func<DelegationChangeInput, bool> IfCoveredByPartyID(int partyID) => delegation =>
+        delegation.Subject.Value == partyID.ToString();
 
     public static Func<DelegationChangeInput, bool> IfOfferedPartyID(int partyID) => delegation =>
         delegation.Party.Value == partyID.ToString();
