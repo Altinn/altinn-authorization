@@ -1,21 +1,25 @@
 using System;
+using Altinn.Authorization.Enums;
 using Altinn.Platform.Authorization.Models;
 
 namespace Altinn.Platform.Authorization.IntegrationTests.Data;
 
 public static class DelegationChangesTestData
 {
-    public static DelegationChange Default(params Action<DelegationChange>[] actions)
+    public static DelegationChangeExternal Default(params Action<DelegationChangeExternal>[] actions)
     {
-        var data = new DelegationChange()
+        var data = new DelegationChangeExternal()
         {
             DelegationChangeId = 1337,
+            ResourceRegistryDelegationChangeId = 0,
             DelegationChangeType = DelegationChangeType.Grant,
-            AltinnAppId = "apps-test",
+            ResourceId = "ttd/apps-test",
+            ResourceType = string.Empty,
             OfferedByPartyId = 0,
             CoveredByPartyId = null,
             CoveredByUserId = null,
             PerformedByUserId = 20001336,
+            PerformedByPartyId = null,
             BlobStoragePolicyPath = "{altinnAppId}/{offeredByPartyId}/{coveredBy}/delegationpolicy.xml",
             BlobStorageVersionId = "CorrectLeaseId",
             Created = DateTime.Now
@@ -30,23 +34,30 @@ public static class DelegationChangesTestData
         return data;
     }
 
-    public static void WithBlobStorage(DelegationChange data)
+    public static void WithBlobStorage(DelegationChangeExternal data)
     {
         var coveredBy = data.CoveredByPartyId != null ? $"p{data.CoveredByPartyId}" : $"u{data.CoveredByUserId}";
-        data.BlobStoragePolicyPath = $"{data.AltinnAppId}/{data.OfferedByPartyId}/{coveredBy}/delegationpolicy.xml";
+        coveredBy = data.ToUuid.HasValue ? $"{data.ToUuidType}{data.ToUuid}" : coveredBy;
+        data.BlobStoragePolicyPath = $"{data.ResourceId}/{data.OfferedByPartyId}/{coveredBy}/delegationpolicy.xml";
     } 
 
-    public static Action<DelegationChange> WithChangeID(int changeID) => (delegation) => delegation.DelegationChangeId = changeID;
+    public static Action<DelegationChangeExternal> WithChangeID(int changeID) => (delegation) => delegation.DelegationChangeId = changeID;
 
-    public static Action<DelegationChange> WithDelegationChangeType(DelegationChangeType changeType) => (delegation) => delegation.DelegationChangeType = changeType;
+    public static Action<DelegationChangeExternal> WithDelegationChangeType(DelegationChangeType changeType) => (delegation) => delegation.DelegationChangeType = changeType;
 
-    public static Action<DelegationChange> WithPerformedByUserID(int userID) => (delegation) => delegation.PerformedByUserId = userID;
+    public static Action<DelegationChangeExternal> WithPerformedByUserID(int userID) => (delegation) => delegation.PerformedByUserId = userID;
 
-    public static Action<DelegationChange> WithAltinnAppID(string appID) => (delegation) => delegation.AltinnAppId = appID;
+    public static Action<DelegationChangeExternal> WithResourceID(string resourceId) => (delegation) => delegation.ResourceId = resourceId;
 
-    public static Action<DelegationChange> WithCoveredByPartyID(int partyID) => (delegation) => delegation.CoveredByPartyId = partyID;
+    public static Action<DelegationChangeExternal> WithCoveredByPartyID(int partyID) => (delegation) => delegation.CoveredByPartyId = partyID;
 
-    public static Action<DelegationChange> WithCoveredByUserID(int userID) => (delegation) => delegation.CoveredByUserId = userID;
+    public static Action<DelegationChangeExternal> WithCoveredByUserID(int userID) => (delegation) => delegation.CoveredByUserId = userID;
 
-    public static Action<DelegationChange> WithOfferedByPartyID(int partyID) => (delegation) => delegation.OfferedByPartyId = partyID;
+    public static Action<DelegationChangeExternal> WithCoveredByUuid(UuidType toType, Guid to) => (delegation) =>
+    {
+        delegation.ToUuidType = toType;
+        delegation.ToUuid = to;
+    };
+
+    public static Action<DelegationChangeExternal> WithOfferedByPartyID(int partyID) => (delegation) => delegation.OfferedByPartyId = partyID;
 }

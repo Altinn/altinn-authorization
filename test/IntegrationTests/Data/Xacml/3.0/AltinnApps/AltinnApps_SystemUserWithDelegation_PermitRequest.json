@@ -26,12 +26,16 @@
       {
         "Attribute": [
           {
-            "AttributeId": "urn:altinn:resource",
-            "Value": "ttd-externalpdp-resource1"
+            "AttributeId": "urn:altinn:org",
+            "Value": "org1"
           },
           {
-            "AttributeId": "urn:altinn:organization:identifier-no",
-            "Value": "910459880"
+            "AttributeId": "urn:altinn:app",
+            "Value": "app1"
+          },
+          {
+            "AttributeId": "urn:altinn:partyid",
+            "Value": "50005545"
           }
         ]
       }

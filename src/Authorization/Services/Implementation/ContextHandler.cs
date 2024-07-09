@@ -331,6 +331,11 @@ namespace Altinn.Platform.Authorization.Services.Implementation
             string subjectOrgnNo = string.Empty;
             bool foundLegacyOrgNoAttribute = false;
 
+            if (subjectContextAttributes.Attributes.Any(a => a.AttributeId.OriginalString.Equals(XacmlRequestAttribute.SystemUserIdAttribute)) && subjectContextAttributes.Attributes.Count > 1)
+            {
+                throw new ArgumentException($"Subject attribute {XacmlRequestAttribute.SystemUserIdAttribute} can only be used by itself and not in combination with other subject identifiers.");
+            }
+
             foreach (XacmlAttribute xacmlAttribute in subjectContextAttributes.Attributes)
             {
                 if (xacmlAttribute.AttributeId.OriginalString.Equals(XacmlRequestAttribute.UserAttribute))

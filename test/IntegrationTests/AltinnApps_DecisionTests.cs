@@ -391,6 +391,21 @@ namespace Altinn.Platform.Authorization.IntegrationTests
         }
 
         [Fact]
+        public async Task PDP_Decision_DelegationPolicy_AltinnAppsOrg1App1_SystemUserDelegation_Permit()
+        {
+            string testCase = "AltinnApps_SystemUserWithDelegation_Permit";
+            HttpClient client = GetTestClient();
+            HttpRequestMessage httpRequestMessage = TestSetupUtil.CreateJsonProfileXacmlRequest(testCase);
+            XacmlJsonResponse expected = TestSetupUtil.ReadExpectedJsonProfileResponse(testCase);
+
+            // Act
+            XacmlJsonResponse contextResponse = await TestSetupUtil.GetXacmlJsonProfileContextResponseAsync(client, httpRequestMessage);
+
+            // Assert
+            AssertionUtil.AssertEqual(expected, contextResponse);
+        }
+
+        [Fact]
         public async Task PDP_Decision_AltinnApps_OedFormuesfullmakt_Xml_Permit()
         {
             string testCase = "AltinnApps_OedFormuesfullmakt_Xml_Permit";
