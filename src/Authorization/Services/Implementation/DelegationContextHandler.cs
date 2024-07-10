@@ -94,7 +94,7 @@ namespace Altinn.Platform.Authorization.Services.Implementation
 
                 if (subjectAttribute != null)
                 {
-                    return new(attributeId, subjectAttribute?.AttributeValues.FirstOrDefault()?.Value);
+                    return new(attributeId, subjectAttribute.AttributeValues.FirstOrDefault()?.Value);
                 }
             }
 
