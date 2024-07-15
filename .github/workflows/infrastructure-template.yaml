@@ -34,7 +34,7 @@ jobs:
         run: echo "TF_VARS_FILE=$(echo ${{ inputs.environment }} | tr '[:upper:]' '[:lower:]').tfvars" >> $GITHUB_ENV
 
       - name: Terraform Initialize
-        uses: altinn/altinn-platform/actions/terraform/plan@features/828
+        uses: altinn/altinn-platform/actions/terraform/plan@main
         with:
           working_directory: ${{ env.WORKING_DIR }}
           oidc_type: environment
@@ -56,7 +56,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Terraform Initialize
-        uses: altinn/altinn-platform/actions/terraform/plan@features/828
+        uses: altinn/altinn-platform/actions/terraform/plan@main
         with:
           working_directory: ${{ env.WORKING_DIR }}
           oidc_type: environment
