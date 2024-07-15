@@ -26,10 +26,10 @@ resource "azurerm_resource_group" "authorization" {
   location = "norwayeast"
 }
 
-# module "vnet" {
-#   source   = "../modules/vnet"
-#   metadata = local.metadata
+module "vnet" {
+  source   = "../modules/vnet"
+  metadata = local.metadata
 
-#   cidr                = var.cidr
-#   resource_group_name = azurerm_resource_group.authorization.name
-# }
+  cidr                = var.cidr
+  resource_group_name = azurerm_resource_group.authorization.name
+}
