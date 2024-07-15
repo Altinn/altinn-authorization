@@ -1,0 +1,58 @@
+name: Infrastructure
+
+on:
+  push:
+  release:
+    types:
+      - released
+
+permissions:
+  id-token: write
+  contents: write
+  pull-requests: write
+
+jobs:
+  ci:
+    name: Continous Integration
+    secrets: inherit
+    strategy:
+      fail-fast: false
+      matrix:
+        environment: [AT21, AT22, AT23, AT24]
+    uses: ./.github/workflows/infrastructure-template.yaml
+    with:
+      environment: ${{ matrix.environment }}
+
+  at:
+    name: AT
+    secrets: inherit
+    needs: ci
+    if: github.event_name == 'release'
+    strategy:
+      fail-fast: false
+      matrix:
+        environment: [AT21, AT22, AT23, AT24]
+    uses: ./.github/workflows/infrastructure-template.yaml
+    with:
+      environment: ${{ matrix.environment }}
+      tf_should_apply: true
+
+  tt02:
+    name: TT02
+    if: github.event_name == 'release'
+    needs: at
+    secrets: inherit
+    uses: ./.github/workflows/infrastructure-template.yaml
+    with:
+      environment: TT02
+      tf_should_apply: true
+
+  prod:
+    name: PROD
+    if: github.event_name == 'release
+    needs: tt02
+    secrets: inherit
+    uses: ./.github/workflows/infrastructure-template.yaml
+    with:
+      environment: PROD
+      tf_should_apply: true

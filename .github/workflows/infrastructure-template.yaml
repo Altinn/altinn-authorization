@@ -1,0 +1,63 @@
+name: Infrastructure
+
+on:
+  workflow_call:
+    inputs:
+      tf_should_apply:
+        default: false
+        type: boolean
+        description: Specifies if terraform should apply plan
+
+      environment:
+        type: string
+        description: GitHub environment
+        required: true
+
+env:
+  TF_STATE_NAME: infrastructure.tfstate
+  WORKING_DIR: ./infrastructure/authorization
+
+permissions:
+  id-token: write
+  contents: write
+  pull-requests: write
+
+jobs:
+  plan:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Terraform Initialize
+        uses: altinn/altinn-platform/actions/terraform/plan@main
+        with:
+          working_directory: ${{ env.WORKING_DIR }}
+          oidc_type: environment
+          oidc_value: ${{ inputs.environment }}
+
+          arm_client_id: ${{ variables.ARM_CLIENT_ID }}
+          arm_subscription_id: ${{ variables.ARM_SUBSCRIPTION_ID }}
+
+          tf_state_name: ${{ env.TF_STATE_NAME }}
+          gh_token: ${{ secrets.GITHUB_TOKEN }}
+
+  apply:
+    runs-on: ubuntu-latest
+    if: inputs.tf_should_apply
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Terraform Initialize
+        uses: altinn/altinn-platform/actions/terraform/plan@main
+        with:
+          working_directory: ${{ env.WORKING_DIR }}
+          oidc_type: environment
+          oidc_value: ${{ inputs.environment }}
+
+          arm_client_id: ${{ variables.ARM_CLIENT_ID }}
+          arm_subscription_id: ${{ variables.ARM_SUBSCRIPTION_ID }}
+
+          tf_state_name: ${{ env.TF_STATE_NAME }}
+          gh_token: ${{ secrets.GITHUB_TOKEN }}
