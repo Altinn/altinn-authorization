@@ -44,6 +44,7 @@ labels: "kind/deploy_patch, team/tilgangsinfo"
 - [ ] [Resource Registry](https://github.com/Altinn/altinn-resource-registry).
 - [ ] [Register](https://github.com/Altinn/altinn-register).
 - [ ] [Auditlog](https://github.com/Altinn/altinn-auth-audit-log).
+- [ ] [Authorization Utils](https://github.com/Altinn/altinn-authorization-utils).
 
 [Authentication]: https://dev.azure.com/brreg/altinn-studio/_release?_a=releases&view=all&definitionId=20
 [Resource Registry]: https://dev.azure.com/brreg/altinn-studio/_release?_a=releases&view=all&definitionId=36
