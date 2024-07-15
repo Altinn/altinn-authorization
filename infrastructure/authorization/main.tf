@@ -12,7 +12,12 @@ terraform {
 }
 
 
-resource "azurerm_resource_group" "auth" {
-  name     = "rg-altinn-authorization-${var.environment}-001"
-  location = "norwayeast"
+locals {
+  environment = lower(var.environment)
+  metadata = {
+    solution    = "authorization"
+    environment = local.environment
+    instance    = var.instance
+  }
 }
+
