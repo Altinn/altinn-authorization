@@ -13,5 +13,6 @@ variable "instance" {
 }
 
 variable "cidr" {
-  type = string
+  type    = string
+  default = "value"
 }
