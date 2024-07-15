@@ -21,3 +21,7 @@ locals {
   }
 }
 
+resource "azurerm_resource_group" "authorization" {
+  name     = "rg-${local.metadata.environment}-${local.metadata.instance}"
+  location = "norwayeast"
+}
