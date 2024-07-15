@@ -49,7 +49,7 @@ jobs:
 
   prod:
     name: PROD
-    if: github.event_name == 'release
+    if: github.event_name == 'release'
     needs: tt02
     secrets: inherit
     uses: ./.github/workflows/infrastructure-template.yaml
