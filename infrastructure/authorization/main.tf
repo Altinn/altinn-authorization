@@ -6,9 +6,9 @@ terraform {
     }
   }
 
-  backend "azurerm" {
-    use_azuread_auth = true
-  }
+  # backend "azurerm" {
+  #   use_azuread_auth = true
+  # }
 }
 
 
@@ -32,4 +32,6 @@ module "vnet" {
 
   cidr                = var.cidr
   resource_group_name = azurerm_resource_group.authorization.name
+
+  depends_on = [azurerm_resource_group.authorization]
 }

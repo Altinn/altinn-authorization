@@ -8,10 +8,10 @@ output "vnet" {
 }
 
 output "subnets" {
-  value = { for subnet in local.subnets : subnet =>
+  value = { for key, value in local.subnets : key =>
     {
-      id   = azurerm_virtual_network.vnet[subnet].id
-      name = azurerm_virtual_network.vnet[subnet].name
+      id   = azurerm_subnet.vnet[key].id
+      name = azurerm_subnet.vnet[key].name
     }
   }
 

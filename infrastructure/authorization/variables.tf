@@ -1,7 +1,3 @@
-variable "environment" {
-  type = string
-}
-
 variable "location" {
   type    = string
   default = "norwayeast"
@@ -12,7 +8,10 @@ variable "instance" {
   default = "001"
 }
 
+variable "environment" {
+  type = string
+}
+
 variable "cidr" {
-  type    = string
-  default = "value"
+  type = string
 }

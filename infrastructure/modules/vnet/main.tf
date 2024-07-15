@@ -1,24 +1,24 @@
 locals {
-  cidr_prefix        = tonumber(split("/", var.cidr)[1])
-  small_subnet_mask  = 28 - cidr_prefix # IPs 16
-  medium_subnet_mask = 26 - cidr_prefix # IPs 64
-  large_subnet_mask  = 24 - cidr_prefix # IPs 256
+  cidr_prefix   = tonumber(split("/", var.cidr)[1])
+  small_subnet  = 28 - local.cidr_prefix # Available IPs 11
+  medium_subnet = 26 - local.cidr_prefix # Available IPs 59
+  large_subnet  = 24 - local.cidr_prefix # # Available IPs 251
 
   subnets = {
     key_vault = {
-      bits = local.medium_subnet_mask
+      bits = local.medium_subnet
     }
     app_configuration = {
-      bits = local.medium_subnet_mask
+      bits = local.medium_subnet
     }
     storage_accounts = {
-      bits = local.small_subnet_mask
+      bits = local.small_subnet
     }
     redis = {
-      bits = local.small_subnet_mask
+      bits = local.small_subnet
     }
     postgres = {
-      bits = local.small_subnet_mask
+      bits = local.small_subnet
       delegations = {
         fs = {
           name = "Microsoft.DBforPostgreSQL/flexibleServers"
@@ -35,9 +35,8 @@ data "azurerm_resource_group" "vnet" {
   name = var.resource_group_name
 }
 
-
 resource "azurerm_virtual_network" "vnet" {
-  name                = "vnet-${var.metadata.solution}-${var.metadata.enviroment}-${var.metadata.instance}"
+  name                = "vnet-${var.metadata.solution}-${var.metadata.environment}-${var.metadata.instance}"
   address_space       = [var.cidr]
   location            = data.azurerm_resource_group.vnet.location
   resource_group_name = data.azurerm_resource_group.vnet.name
@@ -48,22 +47,22 @@ module "subnet" {
   base_cidr_block = var.cidr
   networks = [for key, value in local.subnets : {
     name     = key
-    new_bits = value.subnet_mask
+    new_bits = value.bits
   }]
 }
 
 resource "azurerm_subnet" "vnet" {
   resource_group_name  = var.resource_group_name
   virtual_network_name = azurerm_virtual_network.vnet.name
-  address_prefixes     = module.subnet[each.key]
+  address_prefixes     = [module.subnet.networks[index(module.subnet.networks.*.name, each.key)].cidr_block]
   name                 = each.key
 
   dynamic "delegation" {
     content {
-      name = each.key
+      name = delegation.key
       service_delegation {
-        name    = each.value.name
-        actions = each.value.actions
+        name    = delegation.value.name
+        actions = delegation.value.actions
       }
     }
 
