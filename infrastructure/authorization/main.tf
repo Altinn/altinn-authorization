@@ -25,3 +25,11 @@ resource "azurerm_resource_group" "authorization" {
   name     = "rg-${local.metadata.environment}-${local.metadata.instance}"
   location = "norwayeast"
 }
+
+# module "vnet" {
+#   source   = "../modules/vnet"
+#   metadata = local.metadata
+
+#   cidr                = var.cidr
+#   resource_group_name = azurerm_resource_group.authorization.name
+# }

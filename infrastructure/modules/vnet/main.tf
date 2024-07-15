@@ -1,20 +1,20 @@
 locals {
-  size = 20
+  size = 22
   subnets = {
     key_vault = {
-      ip_addresses = 1
+      address_space = 4
     }
     app_configuration = {
-      ip_addresses = 1
+      address_space = 2
     }
     storage_accounts = {
-      ip_addresses = 1
+      address_space = 3
     }
     redis = {
-      ip_addresses = 1
+      address_space = 4
     }
     postgres = {
-      ip_addresses = 2
+      address_space = 5
       delegations = {
         fs = {
           name = "Microsoft.DBforPostgreSQL/flexibleServers"
