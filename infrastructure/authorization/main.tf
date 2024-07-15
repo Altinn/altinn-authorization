@@ -5,6 +5,10 @@ terraform {
       version = "3.112.0"
     }
   }
+
+  backend "azurerm" {
+    use_azuread_auth = true
+  }
 }
 
 
