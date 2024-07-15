@@ -25,6 +25,7 @@ permissions:
 jobs:
   plan:
     runs-on: ubuntu-latest
+    environment: ${{ inputs.environment }}
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
@@ -36,14 +37,15 @@ jobs:
           oidc_type: environment
           oidc_value: ${{ inputs.environment }}
 
-          arm_client_id: ${{ variables.ARM_CLIENT_ID }}
-          arm_subscription_id: ${{ variables.ARM_SUBSCRIPTION_ID }}
+          arm_client_id: ${{ vars.ARM_CLIENT_ID }}
+          arm_subscription_id: ${{ vars.ARM_SUBSCRIPTION_ID }}
 
           tf_state_name: ${{ env.TF_STATE_NAME }}
           gh_token: ${{ secrets.GITHUB_TOKEN }}
 
   apply:
     runs-on: ubuntu-latest
+    environment: ${{ inputs.environment }}
     if: inputs.tf_should_apply
     steps:
       - name: Checkout Repository
@@ -56,8 +58,8 @@ jobs:
           oidc_type: environment
           oidc_value: ${{ inputs.environment }}
 
-          arm_client_id: ${{ variables.ARM_CLIENT_ID }}
-          arm_subscription_id: ${{ variables.ARM_SUBSCRIPTION_ID }}
+          arm_client_id: ${{ vars.ARM_CLIENT_ID }}
+          arm_subscription_id: ${{ vars.ARM_SUBSCRIPTION_ID }}
 
           tf_state_name: ${{ env.TF_STATE_NAME }}
           gh_token: ${{ secrets.GITHUB_TOKEN }}
