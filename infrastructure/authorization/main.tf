@@ -9,6 +9,6 @@ terraform {
 
 
 resource "azurerm_resource_group" "auth" {
-  name     = "rg-altinn-auth-001"
+  name     = "rg-altinn-authorization-${var.environment}-001"
   location = "norwayeast"
 }

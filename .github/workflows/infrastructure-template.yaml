@@ -41,6 +41,7 @@ jobs:
           arm_subscription_id: ${{ vars.ARM_SUBSCRIPTION_ID }}
 
           tf_state_name: ${{ env.TF_STATE_NAME }}
+          tf_args: -var environment=${{ inputs.environment }}
           gh_token: ${{ secrets.GITHUB_TOKEN }}
 
   apply:
@@ -61,5 +62,5 @@ jobs:
           arm_client_id: ${{ vars.ARM_CLIENT_ID }}
           arm_subscription_id: ${{ vars.ARM_SUBSCRIPTION_ID }}
 
+          tf_args: -var environment=${{ inputs.environment }}
           tf_state_name: ${{ env.TF_STATE_NAME }}
-          gh_token: ${{ secrets.GITHUB_TOKEN }}
