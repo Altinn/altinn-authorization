@@ -15,7 +15,7 @@ on:
 
 env:
   TF_STATE_NAME: infrastructure.tfstate
-  WORKING_DIR: ./infrastructure/authorization
+  WORKING_DIR: ./infrastructure/shared
 
 permissions:
   id-token: write
