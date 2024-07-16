@@ -2,7 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
+using System.Text.Json;
 using System.Text.RegularExpressions;
+using Altinn.AccessManagement.Core.Models;
 using Altinn.Authorization.ABAC.Xacml;
 using Altinn.Authorization.ABAC.Xacml.JsonProfile;
 using Altinn.Common.PEP.Authorization;
@@ -187,6 +189,10 @@ namespace Altinn.Common.PEP.Helpers
                 {
                     attributes.Add(CreateXacmlJsonAttribute(AltinnXacmlUrns.SessionId, claim.Value, DefaultType, claim.Issuer));
                 }
+                else if (IsSystemUserClaim(claim, out SystemUserClaim userClaim))
+                {
+                    attributes.Add(CreateXacmlJsonAttribute(AltinnXacmlUrns.SystemUserUuid, userClaim.System_id, DefaultType, claim.Issuer));
+                }
                 else if (IsValidUrn(claim.Type))
                 {
                     attributes.Add(CreateXacmlJsonAttribute(claim.Type, claim.Value, DefaultType, claim.Issuer));
@@ -296,6 +302,20 @@ namespace Altinn.Common.PEP.Helpers
         private static bool IsJtiClaim(string value)
         {
             return value.Equals("jti");
+        }
+
+        private static bool IsSystemUserClaim(Claim claim, out SystemUserClaim userClaim)
+        {
+            if (claim.Type.Equals("authorization_details"))
+            {
+                userClaim = JsonSerializer.Deserialize<SystemUserClaim>(claim.Value);
+                return true;
+            }
+            else
+            {
+                userClaim = null;
+                return false;
+            }
         }
 
         /// <summary>
