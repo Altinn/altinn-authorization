@@ -13,24 +13,42 @@ jobs:
     permissions:
       contents: read
       issues: write
-    
+
     steps:
       - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - uses: pnpm/action-setup@v3
+        with:
+          version: 9
+          run_install: |
+            - cwd: .github/scripts
+              args: [--frozen-lockfile]
+            - args: [--global, tsx]
+
       - id: create
+        name: Create issue
         uses: JasonEtco/create-an-issue@v2
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           filename: .github/templates/tilgangsinfo-pnd.md
-      - uses: monry/actions-add-issue-to-project@v2
-        with:
-          # Personal Access Token that with `repo`, `project`, `org:read` and `org:write` are granted.
-          github-token: ${{ secrets.ASSIGN_PROJECT_TOKEN }}
-          project-owner: 'Altinn'
-          project-number: 75
-          issue-repository: '${{ github.repository }}'
-          issue-number: ${{ steps.create.outputs.number }}
-  
+
+      - name: Add issue to project
+        env:
+          GITHUB_TOKEN: ${{ secrets.ASSIGN_PROJECT_TOKEN }}
+          GITHUB_ISSUE_NUMBER: ${{ steps.create.outputs.number }}
+          GITHUB_PROJECT_NUMBER: 75
+          # set status = "In progress"
+          GITHUB_PROJECT_FIELDS: |
+            {
+              "PVTSSF_lADOAFrH7M4ALF9LzgHEmZw": { "singleSelectOptionId": "e4413b57" }
+            }
+        run: tsx ./.github/scripts/add-to-project.mts
+
   tilgangsstyring:
     name: Create Deploy'n'Patch issue for tilgangsstyring
     runs-on: ubuntu-latest
@@ -38,20 +56,38 @@ jobs:
     permissions:
       contents: read
       issues: write
-    
+
     steps:
       - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - uses: pnpm/action-setup@v3
+        with:
+          version: 9
+          run_install: |
+            - cwd: .github/scripts
+              args: [--frozen-lockfile]
+            - args: [--global, tsx]
+
       - id: create
+        name: Create issue
         uses: JasonEtco/create-an-issue@v2
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           filename: .github/templates/tilgangsstyring-pnd.md
-      - uses: monry/actions-add-issue-to-project@v2
-        with:
-          # Personal Access Token that with `repo`, `project`, `org:read` and `org:write` are granted.
-          github-token: ${{ secrets.ASSIGN_PROJECT_TOKEN }}
-          project-owner: 'Altinn'
-          project-number: 50
-          issue-repository: '${{ github.repository }}'
-          issue-number: ${{ steps.create.outputs.number }}
+
+      - name: Add issue to project
+        env:
+          GITHUB_TOKEN: ${{ secrets.ASSIGN_PROJECT_TOKEN }}
+          GITHUB_ISSUE_NUMBER: ${{ steps.create.outputs.number }}
+          GITHUB_PROJECT_NUMBER: 50
+          # set status = "In progress"
+          GITHUB_PROJECT_FIELDS: |
+            {
+              "PVTSSF_lADOAFrH7M4AI9-nzgFibRI": { "singleSelectOptionId": "47fc9ee4" }
+            }
+        run: tsx ./.github/scripts/add-to-project.mts
