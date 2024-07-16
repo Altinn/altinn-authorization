@@ -1,10 +1,9 @@
-output "vnet" {
-  value = {
-    id : azurerm_virtual_network.vnet.id
-    name = azurerm_virtual_network.vnet.name
-  }
+output "id" {
+  value = azurerm_virtual_network.vnet.id
+}
 
-  description = ""
+output "name" {
+  value = azurerm_virtual_network.vnet.name
 }
 
 output "subnets" {

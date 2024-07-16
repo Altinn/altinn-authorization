@@ -1,23 +1,17 @@
 locals {
   cidr_prefix   = tonumber(split("/", var.cidr)[1])
   small_subnet  = 28 - local.cidr_prefix # Available IPs 11
-  medium_subnet = 26 - local.cidr_prefix # Available IPs 59
+  medium_subnet = 26 - local.cidr_prefix # Available IPs IPs 59
   large_subnet  = 24 - local.cidr_prefix # # Available IPs 251
 
   subnets = {
-    key_vault = {
-      bits = local.medium_subnet
+    application = {
+      bits = local.large_subnet
     }
-    app_configuration = {
-      bits = local.medium_subnet
-    }
-    storage_accounts = {
+    encryption = {
       bits = local.small_subnet
     }
-    redis = {
-      bits = local.small_subnet
-    }
-    postgres = {
+    databases = {
       bits = local.small_subnet
       delegations = {
         fs = {
