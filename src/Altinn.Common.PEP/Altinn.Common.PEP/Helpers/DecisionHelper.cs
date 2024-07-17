@@ -191,7 +191,7 @@ namespace Altinn.Common.PEP.Helpers
                 }
                 else if (IsSystemUserClaim(claim, out SystemUserClaim userClaim))
                 {
-                    attributes.Add(CreateXacmlJsonAttribute(AltinnXacmlUrns.SystemUserUuid, userClaim.System_id, DefaultType, claim.Issuer));
+                    attributes.Add(CreateXacmlJsonAttribute(AltinnXacmlUrns.SystemUserUuid, userClaim.Systemuser_id[0], DefaultType, claim.Issuer));
                 }
                 else if (IsValidUrn(claim.Type))
                 {

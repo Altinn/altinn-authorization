@@ -2,8 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Reflection.Metadata;
 using System.Security.Claims;
+using System.Text.Json;
 using System.Threading.Tasks;
-
+using Altinn.AccessManagement.Core.Models;
 using Altinn.Authorization.ABAC.Xacml;
 using Altinn.Authorization.ABAC.Xacml.JsonProfile;
 using Altinn.Common.PEP.Configuration;
@@ -201,6 +202,27 @@ namespace Altinn.Common.PEP.Authorization
             await _aah.HandleAsync(context);
         }
 
+        /// <summary>
+        /// Test case: Send request and get response that fulfills all requirements with system user
+        /// Expected: Context will succeed
+        /// </summary>
+        [Fact]
+        public async Task HandleRequirementAsync_TC09Async()
+        {
+            // Arrange 
+            AuthorizationHandlerContext context = CreateAuthorizationHandlerContextSystemUser();
+            _httpContextAccessorMock.Setup(h => h.HttpContext).Returns(CreateHttpContext());
+            XacmlJsonResponse response = CreateResponse(XacmlContextDecision.Permit.ToString());
+            _pdpMock.Setup(a => a.GetDecisionForRequest(It.IsAny<XacmlJsonRequestRoot>())).Returns(Task.FromResult(response));
+
+            // Act
+            await _aah.HandleAsync(context);
+
+            // Assert
+            Assert.True(context.HasSucceeded);
+            Assert.False(context.HasFailed);
+        }
+
         private ClaimsPrincipal CreateUser()
         {
             // Create the user
@@ -210,6 +232,22 @@ namespace Altinn.Common.PEP.Authorization
             claims.Add(new Claim("urn:name", "Ola", "string", "org"));
             claims.Add(new Claim("urn:altinn:authlevel", "2", "string", "org"));
 
+            ClaimsPrincipal user = new ClaimsPrincipal(new ClaimsIdentity(claims));
+
+            return user;
+        }
+
+        private ClaimsPrincipal CreateSystemUser()
+        {
+            SystemUserClaim systemUserClaim = new SystemUserClaim
+            {
+                Systemuser_id = new List<string>() { "996a686f-d24d-4d92-a92e-5b3cec4a8cf7" },
+                Systemuser_org = new OrgClaim() { ID = "myOrg" },
+                System_id = "the_matrix"
+            };
+
+            List<Claim> claims = new List<Claim>();
+            claims.Add(new Claim("authorization_details", JsonSerializer.Serialize(systemUserClaim), "string", "org"));
             ClaimsPrincipal user = new ClaimsPrincipal(new ClaimsIdentity(claims));
 
             return user;
@@ -278,6 +316,18 @@ namespace Altinn.Common.PEP.Authorization
         {
             AppAccessRequirement requirement = new AppAccessRequirement("read");
             ClaimsPrincipal user = CreateUser();
+            Document resource = default(Document);
+            AuthorizationHandlerContext context = new AuthorizationHandlerContext(
+                new[] { requirement },
+                user,
+                resource);
+            return context;
+        }
+
+        private AuthorizationHandlerContext CreateAuthorizationHandlerContextSystemUser()
+        {
+            AppAccessRequirement requirement = new AppAccessRequirement("read");
+            ClaimsPrincipal user = CreateSystemUser();
             Document resource = default(Document);
             AuthorizationHandlerContext context = new AuthorizationHandlerContext(
                 new[] { requirement },
