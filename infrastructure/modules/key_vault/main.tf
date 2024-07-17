@@ -9,7 +9,7 @@ data "azurerm_resource_group" "key_vault" {
   name = var.resource_group_name
 }
 
-resource "random_string" "key_vault" {
+resource "random_string" "key_vault_name_prefix" {
   length  = 4
   lower   = true
   numeric = false
@@ -18,7 +18,7 @@ resource "random_string" "key_vault" {
 
 # https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/key_vault
 resource "azurerm_key_vault" "key_vault" {
-  name                          = "kvencryption${random_string.key_vault.result}"
+  name                          = "kvencryption${random_string.key_vault_name_prefix.result}"
   resource_group_name           = data.azurerm_resource_group.key_vault.name
   tenant_id                     = data.azurerm_client_config.current.tenant_id
   sku_name                      = "standard"
