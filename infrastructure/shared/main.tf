@@ -26,12 +26,6 @@ resource "azurerm_resource_group" "authorization" {
   location = "norwayeast"
 }
 
-resource "azurerm_user_assigned_identity" "shared" {
-  name                = "mi-${local.metadata.solution}-${local.metadata.environment}-${local.metadata.instance}"
-  resource_group_name = azurerm_resource_group.authorization.name
-  location            = azurerm_resource_group.authorization.location
-}
-
 module "vnet" {
   source              = "../modules/vnet"
   resource_group_name = azurerm_resource_group.authorization.name
