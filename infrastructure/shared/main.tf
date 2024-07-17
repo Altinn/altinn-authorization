@@ -67,7 +67,7 @@ module "key_vault" {
   resource_group_name = azurerm_resource_group.authorization.name
   metadata            = local.metadata
 
-  ###! Changing these deletes and creates new one(s)
+  ###! Changing key or value deletes and creates a new one!
   encryption_keys = {
     service_bus = "ServiceBusEncryptionKey"
   }
