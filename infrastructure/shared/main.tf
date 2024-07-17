@@ -67,7 +67,11 @@ module "key_vault" {
   }
 
   dns_zones = [module.dns.zones["key_vault"].id]
-  subnet_id = module.vnet.subnets["encryption"].id
+  subnet_id = module.vnet.subnets["default"].id
 
   depends_on = [azurerm_resource_group.authorization]
+}
+
+output "subnets" {
+  value = module.vnet.subnets
 }

@@ -14,6 +14,7 @@ resource "random_string" "key_vault_name_prefix" {
   lower   = true
   numeric = false
   upper   = false
+  special = false
 }
 
 # https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/key_vault

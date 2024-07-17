@@ -1,17 +1,18 @@
 locals {
-  cidr_prefix   = tonumber(split("/", var.cidr)[1])
+  cidr_prefix = tonumber(split("/", var.cidr)[1])
+
   small_subnet  = 28 - local.cidr_prefix # Available IPs 11
   medium_subnet = 26 - local.cidr_prefix # Available IPs IPs 59
-  large_subnet  = 24 - local.cidr_prefix # # Available IPs 251
+  large_subnet  = 24 - local.cidr_prefix # Available IPs 251
 
-  subnets = {
-    application = {
+  ###! Important to not change order or resize subnets once created and resource are allocated to the network
+  subnets = [
+    {
+      name : "default"
       bits = local.large_subnet
-    }
-    encryption = {
-      bits = local.small_subnet
-    }
-    databases = {
+    },
+    {
+      name : "postgres"
       bits = local.small_subnet
       delegations = {
         fs = {
@@ -22,7 +23,7 @@ locals {
         }
       }
     }
-  }
+  ]
 }
 
 data "azurerm_resource_group" "vnet" {
@@ -39,9 +40,9 @@ resource "azurerm_virtual_network" "vnet" {
 module "subnet" {
   source          = "hashicorp/subnets/cidr"
   base_cidr_block = var.cidr
-  networks = [for key, value in local.subnets : {
-    name     = key
-    new_bits = value.bits
+  networks = [for subnet in local.subnets : {
+    name     = subnet.name
+    new_bits = subnet.bits
   }]
 }
 
@@ -63,5 +64,5 @@ resource "azurerm_subnet" "vnet" {
     for_each = try(each.value.delegations, {})
   }
 
-  for_each = local.subnets
+  for_each = { for subnet in local.subnets : subnet.name => subnet }
 }

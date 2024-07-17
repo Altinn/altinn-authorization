@@ -7,10 +7,11 @@ output "name" {
 }
 
 output "subnets" {
-  value = { for key, value in local.subnets : key =>
+  value = { for subnet in local.subnets : subnet.name =>
     {
-      id   = azurerm_subnet.vnet[key].id
-      name = azurerm_subnet.vnet[key].name
+      id            = azurerm_subnet.vnet[subnet.name].id
+      name          = azurerm_subnet.vnet[subnet.name].name
+      address_space = azurerm_subnet.vnet[subnet.name].address_space
     }
   }
 
