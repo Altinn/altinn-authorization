@@ -15,12 +15,12 @@ namespace Altinn.Platform.Authorization.Services.Interface
         /// Endpoint to find all delegation changes for a given user, reportee and app/resource context
         /// </summary>
         /// <returns>Input parameter to the request</returns>
-        public Task<IEnumerable<DelegationChange>> GetAllDelegationChanges(DelegationChangeInput input);
+        public Task<IEnumerable<DelegationChangeExternal>> GetAllDelegationChanges(DelegationChangeInput input);
 
         /// <summary>
         /// Endpoint to find all delegation changes for a given user, reportee and app/resource context
         /// </summary>
         /// <returns>optional funvation pattern for modifying the request sent to Access Management API</returns>
-        public Task<IEnumerable<DelegationChange>> GetAllDelegationChanges(params Action<DelegationChangeInput>[] actions);
+        public Task<IEnumerable<DelegationChangeExternal>> GetAllDelegationChanges(params Action<DelegationChangeInput>[] actions);
     }
 }

@@ -65,7 +65,10 @@
   <ItemGroup>
     <None Remove="Data\blobs\input\error\delegationeventfail\50001337\u20001336\delegationpolicy.xml" />
     <None Remove="Data\blobs\input\error\delegationeventfail\policy.xml" />
+    <None Remove="Data\blobs\input\org1\app1\50005545\SystemUser47caea5b-a80b-4343-b1d3-31eb523a4e28\delegationpolicy.xml" />
     <None Remove="Data\blobs\input\skd\taxreport\1000\u20001337\delegationpolicy.xml" />
+    <None Remove="Data\blobs\input\skd\taxreport\50005545\SystemUser47caea5b-a80b-4343-b1d3-31eb523a4e28\delegationpolicy.xml" />
+    <None Remove="Data\blobs\input\ttd-externalpdp-resource1\50005545\SystemUser47caea5b-a80b-4343-b1d3-31eb523a4e28\delegationpolicy.xml" />
     <None Remove="Data\Json\AddRules\DelegationEventError.json" />
     <None Remove="Data\Json\DelegationChanges\delegationchanges_replay.json" />
     <None Remove="Data\Json\GetResourcePolicies\Org2App1Request.json" />
@@ -106,6 +109,8 @@
     <None Remove="Data\Xacml\3.0\AltinnApps\AltinnApps_OedFormuesfullmakt_Xml_PermitPolicy.xml" />
     <None Remove="Data\Xacml\3.0\AltinnApps\AltinnApps_OedFormuesfullmakt_Xml_PermitRequest.xml" />
     <None Remove="Data\Xacml\3.0\AltinnApps\AltinnApps_OedFormuesfullmakt_Xml_PermitResponse.xml" />
+    <None Remove="Data\Xacml\3.0\AltinnApps\AltinnApps_SystemUserWithDelegation_PermitRequest.json" />
+    <None Remove="Data\Xacml\3.0\AltinnApps\AltinnApps_SystemUserWithDelegation_PermitResponse.json" />
     <None Remove="Data\Xacml\3.0\AltinnApps\error\delegationeventfail\policy.xml" />
     <None Remove="Data\Xacml\3.0\AltinnApps\eventlog\AltinnApps0001Event.json" />
     <None Remove="Data\Xacml\3.0\AltinnApps\eventlog\AltinnApps0004Event.json" />
@@ -144,12 +149,22 @@
     <None Remove="Data\Xacml\3.0\ResourceRegistry\ResourceRegistry_OedFormuesfullmakt_Xml_PermitRequest.xml" />
     <None Remove="Data\Xacml\3.0\ResourceRegistry\ResourceRegistry_OedFormuesfullmakt_Xml_PermitResponse.xml" />
     <None Remove="Data\Xacml\3.0\ResourceRegistry\eventlog\AltinnResourceRegistry0004Event.json" />
+    <None Remove="Data\Xacml\3.0\ResourceRegistry\ResourceRegistry_SystemUserWithDelegation_PermitRequest.json" />
+    <None Remove="Data\Xacml\3.0\ResourceRegistry\ResourceRegistry_SystemUserWithDelegation_PermitResponse.json" />
+    <None Remove="Data\Xacml\3.0\ResourceRegistry\ResourceRegistry_SystemUserWithDelegation_TooManyRequestSubjects_IndeterminateRequest.json" />
+    <None Remove="Data\Xacml\3.0\ResourceRegistry\ResourceRegistry_SystemUserWithDelegation_TooManyRequestSubjects_IndeterminateResponse.json" />
     <None Remove="Data\Xacml\3.0\ResourceRegistry\ttd-externalpdp-resource2\policy.xml" />
     <None Remove="Data\Xacml\3.0\ResourceRegistry\ttd-externalpdp-resource1\policy.xml" />
   </ItemGroup>
 
   <ItemGroup>
     <Content Update="Data\Xacml\3.0\ResourceRegistry\AltinnResourceRegistry0008Response.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Update="Data\Xacml\3.0\ResourceRegistry\ResourceRegistry_SystemUserWithDelegation_TooManyRequestSubjects_IndeterminateRequest.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Update="Data\Xacml\3.0\ResourceRegistry\ResourceRegistry_SystemUserWithDelegation_PermitRequest.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Update="Data\Xacml\3.0\ResourceRegistry\AltinnResourceRegistry0011Request.json">
@@ -165,6 +180,12 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Update="Data\Xacml\3.0\ResourceRegistry\AltinnResourceRegistry0009Request.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Update="Data\Xacml\3.0\ResourceRegistry\ResourceRegistry_SystemUserWithDelegation_TooManyRequestSubjects_IndeterminateResponse.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Update="Data\Xacml\3.0\ResourceRegistry\ResourceRegistry_SystemUserWithDelegation_PermitResponse.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Update="Data\Xacml\3.0\ResourceRegistry\AltinnResourceRegistry0011Response.json">

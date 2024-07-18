@@ -80,6 +80,28 @@ namespace Altinn.Platform.Authorization.Services.Implementation
         }
 
         /// <summary>
+        /// Gets the value of the first found attribute matching the prioritized order of xacmlRequestAttributes provided, from the XacmlContextRequest subjects.
+        /// </summary>
+        /// <param name="request">The Xacml Context Request</param>
+        /// <param name="xacmlRequestAttributeIds">Array of xacml request urn attribute identifiers to look for, in prioritized order. First found matching attribute is returned.</param>
+        /// <returns>The value of the first found matching subject attribute if any exists</returns>
+        public AttributeMatch GetSubjectAttributeMatch(XacmlContextRequest request, string[] xacmlRequestAttributeIds)
+        {
+            XacmlContextAttributes subjectContextAttributes = request.GetSubjectAttributes();
+            foreach (var attributeId in xacmlRequestAttributeIds)
+            {
+                XacmlAttribute subjectAttribute = subjectContextAttributes.Attributes.FirstOrDefault(a => a.AttributeId.OriginalString.Equals(attributeId, StringComparison.OrdinalIgnoreCase));
+
+                if (subjectAttribute != null)
+                {
+                    return new(attributeId, subjectAttribute.AttributeValues.FirstOrDefault()?.Value);
+                }
+            }
+
+            return null;
+        }
+
+        /// <summary>
         /// Gets a XacmlResourceAttributes model from the XacmlContextRequest
         /// </summary>
         /// <param name="request">The Xacml Context Request</param>

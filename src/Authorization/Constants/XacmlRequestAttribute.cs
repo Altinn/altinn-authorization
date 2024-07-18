@@ -74,5 +74,10 @@ namespace Altinn.Platform.Authorization.Constants
         /// xacml string that represents person identifier
         /// </summary>
         public const string PersonIdAttribute = "urn:altinn:person:identifier-no";
+
+        /// <summary>
+        /// xacml attribute urn prefix that represents system user id
+        /// </summary>
+        public const string SystemUserIdAttribute = "urn:altinn:systemuser:uuid";
     }
 }

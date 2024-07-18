@@ -304,7 +304,7 @@ namespace Altinn.Platform.Authorization.Controllers
             return rolesContextResponse;
         }
 
-        private async Task<XacmlContextResponse> ProcessDelegationResult(XacmlContextRequest decisionRequest, XacmlPolicy resourcePolicy, IEnumerable<DelegationChange> delegations, CancellationToken cancellationToken = default)
+        private async Task<XacmlContextResponse> ProcessDelegationResult(XacmlContextRequest decisionRequest, XacmlPolicy resourcePolicy, IEnumerable<DelegationChangeExternal> delegations, CancellationToken cancellationToken = default)
         {
             if (!delegations.IsNullOrEmpty())
             {
@@ -335,18 +335,14 @@ namespace Altinn.Platform.Authorization.Controllers
 
         private bool IsIncompleteRequestForDelegation(XacmlResourceAttributes resourceAttributes, XacmlContextRequest decisionRequest) =>
             resourceAttributes == null ||
-            (_delegationContextHandler.GetSubjectUserId(decisionRequest) == 0 && _delegationContextHandler.GetSubjectPartyId(decisionRequest) == 0) ||
+            (_delegationContextHandler.GetSubjectAttributeMatch(decisionRequest, [XacmlRequestAttribute.UserAttribute, XacmlRequestAttribute.PartyAttribute, XacmlRequestAttribute.SystemUserIdAttribute]) == null) ||
             !int.TryParse(resourceAttributes.ResourcePartyValue, out var _) ||
             !(IsTypeApp(resourceAttributes) || IsTypeResource(resourceAttributes));
 
         private Action<DelegationChangeInput> WithDefaultGetAllDelegationChangesInput(XacmlResourceAttributes resourceAttributes, XacmlContextRequest decisionRequest) => (input) =>
         {
+            input.Subject = _delegationContextHandler.GetSubjectAttributeMatch(decisionRequest, [XacmlRequestAttribute.UserAttribute, XacmlRequestAttribute.PartyAttribute, XacmlRequestAttribute.SystemUserIdAttribute]);
             input.Party = new(AltinnXacmlConstants.MatchAttributeIdentifiers.PartyAttribute, resourceAttributes.ResourcePartyValue);
-
-            int subjectUserId = _delegationContextHandler.GetSubjectUserId(decisionRequest);
-            input.Subject = subjectUserId != 0 ?
-                new(AltinnXacmlConstants.MatchAttributeIdentifiers.UserAttribute, subjectUserId.ToString()) :
-                new(AltinnXacmlConstants.MatchAttributeIdentifiers.PartyAttribute, _delegationContextHandler.GetSubjectPartyId(decisionRequest).ToString());
         };
 
         private async Task<XacmlContextResponse> AuthorizeUsingDelegations(XacmlContextRequest decisionRequest, XacmlPolicy resourcePolicy, CancellationToken cancellationToken = default)
@@ -389,7 +385,7 @@ namespace Altinn.Platform.Authorization.Controllers
             });
         }
 
-        private async Task<IEnumerable<DelegationChange>> GetAllCachedDelegationChanges(params Action<DelegationChangeInput>[] actions)
+        private async Task<IEnumerable<DelegationChangeExternal>> GetAllCachedDelegationChanges(params Action<DelegationChangeInput>[] actions)
         {
             var delegation = new DelegationChangeInput();
             foreach (var action in actions)
@@ -403,7 +399,7 @@ namespace Altinn.Platform.Authorization.Controllers
                 $"a:{delegation.Resource.FirstOrDefault(r => r.Id == AltinnXacmlConstants.MatchAttributeIdentifiers.OrgAttribute)}/{delegation.Resource.FirstOrDefault(r => r.Id == AltinnXacmlConstants.MatchAttributeIdentifiers.AppAttribute)}",
                 $"r:{delegation.Resource.FirstOrDefault(r => r.Id == AltinnXacmlConstants.MatchAttributeIdentifiers.ResourceRegistry)}");
 
-            if (!_memoryCache.TryGetValue(cacheKey, out IEnumerable<DelegationChange> result))
+            if (!_memoryCache.TryGetValue(cacheKey, out IEnumerable<DelegationChangeExternal> result))
             {
                 result = await _accessManagement.GetAllDelegationChanges(actions);
                 var cacheEntryOptions = new MemoryCacheEntryOptions()
@@ -416,14 +412,14 @@ namespace Altinn.Platform.Authorization.Controllers
             return result;
         }
 
-        private async Task<XacmlContextResponse> MakeContextDecisionUsingDelegations(XacmlContextRequest decisionRequest, IEnumerable<DelegationChange> delegations, XacmlPolicy appPolicy, CancellationToken cancellationToken = default)
+        private async Task<XacmlContextResponse> MakeContextDecisionUsingDelegations(XacmlContextRequest decisionRequest, IEnumerable<DelegationChangeExternal> delegations, XacmlPolicy appPolicy, CancellationToken cancellationToken = default)
         {
             XacmlContextResponse delegationContextResponse = new XacmlContextResponse(new XacmlContextResult(XacmlContextDecision.NotApplicable)
             {
                 Status = new XacmlContextStatus(XacmlContextStatusCode.Success)
             });
 
-            foreach (DelegationChange delegation in delegations.Where(d => d.DelegationChangeType != DelegationChangeType.RevokeLast))
+            foreach (DelegationChangeExternal delegation in delegations.Where(d => d.DelegationChangeType != DelegationChangeType.RevokeLast))
             {
                 XacmlPolicy delegationPolicy = await _prp.GetPolicyVersionAsync(delegation.BlobStoragePolicyPath, delegation.BlobStorageVersionId, cancellationToken);
                 foreach (XacmlObligationExpression obligationExpression in appPolicy.ObligationExpressions)

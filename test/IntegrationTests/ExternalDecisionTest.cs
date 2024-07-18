@@ -197,6 +197,66 @@ namespace Altinn.Platform.Authorization.IntegrationTests
             AssertionUtil.AssertEqual(expected, contextResponse);
         }
 
+        /// <summary>
+        /// Scenario where systemuser has received delegation from the resource party for the resource. Should give Permit result.
+        /// </summary>
+        [Fact]
+        public async Task PDPExternal_Decision_SystemUserWithResourceDelegation_Permit()
+        {
+            string token = PrincipalUtil.GetOrgToken("skd", "974761076", "altinn:authorization:pdp");
+            string testCase = "ResourceRegistry_SystemUserWithDelegation_Permit";
+            HttpClient client = GetTestClient();
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("bearer", token);
+            HttpRequestMessage httpRequestMessage = TestSetupUtil.CreateXacmlRequestExternal(testCase);
+            XacmlJsonResponse expected = TestSetupUtil.ReadExpectedJsonProfileResponse(testCase);
+
+            // Act
+            XacmlJsonResponse contextResponse = await TestSetupUtil.GetXacmlJsonProfileContextResponseAsync(client, httpRequestMessage);
+
+            // Assert
+            AssertionUtil.AssertEqual(expected, contextResponse);
+        }
+
+        /// <summary>
+        /// Scenario where systemuser has received delegation from the resource party for the resource. Should give Permit result.
+        /// </summary>
+        [Fact]
+        public async Task PDPExternal_Decision_SystemUserWithAppDelegation_Permit()
+        {
+            string token = PrincipalUtil.GetOrgToken("skd", "974761076", "altinn:authorization:pdp");
+            string testCase = "AltinnApps_SystemUserWithDelegation_Permit";
+            HttpClient client = GetTestClient();
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("bearer", token);
+            HttpRequestMessage httpRequestMessage = TestSetupUtil.CreateXacmlRequestExternal(testCase);
+            XacmlJsonResponse expected = TestSetupUtil.ReadExpectedJsonProfileResponse(testCase);
+
+            // Act
+            XacmlJsonResponse contextResponse = await TestSetupUtil.GetXacmlJsonProfileContextResponseAsync(client, httpRequestMessage);
+
+            // Assert
+            AssertionUtil.AssertEqual(expected, contextResponse);
+        }
+
+        /// <summary>
+        /// Scenario where systemuser has received delegation, but request includes multiple subjects as org and orgnumber. Should NOT give Permit. 
+        /// </summary>
+        [Fact]
+        public async Task PDPExternal_Decision_SystemUserWithDelegation_TooManyRequestSubjects_Indeterminate()
+        {
+            string token = PrincipalUtil.GetOrgToken("skd", "974761076", "altinn:authorization:pdp");
+            string testCase = "ResourceRegistry_SystemUserWithDelegation_TooManyRequestSubjects_Indeterminate";
+            HttpClient client = GetTestClient();
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("bearer", token);
+            HttpRequestMessage httpRequestMessage = TestSetupUtil.CreateXacmlRequestExternal(testCase);
+            XacmlJsonResponse expected = TestSetupUtil.ReadExpectedJsonProfileResponse(testCase);
+
+            // Act
+            XacmlJsonResponse contextResponse = await TestSetupUtil.GetXacmlJsonProfileContextResponseAsync(client, httpRequestMessage);
+
+            // Assert
+            AssertionUtil.AssertEqual(expected, contextResponse);
+        }
+
         private HttpClient GetTestClient()
         {
             HttpClient client = _factory.WithWebHostBuilder(builder =>
@@ -215,6 +275,7 @@ namespace Altinn.Platform.Authorization.IntegrationTests
                     services.AddSingleton<IPostConfigureOptions<JwtCookieOptions>, JwtCookiePostConfigureOptionsStub>();
                     services.AddSingleton<IPostConfigureOptions<OidcProviderSettings>, OidcProviderPostConfigureSettingsStub>();
                     services.AddSingleton<IRegisterService, RegisterServiceMock>();
+                    services.AddSingleton<IAccessManagementWrapper, AccessManagementWrapperMock>();
                 });
             }).CreateClient(new WebApplicationFactoryClientOptions { AllowAutoRedirect = false });
 
