@@ -2,10 +2,11 @@ locals {
   cidr_prefix = tonumber(split("/", var.cidr)[1])
 
   small_subnet  = 28 - local.cidr_prefix # Available IPs 11
-  medium_subnet = 26 - local.cidr_prefix # Available IPs IPs 59
-  large_subnet  = 24 - local.cidr_prefix # Available IPs 251
+  medium_subnet = 25 - local.cidr_prefix # Available IPs IPs 123
+  large_subnet  = 23 - local.cidr_prefix # Available IPs 507
 
-  ###! Important to not change order or resize subnets once created and resource are allocated to the network
+  ###! Important to not change order or resize subnets once created and resource are allocated to the network.
+  ###! For adding new subnets, append object only to the end of list.
   subnets = [
     {
       name : "default"
@@ -31,7 +32,7 @@ data "azurerm_resource_group" "vnet" {
 }
 
 resource "azurerm_virtual_network" "vnet" {
-  name                = "vnet-${var.metadata.solution}-${var.metadata.environment}-${var.metadata.instance}"
+  name                = "vnet${var.metadata.suffix}"
   address_space       = [var.cidr]
   location            = data.azurerm_resource_group.vnet.location
   resource_group_name = data.azurerm_resource_group.vnet.name

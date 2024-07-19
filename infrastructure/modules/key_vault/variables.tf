@@ -1,15 +1,18 @@
+variable "metadata" {
+  type = object({
+    name         = string
+    environment  = string
+    instance     = string
+    suffix       = string
+    default_tags = map(string)
+  })
+}
+
 variable "encryption_keys" {
   type    = map(string)
   default = {}
 }
 
-variable "metadata" {
-  type = object({
-    solution    = string
-    environment = string
-    instance    = string
-  })
-}
 
 variable "resource_group_name" {
   type = string

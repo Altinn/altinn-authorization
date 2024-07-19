@@ -1,8 +1,10 @@
 variable "metadata" {
   type = object({
-    solution    = string
-    environment = string
-    instance    = string
+    name         = string
+    environment  = string
+    instance     = string
+    suffix       = string
+    default_tags = map(string)
   })
 }
 
