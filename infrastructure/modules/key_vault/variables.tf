@@ -8,12 +8,6 @@ variable "metadata" {
   })
 }
 
-variable "encryption_keys" {
-  type    = map(string)
-  default = {}
-}
-
-
 variable "resource_group_name" {
   type = string
 }
