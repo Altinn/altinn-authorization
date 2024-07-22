@@ -37,10 +37,9 @@ resource "azurerm_key_vault" "key_vault" {
 
 # https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/role_assignment
 resource "azurerm_role_assignment" "key_vault_administrator" {
-  scope                            = azurerm_key_vault.key_vault.id
-  principal_id                     = data.azurerm_client_config.current.object_id
-  role_definition_name             = data.azurerm_role_definition.key_vault_administrator.name
-  skip_service_principal_aad_check = true
+  scope                = azurerm_key_vault.key_vault.id
+  principal_id         = data.azurerm_client_config.current.object_id
+  role_definition_name = data.azurerm_role_definition.key_vault_administrator.name
 }
 
 # https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/private_endpoint

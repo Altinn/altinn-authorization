@@ -5,7 +5,7 @@ variable "location" {
 
 variable "instance" {
   type    = string
-  default = "002"
+  default = "001"
 }
 
 variable "environment" {

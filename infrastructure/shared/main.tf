@@ -10,9 +10,9 @@ terraform {
     }
   }
 
-  # backend "azurerm" {
-  #   use_azuread_auth = true
-  # }
+  backend "azurerm" {
+    use_azuread_auth = true
+  }
 }
 
 locals {
@@ -88,7 +88,7 @@ module "service_bus" {
   subnet_id              = module.vnet.subnets["default"].id
   permitted_ip_addresses = [module.nat.ip]
 
-  depends_on = [azurerm_resource_group.authorization]
+  depends_on = [azurerm_resource_group.authorization, module.key_vault]
 }
 
 module "postgres_server" {
@@ -99,4 +99,6 @@ module "postgres_server" {
   dns_zone     = module.dns.zones["postgres"].id
   key_vault_id = module.key_vault.id
   subnet_id    = module.vnet.subnets["postgres"].id
+
+  depends_on = [azurerm_resource_group.authorization, module.key_vault]
 }
