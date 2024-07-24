@@ -1,0 +1,69 @@
+name: Infrastructure
+
+on:
+  workflow_call:
+    inputs:
+      tf_should_apply:
+        default: false
+        type: boolean
+        description: Specifies if terraform should apply plan
+
+      environment:
+        type: string
+        description: GitHub environment
+        required: true
+
+env:
+  TF_STATE_NAME: infrastructure.tfstate
+  WORKING_DIR: ./infrastructure/shared
+
+permissions:
+  id-token: write
+  contents: write
+  pull-requests: write
+
+jobs:
+  plan:
+    runs-on: ubuntu-latest
+    environment: ${{ inputs.environment }}
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Terraform Set TFVARS
+        run: echo "TF_VARS_FILE=$(echo ${{ inputs.environment }} | tr '[:upper:]' '[:lower:]').tfvars" >> $GITHUB_ENV
+
+      - name: Terraform Initialize
+        uses: altinn/altinn-platform/actions/terraform/plan@main
+        with:
+          working_directory: ${{ env.WORKING_DIR }}
+          oidc_type: environment
+          oidc_value: ${{ inputs.environment }}
+
+          arm_client_id: ${{ vars.ARM_CLIENT_ID }}
+          arm_subscription_id: ${{ vars.ARM_SUBSCRIPTION_ID }}
+
+          tf_state_name: ${{ env.TF_STATE_NAME }}
+          tf_args: -var environment=${{ inputs.environment }} -var-file=${{ env.TF_VARS_FILE }}
+          gh_token: ${{ secrets.GITHUB_TOKEN }}
+
+  apply:
+    runs-on: ubuntu-latest
+    environment: ${{ inputs.environment }}
+    if: inputs.tf_should_apply
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Terraform Initialize
+        uses: altinn/altinn-platform/actions/terraform/plan@main
+        with:
+          working_directory: ${{ env.WORKING_DIR }}
+          oidc_type: environment
+          oidc_value: ${{ inputs.environment }}
+
+          arm_client_id: ${{ vars.ARM_CLIENT_ID }}
+          arm_subscription_id: ${{ vars.ARM_SUBSCRIPTION_ID }}
+
+          tf_args: -var environment=${{ inputs.environment }} -var-file=${{ env.TF_VARS_FILE }}
+          tf_state_name: ${{ env.TF_STATE_NAME }}
