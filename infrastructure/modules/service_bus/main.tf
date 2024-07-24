@@ -14,7 +14,7 @@ locals {
   service_bus_premium_messaging_partitions = var.is_prod_like ? 1 : 0 # Only avaiable for Premium tier
 }
 
-data "azurerm_resource_group" "service_bus" {
+data "azurerm_resource_group" "rg" {
   name = var.resource_group_name
 }
 
@@ -27,8 +27,8 @@ data "azurerm_role_definition" "key_vault_crypto_officer" {
 # https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/data-sources/user_assigned_identity
 resource "azurerm_user_assigned_identity" "service_bus" {
   name                = "misb${var.metadata.suffix}"
-  resource_group_name = data.azurerm_resource_group.service_bus.name
-  location            = data.azurerm_resource_group.service_bus.location
+  resource_group_name = data.azurerm_resource_group.rg.name
+  location            = data.azurerm_resource_group.rg.location
 }
 
 # https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/role_assignment
@@ -41,7 +41,7 @@ resource "azurerm_role_assignment" "key_vault_crypto_officer" {
 
 # https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/key_vault_key
 resource "azurerm_key_vault_key" "service_bus" {
-  name         = "ServiceBus"
+  name         = "sb${var.metadata.suffix}"
   key_vault_id = var.key_vault_id
   key_type     = "RSA"
   key_size     = 2048
@@ -57,8 +57,8 @@ resource "azurerm_key_vault_key" "service_bus" {
 # https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/servicebus_namespace
 resource "azurerm_servicebus_namespace" "service_bus" {
   name                         = "sb${var.metadata.suffix}"
-  resource_group_name          = data.azurerm_resource_group.service_bus.name
-  location                     = data.azurerm_resource_group.service_bus.location
+  resource_group_name          = data.azurerm_resource_group.rg.name
+  location                     = data.azurerm_resource_group.rg.location
   sku                          = local.service_bus_sku
   local_auth_enabled           = local.service_bus_enable_local_auth
   capacity                     = local.service_bus_capacity
@@ -92,8 +92,8 @@ resource "azurerm_servicebus_namespace" "service_bus" {
 # https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/private_endpoint
 resource "azurerm_private_endpoint" "service_bus_private_endpoint" {
   name                          = "pe${azurerm_servicebus_namespace.service_bus.name}"
-  location                      = data.azurerm_resource_group.service_bus.location
-  resource_group_name           = data.azurerm_resource_group.service_bus.name
+  location                      = data.azurerm_resource_group.rg.location
+  resource_group_name           = data.azurerm_resource_group.rg.name
   subnet_id                     = var.subnet_id
   custom_network_interface_name = "nic${azurerm_servicebus_namespace.service_bus.name}"
 
@@ -112,3 +112,20 @@ resource "azurerm_private_endpoint" "service_bus_private_endpoint" {
   }
 }
 
+# Service bus Actions List: https://learn.microsoft.com/en-us/azure/role-based-access-control/permissions/integration#microsoftservicebus
+# https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/role_definition
+resource "azurerm_role_definition" "service_bus_masstransit" {
+  name        = "Azure Service Bus Mass Transit"
+  scope       = azurerm_servicebus_namespace.service_bus.id
+  description = "Allow C# Applications use MassTransit with Azure Service Bus"
+
+  permissions {
+    actions = [
+      "Microsoft.ServiceBus/namespaces/read",
+      "Microsoft.ServiceBus/namespaces/queues/*",
+      "Microsoft.ServiceBus/namespaces/topics/*"
+    ]
+  }
+
+  assignable_scopes = [azurerm_servicebus_namespace.service_bus.id]
+}

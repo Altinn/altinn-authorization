@@ -1,12 +1,12 @@
-data "azurerm_resource_group" "nat_gateway" {
+data "azurerm_resource_group" "rg" {
   name = var.resource_group_name
 }
 
 # https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/nat_gateway
 resource "azurerm_nat_gateway" "nat_gateway" {
   name                    = "natgw${var.metadata.suffix}"
-  resource_group_name     = data.azurerm_resource_group.nat_gateway.name
-  location                = data.azurerm_resource_group.nat_gateway.location
+  resource_group_name     = data.azurerm_resource_group.rg.name
+  location                = data.azurerm_resource_group.rg.location
   sku_name                = "Standard"
   idle_timeout_in_minutes = 4
 }
@@ -14,8 +14,8 @@ resource "azurerm_nat_gateway" "nat_gateway" {
 # https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/public_ip
 resource "azurerm_public_ip" "nat_gateway" {
   name                = "pipegress${var.metadata.suffix}"
-  resource_group_name = data.azurerm_resource_group.nat_gateway.name
-  location            = data.azurerm_resource_group.nat_gateway.location
+  resource_group_name = data.azurerm_resource_group.rg.name
+  location            = data.azurerm_resource_group.rg.location
   sku                 = "Standard"
   allocation_method   = "Static"
 }

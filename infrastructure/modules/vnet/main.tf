@@ -5,7 +5,7 @@ locals {
   medium_subnet = 25 - local.cidr_prefix # Available IPs IPs 123
   large_subnet  = 23 - local.cidr_prefix # Available IPs 507
 
-  ###! Important to not change order or resize subnets once created and resource are allocated to the network.
+  ###! Important to not change order, resize or rename subnets once created and resource are allocated to the network.
   ###! For adding new subnets, append object only to the end of list.
   subnets = [
     {
@@ -27,15 +27,15 @@ locals {
   ]
 }
 
-data "azurerm_resource_group" "vnet" {
+data "azurerm_resource_group" "rg" {
   name = var.resource_group_name
 }
 
 resource "azurerm_virtual_network" "vnet" {
   name                = "vnet${var.metadata.suffix}"
   address_space       = [var.cidr]
-  location            = data.azurerm_resource_group.vnet.location
-  resource_group_name = data.azurerm_resource_group.vnet.name
+  location            = data.azurerm_resource_group.rg.location
+  resource_group_name = data.azurerm_resource_group.rg.name
 }
 
 module "subnet" {

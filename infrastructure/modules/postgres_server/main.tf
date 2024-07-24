@@ -1,6 +1,6 @@
 data "azurerm_client_config" "current" {}
 
-data "azurerm_resource_group" "postgres_server" {
+data "azurerm_resource_group" "rg" {
   name = var.resource_group_name
 }
 
@@ -12,8 +12,8 @@ data "azurerm_role_definition" "key_vault_crypto_officer" {
 # https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/data-sources/user_assigned_identity
 resource "azurerm_user_assigned_identity" "postgres_server" {
   name                = "mipsqlsrv${var.metadata.suffix}"
-  resource_group_name = data.azurerm_resource_group.postgres_server.name
-  location            = data.azurerm_resource_group.postgres_server.location
+  resource_group_name = data.azurerm_resource_group.rg.name
+  location            = data.azurerm_resource_group.rg.location
 }
 
 # https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/role_assignment
@@ -24,11 +24,24 @@ resource "azurerm_role_assignment" "key_vault_crypto_officer" {
   skip_service_principal_aad_check = true
 }
 
+# https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/key_vault_key
+resource "azurerm_key_vault_key" "postgres_server" {
+  name         = "psqlsrv${var.metadata.suffix}"
+  key_vault_id = var.key_vault_id
+  key_type     = "RSA"
+  key_size     = 2048
+
+  key_opts = [
+    "unwrapKey",
+    "wrapKey"
+  ]
+}
+
 # https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/postgresql_flexible_server
 resource "azurerm_postgresql_flexible_server" "postgres_server" {
   name                = "psqlsrv${var.metadata.suffix}"
-  resource_group_name = data.azurerm_resource_group.postgres_server.name
-  location            = data.azurerm_resource_group.postgres_server.location
+  resource_group_name = data.azurerm_resource_group.rg.name
+  location            = data.azurerm_resource_group.rg.location
   version             = var.postgres_version
 
   delegated_subnet_id           = var.subnet_id
@@ -59,15 +72,19 @@ resource "azurerm_postgresql_flexible_server" "postgres_server" {
   sku_name     = "GP_Standard_D4s_v3"
 }
 
-# https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/key_vault_key
-resource "azurerm_key_vault_key" "postgres_server" {
-  name         = "Postgres"
-  key_vault_id = var.key_vault_id
-  key_type     = "RSA"
-  key_size     = 2048
+# https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/data-sources/user_assigned_identity
+resource "azurerm_user_assigned_identity" "postgres_server_admin" {
+  name                = "mipsqlsrvadmin${var.metadata.suffix}"
+  resource_group_name = data.azurerm_resource_group.rg.name
+  location            = data.azurerm_resource_group.rg.location
+}
 
-  key_opts = [
-    "unwrapKey",
-    "wrapKey"
-  ]
+# https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/postgresql_flexible_server_active_directory_administrator
+resource "azurerm_postgresql_flexible_server_active_directory_administrator" "admin" {
+  server_name         = azurerm_postgresql_flexible_server.postgres_server.name
+  resource_group_name = data.azurerm_resource_group.rg.name
+  tenant_id           = data.azurerm_client_config.current.tenant_id
+  object_id           = azurerm_user_assigned_identity.postgres_server_admin.principal_id
+  principal_name      = azurerm_user_assigned_identity.postgres_server_admin.name
+  principal_type      = "ServicePrincipal"
 }

@@ -9,25 +9,25 @@ locals {
   })
 }
 
-data "azurerm_resource_group" "dns" {
+data "azurerm_resource_group" "rg" {
   name = var.resource_group_name
 }
 
 # https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/dns_zone
 resource "azurerm_private_dns_zone" "dns" {
   name                = each.value
-  resource_group_name = data.azurerm_resource_group.dns.name
+  resource_group_name = data.azurerm_resource_group.rg.name
 
   for_each = local.zones
 }
 
 # https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/private_dns_zone_virtual_network_link
-resource "azurerm_private_dns_zone_virtual_network_link" "network" {
+resource "azurerm_private_dns_zone_virtual_network_link" "dns" {
   name                  = each.key
   private_dns_zone_name = azurerm_private_dns_zone.dns[each.key].name
 
   virtual_network_id   = var.vnet_id
-  resource_group_name  = data.azurerm_resource_group.dns.name
+  resource_group_name  = data.azurerm_resource_group.rg.name
   registration_enabled = false
 
   for_each = local.zones
