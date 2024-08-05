@@ -2,7 +2,6 @@ using System.Threading.Tasks;
 using Altinn.Platform.Authorization.Functions.Models;
 using Altinn.Platform.Authorization.Functions.Services.Interfaces;
 using Microsoft.Azure.WebJobs;
-using Microsoft.IdentityModel.Clients.ActiveDirectory;
 
 // ReSharper disable UnusedMember.Global
 namespace Altinn.Platform.Authorization.Functions;
