@@ -13,7 +13,7 @@ importers:
         version: 7.0.0
       '@types/node':
         specifier: ^20.11.30
-        version: 20.14.10
+        version: 20.14.14
       chalk:
         specifier: ^5.3.0
         version: 5.3.0
@@ -22,10 +22,10 @@ importers:
         version: 14.0.2
       tsx:
         specifier: ^4.7.1
-        version: 4.16.2
+        version: 4.16.5
       typescript:
         specifier: ^5.4.3
-        version: 5.5.3
+        version: 5.5.4
       zx:
         specifier: ^8.0.0
         version: 8.1.4
@@ -242,8 +242,8 @@ packages:
   '@types/jsonfile@6.1.4':
     resolution: {integrity: sha512-D5qGUYwjvnNNextdU59/+fI+spnwtTFmyQP0h+PfIOSkNfpU6AOICUOkm4i0OnSk+NyjdPJrxCDro0sJsWlRpQ==}
 
-  '@types/node@20.14.10':
-    resolution: {integrity: sha512-MdiXf+nDuMvY0gJKxyfZ7/6UFsETO7mGKF54MVD/ekJS6HdFtpZFBgrh6Pseu64XTb2MLyFPlbW6hj8HYRQNOQ==}
+  '@types/node@20.14.14':
+    resolution: {integrity: sha512-d64f00982fS9YoOgJkAMolK7MN8Iq3TDdVjchbYHdEmjth/DHowx82GnoA+tVUAN+7vxfYUgAzi+JXbKNd2SDQ==}
 
   before-after-hook@3.0.2:
     resolution: {integrity: sha512-Nik3Sc0ncrMK4UUdXQmAnRtzmNQTAAXmXIopizwZ1W1t8QmfJj+zL4OA2I7XPTPW5z5TDqv4hRo/JzouDJnX3A==}
@@ -277,8 +277,8 @@ packages:
     engines: {node: ^8.16.0 || ^10.6.0 || >=11.0.0}
     os: [darwin]
 
-  get-tsconfig@4.7.5:
-    resolution: {integrity: sha512-ZCuZCnlqNzjb4QprAzXKdpp/gh6KTxSJuw3IBsPnV/7fV4NxC9ckB+vPTt8w7fJA0TaSD7c55BR47JD6MEDyDw==}
+  get-tsconfig@4.7.6:
+    resolution: {integrity: sha512-ZAqrLlu18NbDdRaHq+AKXzAmqIUPswPWKUchfytdAjiRFnCe5ojG2bstg6mRiZabkKfCoL/e98pbBELIV/YCeA==}
 
   glob-parent@5.1.2:
     resolution: {integrity: sha512-AOIgSQCepiJYwP3ARnGx+5VnTu2HBYdzbGP45eLw1vr3zB3vZLeyed1sC9hnbcOc9/SrMyM5RPQrkGz4aS9Zow==}
@@ -341,13 +341,13 @@ packages:
     resolution: {integrity: sha512-65P7iz6X5yEr1cwcgvQxbbIw7Uk3gOy5dIdtZ4rDveLqhrdJP+Li/Hx6tyK0NEb+2GCyneCMJiGqrADCSNk8sQ==}
     engines: {node: '>=8.0'}
 
-  tsx@4.16.2:
-    resolution: {integrity: sha512-C1uWweJDgdtX2x600HjaFaucXTilT7tgUZHbOE4+ypskZ1OP8CRCSDkCxG6Vya9EwaFIVagWwpaVAn5wzypaqQ==}
+  tsx@4.16.5:
+    resolution: {integrity: sha512-ArsiAQHEW2iGaqZ8fTA1nX0a+lN5mNTyuGRRO6OW3H/Yno1y9/t1f9YOI1Cfoqz63VAthn++ZYcbDP7jPflc+A==}
     engines: {node: '>=18.0.0'}
     hasBin: true
 
-  typescript@5.5.3:
-    resolution: {integrity: sha512-/hreyEujaB0w76zKo6717l3L0o/qEUtRgdvUBvlkhoWeOVMjMuHNHk0BRBzikzuGDqNmPQbg5ifMEqsHLiIUcQ==}
+  typescript@5.5.4:
+    resolution: {integrity: sha512-Mtq29sKDAEYP7aljRgtPOpTvOfbwRWlS6dPRzwjdE+C0R4brX/GUyhHSecbHMFLNBLcJIPt9nl9yG5TZ1weH+Q==}
     engines: {node: '>=14.17'}
     hasBin: true
 
@@ -522,15 +522,15 @@ snapshots:
   '@types/fs-extra@11.0.4':
     dependencies:
       '@types/jsonfile': 6.1.4
-      '@types/node': 20.14.10
+      '@types/node': 20.14.14
     optional: true
 
   '@types/jsonfile@6.1.4':
     dependencies:
-      '@types/node': 20.14.10
+      '@types/node': 20.14.14
     optional: true
 
-  '@types/node@20.14.10':
+  '@types/node@20.14.14':
     dependencies:
       undici-types: 5.26.5
 
@@ -587,7 +587,7 @@ snapshots:
   fsevents@2.3.3:
     optional: true
 
-  get-tsconfig@4.7.5:
+  get-tsconfig@4.7.6:
     dependencies:
       resolve-pkg-maps: 1.0.0
 
@@ -641,14 +641,14 @@ snapshots:
     dependencies:
       is-number: 7.0.0
 
-  tsx@4.16.2:
+  tsx@4.16.5:
     dependencies:
       esbuild: 0.21.5
-      get-tsconfig: 4.7.5
+      get-tsconfig: 4.7.6
     optionalDependencies:
       fsevents: 2.3.3
 
-  typescript@5.5.3: {}
+  typescript@5.5.4: {}
 
   undici-types@5.26.5: {}
 
@@ -661,4 +661,4 @@ snapshots:
   zx@8.1.4:
     optionalDependencies:
       '@types/fs-extra': 11.0.4
-      '@types/node': 20.14.10
+      '@types/node': 20.14.14
