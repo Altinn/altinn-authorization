@@ -82,7 +82,7 @@ script:pre-request {
   bru.setVar("party", testdata.org1.partyid);
   bru.setVar("appsAccessKey", bru.getEnvVar("appsAccessKey"));
   
-  await testTokenGenerator.getToken();
+  bru.setVar("bearerToken", await testTokenGenerator.getToken("altinn:instances.read"));
 }
 
 script:post-response {
