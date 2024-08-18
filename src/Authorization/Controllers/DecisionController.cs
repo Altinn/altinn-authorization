@@ -306,7 +306,7 @@ namespace Altinn.Platform.Authorization.Controllers
 
         private async Task<XacmlContextResponse> ProcessDelegationResult(XacmlContextRequest decisionRequest, XacmlPolicy resourcePolicy, IEnumerable<DelegationChangeExternal> delegations, CancellationToken cancellationToken = default)
         {
-            if (!delegations.IsNullOrEmpty())
+            if (delegations?.Any() ?? false)
             {
                 List<int> keyrolePartyIds = await _delegationContextHandler.GetKeyRolePartyIds(_delegationContextHandler.GetSubjectUserId(decisionRequest), cancellationToken);
                 _delegationContextHandler.Enrich(decisionRequest, keyrolePartyIds);
@@ -325,7 +325,7 @@ namespace Altinn.Platform.Authorization.Controllers
         }
 
         private static string CreateCacheKey(params string[] cacheKeys) =>
-            string.Join("-", cacheKeys.Where(c => !c.IsNullOrEmpty() || !c.EndsWith(':')));
+            string.Join("-", cacheKeys.Where(c => c != null && (c != string.Empty || !c.EndsWith(':'))));
 
         private static bool IsTypeApp(XacmlResourceAttributes resourceAttributes) =>
             !string.IsNullOrEmpty(resourceAttributes.OrgValue) && !string.IsNullOrEmpty(resourceAttributes.AppValue);
