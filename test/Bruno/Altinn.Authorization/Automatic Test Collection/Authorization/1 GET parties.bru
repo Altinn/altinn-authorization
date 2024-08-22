@@ -15,10 +15,6 @@ headers {
   Ocp-Apim-Subscription-Key: {{process.env.APIMSUBSCRIPTIONKEY}}
 }
 
-vars:pre-request {
-  bearerToken: 
-}
-
 assert {
   ~res.status: eq 200
 }
