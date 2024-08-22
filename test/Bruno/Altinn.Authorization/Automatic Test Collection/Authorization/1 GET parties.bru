@@ -7,7 +7,7 @@ meta {
 get {
   url: {{baseUrl}}/authorization/api/v1/parties?userId={{auth_userId}}
   body: none
-  auth: bearer
+  auth: inherit
 }
 
 headers {
@@ -15,8 +15,8 @@ headers {
   Ocp-Apim-Subscription-Key: {{process.env.APPSACCESSKEY}}
 }
 
-auth:bearer {
-  token: {{bearerToken}}
+vars:pre-request {
+  bearerToken: 
 }
 
 assert {
