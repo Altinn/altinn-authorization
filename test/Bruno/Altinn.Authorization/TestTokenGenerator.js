@@ -8,6 +8,11 @@ exports.getToken = async function (getTokenParameters) {
   const basicAuthPw = bru.getEnvVar("tokenBasicAuthPw");
   const Authorization = 'Basic ' + btoa(`${basicAuthUser}:${basicAuthPw}`);
 
+  console.log("tokenEnv: " + bru.getEnvVar("tokenEnv"));
+  console.log("tokenBasicAuthUser: " + bru.getEnvVar("tokenBasicAuthUser"));
+  console.log("tokenBasicAuthPw: " + bru.getEnvVar("tokenBasicAuthPw"));
+  console.log("appAccessKey: " + bru.getEnvVar("appAccessKey"));
+
   const tokenEnv = bru.getEnvVar("tokenEnv");
   const tokenType = getTokenParameters.auth_tokenType;
   const tokenScopes = getTokenParameters.auth_scopes;
