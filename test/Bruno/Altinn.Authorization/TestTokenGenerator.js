@@ -11,7 +11,7 @@ exports.getToken = async function (getTokenParameters) {
   console.log("tokenEnv: " + bru.getEnvVar("tokenEnv"));
   console.log("tokenBasicAuthUser: " + bru.getEnvVar("tokenBasicAuthUser"));
   console.log("tokenBasicAuthPw: " + bru.getEnvVar("tokenBasicAuthPw"));
-  console.log("appAccessKey: " + bru.getEnvVar("appAccessKey"));
+  console.log("apimSubscriptionKey: " + bru.getEnvVar("apimSubscriptionKey"));
 
   const tokenEnv = bru.getEnvVar("tokenEnv");
   const tokenType = getTokenParameters.auth_tokenType;
