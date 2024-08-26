@@ -7,7 +7,7 @@ meta {
 post {
   url: {{baseUrl}}/authorization/api/v1/decision
   body: json
-  auth: none
+  auth: inherit
 }
 
 headers {
@@ -109,7 +109,7 @@ tests {
 
 docs {
   Get a decision from PDP with user details and validate response to have Permit
-
+  
   AccessSubject: ['urn:altinn:userid']
   
   Action: ['read']
