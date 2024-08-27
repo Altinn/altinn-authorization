@@ -1,7 +1,4 @@
 {
-    "scopes": {
-        "read": "altinn:instances:read"
-    },
     "auth_scopes": {
         "read": "altinn:instances:read"
     },
