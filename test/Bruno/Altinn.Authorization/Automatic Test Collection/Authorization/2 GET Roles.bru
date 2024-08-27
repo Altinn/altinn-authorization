@@ -15,17 +15,6 @@ headers {
   Ocp-Apim-Subscription-Key: {{process.env.APIMSUBSCRIPTIONKEY}}
 }
 
-vars:pre-request {
-  scope: altinn:instances.read
-  auth_tokenType: Personal
-  auth_userId: 
-  auth_scopes: altinn:instances.read
-  auth_partyId: 
-  auth_ssn: 
-  party: 
-  apps_access_key: 
-}
-
 assert {
   ~res.status: eq 200
   ~res.body: contains created
@@ -33,26 +22,16 @@ assert {
 
 script:pre-request {
   const testdata = require(`./Testdata/Authorization/${bru.getEnvVar("tokenEnv")}testdata.json`);
-  bru.setVar("auth_userId", testdata.org1.dagl.userid);
-  bru.setVar("auth_partyId", testdata.org1.dagl.partyid);
-  bru.setVar("auth_ssn", testdata.org1.dagl.pid);
-  bru.setVar("party", testdata.org1.partyid);
-  bru.setVar("appsAccessKey", bru.getEnvVar("appsAccessKey"));
-  
-  bru.setVar("bearerToken", await testTokenGenerator.getToken("altinn:instances.read"));
-  
-  const testdata = require(`./Testdata/Authorization/${bru.getEnvVar("tokenEnv")}testdata.json`);
   const sharedtestdata = require(`./Testdata/Authorization/sharedtestdata.json`);
   
-  bru.setVar("auth_userId", testdata.org1.dagl.userid)
+  bru.setVar("auth_userId", testdata.org1.dagl.userid);
+  bru.setVar("auth_partyId", testdata.org1.dagl.partyid);
   
   var getTokenParameters = {
     auth_userId: testdata.org1.dagl.userid,
     auth_partyId: testdata.org1.dagl.partyid,
     auth_ssn: testdata.org1.dagl.pid,
     party: testdata.org1.partyid,
-    to_partyid: testdata.org2.partyid,
-    scope: sharedtestdata.scopes.read,
     auth_tokenType: sharedtestdata.authTokenType.personal,
     auth_scopes: sharedtestdata.auth_scopes.read
   }
@@ -60,6 +39,8 @@ script:pre-request {
   const token = await testTokenGenerator.getToken(getTokenParameters);
   
   bru.setVar("bearerToken",  token);
+  
+  
 }
 
 script:post-response {
