@@ -66,17 +66,6 @@ body:json {
   }
 }
 
-vars:pre-request {
-  scope: altinn:instances.read
-  auth_tokenType: Personal
-  auth_userId: 
-  auth_scopes: altinn:instances.read
-  auth_partyId: 
-  auth_ssn: 
-  party: 
-  apps_access_key: 
-}
-
 assert {
   ~res.status: eq 200
   ~res.body: contains created
