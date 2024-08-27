@@ -12,7 +12,7 @@ post {
 
 headers {
   Content-Type: application/json
-  Ocp-Apim-Subscription-Key: {{appsAccessKey}}
+  Ocp-Apim-Subscription-Key: {{process.env.APIMSUBSCRIPTIONKEY}}
 }
 
 body:json {
