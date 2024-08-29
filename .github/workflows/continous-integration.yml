@@ -16,8 +16,8 @@ jobs:
       - name: Debug
         run: echo $GITHUB_OUTPUT
 
-  build-and-test:
-    name: Build And Test Apps
+  CI:
+    name: CI
     runs-on: ubuntu-latest
     needs: bundle_apps
     strategy:
