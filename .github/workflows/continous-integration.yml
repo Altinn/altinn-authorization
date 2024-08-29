@@ -12,7 +12,7 @@ jobs:
       - name: List all apps
         id: list
         working-directory: src/apps
-        run: echo "result=$(find . -maxdepth 1 -type d -not -path '.' -printf '%P\n' | jq -R -s -c 'split("\n")[:-1])'" >> $GITHUB_OUTPUT
+        run: echo result=$(find . -maxdepth 1 -type d -not -path "." -printf "%P\n" | jq -R -s -c 'split("\n")[:-1]') >> $GITHUB_OUTPUT
 
   build-and-test:
     name: Build And Test Apps
