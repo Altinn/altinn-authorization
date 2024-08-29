@@ -17,7 +17,6 @@
         </When>
 
         <Otherwise>
-            <!-- not test project -->
 
             <ItemGroup>
                 <InternalsVisibleTo Include="$(AssemblyName).Tests" />
@@ -29,13 +28,13 @@
     <ItemGroup Condition=" '$(EnableStyleCop)' == 'true' ">
         <PackageReference Include="StyleCop.Analyzers" PrivateAssets="all"
             IncludeAssets="runtime; build; native; contentfiles; analyzers" />
-        <AdditionalFiles Include="$(MSBuildThisFileDirectory)stylecop.json">
+        <AdditionalFiles Include="$(MSBuildThisFileDirectory)\..\..\stylecop.json">
             <Link>stylecop.json</Link>
         </AdditionalFiles>
     </ItemGroup>
 
     <PropertyGroup Condition="'$(Configuration)'=='Debug'">
-        <CodeAnalysisRuleSet>$(MSBuildThisFileDirectory)\Altinn3.ruleset</CodeAnalysisRuleSet>
+        <CodeAnalysisRuleSet>$(MSBuildThisFileDirectory)\..\..\Altinn3.ruleset</CodeAnalysisRuleSet>
     </PropertyGroup>
 
 

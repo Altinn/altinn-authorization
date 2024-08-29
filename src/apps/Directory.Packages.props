@@ -3,6 +3,11 @@
         <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
     </PropertyGroup>
     <ItemGroup>
+        <PackageVersion Include="Altinn.ApiClients.Maskinporten" Version="9.1.0" />
+        <PackageVersion Include="Microsoft.Azure.Services.AppAuthentication" Version="1.6.2" />
+        <PackageVersion Include="Microsoft.IdentityModel.Protocols.OpenIdConnect" Version="8.0.1" />
+        <PackageVersion Include="Microsoft.Azure.DocumentDB.Core" Version="2.22.0" />
+
         <PackageVersion Include="Altinn.Authorization.ServiceDefaults.Npgsql.Yuniql" Version="2.2.2" />
         <PackageVersion Include="Altinn.Authorization.ServiceDefaults" Version="2.2.2" />
         <PackageVersion Include="Altinn.Authorization.ABAC" Version="0.0.8" />
@@ -57,5 +62,6 @@
         <PackageVersion Include="xunit" Version="2.9.0" />
         <PackageVersion Include="xunit.runner.visualstudio" Version="2.8.2" />
         <PackageVersion Include="coverlet.collector" Version="6.0.2" />
+        <PackageVersion Include="MSTest.TestFramework" Version="3.5.2" />
     </ItemGroup>
 </Project>

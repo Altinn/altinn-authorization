@@ -47,9 +47,6 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Npgsql;
 
-using Yuniql.AspNetCore;
-using Yuniql.PostgreSql;
-
 ILogger logger;
 
 string applicationInsightsKeySecretName = "ApplicationInsights--InstrumentationKey";
@@ -341,27 +338,6 @@ void Configure()
     else
     {
         app.UseExceptionHandler("/authorization/api/v1/error");
-    }
-
-    if (builder.Configuration.GetValue<bool>("PostgreSQLSettings:EnableDBConnection"))
-    {
-        ConsoleTraceService traceService = new ConsoleTraceService { IsDebugEnabled = true };
-
-        string connectionString = string.Format(
-            builder.Configuration.GetValue<string>("PostgreSQLSettings:AdminConnectionString"),
-            builder.Configuration.GetValue<string>("PostgreSQLSettings:authorizationDbAdminPwd"));
-
-        app.UseYuniql(
-            new PostgreSqlDataService(traceService),
-            new PostgreSqlBulkImportService(traceService),
-            traceService,
-            new Yuniql.AspNetCore.Configuration
-            {
-                Workspace = Path.Combine(Environment.CurrentDirectory, builder.Configuration.GetValue<string>("PostgreSQLSettings:WorkspacePath")),
-                ConnectionString = connectionString,
-                IsAutoCreateDatabase = false,
-                IsDebug = true
-            });
     }
 
     app.UseSwagger(o => o.RouteTemplate = "authorization/swagger/{documentName}/swagger.json");
