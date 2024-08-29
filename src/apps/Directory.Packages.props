@@ -7,7 +7,6 @@
         <PackageVersion Include="Microsoft.Azure.Services.AppAuthentication" Version="1.6.2" />
         <PackageVersion Include="Microsoft.IdentityModel.Protocols.OpenIdConnect" Version="8.0.1" />
         <PackageVersion Include="Microsoft.Azure.DocumentDB.Core" Version="2.22.0" />
-
         <PackageVersion Include="Altinn.Authorization.ServiceDefaults.Npgsql.Yuniql" Version="2.2.2" />
         <PackageVersion Include="Altinn.Authorization.ServiceDefaults" Version="2.2.2" />
         <PackageVersion Include="Altinn.Authorization.ABAC" Version="0.0.8" />

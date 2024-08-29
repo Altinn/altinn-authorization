@@ -2,7 +2,7 @@ name: Testing
 on:
   push:
     paths:
-      - src
+      - src/**
 
 env:
   DOTNET_VERSION: 8.0.x
