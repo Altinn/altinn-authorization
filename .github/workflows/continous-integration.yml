@@ -18,7 +18,7 @@ jobs:
     needs: list_apps
     runs-on: ubuntu-latest
     steps:
-      - run: echo ${{ fromJson(needs.list_apps.outputs.names) }}
+      - run: echo ${{ needs.list_apps.outputs.names }}
 
   build-and-test:
     name: Build And Test Apps
