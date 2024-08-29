@@ -1,5 +1,11 @@
 name: Testing
-on: push
+on:
+  push:
+    paths:
+      - src
+
+env:
+  DOTNET_VERSION: 8.0.x
 
 jobs:
   bundle_apps:
@@ -9,14 +15,15 @@ jobs:
       names: ${{ steps.list.outputs.result }}
     steps:
       - uses: actions/checkout@v4
+
       - name: List apps
         id: list
         working-directory: src/apps
-        run: echo result=$(find . -maxdepth 1 -type d -not -path "." -printf "%P\n" | jq -R -s -c 'split("\n")[:-1]') >> $GITHUB_OUTPUT
-      - name: Debug
-        run: echo $GITHUB_OUTPUT
+        run: |
+          result=$(find . -maxdepth 1 -type d -not -path '.' -printf '%P\n' | jq -R -s -c 'split("\n")[:-1]')
+          echo "result=$result" >> $GITHUB_OUTPUT
 
-  CI:
+  ci:
     name: CI
     runs-on: ubuntu-latest
     needs: bundle_apps
@@ -25,13 +32,17 @@ jobs:
         name: ${{ fromJson(needs.bundle_apps.outputs.names) }}
     steps:
       - uses: actions/checkout@v4
+
       - name: Setup .NET
         uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: |
-            8.0.x
-      - name: Build & Test
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+
+      - name: Build
         working-directory: src/apps/${{ matrix.name }}
-        run: |
-          dotnet build
-          dotnet test
+        run: dotnet build
+
+      - name: Test
+        if: always()
+        working-directory: src/apps/${{ matrix.name }}
+        run: dotnet test --no-build
