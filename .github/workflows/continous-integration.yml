@@ -2,31 +2,27 @@ name: Testing
 on: push
 
 jobs:
-  list_apps:
-    name: List Apps
+  bundle_apps:
+    name: Bundle Apps
     runs-on: ubuntu-latest
     outputs:
       names: ${{ steps.list.outputs.result }}
     steps:
       - uses: actions/checkout@v4
-      - name: List all apps
+      - name: List apps
         id: list
         working-directory: src/apps
         run: echo result=$(find . -maxdepth 1 -type d -not -path "." -printf "%P\n" | jq -R -s -c 'split("\n")[:-1]') >> $GITHUB_OUTPUT
-
-  debug:
-    needs: list_apps
-    runs-on: ubuntu-latest
-    steps:
-      - run: echo ${{ needs.list_apps.outputs.names }}
+      - name: Debug
+        run: echo $GITHUB_OUTPUT
 
   build-and-test:
     name: Build And Test Apps
     runs-on: ubuntu-latest
-    needs: list_apps
+    needs: bundle_apps
     strategy:
       matrix:
-        name: ${{ fromJson(needs.list_apps.outputs.names) }}
+        name: ${{ fromJson(needs.bundle_apps.outputs.names) }}
     steps:
       - uses: actions/checkout@v4
       - name: Setup .NET
