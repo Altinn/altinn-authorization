@@ -1,24 +1,18 @@
+ARG APP_NAME
+
 FROM mcr.microsoft.com/dotnet/sdk:8.0-alpine AS build
-WORKDIR Authorization/
-
-COPY src/Authorization ./Authorization
-WORKDIR Authorization/
-
-RUN dotnet build Altinn.Platform.Authorization.csproj -c Release -o /app_output
-RUN dotnet publish Altinn.Platform.Authorization.csproj -c Release -o /app_output
+ARG APP_NAME
+COPY . .
+WORKDIR /src/apps/${APP_NAME}
+RUN dotnet publish -c Release -o /app
 
 FROM mcr.microsoft.com/dotnet/aspnet:8.0-alpine AS final
+ARG APP_NAME
 EXPOSE 5050
-WORKDIR /app
-COPY --from=build /app_output .
+COPY --from=build /app .
 
-COPY src/Authorization/Migration ./Migration
+RUN echo "#!/bin/sh" >> entrypoint.sh
+RUN echo "exec dotnet ${APP_NAME}.dll" >> entrypoint.sh
+RUN chmod +x entrypoint.sh
 
-# setup the user and group
-# the user will have no password, using shell /bin/false and using the group dotnet
-RUN addgroup -g 3000 dotnet && adduser -u 1000 -G dotnet -D -s /bin/false dotnet
-# update permissions of files if neccessary before becoming dotnet user
-USER dotnet
-RUN mkdir /tmp/logtelemetry
-
-ENTRYPOINT ["dotnet", "Altinn.Platform.Authorization.dll"]
+ENTRYPOINT ["/entrypoint.sh"]

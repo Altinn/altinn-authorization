@@ -1,0 +1,29 @@
+name: template-bundle.yml
+
+on:
+  workflow_call:
+    outputs:
+      dirs:
+        value: ${{ jobs.bundle_apps.outputs.names }}
+        description: JSON list of folders in either <apps, pkgs, libs>
+
+    inputs:
+      dir:
+        required: true
+        description: <apps, pkgs, libs>
+        type: string
+
+jobs:
+  bundle_apps:
+    name: Bundle Apps
+    runs-on: ubuntu-latest
+    outputs:
+      names: ${{ steps.list.outputs.result }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: List apps
+        id: list
+        working-directory: src/${{ inputs.dir }}
+        run: |
+          result=$(find . -maxdepth 1 -type d -not -path '.' -printf '%P\n' | jq -R -s -c 'split("\n")[:-1]')
+          echo "result=$result" >> $GITHUB_OUTPUT
