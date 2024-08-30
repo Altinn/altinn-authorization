@@ -10,7 +10,7 @@ env:
 jobs:
   bundle:
     name: Bundle Apps
-    uses: ".github/workflows/template-bundle.yml"
+    uses: ./.github/workflows/template-bundle.yml
     with:
       dir: apps
 
