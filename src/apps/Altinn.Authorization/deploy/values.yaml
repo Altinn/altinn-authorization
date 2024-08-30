@@ -1,0 +1,354 @@
+replicaCount: 1
+
+environment: development
+
+image:
+  repository: altinntjenesterregistry.azurecr.io/altinn-authorization
+  containerPort: 5050
+environmentVariables:
+  at21:
+    - name: ASPNETCORE_ENVIRONMENT
+      value: Staging
+    - name: ASPNETCORE_URLS
+      value: http://+:5050
+    - name: PostgreSQLSettings__AdminConnectionString
+      value: Host=at21-authorization-postgres.altinn.cloud;Port=5432;Username=platform_authorization_admin;Password={0};Database=authorizationdb;SslMode=Require;Trust Server Certificate=true;
+    - name: PostgreSQLSettings__ConnectionString
+      value: Host=at21-authorization-postgres.altinn.cloud;Port=5432;Username=platform_authorization;Password={0};Database=authorizationdb;SslMode=Require;Trust Server Certificate=true;Maximum Pool Size=6;
+    - name: PostgreSQLSettings__EnableDBConnection
+      value: true
+    - name: GeneralSettings__UseStorageApiForInstanceAuthInfo
+      value: true
+    - name: GeneralSettings__BridgeApiEndpoint
+      value: https://at21.altinn.cloud/sblbridge/
+    - name: GeneralSettings__SBLBaseAdress
+      value: https://at21.altinn.cloud/
+    - name: GeneralSettings__OpenIdWellKnownEndpoint
+      value: https://platform.at21.altinn.cloud/authentication/api/v1/openid/
+    - name: GeneralSettings__OedAuthzApiEndpoint
+      value: https://oed-test-authz-app.azurewebsites.net/
+    - name: PlatformSettings__ApiRegisterEndpoint
+      value: http://altinn-register.default.svc.cluster.local/register/api/v1/
+    - name: PlatformSettings__ApiResourceRegistryEndpoint
+      value: http://altinn-resource-registry.default.svc.cluster.local/resourceregistry/api/v1/
+    - name: PlatformSettings__ApiStorageEndpoint
+      value: http://altinn-storage.default.svc.cluster.local/storage/api/v1/
+    - name: PlatformSettings__ApiAccessManagementEndpoint
+      value: http://altinn-access-management.default.svc.cluster.local/accessmanagement/api/v1/
+    - name: PlatformSettings__ApiProfileEndpoint
+      value: http://altinn-profile.default.svc.cluster.local/profile/api/v1/
+    - name: OedAuthzMaskinportenClientSettings__Environment
+      value: test
+    - name: OedAuthzMaskinportenClientSettings__ClientId
+      value: 32e31e1b-563c-4451-9ebc-b9d20cd730de
+    - name: FeatureManagement__AuditLog
+      value: "true"
+  at22:
+    - name: ASPNETCORE_ENVIRONMENT
+      value: Staging
+    - name: ASPNETCORE_URLS
+      value: http://+:5050
+    - name: PostgreSQLSettings__AdminConnectionString
+      value: Host=at22-authorization-postgres.altinn.cloud;Port=5432;Username=platform_authorization_admin;Password={0};Database=authorizationdb;SslMode=Require;Trust Server Certificate=true;
+    - name: PostgreSQLSettings__ConnectionString
+      value: Host=at22-authorization-postgres.altinn.cloud;Port=5432;Username=platform_authorization;Password={0};Database=authorizationdb;SslMode=Require;Trust Server Certificate=true;Maximum Pool Size=6;
+    - name: PostgreSQLSettings__EnableDBConnection
+      value: true
+    - name: GeneralSettings__UseStorageApiForInstanceAuthInfo
+      value: true
+    - name: GeneralSettings__BridgeApiEndpoint
+      value: https://at22.altinn.cloud/sblbridge/
+    - name: GeneralSettings__SBLBaseAdress
+      value: https://at22.altinn.cloud/
+    - name: GeneralSettings__OpenIdWellKnownEndpoint
+      value: https://platform.at22.altinn.cloud/authentication/api/v1/openid/
+    - name: GeneralSettings__OedAuthzApiEndpoint
+      value: https://oed-test-authz-app.azurewebsites.net/
+    - name: PlatformSettings__ApiRegisterEndpoint
+      value: http://altinn-register.default.svc.cluster.local/register/api/v1/
+    - name: PlatformSettings__ApiResourceRegistryEndpoint
+      value: http://altinn-resource-registry.default.svc.cluster.local/resourceregistry/api/v1/
+    - name: PlatformSettings__ApiStorageEndpoint
+      value: http://altinn-storage.default.svc.cluster.local/storage/api/v1/
+    - name: PlatformSettings__ApiAccessManagementEndpoint
+      value: http://altinn-access-management.default.svc.cluster.local/accessmanagement/api/v1/
+    - name: PlatformSettings__ApiProfileEndpoint
+      value: http://altinn-profile.default.svc.cluster.local/profile/api/v1/
+    - name: OedAuthzMaskinportenClientSettings__Environment
+      value: test
+    - name: OedAuthzMaskinportenClientSettings__ClientId
+      value: 32e31e1b-563c-4451-9ebc-b9d20cd730de
+    - name: FeatureManagement__AuditLog
+      value: "true"
+  at23:
+    - name: ASPNETCORE_ENVIRONMENT
+      value: Staging
+    - name: ASPNETCORE_URLS
+      value: http://+:5050
+    - name: PostgreSQLSettings__AdminConnectionString
+      value: Host=at23-authorization-postgres.altinn.cloud;Port=5432;Username=platform_authorization_admin;Password={0};Database=authorizationdb;SslMode=Require;Trust Server Certificate=true;
+    - name: PostgreSQLSettings__ConnectionString
+      value: Host=at23-authorization-postgres.altinn.cloud;Port=5432;Username=platform_authorization;Password={0};Database=authorizationdb;SslMode=Require;Trust Server Certificate=true;Maximum Pool Size=6;
+    - name: PostgreSQLSettings__EnableDBConnection
+      value: true
+    - name: GeneralSettings__UseStorageApiForInstanceAuthInfo
+      value: true
+    - name: GeneralSettings__BridgeApiEndpoint
+      value: https://at23.altinn.cloud/sblbridge/
+    - name: GeneralSettings__SBLBaseAdress
+      value: https://at23.altinn.cloud/
+    - name: GeneralSettings__OpenIdWellKnownEndpoint
+      value: https://platform.at23.altinn.cloud/authentication/api/v1/openid/
+    - name: GeneralSettings__OedAuthzApiEndpoint
+      value: https://oed-test-authz-app.azurewebsites.net/
+    - name: PlatformSettings__ApiRegisterEndpoint
+      value: http://altinn-register.default.svc.cluster.local/register/api/v1/
+    - name: PlatformSettings__ApiResourceRegistryEndpoint
+      value: http://altinn-resource-registry.default.svc.cluster.local/resourceregistry/api/v1/
+    - name: PlatformSettings__ApiStorageEndpoint
+      value: http://altinn-storage.default.svc.cluster.local/storage/api/v1/
+    - name: PlatformSettings__ApiAccessManagementEndpoint
+      value: http://altinn-access-management.default.svc.cluster.local/accessmanagement/api/v1/
+    - name: PlatformSettings__ApiProfileEndpoint
+      value: http://altinn-profile.default.svc.cluster.local/profile/api/v1/
+    - name: OedAuthzMaskinportenClientSettings__Environment
+      value: test
+    - name: OedAuthzMaskinportenClientSettings__ClientId
+      value: 32e31e1b-563c-4451-9ebc-b9d20cd730de
+    - name: FeatureManagement__AuditLog
+      value: "true"
+  at24:
+    - name: ASPNETCORE_ENVIRONMENT
+      value: Staging
+    - name: ASPNETCORE_URLS
+      value: http://+:5050
+    - name: PostgreSQLSettings__AdminConnectionString
+      value: Host=at24-authorization-postgres.altinn.cloud;Port=5432;Username=platform_authorization_admin;Password={0};Database=authorizationdb;SslMode=Require;Trust Server Certificate=true;
+    - name: PostgreSQLSettings__ConnectionString
+      value: Host=at24-authorization-postgres.altinn.cloud;Port=5432;Username=platform_authorization;Password={0};Database=authorizationdb;SslMode=Require;Maximum Pool Size=6;Trust Server Certificate=true;
+    - name: PostgreSQLSettings__EnableDBConnection
+      value: true
+    - name: GeneralSettings__UseStorageApiForInstanceAuthInfo
+      value: true
+    - name: GeneralSettings__BridgeApiEndpoint
+      value: https://at24.altinn.cloud/sblbridge/
+    - name: GeneralSettings__SBLBaseAdress
+      value: https://at24.altinn.cloud/
+    - name: GeneralSettings__OpenIdWellKnownEndpoint
+      value: https://platform.at24.altinn.cloud/authentication/api/v1/openid/
+    - name: GeneralSettings__OedAuthzApiEndpoint
+      value: https://oed-test-authz-app.azurewebsites.net/
+    - name: PlatformSettings__ApiRegisterEndpoint
+      value: http://altinn-register.default.svc.cluster.local/register/api/v1/
+    - name: PlatformSettings__ApiResourceRegistryEndpoint
+      value: http://altinn-resource-registry.default.svc.cluster.local/resourceregistry/api/v1/
+    - name: PlatformSettings__ApiStorageEndpoint
+      value: http://altinn-storage.default.svc.cluster.local/storage/api/v1/
+    - name: PlatformSettings__ApiAccessManagementEndpoint
+      value: http://altinn-access-management.default.svc.cluster.local/accessmanagement/api/v1/
+    - name: PlatformSettings__ApiProfileEndpoint
+      value: http://altinn-profile.default.svc.cluster.local/profile/api/v1/
+    - name: OedAuthzMaskinportenClientSettings__Environment
+      value: test
+    - name: OedAuthzMaskinportenClientSettings__ClientId
+      value: 32e31e1b-563c-4451-9ebc-b9d20cd730de
+    - name: FeatureManagement__AuditLog
+      value: "true"
+  development:
+    - name: ASPNETCORE_ENVIRONMENT
+      value: Development
+    - name: ASPNETCORE_URLS
+      value: http://+:5050
+    - name: PostgreSQLSettings__AdminConnectionString
+      value: Host=altinn-platform-db-at24-postgres.postgres.database.azure.com;Port=5432;Username=platform_authorization_admin@altinn-platform-db-at24-postgres;Password={0};Database=authorizationdb;SslMode=VerifyFull;
+    - name: PostgreSQLSettings__ConnectionString
+      value: Host=altinn-platform-db-at24-postgres.postgres.database.azure.com;Port=5432;Username=platform_authorization@altinn-platform-db-at24-postgres;Password={0};Database=authorizationdb;SslMode=VerifyFull;
+    - name: PostgreSQLSettings__EnableDBConnection
+      value: true
+    - name: GeneralSettings__UseStorageApiForInstanceAuthInfo
+      value: true
+    - name: GeneralSettings__BridgeApiEndpoint
+      value: https://at22.altinn.cloud/sblbridge/
+    - name: GeneralSettings__SBLBaseAdress
+      value: https://at22.altinn.cloud/
+    - name: GeneralSettings__OpenIdWellKnownEndpoint
+      value: https://platform.at22.altinn.cloud/authentication/api/v1/openid/
+    - name: GeneralSettings__OedAuthzApiEndpoint
+      value: https://oed-test-authz-app.azurewebsites.net/
+    - name: PlatformSettings__ApiRegisterEndpoint
+      value: https://platform.at22.altinn.cloud/register/api/v1/
+    - name: PlatformSettings__ApiResourceRegistryEndpoint
+      value: https://platform.at22.altinn.cloud/resourceregistry/api/v1/
+    - name: PlatformSettings__ApiStorageEndpoint
+      value: https://platform.at22.altinn.cloud/storage/api/v1/
+    - name: PlatformSettings__ApiAccessManagementEndpoint
+      value: http://altinn-access-management.default.svc.cluster.local/accessmanagement/api/v1/
+    - name: PlatformSettings__ApiProfileEndpoint
+      value: https://platform.at22.altinn.cloud/profile/api/v1/
+    - name: OedAuthzMaskinportenClientSettings__Environment
+      value: test
+    - name: OedAuthzMaskinportenClientSettings__ClientId
+      value: 32e31e1b-563c-4451-9ebc-b9d20cd730de
+  prod:
+    - name: ASPNETCORE_ENVIRONMENT
+      value: Production
+    - name: ASPNETCORE_URLS
+      value: http://+:5050
+    - name: PostgreSQLSettings__AdminConnectionString
+      value: Host=authorization-postgres.altinn.no;Port=5432;Username=platform_authorization_admin;Password={0};Database=authorizationdb;SslMode=Require;Trust Server Certificate=true;
+    - name: PostgreSQLSettings__ConnectionString
+      value: Host=authorization-postgres.altinn.no;Port=5432;Username=platform_authorization;Password={0};Database=authorizationdb;SslMode=Require;Trust Server Certificate=true;Maximum Pool Size=105;
+    - name: PostgreSQLSettings__EnableDBConnection
+      value: true
+    - name: GeneralSettings__UseStorageApiForInstanceAuthInfo
+      value: true
+    - name: GeneralSettings__BridgeApiEndpoint
+      value: https://ai-pr-vip-sblbridge.ai.basefarm.net/sblbridge/
+    - name: GeneralSettings__SBLBaseAdress
+      value: https://altinn.no
+    - name: GeneralSettings__OpenIdWellKnownEndpoint
+      value: https://platform.altinn.no/authentication/api/v1/openid/
+    - name: GeneralSettings__OedAuthzApiEndpoint
+      value: https://oed-prod-authz-app.azurewebsites.net/
+    - name: PlatformSettings__ApiRegisterEndpoint
+      value: http://altinn-register.default.svc.cluster.local/register/api/v1/
+    - name: PlatformSettings__ApiResourceRegistryEndpoint
+      value: http://altinn-resource-registry.default.svc.cluster.local/resourceregistry/api/v1/
+    - name: PlatformSettings__ApiStorageEndpoint
+      value: http://altinn-storage.default.svc.cluster.local/storage/api/v1/
+    - name: PlatformSettings__ApiAccessManagementEndpoint
+      value: http://altinn-access-management.default.svc.cluster.local/accessmanagement/api/v1/
+    - name: PlatformSettings__ApiProfileEndpoint
+      value: http://altinn-profile.default.svc.cluster.local/profile/api/v1/
+    - name: OedAuthzMaskinportenClientSettings__Environment
+      value: prod
+    - name: OedAuthzMaskinportenClientSettings__ClientId
+      value: fe3a2b1b-4b76-4a69-99e4-086682c20b99
+    - name: FeatureManagement__AuditLog
+      value: "true"
+  tt02:
+    - name: ASPNETCORE_ENVIRONMENT
+      value: Production
+    - name: ASPNETCORE_URLS
+      value: http://+:5050
+    - name: PostgreSQLSettings__AdminConnectionString
+      value: Host=tt02-authorization-postgres.altinn.no;Port=5432;Username=platform_authorization_admin;Password={0};Database=authorizationdb;SslMode=Require;Trust Server Certificate=true;
+    - name: PostgreSQLSettings__ConnectionString
+      value: Host=tt02-authorization-postgres.altinn.no;Port=5432;Username=platform_authorization;Password={0};Database=authorizationdb;SslMode=Require;Trust Server Certificate=true;Maximum Pool Size=105;
+    - name: PostgreSQLSettings__EnableDBConnection
+      value: true
+    - name: GeneralSettings__UseStorageApiForInstanceAuthInfo
+      value: true
+    - name: GeneralSettings__BridgeApiEndpoint
+      value: https://ai-tt02-vip-sblbridge.ai.basefarm.net/sblbridge/
+    - name: GeneralSettings__SBLBaseAdress
+      value: https://tt02.altinn.no/
+    - name: GeneralSettings__OpenIdWellKnownEndpoint
+      value: https://platform.tt02.altinn.no/authentication/api/v1/openid/
+    - name: GeneralSettings__OedAuthzApiEndpoint
+      value: https://oed-test-authz-app.azurewebsites.net/
+    - name: PlatformSettings__ApiRegisterEndpoint
+      value: http://altinn-register.default.svc.cluster.local/register/api/v1/
+    - name: PlatformSettings__ApiResourceRegistryEndpoint
+      value: http://altinn-resource-registry.default.svc.cluster.local/resourceregistry/api/v1/
+    - name: PlatformSettings__ApiStorageEndpoint
+      value: http://altinn-storage.default.svc.cluster.local/storage/api/v1/
+    - name: PlatformSettings__ApiAccessManagementEndpoint
+      value: http://altinn-access-management.default.svc.cluster.local/accessmanagement/api/v1/
+    - name: PlatformSettings__ApiProfileEndpoint
+      value: http://altinn-profile.default.svc.cluster.local/profile/api/v1/
+    - name: OedAuthzMaskinportenClientSettings__Environment
+      value: test
+    - name: OedAuthzMaskinportenClientSettings__ClientId
+      value: 32e31e1b-563c-4451-9ebc-b9d20cd730de
+    - name: FeatureManagement__AuditLog
+      value: "true"
+  yt01:
+    - name: ASPNETCORE_ENVIRONMENT
+      value: Production
+    - name: ASPNETCORE_URLS
+      value: http://+:5050
+    - name: PostgreSQLSettings__AdminConnectionString
+      value: Host=yt01-authorization-postgres.altinn.cloud;Port=5432;Username=platform_authorization_admin;Password={0};Database=authorizationdb;SslMode=Require;Trust Server Certificate=true;
+    - name: PostgreSQLSettings__ConnectionString
+      value: Host=yt01-authorization-postgres.altinn.cloud;Port=5432;Username=platform_authorization;Password={0};Database=authorizationdb;SslMode=Require;Trust Server Certificate=true;Maximum Pool Size=105;
+    - name: PostgreSQLSettings__EnableDBConnection
+      value: true
+    - name: GeneralSettings__UseStorageApiForInstanceAuthInfo
+      value: true
+    - name: GeneralSettings__BridgeApiEndpoint
+      value: https://ai-yt01-vip-sblbridge.ai.basefarm.net/sblbridge/
+    - name: GeneralSettings__SBLBaseAdress
+      value: https://yt01.altinn.cloud/
+    - name: GeneralSettings__OpenIdWellKnownEndpoint
+      value: https://platform.yt01.altinn.cloud/authentication/api/v1/openid/
+    - name: GeneralSettings__OedAuthzApiEndpoint
+      value: https://oed-test-authz-app.azurewebsites.net/
+    - name: PlatformSettings__ApiRegisterEndpoint
+      value: http://altinn-register.default.svc.cluster.local/register/api/v1/
+    - name: PlatformSettings__ApiResourceRegistryEndpoint
+      value: http://altinn-resource-registry.default.svc.cluster.local/resourceregistry/api/v1/
+    - name: PlatformSettings__ApiStorageEndpoint
+      value: http://altinn-storage.default.svc.cluster.local/storage/api/v1/
+    - name: PlatformSettings__ApiAccessManagementEndpoint
+      value: http://altinn-access-management.default.svc.cluster.local/accessmanagement/api/v1/
+    - name: PlatformSettings__ApiProfileEndpoint
+      value: http://altinn-profile.default.svc.cluster.local/profile/api/v1/
+    - name: OedAuthzMaskinportenClientSettings__Environment
+      value: test
+    - name: OedAuthzMaskinportenClientSettings__ClientId
+      value: 32e31e1b-563c-4451-9ebc-b9d20cd730de
+    - name: FeatureManagement__AuditLog
+      value: "true"
+
+volumeMounts:
+  - name: altinn-appsettings
+    mountPath: "/altinn-appsettings"
+  - name: accesstoken
+    mountPath: "/accesstoken"
+volumes:
+  - name: altinn-appsettings
+    secret:
+      secretName: altinn-appsettings-secret
+  - name: accesstoken
+    secret:
+      secretName: accesstoken
+
+service:
+  type: ClusterIP
+  externalPort: 80
+  internalPort: 5050
+
+middlewares: []
+
+linkerd:
+  enabled: true
+  header: altinn-authorization
+  host: altinn-authorization.default.svc.cluster.local:80
+
+ingressRoute:
+  name: altinn-authorization-ingress-route
+  entryPoints:
+    - http
+    - https
+  routes:
+    - match:
+        at21: Host(`internal.platform.at21.altinn.cloud`) && PathPrefix(`/authorization`)
+        at22: Host(`internal.platform.at22.altinn.cloud`) && PathPrefix(`/authorization`)
+        at23: Host(`internal.platform.at23.altinn.cloud`) && PathPrefix(`/authorization`)
+        at24: Host(`internal.platform.at24.altinn.cloud`) && PathPrefix(`/authorization`)
+        development: Host(`platform.at22.altinn.cloud`) && PathPrefix(`/authorization`)
+        production: Host(`internal.platform.prod.altinn.cloud`) && PathPrefix(`/authorization`)
+        tt02: Host(`internal.platform.tt02.altinn.cloud`) && PathPrefix(`/authorization`)
+        yt01: Host(`internal.platform.yt01.altinn.cloud`) && PathPrefix(`/authorization`)
+        prod: Host(`internal.platform.prod.altinn.cloud`) && PathPrefix(`/authorization`)
+      kind: Rule
+      middlewares:
+        - name: hsts-header
+      services:
+        - name: altinn-authorization
+          port: 80
+  tls:
+    options:
+      name: tls-options
+    secretName: ssl-cert

@@ -1,0 +1,16 @@
+{{- if .Values.linkerd.enabled }}
+apiVersion: traefik.containo.us/v1alpha1
+kind: Middleware
+metadata:
+  name: {{ .Values.linkerd.header }}
+spec: 
+  headers:
+    customRequestHeaders:
+      l5d-dst-override: "{{ .Values.linkerd.host }}"
+---
+{{- end }}
+
+{{- range $middleware := .Values.middlewares }}
+{{ toYaml $middleware }}
+---
+{{- end }}

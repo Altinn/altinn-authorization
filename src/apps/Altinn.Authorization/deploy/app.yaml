@@ -1,0 +1,33 @@
+# Only change this file to update the chart
+apiVersion: helm.toolkit.fluxcd.io/v2beta1
+kind: HelmRelease
+metadata:
+  name: altinn-authorization
+  namespace: default
+spec:
+  releaseName: altinn-authorization
+  targetNamespace: default
+  interval: 5m
+  install:
+    remediation:
+      retries: 1
+  upgrade:
+    remediation:
+      retries: 1
+  chart:
+    spec:
+      version: "0.1.0+$SHA" # Comes from altinn-studio-ops
+      chart: altinn-authorization/charts/api
+      sourceRef:
+        kind: HelmRepository
+        name: api
+        namespace: default
+      valuesFiles:
+        - values.yaml
+  valuesFrom:
+    - kind: ConfigMap
+      name: flux-values
+      valuesKey: values.yaml
+  values:
+    image:
+      tag: "$SHA"
