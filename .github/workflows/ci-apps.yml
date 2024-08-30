@@ -20,7 +20,7 @@ jobs:
     needs: bundle
     strategy:
       matrix:
-        name: ${{ fromJson(needs.bundle_apps.outputs.names) }}
+        name: ${{ fromJson(needs.bundle.outputs.names) }}
     steps:
       - uses: actions/checkout@v4
 

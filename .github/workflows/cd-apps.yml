@@ -15,10 +15,11 @@ jobs:
 
   cd_docker:
     name: Containerize
+    needs: bundle
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        name: ${{ fromJson(bundle.outputs.dirs) }}
+        name: ${{ fromJson(needs.bundle.outputs.dirs) }}
       fail-fast: true
     steps:
       - uses: actions/checkout@v4
