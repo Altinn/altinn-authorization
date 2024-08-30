@@ -13,7 +13,7 @@ jobs:
     with:
       dir: apps
 
-  cd_docker:
+  cd_containerize:
     name: Containerize
     needs: bundle
     runs-on: ubuntu-latest
