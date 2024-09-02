@@ -12,7 +12,7 @@ post {
 
 headers {
   Content-Type: application/json
-  Ocp-Apim-Subscription-Key: {{process.env.APIMSUBSCRIPTIONKEY}}
+  Ocp-Apim-Subscription-Key: {{process.env.APIM_SUBSCRIPTION_KEY}}
 }
 
 body:json {
@@ -74,7 +74,19 @@ assert {
 }
 
 script:pre-request {
-  await testTokenGenerator.getToken();
+  const testdata = require(`./Testdata/Authorization/${bru.getEnvVar("tokenEnv")}testdata.json`);
+  const sharedtestdata = require(`./Testdata/Authorization/sharedtestdata.json`);
+  
+  var getTokenParameters = {
+    auth_tokenType: sharedtestdata.authTokenType.enterprise,
+    auth_scopes: sharedtestdata.auth_scopes.pdp,
+    auth_org: "digdir",
+    auth_orgNo: "991825827"
+  }
+  
+  const token = await testTokenGenerator.getToken(getTokenParameters);
+  
+  bru.setVar("bearerToken",  token);
 }
 
 tests {
