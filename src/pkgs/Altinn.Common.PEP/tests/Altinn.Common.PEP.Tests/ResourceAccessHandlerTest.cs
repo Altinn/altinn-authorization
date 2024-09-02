@@ -47,7 +47,7 @@ namespace Altinn.Common.PEP.Authorization
             _pdpMock.Setup(a => a.GetDecisionForRequest(It.IsAny<XacmlJsonRequestRoot>())).Returns(Task.FromResult(response));
 
             // Act
-            await _rah.HandleAsync(context); 
+            await _rah.HandleAsync(context);
 
             // Assert
             Assert.True(context.HasSucceeded);
@@ -85,7 +85,7 @@ namespace Altinn.Common.PEP.Authorization
         /// </summary>
         [Fact]
 
-        public async Task HandleRequirementAsync_TC03Async()
+        public async Task HandleRequirementAsync_TC03()
         {
             // Arrange 
             AuthorizationHandlerContext context = CreateAuthorizationHandlerContext();
@@ -93,11 +93,8 @@ namespace Altinn.Common.PEP.Authorization
             XacmlJsonResponse response = CreateResponse(XacmlContextDecision.Permit.ToString());
             _pdpMock.Setup(a => a.GetDecisionForRequest(It.IsAny<XacmlJsonRequestRoot>())).Returns(Task.FromResult(response));
 
-            // Act
-            Task Act() => _rah.HandleAsync(context);
-
             // Assert
-            ArgumentException exception = await Assert.ThrowsAsync<ArgumentException>(Act);
+            ArgumentException exception = await Assert.ThrowsAsync<ArgumentException>(async () => await _rah.HandleAsync(context));
             Assert.Equal("invalid party organization", exception.Message);
         }
 
@@ -141,11 +138,8 @@ namespace Altinn.Common.PEP.Authorization
             XacmlJsonResponse response = CreateResponse(XacmlContextDecision.Permit.ToString());
             _pdpMock.Setup(a => a.GetDecisionForRequest(It.IsAny<XacmlJsonRequestRoot>())).Returns(Task.FromResult(response));
 
-            // Act
-            Task Act() => _rah.HandleAsync(context);
-
             // Assert
-            ArgumentException exception = await Assert.ThrowsAsync<ArgumentException>(Act);
+            ArgumentException exception = await Assert.ThrowsAsync<ArgumentException>(async () => await _rah.HandleAsync(context));
             Assert.Equal("invalid party person", exception.Message);
         }
 
@@ -180,7 +174,7 @@ namespace Altinn.Common.PEP.Authorization
             string ipaddress = "18.203.138.153";
             _httpContextAccessorMock.Setup(h => h.HttpContext).Returns(CreateHttpContext("organization", "991825827", null, ipaddress));
             XacmlJsonResponse response = CreateResponse(XacmlContextDecision.Permit.ToString());
-            
+
             // verify
             _pdpMock.Setup(a => a.GetDecisionForRequest(It.IsAny<XacmlJsonRequestRoot>())).Returns(Task.FromResult(response));
 
@@ -210,7 +204,7 @@ namespace Altinn.Common.PEP.Authorization
             {
                 httpContext.Request.Headers.Add("Altinn-Party-OrganizationNumber", orgHeader);
             }
-            
+
             if (!string.IsNullOrEmpty(ssnHeader))
             {
                 httpContext.Request.Headers.Add("Altinn-Party-SocialSecurityNumber", ssnHeader);

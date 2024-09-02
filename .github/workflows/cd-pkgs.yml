@@ -1,0 +1,43 @@
+name: CD Apps
+
+on:
+  release:
+    types:
+      - published
+
+env:
+  DOTNET_VERSION: 8.0.x
+  PKGS_DIR: src/pkgs
+
+jobs:
+  bundle:
+    name: Bundle Apps
+    uses: ./.github/workflows/template-bundle.yml
+    with:
+      dir: apps
+
+  cd:
+    name: Publish
+    needs: bundle
+    environment: prod
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        name: ${{ fromJson(needs.bundle.outputs.dirs) }}
+      fail-fast: true
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+
+      - name: Build
+        working-directory: ${{ env.PKGS_DIR }}
+        run: dotnet build --configuration Release
+
+      - name: Pack
+        working-directory: ${{ env.PKGS_DIR }}
+        run: |
+          dotnet pack --configuration Release --no-build
