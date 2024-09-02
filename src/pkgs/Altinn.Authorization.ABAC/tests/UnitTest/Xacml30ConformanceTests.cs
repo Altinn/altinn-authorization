@@ -84,8 +84,8 @@ namespace Altinn.Authorization.ABAC.UnitTest
             }
 
             Moq.Mock<IContextHandler> moqContextHandler = new Mock<IContextHandler>();
-            moqContextHandler.Setup(c => c.Enrich(It.IsAny<XacmlContextRequest>())).ReturnsAsync(contextRequestEnriched);
-            
+            moqContextHandler.Setup(c => c.Enrich(It.IsAny<XacmlContextRequest>())).Returns(Task.Run(() => contextRequestEnriched));
+
             XacmlPolicy policy = null;
             try
             {
