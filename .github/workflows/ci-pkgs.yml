@@ -9,7 +9,7 @@ env:
 
 jobs:
   bundle:
-    name: Bundle Apps
+    name: Bundle Pkgs
     uses: ./.github/workflows/template-bundle.yml
     with:
       dir: pkgs

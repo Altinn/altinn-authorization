@@ -47,6 +47,34 @@ jobs:
           tf_args: -var environment=${{ inputs.environment }} -var-file=${{ env.TF_VARS_FILE }}
           gh_token: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Delete Previous deployment
+        uses: actions/github-script@v6
+        if: always()
+        env:
+          GITHUB_SHA_HEAD: ${{ github.sha }}
+        with:
+          script: |
+            const { GITHUB_SHA_HEAD } = process.env
+            const deployments = await github.rest.repos.listDeployments({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              sha: GITHUB_SHA_HEAD
+            });
+            await Promise.all(
+              deployments.data.map(async (deployment) => {
+                await github.rest.repos.createDeploymentStatus({ 
+                  owner: context.repo.owner, 
+                  repo: context.repo.repo, 
+                  deployment_id: deployment.id, 
+                  state: 'inactive' 
+                });
+                return github.rest.repos.deleteDeployment({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  deployment_id: deployment.id
+                });
+              })
+
   apply:
     runs-on: ubuntu-latest
     environment: ${{ inputs.environment }}
