@@ -2,8 +2,8 @@ name: Infrastructure
 
 on:
   push:
-    paths:
-      - "infrastructure/**"
+    # paths:
+    # - "infrastructure/**"
   release:
     types:
       - released

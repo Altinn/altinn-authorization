@@ -74,6 +74,7 @@ jobs:
                   deployment_id: deployment.id
                 });
               })
+            );
 
   apply:
     runs-on: ubuntu-latest
