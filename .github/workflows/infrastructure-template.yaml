@@ -7,7 +7,6 @@ on:
         default: false
         type: boolean
         description: Specifies if terraform should apply plan
-
       environment:
         type: string
         description: GitHub environment
