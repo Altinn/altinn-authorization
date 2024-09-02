@@ -35,5 +35,5 @@ jobs:
 
       - name: Test
         if: always()
-        working-directory: src/apps/${{ matrix.name }}
+        working-directory: ${{ env.PKGS_DIR }}/${{ matrix.name }}
         run: dotnet test --no-build
