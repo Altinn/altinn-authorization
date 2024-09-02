@@ -21,7 +21,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        environment: [AT21, AT22, AT23, AT24]
+        environment: [AT21]
     uses: ./.github/workflows/infrastructure-template.yaml
     with:
       environment: ${{ matrix.environment }}
