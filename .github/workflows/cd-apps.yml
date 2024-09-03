@@ -3,6 +3,9 @@ name: CD Apps
 on:
   push:
 
+permissions:
+  id-token: write
+
 env:
   IMAGE_NAME: altinn-authorization
   APP_NAME: Altinn.AccessManagement
