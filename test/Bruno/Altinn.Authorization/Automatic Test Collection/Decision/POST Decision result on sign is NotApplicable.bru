@@ -1,11 +1,11 @@
 meta {
-  name: Paula for Ørsta
+  name: POST Decision result on sign is NotApplicable
   type: http
-  seq: 1
+  seq: 2
 }
 
 post {
-  url: {{baseUrl}}/authorization/api/v1/authorize
+  url: {{baseUrl}}/authorization/api/v1/decision
   body: json
   auth: inherit
 }
@@ -23,9 +23,8 @@ body:json {
               {
                   "Attribute": [
                       {
-                          "AttributeId": "urn:altinn:person:identifier-no",
-                          "Value": "02056260016",
-                          "DataType": "http://www.w3.org/2001/XMLSchema#string"
+                          "AttributeId": "urn:altinn:org",
+                          "Value": "ttd"
                       }
                   ]
               }
@@ -35,7 +34,7 @@ body:json {
                   "Attribute": [
                       {
                           "AttributeId": "urn:oasis:names:tc:xacml:1.0:action:action-id",
-                          "Value": "read",
+                          "Value": "sign",
                           "DataType": "http://www.w3.org/2001/XMLSchema#string"
                       }
                   ]
@@ -45,27 +44,18 @@ body:json {
               {
                   "Attribute": [
                       {
-                          "AttributeId": "urn:altinn:resource",
-                          "Value": "test-ressurs-rf-1086-altinn-autorisasjon",
-                          "DataType": "http://www.w3.org/2001/XMLSchema#string"
+                          "AttributeId": "urn:altinn:app",
+                          "Value": "apps-test"
                       },
                       {
-                          "AttributeId": "urn:altinn:organization:identifier-no",
-                          "Value": "910459880",
-                          "DataType": "http://www.w3.org/2001/XMLSchema#string"
+                          "AttributeId": "urn:altinn:org",
+                          "Value": "ttd"
                       }
                   ]
               }
           ]
       }
   }
-}
-
-vars:pre-request {
-  auth_tokenType: Enterprise
-  auth_scopes: altinn:authorization:pdp
-  auth_org: digdir
-  auth_orgNo: 991825827
 }
 
 assert {
@@ -78,33 +68,41 @@ script:pre-request {
   const sharedtestdata = require(`./Testdata/Authorization/sharedtestdata.json`);
   
   var getTokenParameters = {
-    auth_tokenType: sharedtestdata.authTokenType.enterprise,
-    auth_scopes: sharedtestdata.auth_scopes.pdp,
-    auth_org: "digdir",
-    auth_orgNo: "991825827"
+    auth_userId: testdata.org1.dagl.userid,
+    auth_partyId: testdata.org1.dagl.partyid,
+    auth_ssn: testdata.org1.dagl.pid,
+    party: testdata.org1.partyid,
+    auth_tokenType: sharedtestdata.authTokenType.personal,
+    auth_scopes: sharedtestdata.auth_scopes.read
   }
   
   const token = await testTokenGenerator.getToken(getTokenParameters);
   
   bru.setVar("bearerToken",  token);
+  
+  
+}
+
+script:post-response {
+  console.log("request url (after): " + req.getUrl());
 }
 
 tests {
   
-  test("3 POST Decision result on read is permit", function() {
+  test("POST Decision result on sign is NotApplicable", function() {
     const testdata = require(`./Testdata/Authorization/${bru.getEnvVar("tokenEnv")}testdata.json`);
     const data = res.getBody();  
     expect(res.status).to.equal(200);
-    expect(data.response[0]).to.have.property('decision', "Permit");
+    expect(data.response[0]).to.have.property('decision', "NotApplicable");
   });
 }
 
 docs {
-  Get a decision from PDP with appOwner details and validate response to have Permit.
+  Get a decision from PDP with appOwner details and validate response to have NotApplicable
   
   AccessSubject: ['urn:altinn:org']
   
-  Action: ['read']
+  Action: ['sign']
   
   Resource: ['urn:altinn:app', 'urn:altinn:org']
 }

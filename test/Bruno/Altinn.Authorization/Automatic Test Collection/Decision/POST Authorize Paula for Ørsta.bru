@@ -1,7 +1,7 @@
 meta {
-  name: Karlstad for Ørsta
+  name: POST Authorize Paula for Ørsta
   type: http
-  seq: 2
+  seq: 5
 }
 
 post {
@@ -12,7 +12,7 @@ post {
 
 headers {
   Content-Type: application/json
-  Ocp-Apim-Subscription-Key: {{process.env.APIMSUBSCRIPTIONKEY}}
+  Ocp-Apim-Subscription-Key: {{process.env.APIM_SUBSCRIPTION_KEY}}
 }
 
 body:json {
@@ -23,9 +23,8 @@ body:json {
               {
                   "Attribute": [
                       {
-                          "AttributeId": "urn:altinn:organization:identifier-no",
-                          "Value": "810418672",
-                          "DataType": "http://www.w3.org/2001/XMLSchema#string"
+                          "AttributeId": "urn:altinn:org",
+                          "Value": "ttd"
                       }
                   ]
               }
@@ -45,14 +44,12 @@ body:json {
               {
                   "Attribute": [
                       {
-                          "AttributeId": "urn:altinn:resource",
-                          "Value": "test-ressurs-rf-1086-altinn-autorisasjon",
-                          "DataType": "http://www.w3.org/2001/XMLSchema#string"
+                          "AttributeId": "urn:altinn:app",
+                          "Value": "apps-test"
                       },
                       {
-                          "AttributeId": "urn:altinn:organizationnumber",
-                          "Value": "910459880",
-                          "DataType": "http://www.w3.org/2001/XMLSchema#string"
+                          "AttributeId": "urn:altinn:org",
+                          "Value": "ttd"
                       }
                   ]
               }
@@ -63,7 +60,7 @@ body:json {
 
 vars:pre-request {
   auth_tokenType: Enterprise
-  auth_scopes: altinn:authorization/authorize.admin
+  auth_scopes: altinn:authorization/authorize
   auth_org: digdir
   auth_orgNo: 991825827
 }
@@ -74,12 +71,28 @@ assert {
 }
 
 script:pre-request {
-  await testTokenGenerator.getToken();
+  const testdata = require(`./Testdata/Authorization/${bru.getEnvVar("tokenEnv")}testdata.json`);
+  const sharedtestdata = require(`./Testdata/Authorization/sharedtestdata.json`);
+  
+  var getTokenParameters = {
+    auth_tokenType: sharedtestdata.authTokenType.enterprise,
+    auth_scopes: sharedtestdata.auth_scopes.pdp,
+    auth_org: "digdir",
+    auth_orgNo: "991825827"
+  }
+  
+  const token = await testTokenGenerator.getToken(getTokenParameters);
+  
+  bru.setVar("bearerToken",  token);
+}
+
+script:post-response {
+  console.log("request url (after): " + req.getUrl());
 }
 
 tests {
   
-  test("3 POST Decision result on read is permit", function() {
+  test("POST Decision result on read is permit", function() {
     const testdata = require(`./Testdata/Authorization/${bru.getEnvVar("tokenEnv")}testdata.json`);
     const data = res.getBody();  
     expect(res.status).to.equal(200);
