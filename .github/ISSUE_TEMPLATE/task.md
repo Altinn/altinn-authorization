@@ -1,16 +1,17 @@
 ---
-name: Task
-about: 'Enkelt oppgave knytt til arbeid på deler av en Feature. '
+name: 🛠️ Task
+about: 'Et konkret stykke arbeid som skal gjøres'
 title: ''
 labels: ''
 assignees: ''
-
 ---
 
 # Beskrivelse
 
+<!--- Beskriv oppgaven som skal utføres --->
 
-# Avklaringer
+# To do's
 
+<!--- Liste av ting som inngår i utførelsen --->
 
-# Nyttige linker
+- [ ] Eks: Ta ut av oppvaskmaskinen
