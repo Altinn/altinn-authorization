@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 using System.Threading.Tasks;
@@ -10,6 +11,7 @@ using Altinn.Platform.Authorization.Clients;
 using Altinn.Platform.Authorization.Clients.Interfaces;
 using Altinn.Platform.Authorization.Configuration;
 using Altinn.Platform.Authorization.Constants;
+using Altinn.Platform.Authorization.Extensions;
 using Altinn.Platform.Authorization.Filters;
 using Altinn.Platform.Authorization.Health;
 using Altinn.Platform.Authorization.ModelBinding;
@@ -46,7 +48,7 @@ using Microsoft.IdentityModel.Logging;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Npgsql;
-
+using Swashbuckle.AspNetCore.Filters;
 using Yuniql.AspNetCore;
 using Yuniql.PostgreSql;
 
@@ -213,6 +215,7 @@ void ConfigureServices(IServiceCollection services, IConfiguration config)
     services.AddSingleton<IDelegationChangeEventQueue, DelegationChangeEventQueue>();
     services.AddSingleton<IEventMapperService, EventMapperService>();
     services.AddSingleton<IAccessManagementWrapper, AccessManagementWrapper>();
+    services.AddSingleton<IAccessListAuthorization, AccessListAuthorization>();
 
     services.Configure<GeneralSettings>(config.GetSection("GeneralSettings"));
     services.Configure<AzureStorageConfiguration>(config.GetSection("AzureStorageConfiguration"));
@@ -232,7 +235,6 @@ void ConfigureServices(IServiceCollection services, IConfiguration config)
     services.AddHttpClient<ResourceRegistryClient>();
     services.AddHttpClient<OedAuthzClient>();
     services.TryAddSingleton<IHttpContextAccessor, HttpContextAccessor>();
-    services.AddSingleton<IAccessTokenGenerator, AccessTokenGenerator>();
     services.AddTransient<ISigningCredentialsResolver, SigningCredentialsResolver>();
     services.AddSingleton<IEventsQueueClient, EventsQueueClient>();
     services.AddSingleton<IEventLog, EventLogService>();
@@ -264,11 +266,13 @@ void ConfigureServices(IServiceCollection services, IConfiguration config)
         options.AddPolicy(AuthzConstants.POLICY_STUDIO_DESIGNER, policy => policy.Requirements.Add(new ClaimAccessRequirement("urn:altinn:app", "studio.designer")));
         options.AddPolicy(AuthzConstants.ALTINNII_AUTHORIZATION, policy => policy.Requirements.Add(new ClaimAccessRequirement("urn:altinn:app", "sbl.authorization")));
         options.AddPolicy(AuthzConstants.DELEGATIONEVENT_FUNCTION_AUTHORIZATION, policy => policy.Requirements.Add(new ClaimAccessRequirement("urn:altinn:app", "platform.authorization")));
-        options.AddPolicy(AuthzConstants.AUTHORIZESCOPEACCESS, policy => policy.Requirements.Add(new ScopeAccessRequirement(new string[] { AuthzConstants.PDP_SCOPE, AuthzConstants.AUTHORIZE_SCOPE, AuthzConstants.AUTHORIZE_ADMIN_SCOPE })));
+        options.AddPolicy(AuthzConstants.AUTHORIZESCOPEACCESS, policy => policy.Requirements.Add(new ScopeAccessRequirement([AuthzConstants.AUTHORIZE_SCOPE, AuthzConstants.AUTHORIZE_ADMIN_SCOPE])));
     });
 
     services.AddTransient<IAuthorizationHandler, ClaimAccessHandler>();
     services.AddTransient<IAuthorizationHandler, ScopeAccessHandler>();
+
+    services.AddPlatformAccessTokenSupport(config, builder.Environment.IsDevelopment());
 
     services.Configure<KestrelServerOptions>(options =>
     {
@@ -298,20 +302,60 @@ void ConfigureServices(IServiceCollection services, IConfiguration config)
     });
 
     // Add Swagger support (Swashbuckle)
-    services.AddSwaggerGen(c =>
+    services.AddSwaggerGen(options =>
     {
-        c.SwaggerDoc("v1", new OpenApiInfo { Title = "Altinn Platform Authorization", Version = "v1" });
+        options.SwaggerDoc("v1", new OpenApiInfo { Title = "Altinn Platform Authorization", Version = "v1" });
 
         try
         {
             string filePath = GetXmlCommentsPathForControllers();
-            c.IncludeXmlComments(filePath);
+            options.IncludeXmlComments(filePath);
         }
         catch
         {
             // catch swashbuckle exception if it doesn't find the generated xml documentation file
         }
+
+        options.AddSecurityDefinition("AuthorizeAPI", new OpenApiSecurityScheme
+        {
+            Name = "AuthorizeAPI",
+            Description = $"Requires one of the following Scopes: [{AuthzConstants.AUTHORIZE_SCOPE}, {AuthzConstants.AUTHORIZE_ADMIN_SCOPE}]",
+            Type = SecuritySchemeType.Http,
+            In = ParameterLocation.Header,
+            Scheme = "bearer",
+            BearerFormat = "JWT"
+        });
+        options.AddSecurityDefinition("SubscriptionKey", new OpenApiSecurityScheme
+        {
+            Name = "SubscriptionKey",
+            Description = $"Requires a valid product subscription key as header value: \"Ocp-Apim-Subscription-Key\"",
+            Type = SecuritySchemeType.ApiKey,
+            In = ParameterLocation.Header
+        });
+        options.OperationFilter<SecurityRequirementsOperationFilter>();
+
+        var originalIdSelector = options.SchemaGeneratorOptions.SchemaIdSelector;
+        options.SchemaGeneratorOptions.SchemaIdSelector = (Type t) =>
+        {
+            if (!t.IsNested)
+            {
+                return originalIdSelector(t);
+            }
+
+            var chain = new List<string>();
+            do
+            {
+                chain.Add(originalIdSelector(t));
+                t = t.DeclaringType;
+            }
+            while (t != null);
+
+            chain.Reverse();
+            return string.Join(".", chain);
+        };
     });
+
+    services.AddUrnSwaggerSupport();
 
     services.AddFeatureManagement();
 }

@@ -34,10 +34,10 @@ namespace Altinn.Platform.Events.Tests.Mocks
             return await Task.FromResult(party);
         }
 
-        public async Task<int> PartyLookup(string orgNo, string person)
+        public async Task<Party> PartyLookup(string orgNo, string person)
         {
             string eventsPath = Path.Combine(GetPartiesPath(), $@"{_partiesCollection}.json");
-            int partyId = 0;
+            Party party = null;
 
             if (File.Exists(eventsPath))
             {
@@ -46,16 +46,16 @@ namespace Altinn.Platform.Events.Tests.Mocks
 
                 if (!string.IsNullOrEmpty(orgNo))
                 {
-                    partyId = parties.Where(p => p.OrgNumber != null && p.OrgNumber.Equals(orgNo)).Select(p => p.PartyId).FirstOrDefault();
+                    party = parties.Where(p => p.OrgNumber != null && p.OrgNumber.Equals(orgNo)).FirstOrDefault();
                 }
                 else
                 {
-                    partyId = parties.Where(p => p.SSN != null && p.SSN.Equals(person)).Select(p => p.PartyId).FirstOrDefault();
+                    party = parties.Where(p => p.SSN != null && p.SSN.Equals(person)).FirstOrDefault();
                 }
             }
 
-            return partyId > 0
-                ? partyId
+            return party != null
+                ? party
                 : throw await PlatformHttpException.CreateAsync(new HttpResponseMessage
                 { Content = new StringContent(string.Empty), StatusCode = System.Net.HttpStatusCode.NotFound });
         }

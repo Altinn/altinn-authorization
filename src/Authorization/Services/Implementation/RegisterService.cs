@@ -73,7 +73,7 @@ namespace Altinn.Platform.Authorization.Services
         }
 
         /// <inheritdoc/>
-        public async Task<int> PartyLookup(string orgNo, string person)
+        public async Task<Party> PartyLookup(string orgNo, string person)
         {
             string endpointUrl = "parties/lookup";
 
@@ -85,12 +85,11 @@ namespace Altinn.Platform.Authorization.Services
             StringContent content = new StringContent(JsonSerializer.Serialize(partyLookup));
             content.Headers.ContentType = MediaTypeHeaderValue.Parse("application/json");
 
-            HttpResponseMessage response = await _client.PostAsync(bearerToken, endpointUrl, content, accessToken);
+            HttpResponseMessage response = await _client.PostAsync(endpointUrl, content, bearerToken, accessToken);
             if (response.StatusCode == HttpStatusCode.OK)
             {
                 string responseContent = await response.Content.ReadAsStringAsync();
-                Party party = JsonSerializer.Deserialize<Party>(responseContent, _serializerOptions);
-                return party.PartyId;
+                return JsonSerializer.Deserialize<Party>(responseContent, _serializerOptions);
             }
             else
             {

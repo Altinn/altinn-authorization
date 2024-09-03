@@ -21,6 +21,6 @@ namespace Altinn.Platform.Authorization.Services.Interfaces
         /// <param name="orgNo">organisation number</param>
         /// <param name="person">f or d number</param>
         /// <returns></returns>
-        Task<int> PartyLookup(string orgNo, string person);
+        Task<Party> PartyLookup(string orgNo, string person);
     }
 }

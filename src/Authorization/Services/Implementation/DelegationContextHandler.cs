@@ -1,9 +1,10 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
-using Altinn.Authorization.ABAC.Interface;
+using Altinn.Authorization.ABAC.Constants;
 using Altinn.Authorization.ABAC.Xacml;
 using Altinn.Platform.Authorization.Configuration;
 using Altinn.Platform.Authorization.Constants;
@@ -110,6 +111,13 @@ namespace Altinn.Platform.Authorization.Services.Implementation
         {
             XacmlContextAttributes resourceContextAttributes = request.GetResourceAttributes();
             return GetResourceAttributeValues(resourceContextAttributes);
+        }
+
+        /// <inheritdoc/>
+        public string GetActionString(XacmlContextRequest request)
+        {
+            XacmlContextAttributes actionAttributes = request.Attributes.FirstOrDefault(a => a.Category.OriginalString.Equals(XacmlConstants.MatchAttributeCategory.Action));
+            return actionAttributes?.Attributes.FirstOrDefault(a => a.AttributeId.OriginalString.Equals(XacmlConstants.MatchAttributeIdentifiers.ActionId))?.AttributeValues.FirstOrDefault()?.Value;
         }
 
         /// <summary>
