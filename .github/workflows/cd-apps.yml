@@ -34,8 +34,8 @@ jobs:
         id: set_short_sha
         run: |
           SHORT_SHA=$(git rev-parse --short HEAD)
-          echo "IMAGE=${{ vars.ARM_ACR }}/${{ env.IMAGE_NAME }}:$SHORT_SHA" >> $GITHUB_ENV
-          echo "image=${{ vars.ARM_ACR }}/${{ env.IMAGE_NAME }}:$SHORT_SHA" >> $GITHUB_OUTPUT
+          echo "IMAGE=${{ vars.ARM_ACR }}.azurecr.io/${{ env.IMAGE_NAME }}:$SHORT_SHA" >> $GITHUB_ENV
+          echo "image=${{ vars.ARM_ACR }}.azurecr.io/${{ env.IMAGE_NAME }}:$SHORT_SHA" >> $GITHUB_OUTPUT
 
       - name: Azure login
         uses: azure/login@v2
@@ -46,7 +46,7 @@ jobs:
 
       - name: Log in to Container registry
         run: |
-          az acr login --name ${{ vars.ARM_ACR }} --expose-token --output tsv --query accessToken --subscription ${{ vars.ARM_ACR_SUBSCRIPTION_ID }} --only-show-errors | docker login ${{ vars.ARM_ACR }} --username 00000000-0000-0000-0000-000000000000 --password-stdin
+          az acr login --name ${{ vars.ARM_ACR }}.azurecr.io --expose-token --output tsv --query accessToken --subscription ${{ vars.ARM_ACR_SUBSCRIPTION_ID }} --only-show-errors | docker login ${{ vars.ARM_ACR }}.azurecr.io.azurecr.io --username 00000000-0000-0000-0000-000000000000 --password-stdin
 
       - name: Docker build
         run: |
