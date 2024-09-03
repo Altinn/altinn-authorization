@@ -14,7 +14,7 @@ permissions:
 
 env:
   REGISTRY: ${{ secrets.ALTINN_REGISTRY }}
-  APP_NAME: altinn-authorization/api
+  APP_NAME: altinn-authorization
   TEAM_NAME: team-authorization
   DEPLOY_DIR: "./src/apps/Altinn.Authorization/deploy"
 
