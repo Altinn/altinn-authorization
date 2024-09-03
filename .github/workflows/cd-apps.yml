@@ -4,52 +4,50 @@ on:
   push:
 
 env:
-  APPS_DIR: src/apps
+  IMAGE_NAME: altinn-authorization
+  APP_NAME: Altinn.AccessManagement
+  TEAM_NAME: team-authorization
 
 jobs:
-  bundle:
-    name: Bundle Apps
-    uses: ./.github/workflows/template-bundle.yml
-    with:
-      dir: apps
+  # bundle:
+  #   name: Bundle Apps
+  #   uses: ./.github/workflows/template-bundle.yml
+  #   with:
+  #     dir: apps
 
   cd_containerize:
     name: Containerize
-    needs: bundle
+    # needs: bundle
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        name: ${{ fromJson(needs.bundle.outputs.dirs) }}
-      fail-fast: true
+    # strategy:
+    #   matrix:
+    #     name: ${{ fromJson(needs.bundle.outputs.dirs) }}
+
     steps:
       - uses: actions/checkout@v4
+
+      - name: Set short SHA
+        id: set_short_sha
+        run: |
+          SHORT_SHA=$(git rev-parse --short HEAD)
+          echo "IMAGE=${{ vars.ARM_ACR }}/${{ env.IMAGE_NAME }}:$SHORT_SHA" >> $GITHUB_ENV
+          echo "image=${{ vars.ARM_ACR }}/${{ env.IMAGE_NAME }}:$SHORT_SHA" >> $GITHUB_OUTPUT
+
+      - name: Azure login
+        uses: azure/login@v2
+        with:
+          client-id: ${{ vars.ARM_CLIENT_ID }}
+          tenant-id: ${{ vars.ARM_TENANT_ID }}
+          subscription-id: ${{ vars.ARM_ACR_SUBSCRIPTION_ID }}
+
+      - name: Log in to Container registry
+        run: |
+          az acr login --name ${{ vars.ARM_ACR }} --expose-token --output tsv --query accessToken --subscription ${{ vars.ARM_ACR_SUBSCRIPTION_ID }} --only-show-errors | docker login ${{ vars.ARM_ACR }} --username 00000000-0000-0000-0000-000000000000 --password-stdin
+
       - name: Docker build
         run: |
-          docker build --build-arg APP_NAME=${{ matrix.name }} -t test .
+          docker build --build-arg APP_NAME=${{ env.APP_NAME }} . -t ${{ env.IMAGE }}
 
-      # - name: Azure login
-      #   uses: azure/login@v2
-      #   with:
-      #     client-id: ${{ variables.AZURE_CLIENT_ID }}
-      #     tenant-id: ${{ variables.AZURE_TENANT_ID }}
-      #     subscription-id: ${{ variables.AZURE_SUBSCRIPTION_ID }}
-
-      # - name: Set short SHA
-      #   id: set_short_sha
-      #   run: |
-      #     SHORT_SHA=$(git rev-parse --short HEAD)
-      #     echo "SHORT_SHA=$SHORT_SHA" >> $GITHUB_ENV
-      #     echo "short_sha=$SHORT_SHA" >> $GITHUB_OUTPUT
-
-      # - name: Log in to Container registry
-      #   run: |
-      #     az acr login --name ${{ env.REGISTRY }} --expose-token --output tsv --query accessToken --subscription ${{ secrets.AZURE_SUBSCRIPTION_ID }} --only-show-errors | docker login ${{ env.REGISTRY }} --username 00000000-0000-0000-0000-000000000000 --password-stdin
-
-      # - name: Docker build
-      #   working-directory: ${{ env.APPS_DIR }}
-      #   run: |
-      #     docker build --build-arg app=${{ matrix.name }} . -t ${{ env.REGISTRY }}/${{ env.APP_NAME }}:${{ env.SHORT_SHA }}
-
-      # - name: Docker push
-      #   run: |
-      #     docker push ${{ env.REGISTRY }}/${{ env.APP_NAME }}:${{ env.SHORT_SHA }}
+      - name: Docker push
+        run: |
+          docker push ${{ env.IMAGE }}
