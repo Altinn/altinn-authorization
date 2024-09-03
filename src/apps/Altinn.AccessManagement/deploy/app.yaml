@@ -16,7 +16,7 @@ spec:
       retries: 1
   chart:
     spec:
-      version: "0.1.0+870bc3600" # Comes from altinn-studio-ops
+      version: "0.1.0+$SHA" # Comes from altinn-studio-ops
       chart: altinn-access-management
       sourceRef:
         kind: HelmRepository

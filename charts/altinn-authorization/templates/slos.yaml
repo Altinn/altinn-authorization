@@ -1,0 +1,19 @@
+{{- if or (eq .Values.environment "prod") (eq .Values.environment "tt02") }}
+apiVersion: pyrra.dev/v1alpha1
+kind: ServiceLevelObjective
+metadata:
+  name: {{ .Values.ingressRoute.name }}
+  namespace: monitoring
+  labels:
+    release: kube-prometheus-stack
+    role: alert-rules
+spec:
+  indicator:
+    ratio:
+      errors:
+        metric: traefik_service_requests_total{service=~".*{{ .Values.ingressRoute.name }}.*",code=~"5.."}
+      total:
+        metric: traefik_service_requests_total{service=~".*{{ .Values.ingressRoute.name }}.*"}
+  target: "99"
+  window: 4w
+{{- end }}

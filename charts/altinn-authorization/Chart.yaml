@@ -1,5 +1,5 @@
 apiVersion: v1
-name: altinn-access-management
+name: altinn-authorization
 description: A Helm chart for Kubernetes
 version: 0.1.0
 sources:

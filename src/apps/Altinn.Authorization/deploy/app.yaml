@@ -17,7 +17,7 @@ spec:
   chart:
     spec:
       version: "0.1.0+$SHA" # Comes from altinn-studio-ops
-      chart: altinn-authorization/charts/api
+      chart: altinn-authorization/api
       sourceRef:
         kind: HelmRepository
         name: api
