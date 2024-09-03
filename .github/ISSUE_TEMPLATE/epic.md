@@ -1,31 +1,29 @@
 ---
-name: Epic
-about: Template for å beskrive en epic for en større helhetlig leveranse.
-title: 'Kort leveranse navn (f.eks: System Tilgang)'
-labels: ''
+name: 💎 Epic
+about: En leveranse
+title: 'Kort leveransenavn (f.eks: Systemtilgang)'
+labels: 'epic'
 assignees: ''
-
 ---
 
 # Beskrivelse
-Overordnet funksjonell beskrivelse av problemet som skal løses.
-Intro til hvordan det evt. fungerer i dag.
-Outline av hvordan det er ønsket fungere i ny løsning.
+
+<!--- Overordnet funksjonell beskrivelse av hva som skal leveres.
+Hvordan fungerer det i dag? Hvordan skal det fungere nå? Etc. --->
 
 ## Definisjoner
+
 `Definisjon` - Noe som definerer hva noe er eller betyr
 
-# In scope
-- Det vi _må_ levere som del av leveransen.
+## In scope
 
-# Out of scope (evt. senere leveranse)
-- Det som _ikke_ er relevant for denne leveransen eller kan vente til senere.
+<!--- Det vi _må_ levere som del av leveransen. --->
+
+## Out of scope (evt. senere leveranse)
+
+<!--- Det som _ikke_ er relevant for denne leveransen eller kan vente til senere. --->
 
 ```[tasklist]
-### Features
+# Features
 - [ ] Legg til features her
 ```
-
-# Additional Information
-
-Links etc.
