@@ -19,6 +19,7 @@ jobs:
     name: Containerize
     # needs: bundle
     runs-on: ubuntu-latest
+    environment: at21
     # strategy:
     #   matrix:
     #     name: ${{ fromJson(needs.bundle.outputs.dirs) }}
