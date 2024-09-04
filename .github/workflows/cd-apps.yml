@@ -89,13 +89,13 @@ jobs:
 
       - name: Push config artifact
         run: |
-          flux push artifact oci://${{ env.DOCKER_LOGIN_SERVER }}/configs/${{ env.APP_NAME }}-at21:${{ env.SHORT_SHA }} \
+          flux push artifact oci://${{ env.DOCKER_LOGIN_SERVER }}/configs/${{ env.IMAGE_NAME }}-at21:${{ env.SHORT_SHA }} \
           --path="${{ env.DEPLOY_DIR }}" \
           --source="$(git config --get remote.origin.url)" \
           --revision="$(git branch --show-current)/$(git rev-parse HEAD)" \
-          --annotations "org.opencontainers.image.description=${{ env.APP_NAME }}" \
+          --annotations "org.opencontainers.image.description=${{ env.IMAGE_NAME }}" \
           --annotations "org.opencontainers.image.authors=${{ env.TEAM_NAME }}"
 
       - name: Tag artifact as latest
         run: |
-          flux tag artifact oci://${{ env.DOCKER_LOGIN_SERVER }}/configs/${{ env.APP_NAME }}-at21:${{ env.SHORT_SHA }} --tag latest
+          flux tag artifact oci://${{ env.DOCKER_LOGIN_SERVER }}/configs/${{ env.IMAGE_NAME }}-at21:${{ env.SHORT_SHA }} --tag latest
