@@ -1,7 +1,6 @@
 ﻿#nullable enable
 
 using System;
-using System.Buffers;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Text.Json;
@@ -13,11 +12,9 @@ namespace Altinn.Authorization.Models;
 /// <summary>
 /// A xacml action string.
 /// </summary>
-[JsonConverter(typeof(ActionIdentifier.JsonConverter))]
+[JsonConverter(typeof(JsonConverter))]
 public class ActionIdentifier
-    : IParsable<ActionIdentifier>,
-    ISpanParsable<ActionIdentifier>,
-    IFormattable,
+    : ISpanParsable<ActionIdentifier>,
     ISpanFormattable,
     IExampleDataProvider<ActionIdentifier>
 {

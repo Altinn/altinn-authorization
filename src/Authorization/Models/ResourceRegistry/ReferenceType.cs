@@ -5,7 +5,7 @@ namespace Altinn.Authorization.Models.ResourceRegistry;
 /// <summary>
 /// Enum for reference types of resources in the resource registry
 /// </summary>
-public enum ReferenceType : int
+public enum ReferenceType
 {
     [EnumMember(Value = "Default")]
     Default = 0,

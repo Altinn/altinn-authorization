@@ -311,7 +311,7 @@ namespace Altinn.Platform.Authorization.Controllers
 
             XacmlContextResponse finalResponse = delegationContextResponse ?? rolesContextResponse;
             XacmlContextResult finalResult = finalResponse.Results.First();
-            if (finalResult.Decision.Equals(XacmlContextDecision.Permit) && !await IsAccessListAuthorized(decisionRequest))
+            if (finalResult.Decision.Equals(XacmlContextDecision.Permit) && !await IsAccessListAuthorized(decisionRequest, cancellationToken))
             {
                 return new XacmlContextResponse(new XacmlContextResult(XacmlContextDecision.Deny)
                 {

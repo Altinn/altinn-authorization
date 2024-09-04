@@ -13,16 +13,13 @@ namespace Altinn.Authorization.Models.Register;
 /// <summary>
 /// A organization number (a string of 9 digits).
 /// </summary>
-[JsonConverter(typeof(OrganizationNumber.JsonConverter))]
+[JsonConverter(typeof(JsonConverter))]
 public class OrganizationNumber
-    : IParsable<OrganizationNumber>
-    , ISpanParsable<OrganizationNumber>
-    , IFormattable
-    , ISpanFormattable
-    , IExampleDataProvider<OrganizationNumber>
+    : ISpanParsable<OrganizationNumber>,
+      ISpanFormattable,
+      IExampleDataProvider<OrganizationNumber>
 {
     private static readonly SearchValues<char> NUMBERS = SearchValues.Create(['0', '1', '2', '3', '4', '5', '6', '7', '8', '9']);
-
     private readonly string _value;
 
     private OrganizationNumber(string value)

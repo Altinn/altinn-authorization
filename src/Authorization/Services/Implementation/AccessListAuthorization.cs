@@ -7,7 +7,6 @@ using Altinn.Authorization.Models.ResourceRegistry;
 using Altinn.Authorization.ProblemDetails;
 using Altinn.Platform.Authorization.Models;
 using Altinn.Platform.Authorization.Services.Interface;
-using Microsoft.Extensions.Logging;
 
 namespace Altinn.Platform.Authorization.Services.Implementation;
 
@@ -17,14 +16,12 @@ namespace Altinn.Platform.Authorization.Services.Implementation;
 public class AccessListAuthorization : IAccessListAuthorization
 {
     private readonly IResourceRegistry _client;
-    private readonly ILogger<AccessListAuthorization> _logger;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="AccessListAuthorization"/> class.
     /// </summary>
-    public AccessListAuthorization(ILogger<AccessListAuthorization> logger, IResourceRegistry client)
+    public AccessListAuthorization(IResourceRegistry client)
     {
-        _logger = logger;
         _client = client;
     }
 

@@ -1,4 +1,7 @@
+#nullable enable
+
 using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 using Altinn.Authorization.Models.Register;
 using Altinn.Authorization.Models.ResourceRegistry;
 using Altinn.Urn.Json;
@@ -14,12 +17,14 @@ public class AccessListAuthorizationRequest
     /// Gets or sets the attributes identifying the party to be authorized
     /// </summary>
     [Required]
+    [JsonRequired]
     public UrnJsonTypeValue<PartyUrn> Subject { get; set; }
 
     /// <summary>
     /// Gets or sets the attributes identifying the resource to authorize the party for
     /// </summary>
     [Required]
+    [JsonRequired]
     public UrnJsonTypeValue<ResourceIdUrn> Resource { get; set; }
 
     /// <summary>

@@ -16,9 +16,7 @@ namespace Altinn.Authorization.Models.ResourceRegistry;
 [JsonConverter(typeof(JsonConverter))]
 [DebuggerDisplay("{_value}")]
 public sealed record ResourceInstanceIdentifier
-    : IParsable<ResourceInstanceIdentifier>,
-    ISpanParsable<ResourceInstanceIdentifier>,
-    IFormattable,
+    : ISpanParsable<ResourceInstanceIdentifier>,
     ISpanFormattable,
     IExampleDataProvider<ResourceInstanceIdentifier>
 {

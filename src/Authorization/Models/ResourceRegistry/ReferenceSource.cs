@@ -5,7 +5,7 @@ namespace Altinn.Authorization.Models.ResourceRegistry;
 /// <summary>
 /// Enum for the different reference sources for resources in the resource registry
 /// </summary>
-public enum ReferenceSource : int
+public enum ReferenceSource
 {
     [EnumMember(Value = "Default")]    
     Default = 0,

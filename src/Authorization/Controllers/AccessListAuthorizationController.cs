@@ -52,7 +52,7 @@ public class AccessListAuthorizationController : ControllerBase
     [ProducesResponseType(typeof(ProblemDescriptor), StatusCodes.Status500InternalServerError)]
     public async Task<ActionResult> Authorize(AccessListAuthorizationRequest accessListAuthorizationRequest, CancellationToken cancellationToken = default)
     {
-        var scopes = HttpContext.User?.Claims.FirstOrDefault(c => c.Type.Equals("scope"));
+        var scopes = HttpContext.User?.Claims.First(c => c.Type.Equals("scope"));
         bool isAdmin = scopes.Value.Contains(AuthzConstants.AUTHORIZE_ADMIN_SCOPE);
 
         if (!isAdmin)
@@ -60,7 +60,7 @@ public class AccessListAuthorizationController : ControllerBase
             var orgCode = HttpContext.User?.Claims.FirstOrDefault(c => c.Type.Equals(AltinnCoreClaimTypes.Org));
             var orgNumber = HttpContext.User?.Claims.FirstOrDefault(c => c.Type.Equals(AltinnCoreClaimTypes.OrgNumber));
 
-            if (string.IsNullOrWhiteSpace(orgCode.Value) || string.IsNullOrWhiteSpace(orgNumber.Value))
+            if (string.IsNullOrWhiteSpace(orgCode?.Value) || string.IsNullOrWhiteSpace(orgNumber?.Value))
             {
                 return Forbid();
             }
