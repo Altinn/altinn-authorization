@@ -37,8 +37,8 @@ jobs:
           SHORT_SHA=$(git rev-parse --short HEAD)
           echo "IMAGE=${{ env.DOCKER_LOGIN_SERVER }}/${{ env.IMAGE_NAME }}:$SHORT_SHA" >> $GITHUB_ENV
           echo "image=${{ env.DOCKER_LOGIN_SERVER }}/${{ env.IMAGE_NAME }}:$SHORT_SHA" >> $GITHUB_OUTPUT
-          echo "IMAGE_TAG=$SHORT_SHA" >> $GITHUB_ENV
-          echo "image_tag=$SHORT_SHA" >> $GITHUB_OUTPUT
+          echo "SHORT_SHA=$SHORT_SHA" >> $GITHUB_ENV
+          echo "short_sha=$SHORT_SHA" >> $GITHUB_OUTPUT
 
       - name: Azure login
         uses: azure/login@v2
@@ -65,7 +65,7 @@ jobs:
     needs: cd_containerize
     environment: at21
     env:
-      SHORT_SHA: ${{ needs.docker-build-push.outputs.short_sha }}
+      SHORT_SHA: ${{ needs.cd_containerize.outputs.short_sha }}
       DEPLOY_DIR: src/apps/Altinn.Authorization/deploy
     steps:
       - uses: actions/checkout@v4
