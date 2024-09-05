@@ -16,11 +16,11 @@ spec:
       retries: 1
   chart:
     spec:
-      version: "0.1.0+$SHA" # Comes from altinn-studio-ops
+      version: "0.1.0+$SHA"
       chart: altinn-authorization
       sourceRef:
         kind: HelmRepository
-        name: api
+        name: altinn-charts
         namespace: default
       valuesFiles:
         - values.yaml
