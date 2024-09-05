@@ -11,8 +11,8 @@
   "devDependencies": {
     "@babel/core": "7.25.2",
     "@babel/eslint-parser": "7.25.1",
-    "eslint": "9.9.0",
+    "eslint": "9.9.1",
     "prettier": "3.3.3"
   },
-  "packageManager": "yarn@4.4.0"
+  "packageManager": "yarn@4.4.1"
 }
