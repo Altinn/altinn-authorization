@@ -70,6 +70,15 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Set short SHA
+        id: set_short_sha
+        run: |
+          SHORT_SHA=$(git rev-parse --short HEAD)
+          echo "IMAGE=${{ env.DOCKER_LOGIN_SERVER }}/${{ env.IMAGE_NAME }}:$SHORT_SHA" >> $GITHUB_ENV
+          echo "image=${{ env.DOCKER_LOGIN_SERVER }}/${{ env.IMAGE_NAME }}:$SHORT_SHA" >> $GITHUB_OUTPUT
+          echo "SHORT_SHA=$SHORT_SHA" >> $GITHUB_ENV
+          echo "short_sha=$SHORT_SHA" >> $GITHUB_OUTPUT
+
       - name: Azure login
         uses: azure/login@v2
         with:
