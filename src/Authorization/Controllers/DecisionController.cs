@@ -322,9 +322,11 @@ namespace Altinn.Platform.Authorization.Controllers
                 });
             }
 
+            // If the delegation context response is NOT permit, the final response should be the roles context response
+            finalResponse = finalResult.Decision.Equals(XacmlContextDecision.Permit) ? finalResponse : rolesContextResponse;
             if (logEvent)
             {
-                await _eventLog.CreateAuthorizationEvent(_featureManager, decisionRequest, HttpContext, finalResult.Decision.Equals(XacmlContextDecision.Permit) ? finalResponse : rolesContextResponse, cancellationToken);
+                await _eventLog.CreateAuthorizationEvent(_featureManager, decisionRequest, HttpContext, finalResponse, cancellationToken);
             }
             
             return finalResponse;
@@ -359,7 +361,7 @@ namespace Altinn.Platform.Authorization.Controllers
             }
 
             ServiceResource resource = await _resourceRegistry.GetResourceAsync(resourceId, cancellationToken);
-            if (resource?.LimitedByRRR ?? true)
+            if (resource != null && resource.LimitedByRRR)
             {
                 var resourceAttributes = _delegationContextHandler.GetResourceAttributes(decisionRequest);
                 if (string.IsNullOrWhiteSpace(resourceAttributes?.OrganizationNumber))
@@ -384,7 +386,7 @@ namespace Altinn.Platform.Authorization.Controllers
                 return result.Value.Result == AccessListAuthorizationResult.Authorized;
             }
 
-            return false;
+            return true;
         }
 
         private static string CreateCacheKey(params string[] cacheKeys) =>

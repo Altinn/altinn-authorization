@@ -26,11 +26,6 @@ namespace Altinn.Platform.Authorization.Constants
         public const string AUTHORIZESCOPEACCESS = "AuthorizeScopeAccess";
 
         /// <summary>
-        /// (deprecated) Scope that gives access to Authorize API
-        /// </summary>
-        public const string PDP_SCOPE = "altinn:authorization:pdp";
-
-        /// <summary>
         /// Scope that gives access to external Authorize API for service/resource owners
         /// </summary>
         public const string AUTHORIZE_SCOPE = "altinn:authorization/authorize";

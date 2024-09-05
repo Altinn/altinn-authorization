@@ -73,6 +73,7 @@
     <None Remove="Data\Json\DelegationChanges\delegationchanges_replay.json" />
     <None Remove="Data\Json\GetResourcePolicies\Org2App1Request.json" />
     <None Remove="Data\Json\GetResourcePolicies\Org2App2Request.json" />
+    <None Remove="Data\Json\ResourceList\ResourceList.json" />
     <None Remove="Data\Register\500000.json" />
     <None Remove="Data\Register\500001.json" />
     <None Remove="Data\Register\500002.json" />
