@@ -33,7 +33,7 @@
       "orgcode": "ttd"
     },
     "keywords": [],
-    "limitedByRRR": false,
+    "AccessListMode": "Disabled",
     "selfIdentifiedUserEnabled": false,
     "enterpriseUserEnabled": false,
     "resourceType": "GenericAccessResource",
@@ -78,7 +78,7 @@
       "orgcode": "ttd"
     },
     "keywords": [],
-    "limitedByRRR": true,
+    "AccessListMode": "Enabled",
     "selfIdentifiedUserEnabled": false,
     "enterpriseUserEnabled": false,
     "resourceType": "GenericAccessResource",
@@ -123,7 +123,7 @@
       "orgcode": "ttd"
     },
     "keywords": [],
-    "limitedByRRR": true,
+    "AccessListMode": "Enabled",
     "selfIdentifiedUserEnabled": false,
     "enterpriseUserEnabled": false,
     "resourceType": "GenericAccessResource",

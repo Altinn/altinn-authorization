@@ -361,7 +361,7 @@ namespace Altinn.Platform.Authorization.Controllers
             }
 
             ServiceResource resource = await _resourceRegistry.GetResourceAsync(resourceId, cancellationToken);
-            if (resource != null && resource.LimitedByRRR)
+            if (resource != null && resource.AccessListMode == ResourceAccessListMode.Enabled)
             {
                 var resourceAttributes = _delegationContextHandler.GetResourceAttributes(decisionRequest);
                 if (string.IsNullOrWhiteSpace(resourceAttributes?.OrganizationNumber))
