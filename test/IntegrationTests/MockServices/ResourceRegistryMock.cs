@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
@@ -43,7 +44,43 @@ public class ResourceRegistryMock : IResourceRegistry
 
     public Task<IEnumerable<AccessListResourceMembershipWithActionFilterDto>> GetMembershipsForResourceForParty(PartyUrn partyUrn, ResourceIdUrn resourceIdUrn, CancellationToken cancellationToken = default)
     {
-        throw new NotImplementedException();
+        partyUrn.IsPartyUuid(out Guid partyUuid);
+        partyUrn.IsOrganizationIdentifier(out OrganizationNumber partyOrgNum);
+        resourceIdUrn.IsResourceId(out ResourceIdentifier resourceId);
+
+        if (partyOrgNum.ToString() == "910459880" && resourceId.ToString() == "ttd-accesslist-resource")
+        {
+            return Task.FromResult(JsonSerializer.Deserialize<IEnumerable<AccessListResourceMembershipWithActionFilterDto>>(
+            """
+            [
+              {
+                "party": "urn:altinn:party:uuid:00000000-0000-0000-0005-000000005545",
+                "resource": "urn:altinn:resource:ttd-accesslist-resource",
+                "since": "2024-08-27T15:15:55.446051+00:00"
+              }
+            ]
+            """,
+            options));
+        }
+        else if (partyOrgNum.ToString() == "910459880" && resourceId.ToString() == "ttd-accesslist-resource-with-actionfilter")
+        {
+            return Task.FromResult(JsonSerializer.Deserialize<IEnumerable<AccessListResourceMembershipWithActionFilterDto>>(
+            """
+            [
+              {
+                "party": "urn:altinn:party:uuid:00000000-0000-0000-0005-000000005545",
+                "resource": "urn:altinn:resource:ttd-accesslist-resource",
+                "since": "2024-08-27T15:15:55.446051+00:00",
+                "actionFilters": [
+                  "read"
+                ]
+              }
+            ]
+            """,
+            options));
+        }
+
+        return Task.FromResult(Enumerable.Empty<AccessListResourceMembershipWithActionFilterDto>());
     }
 
     private static string GetResourceRegistryPolicyPath(string resourceId)

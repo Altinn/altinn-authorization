@@ -43,5 +43,95 @@
         "value": "ttd-externalpdp-resource1"
       }
     ]
+  },
+  {
+    "identifier": "ttd-accesslist-resource",
+    "title": {
+      "en": "PDP Test Resource Requiring AccessList Authorization",
+      "nb": "PDP Test Resource Requiring AccessList Authorization",
+      "nn": "PDP Test Resource Requiring AccessList Authorization"
+    },
+    "description": {
+      "en": "Very nice test resource",
+      "nb": "Veldig fin test ressurs",
+      "nn": "Steikje fine test ressurs"
+    },
+    "rightDescription": {
+      "en": "You'll give access to this nice test resource",
+      "nb": "Du gir tilgang til denne fine test ressursen",
+      "nn": "Du gir tilgong til dinne steikje fine test ressursen"
+    },
+    "homepage": "",
+    "status": "Active",
+    "contactPoints": [],
+    "isPartOf": "",
+    "resourceReferences": [],
+    "delegable": true,
+    "visible": true,
+    "hasCompetentAuthority": {
+      "name": {
+        "en": "Test Ministry",
+        "nb": "Testdepartementet",
+        "nn": "Testdepartementet"
+      },
+      "organization": "991825827",
+      "orgcode": "ttd"
+    },
+    "keywords": [],
+    "limitedByRRR": true,
+    "selfIdentifiedUserEnabled": false,
+    "enterpriseUserEnabled": false,
+    "resourceType": "GenericAccessResource",
+    "authorizationReference": [
+      {
+        "id": "urn:altinn:resource",
+        "value": "ttd-accesslist-resource"
+      }
+    ]
+  },
+  {
+    "identifier": "ttd-accesslist-resource-with-actionfilter",
+    "title": {
+      "en": "PDP Test Resource Requiring AccessList Authorization, AccessLists include action filter",
+      "nb": "PDP Test Resource Requiring AccessList Authorization, AccessLists include action filter",
+      "nn": "PDP Test Resource Requiring AccessList Authorization, AccessLists include action filter"
+    },
+    "description": {
+      "en": "Very nice test resource",
+      "nb": "Veldig fin test ressurs",
+      "nn": "Steikje fine test ressurs"
+    },
+    "rightDescription": {
+      "en": "You'll give access to this nice test resource",
+      "nb": "Du gir tilgang til denne fine test ressursen",
+      "nn": "Du gir tilgong til dinne steikje fine test ressursen"
+    },
+    "homepage": "",
+    "status": "Active",
+    "contactPoints": [],
+    "isPartOf": "",
+    "resourceReferences": [],
+    "delegable": true,
+    "visible": true,
+    "hasCompetentAuthority": {
+      "name": {
+        "en": "Test Ministry",
+        "nb": "Testdepartementet",
+        "nn": "Testdepartementet"
+      },
+      "organization": "991825827",
+      "orgcode": "ttd"
+    },
+    "keywords": [],
+    "limitedByRRR": true,
+    "selfIdentifiedUserEnabled": false,
+    "enterpriseUserEnabled": false,
+    "resourceType": "GenericAccessResource",
+    "authorizationReference": [
+      {
+        "id": "urn:altinn:resource",
+        "value": "ttd-accesslist-resource-with-actionfilter"
+      }
+    ]
   }
 ]
