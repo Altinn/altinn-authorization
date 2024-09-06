@@ -139,9 +139,9 @@ namespace Altinn.Platform.Authorization.IntegrationTests
         /// Tests the scenario where the reportee organization has access to 'ttd-accesslist-resource' through access list membership with matching action filter.
         /// </summary>
         [Fact]
-        public async Task PDP_Decision_ResourceRegistry_AccessListAuthorization_Json_PermitWithActionFilter()
+        public async Task PDP_Decision_ResourceRegistry_AccessListAuthorization_Json_PermitWithActionFilterMatch()
         {
-            string testCase = "ResourceRegistry_AccessListAuthorization_Json_PermitWithActionFilter";
+            string testCase = "ResourceRegistry_AccessListAuthorization_Json_PermitWithActionFilterMatch";
             HttpClient client = GetTestClient();
             HttpRequestMessage httpRequestMessage = TestSetupUtil.CreateJsonProfileXacmlRequest(testCase);
             XacmlJsonResponse expected = TestSetupUtil.ReadExpectedJsonProfileResponse(testCase);
@@ -157,9 +157,9 @@ namespace Altinn.Platform.Authorization.IntegrationTests
         /// Tests the scenario where the reportee organization has access to 'ttd-accesslist-resource' through access list membership but with action filter not matching the request action.
         /// </summary>
         [Fact]
-        public async Task PDP_Decision_ResourceRegistry_AccessListAuthorization_Json_DenyBecauseOfActionFilter()
+        public async Task PDP_Decision_ResourceRegistry_AccessListAuthorization_Json_DenyActionFilterNotMatching()
         {
-            string testCase = "ResourceRegistry_AccessListAuthorization_Json_DenyBecauseOfActionFilter";
+            string testCase = "ResourceRegistry_AccessListAuthorization_Json_DenyActionFilterNotMatching";
             HttpClient client = GetTestClient();
             HttpRequestMessage httpRequestMessage = TestSetupUtil.CreateJsonProfileXacmlRequest(testCase);
             XacmlJsonResponse expected = TestSetupUtil.ReadExpectedJsonProfileResponse(testCase);
