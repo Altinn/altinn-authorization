@@ -13,6 +13,9 @@ namespace Altinn.AccessManagement.Core.Models
         [JsonPropertyName("authority")]
         public string Authority => "iso6523-actorid-upis";
 
+        /// <summary>
+        /// The orgclaim id
+        /// </summary>
         [JsonPropertyName("ID")]
         public string ID { get; set; }
     }
