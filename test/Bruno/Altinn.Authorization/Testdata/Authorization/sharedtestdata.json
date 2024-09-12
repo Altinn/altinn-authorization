@@ -1,8 +1,8 @@
 {
     "auth_scopes": {
         "read": "altinn:instances:read",
-        "pdp": "altinn:authorization:pdp",
-        "admin": "altinn:authorization/authorize.admin"
+        "authorize": "altinn:authorization/authorize",
+        "authorizeAdmin": "altinn:authorization/authorize.admin"
     },
     "authTokenType": {
         "personal": "Personal",

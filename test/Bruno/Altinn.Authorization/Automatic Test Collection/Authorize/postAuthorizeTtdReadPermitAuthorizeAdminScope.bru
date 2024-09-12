@@ -1,5 +1,5 @@
 meta {
-  name: POST Authorize Karlstad for Ørsta
+  name: postAuthorizeTtdReadPermitAuthorizeAdminScope
   type: http
   seq: 6
 }
@@ -76,7 +76,7 @@ script:pre-request {
   
   var getTokenParameters = {
     auth_tokenType: sharedtestdata.authTokenType.enterprise,
-    auth_scopes: sharedtestdata.auth_scopes.admin,
+    auth_scopes: sharedtestdata.auth_scopes.authorizeAdmin,
     auth_org: "digdir",
     auth_orgNo: "991825827"
   }

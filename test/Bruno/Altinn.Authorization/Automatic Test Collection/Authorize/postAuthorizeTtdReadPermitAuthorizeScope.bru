@@ -1,5 +1,5 @@
 meta {
-  name: POST Authorize Paula for Ørsta
+  name: postAuthorizeTtdReadPermitAuthorizeScope
   type: http
   seq: 5
 }
@@ -76,7 +76,7 @@ script:pre-request {
   
   var getTokenParameters = {
     auth_tokenType: sharedtestdata.authTokenType.enterprise,
-    auth_scopes: sharedtestdata.auth_scopes.pdp,
+    auth_scopes: sharedtestdata.auth_scopes.authorize,
     auth_org: "digdir",
     auth_orgNo: "991825827"
   }
