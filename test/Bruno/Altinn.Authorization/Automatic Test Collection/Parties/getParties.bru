@@ -1,17 +1,13 @@
 meta {
-  name: GET Parties Validate True
+  name: getParties
   type: http
-  seq: 8
+  seq: 7
 }
 
 get {
-  url: {{baseUrl}}/authorization/api/v1/parties/{{auth_partyId}}/validate?userId={{auth_userId}}
+  url: {{baseUrl}}/authorization/api/v1/parties?userId={{auth_userId}}
   body: none
   auth: inherit
-}
-
-params:query {
-  userId: {{auth_userId}}
 }
 
 headers {
@@ -28,7 +24,6 @@ script:pre-request {
   const sharedtestdata = require(`./Testdata/Authorization/sharedtestdata.json`);
   
   bru.setVar("auth_userId", testdata.org1.dagl.userid)
-  bru.setVar("auth_partyId", testdata.org1.dagl.partyid)
   
   var getTokenParameters = {
     auth_userId: testdata.org1.dagl.userid,
@@ -50,10 +45,11 @@ script:post-response {
 }
 
 tests {
-  test("Verifies that the user can represent the given party", function() {
+  test("GET parties of an user and validate response", function() {
+    const testdata = require(`./Testdata/Authorization/${bru.getEnvVar("tokenEnv")}testdata.json`);
     const data = res.getBody();
     expect(res.status).to.equal(200);
-    expect(data).to.equal(true);
+    expect(data).to.not.be.empty;
   });
 }
 

@@ -1,7 +1,7 @@
 meta {
-  name: POST Decision result on read for events is Permit
+  name: postDecisionReadTaskPermit
   type: http
-  seq: 4
+  seq: 3
 }
 
 post {
@@ -56,8 +56,8 @@ body:json {
                           "Value": "{{auth_partyId}}"
                       },
                       {
-                          "AttributeId": "urn:altinn:appresource",
-                          "Value": "events"
+                          "AttributeId": "urn:altinn:task",
+                          "Value": "Task_1"
                       }
                   ]
               }
@@ -100,7 +100,7 @@ script:post-response {
 
 tests {
   
-  test("POST Decision result on read for events is Permit", function() {
+  test("POST Decision result on read for task is Permit", function() {
     const testdata = require(`./Testdata/Authorization/${bru.getEnvVar("tokenEnv")}testdata.json`);
     const data = res.getBody();  
     expect(res.status).to.equal(200);
@@ -109,11 +109,11 @@ tests {
 }
 
 docs {
-  Get a decision from PDP with user details for reading events and validate response to have Permit
+  Get a decision from PDP with user details and validate response to have Permit
   
   AccessSubject: ['urn:altinn:userid']
   
   Action: ['read']
   
-  Resource: ['urn:altinn:app', 'urn:altinn:org', 'urn:altinn:partyid', 'urn:altinn:appresource']
+  Resource: ['urn:altinn:app', 'urn:altinn:org', 'urn:altinn:partyid', 'urn:altinn:task']
 }

@@ -1,7 +1,7 @@
 meta {
-  name: POST Decision result on read for task is Permit
+  name: postDecisionSignNotApplicable
   type: http
-  seq: 3
+  seq: 2
 }
 
 post {
@@ -23,8 +23,8 @@ body:json {
               {
                   "Attribute": [
                       {
-                          "AttributeId": "urn:altinn:userid",
-                          "Value": "{{auth_userId}}"
+                          "AttributeId": "urn:altinn:org",
+                          "Value": "ttd"
                       }
                   ]
               }
@@ -34,7 +34,7 @@ body:json {
                   "Attribute": [
                       {
                           "AttributeId": "urn:oasis:names:tc:xacml:1.0:action:action-id",
-                          "Value": "read",
+                          "Value": "sign",
                           "DataType": "http://www.w3.org/2001/XMLSchema#string"
                       }
                   ]
@@ -50,14 +50,6 @@ body:json {
                       {
                           "AttributeId": "urn:altinn:org",
                           "Value": "ttd"
-                      },
-                      {
-                          "AttributeId": "urn:altinn:partyid",
-                          "Value": "{{auth_partyId}}"
-                      },
-                      {
-                          "AttributeId": "urn:altinn:task",
-                          "Value": "Task_1"
                       }
                   ]
               }
@@ -74,9 +66,6 @@ assert {
 script:pre-request {
   const testdata = require(`./Testdata/Authorization/${bru.getEnvVar("tokenEnv")}testdata.json`);
   const sharedtestdata = require(`./Testdata/Authorization/sharedtestdata.json`);
-  
-  bru.setVar("auth_userId", testdata.org1.dagl.userid)
-  bru.setVar("auth_partyId", testdata.org1.dagl.partyid)
   
   var getTokenParameters = {
     auth_userId: testdata.org1.dagl.userid,
@@ -100,20 +89,20 @@ script:post-response {
 
 tests {
   
-  test("POST Decision result on read for task is Permit", function() {
+  test("POST Decision result on sign is NotApplicable", function() {
     const testdata = require(`./Testdata/Authorization/${bru.getEnvVar("tokenEnv")}testdata.json`);
     const data = res.getBody();  
     expect(res.status).to.equal(200);
-    expect(data.response[0]).to.have.property('decision', "Permit");
+    expect(data.response[0]).to.have.property('decision', "NotApplicable");
   });
 }
 
 docs {
-  Get a decision from PDP with user details and validate response to have Permit
+  Get a decision from PDP with appOwner details and validate response to have NotApplicable
   
-  AccessSubject: ['urn:altinn:userid']
+  AccessSubject: ['urn:altinn:org']
   
-  Action: ['read']
+  Action: ['sign']
   
-  Resource: ['urn:altinn:app', 'urn:altinn:org', 'urn:altinn:partyid', 'urn:altinn:task']
+  Resource: ['urn:altinn:app', 'urn:altinn:org']
 }
