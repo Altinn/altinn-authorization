@@ -51,6 +51,10 @@
     </AdditionalFiles>
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\altinn-accesstoken\src\Altinn.Common.AccessToken\Altinn.Common.AccessToken.csproj" />
+  </ItemGroup>
+
   <PropertyGroup Condition="'$(Configuration)'=='Debug'">
     <CodeAnalysisRuleSet>..\..\Altinn3.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>

@@ -90,10 +90,9 @@ namespace Altinn.Platform.Authorization.IntegrationTests.Util
             return new ClaimsPrincipal(identity);
         }
 
-        public static string GetAccessToken(string appId)
+        public static string GetAccessToken(string appId, string issuer = "www.altinn.no")
         {
             List<Claim> claims = new List<Claim>();
-            string issuer = "www.altinn.no";
             if (!string.IsNullOrEmpty(appId))
             {
                 claims.Add(new Claim("urn:altinn:app", appId, ClaimValueTypes.String, issuer));

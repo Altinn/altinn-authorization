@@ -48,6 +48,12 @@
     <None Update="appsettings.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="platform-org.pem">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="platform-org.pfx">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="selfSignedTestCertificate.pfx">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
@@ -60,5 +66,10 @@
     <Content Include="Data\**">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="Data\Json\AccessListAuthorization\Permit_WithoutActionFilter_Request.json" />
+    <None Remove="Data\Json\AccessListAuthorization\Permit_WithoutActionFilter_Response.json" />
   </ItemGroup>
 </Project>

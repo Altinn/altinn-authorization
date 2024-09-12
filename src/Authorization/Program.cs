@@ -5,6 +5,8 @@ using System.Reflection;
 using System.Threading.Tasks;
 using Altinn.ApiClients.Maskinporten.Extensions;
 using Altinn.ApiClients.Maskinporten.Services;
+using Altinn.Common.AccessToken;
+using Altinn.Common.AccessToken.Services;
 using Altinn.Common.AccessTokenClient.Services;
 using Altinn.Common.PEP.Authorization;
 using Altinn.Platform.Authorization.Clients;
@@ -216,6 +218,7 @@ void ConfigureServices(IServiceCollection services, IConfiguration config)
     services.AddSingleton<IEventMapperService, EventMapperService>();
     services.AddSingleton<IAccessManagementWrapper, AccessManagementWrapper>();
     services.AddSingleton<IAccessListAuthorization, AccessListAuthorization>();
+    services.AddSingleton<IPublicSigningKeyProvider, PublicSigningKeyProvider>();
 
     services.Configure<GeneralSettings>(config.GetSection("GeneralSettings"));
     services.Configure<AzureStorageConfiguration>(config.GetSection("AzureStorageConfiguration"));
@@ -265,12 +268,14 @@ void ConfigureServices(IServiceCollection services, IConfiguration config)
     {
         options.AddPolicy(AuthzConstants.POLICY_STUDIO_DESIGNER, policy => policy.Requirements.Add(new ClaimAccessRequirement("urn:altinn:app", "studio.designer")));
         options.AddPolicy(AuthzConstants.ALTINNII_AUTHORIZATION, policy => policy.Requirements.Add(new ClaimAccessRequirement("urn:altinn:app", "sbl.authorization")));
+        options.AddPolicy(AuthzConstants.POLICY_PLATFORMISSUER_ACCESSTOKEN, policy => policy.Requirements.Add(new AccessTokenRequirement(AuthzConstants.PLATFORM_ACCESSTOKEN_ISSUER)));
         options.AddPolicy(AuthzConstants.DELEGATIONEVENT_FUNCTION_AUTHORIZATION, policy => policy.Requirements.Add(new ClaimAccessRequirement("urn:altinn:app", "platform.authorization")));
         options.AddPolicy(AuthzConstants.AUTHORIZESCOPEACCESS, policy => policy.Requirements.Add(new ScopeAccessRequirement([AuthzConstants.AUTHORIZE_SCOPE, AuthzConstants.AUTHORIZE_ADMIN_SCOPE])));
     });
 
     services.AddTransient<IAuthorizationHandler, ClaimAccessHandler>();
     services.AddTransient<IAuthorizationHandler, ScopeAccessHandler>();
+    services.AddSingleton<IAuthorizationHandler, AccessTokenHandler>();
 
     services.AddPlatformAccessTokenSupport(config, builder.Environment.IsDevelopment());
 

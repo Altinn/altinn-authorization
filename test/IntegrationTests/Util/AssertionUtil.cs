@@ -286,6 +286,22 @@ namespace Altinn.Platform.Authorization.IntegrationTests.Util
                 numberOfTimes);
         }
 
+        /// <summary>
+        /// Assert that two <see cref="AccessListAuthorizationResponse"/> have the same property values.
+        /// </summary>
+        /// <param name="expected">An instance with the expected values.</param>
+        /// <param name="actual">The instance to verify.</param>
+        public static void AssertEqual(AccessListAuthorizationResponse expected, AccessListAuthorizationResponse actual)
+        {
+            Assert.NotNull(actual);
+            Assert.NotNull(expected);
+
+            Assert.Equal(expected.Result, actual.Result);
+            Assert.Equal(expected.Subject.ToString(), actual.Subject.ToString());
+            Assert.Equal(expected.Resource.ToString(), actual.Resource.ToString());
+            Assert.Equal(expected.Action.ToString(), actual.Action.ToString());
+        }
+
         private static void AssertEqual(List<AttributeMatch> expected, List<AttributeMatch> actual)
         {
             if (expected == null)
