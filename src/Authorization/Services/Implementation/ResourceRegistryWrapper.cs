@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Net;
 using System.Net.Http;
@@ -10,7 +11,6 @@ using System.Threading.Tasks;
 using Altinn.Authorization.ABAC.Xacml;
 using Altinn.Authorization.Models.Register;
 using Altinn.Authorization.Models.ResourceRegistry;
-using Altinn.Authorization.ProblemDetails;
 using Altinn.Common.AccessTokenClient.Services;
 using Altinn.Platform.Authorization.Clients;
 using Altinn.Platform.Authorization.Configuration;
@@ -25,6 +25,7 @@ namespace Altinn.Platform.Authorization.Services.Implementation
     /// <summary>
     /// Wrapper for resource registry
     /// </summary>
+    [ExcludeFromCodeCoverage]
     public class ResourceRegistryWrapper : IResourceRegistry
     {
         private readonly ResourceRegistryClient _resourceRegistry;
