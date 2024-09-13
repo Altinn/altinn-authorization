@@ -1,4 +1,5 @@
-﻿using System.Net.Http;
+﻿using System.Diagnostics.CodeAnalysis;
+using System.Net.Http;
 using System.Security.Cryptography.X509Certificates;
 using Altinn.Common.AccessTokenClient.Services;
 using Altinn.Platform.Authorization.Configuration;
@@ -9,6 +10,7 @@ namespace Altinn.Authorization.Services;
 /// <summary>
 /// Sets up an access token generator for development environment using the web based Altinn test token generator.
 /// </summary>
+[ExcludeFromCodeCoverage]
 public class DevAccessTokenGenerator : IAccessTokenGenerator
 {
     private readonly TokenGeneratorSettings _settings;
