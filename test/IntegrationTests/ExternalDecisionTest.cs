@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Altinn.Authorization.ABAC.Interface;
 using Altinn.Authorization.ABAC.Xacml;
 using Altinn.Authorization.ABAC.Xacml.JsonProfile;
+using Altinn.Common.AccessToken.Services;
 using Altinn.Common.Authentication.Configuration;
 using Altinn.Platform.Authorization.Controllers;
 using Altinn.Platform.Authorization.IntegrationTests.MockServices;
@@ -277,6 +278,7 @@ namespace Altinn.Platform.Authorization.IntegrationTests
                     services.AddSingleton<IRegisterService, RegisterServiceMock>();
                     services.AddSingleton<IResourceRegistry, ResourceRegistryMock>();
                     services.AddSingleton<IAccessManagementWrapper, AccessManagementWrapperMock>();
+                    services.AddSingleton<IPublicSigningKeyProvider, PublicSigningKeyProviderMock>();
                 });
             }).CreateClient(new WebApplicationFactoryClientOptions { AllowAutoRedirect = false });
 
