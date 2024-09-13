@@ -24,6 +24,7 @@ using Altinn.Platform.Authorization.Models.External;
 using Altinn.Platform.Authorization.Repositories.Interface;
 using Altinn.Platform.Authorization.Services.Interface;
 using Altinn.Platform.Authorization.Services.Interfaces;
+using Altinn.Platform.Register.Models;
 using Altinn.Platform.Storage.Interface.Models;
 using AutoMapper;
 using Azure.Core;
@@ -54,6 +55,7 @@ namespace Altinn.Platform.Authorization.Controllers
         private readonly IFeatureManager _featureManager;
         private readonly IAccessManagementWrapper _accessManagement;
         private readonly IResourceRegistry _resourceRegistry;
+        private readonly IRegisterService _registerService;
         private readonly IAccessListAuthorization _accessListAuthorization;
         private readonly IMapper _mapper;
 
@@ -64,6 +66,7 @@ namespace Altinn.Platform.Authorization.Controllers
         /// </summary>
         /// <param name="accessManagement">Service for making request the to Access Management API (PIP)</param>
         /// <param name="resourceRegistry">Service for making requests to the Resource Registry API</param>
+        /// <param name="registerService">Service for making requests to the Register API</param>
         /// <param name="accessListAuthorization">Service for authorization of subjects based on Resource Registry access lists</param>
         /// <param name="contextHandler">The Context handler</param>
         /// <param name="delegationContextHandler">The delegation context handler</param>
@@ -77,6 +80,7 @@ namespace Altinn.Platform.Authorization.Controllers
         public DecisionController(
             IAccessManagementWrapper accessManagement,
             IResourceRegistry resourceRegistry,
+            IRegisterService registerService,
             IAccessListAuthorization accessListAuthorization,
             IContextHandler contextHandler,
             IDelegationContextHandler delegationContextHandler,
@@ -98,6 +102,7 @@ namespace Altinn.Platform.Authorization.Controllers
             _featureManager = featureManager;
             _accessManagement = accessManagement;
             _resourceRegistry = resourceRegistry;
+            _registerService = registerService;
             _accessListAuthorization = accessListAuthorization;
             _mapper = mapper;
         }
@@ -364,12 +369,15 @@ namespace Altinn.Platform.Authorization.Controllers
             if (resource != null && resource.AccessListMode == ResourceAccessListMode.Enabled)
             {
                 var resourceAttributes = _delegationContextHandler.GetResourceAttributes(decisionRequest);
-                if (string.IsNullOrWhiteSpace(resourceAttributes?.OrganizationNumber))
+
+                Party party = await _registerService.GetParty(int.Parse(resourceAttributes.ResourcePartyValue));
+                if (party?.PartyTypeName != Register.Enums.PartyType.Organisation)
                 {
-                    // Currently only Organization support in AccessList
+                    // Currently only Organization support in AccessLists
                     return false;
                 }
 
+                resourceAttributes.OrganizationNumber = party.OrgNumber;
                 AccessListAuthorizationRequest accessListAuthorizationRequest = new AccessListAuthorizationRequest
                 {
                     Subject = PartyUrn.OrganizationIdentifier.Create(OrganizationNumber.CreateUnchecked(resourceAttributes.OrganizationNumber)),

@@ -190,15 +190,6 @@ namespace Altinn.Platform.Authorization.Services.Implementation
                     requestResourceAttributes.Attributes.Add(GetPartyIdsAttribute(new List<int> { party.PartyId }));
                 }
             }
-            else if (!string.IsNullOrEmpty(resourceAttributes.ResourcePartyValue) && int.TryParse(resourceAttributes.ResourcePartyValue, out int partyId) && string.IsNullOrEmpty(resourceAttributes.OrganizationNumber))
-            {
-                Party party = await _registerService.GetParty(partyId);
-                if (party != null && party.PartyTypeName == Register.Enums.PartyType.Organisation)
-                {
-                    resourceAttributes.OrganizationNumber = party.OrgNumber;
-                    requestResourceAttributes.Attributes.Add(GetOrganizationIdentifierAttribute(party.OrgNumber));
-                }           
-            }
             else if (string.IsNullOrEmpty(resourceAttributes.ResourcePartyValue) && !string.IsNullOrEmpty(resourceAttributes.PersonId))
             {
                 if (!isExternalRequest)
