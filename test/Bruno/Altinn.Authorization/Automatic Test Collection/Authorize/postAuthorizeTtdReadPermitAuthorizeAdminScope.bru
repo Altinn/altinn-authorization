@@ -1,18 +1,18 @@
 meta {
-  name: 6 POST Decision result on read for events is Permit
+  name: postAuthorizeTtdReadPermitAuthorizeAdminScope
   type: http
   seq: 6
 }
 
 post {
-  url: {{baseUrl}}/authorization/api/v1/decision
+  url: {{baseUrl}}/authorization/api/v1/authorize
   body: json
-  auth: none
+  auth: inherit
 }
 
 headers {
   Content-Type: application/json
-  Ocp-Apim-Subscription-Key: {{appsAccessKey}}
+  Ocp-Apim-Subscription-Key: {{apimSubscriptionKey}}
 }
 
 body:json {
@@ -23,8 +23,8 @@ body:json {
               {
                   "Attribute": [
                       {
-                          "AttributeId": "urn:altinn:userid",
-                          "Value": "{{auth_userId}}"
+                          "AttributeId": "urn:altinn:org",
+                          "Value": "ttd"
                       }
                   ]
               }
@@ -50,31 +50,12 @@ body:json {
                       {
                           "AttributeId": "urn:altinn:org",
                           "Value": "ttd"
-                      },
-                      {
-                          "AttributeId": "urn:altinn:partyid",
-                          "Value": "{{auth_partyId}}"
-                      },
-                      {
-                          "AttributeId": "urn:altinn:appresource",
-                          "Value": "events"
                       }
                   ]
               }
           ]
       }
   }
-}
-
-vars:pre-request {
-  scope: altinn:instances.read
-  auth_tokenType: Personal
-  auth_userId: 
-  auth_scopes: altinn:instances.read
-  auth_partyId: 
-  auth_ssn: 
-  party: 
-  apps_access_key: 
 }
 
 assert {
@@ -84,22 +65,27 @@ assert {
 
 script:pre-request {
   const testdata = require(`./Testdata/Authorization/${bru.getEnvVar("tokenEnv")}testdata.json`);
-  bru.setVar("auth_userId", testdata.org1.dagl.userid);
-  bru.setVar("auth_partyId", testdata.org1.dagl.partyid);
-  bru.setVar("auth_ssn", testdata.org1.dagl.pid);
-  bru.setVar("party", testdata.org1.partyid);
-  bru.setVar("appsAccessKey", bru.getEnvVar("appsAccessKey"));
+  const sharedtestdata = require(`./Testdata/Authorization/sharedtestdata.json`);
   
-  bru.setVar("bearerToken", await testTokenGenerator.getToken("altinn:instances.read"));
+  var getTokenParameters = {
+    auth_tokenType: sharedtestdata.authTokenType.enterprise,
+    auth_scopes: sharedtestdata.auth_scopes.authorizeAdmin,
+    auth_org: "digdir",
+    auth_orgNo: "991825827"
+  }
+  
+  const token = await testTokenGenerator.getToken(getTokenParameters);
+  
+  bru.setVar("bearerToken",  token);
 }
 
 script:post-response {
-  console.log("request url (after): " + req.getUrl());
+  //console.log("request url (after): " + req.getUrl());
 }
 
 tests {
   
-  test("6 POST Decision result on read for events is Permit", function() {
+  test("POST Decision result on read is permit", function() {
     const testdata = require(`./Testdata/Authorization/${bru.getEnvVar("tokenEnv")}testdata.json`);
     const data = res.getBody();  
     expect(res.status).to.equal(200);
@@ -108,11 +94,11 @@ tests {
 }
 
 docs {
-  Get a decision from PDP with user details for reading events and validate response to have Permit
-
-  AccessSubject: ['urn:altinn:userid']
+  Get a decision from PDP with appOwner details and validate response to have Permit.
+  
+  AccessSubject: ['urn:altinn:org']
   
   Action: ['read']
   
-  Resource: ['urn:altinn:app', 'urn:altinn:org', 'urn:altinn:partyid', 'urn:altinn:appresource']
+  Resource: ['urn:altinn:app', 'urn:altinn:org']
 }
