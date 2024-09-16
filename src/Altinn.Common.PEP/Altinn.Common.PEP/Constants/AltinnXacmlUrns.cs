@@ -79,5 +79,10 @@ namespace Altinn.Common.PEP.Constants
         /// Get the value sessionid
         /// </summary>
         public const string SessionId = "urn:altinn:sessionid";
+
+        /// <summary>
+        /// SystemUserUuid urn
+        /// </summary>
+        public const string SystemUserUuid = "urn:altinn:systemuser:uuid";
     }
 }
