@@ -1,5 +1,4 @@
--- Function: select_delegationchanges_by_id_range 
--- Broken PostgreSQL functions for replay of delegation change events #1069
+-- Function: select_delegationchanges_by_id_range
 DROP FUNCTION IF EXISTS delegation.select_delegationchanges_by_id_range(bigint, bigint);
 
 CREATE OR REPLACE FUNCTION delegation.select_delegationchanges_by_id_range(
