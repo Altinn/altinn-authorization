@@ -44,7 +44,17 @@ CREATE OR REPLACE FUNCTION delegation.get_current_change(
 	_offeredbypartyid integer,
 	_coveredbyuserid integer,
 	_coveredbypartyid integer)
-    RETURNS SETOF delegation.delegationchanges 
+    RETURNS TABLE(
+        delegationchangeid integer,
+        delegationchangetype delegation.delegationchangetype,
+        altinnappid text,
+        offeredbypartyid integer,
+        coveredbypartyid integer,
+        coveredbyuserid integer,
+        performedbyuserid integer,
+        blobstoragepolicypath text,
+        blobstorageversionid text,
+        created timestamp with time zone)
     LANGUAGE 'sql'
     COST 100
     STABLE PARALLEL SAFE 
