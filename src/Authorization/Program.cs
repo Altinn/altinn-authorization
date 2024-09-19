@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Altinn.ApiClients.Maskinporten.Extensions;
 using Altinn.ApiClients.Maskinporten.Services;
 using Altinn.Common.AccessToken;
+using Altinn.Common.AccessToken.Configuration;
 using Altinn.Common.AccessToken.Services;
 using Altinn.Common.AccessTokenClient.Services;
 using Altinn.Common.PEP.Authorization;
@@ -24,8 +25,6 @@ using Altinn.Platform.Authorization.Services.Implementation;
 using Altinn.Platform.Authorization.Services.Interface;
 using Altinn.Platform.Authorization.Services.Interfaces;
 using Altinn.Platform.Telemetry;
-
-using AltinnCore.Authentication.Constants;
 using AltinnCore.Authentication.JwtCookie;
 
 using Azure.Identity;
@@ -225,6 +224,7 @@ void ConfigureServices(IServiceCollection services, IConfiguration config)
     services.Configure<AzureCosmosSettings>(config.GetSection("AzureCosmosSettings"));
     services.Configure<PostgreSQLSettings>(config.GetSection("PostgreSQLSettings"));
     services.Configure<PlatformSettings>(config.GetSection("PlatformSettings"));
+    services.Configure<KeyVaultSettings>(config.GetSection("kvSetting"));
     OedAuthzMaskinportenClientSettings oedAuthzMaskinportenClientSettings = config.GetSection("OedAuthzMaskinportenClientSettings").Get<OedAuthzMaskinportenClientSettings>();
     services.Configure<OedAuthzMaskinportenClientSettings>(config.GetSection("OedAuthzMaskinportenClientSettings"));
     services.AddMaskinportenHttpClient<SettingsJwkClientDefinition, OedAuthzMaskinportenClientDefinition>(oedAuthzMaskinportenClientSettings);
