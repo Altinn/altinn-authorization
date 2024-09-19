@@ -65,7 +65,7 @@ namespace Altinn.Platform.Authorization.Services
                 string token = JwtTokenUtil.GetTokenFromContext(_httpContextAccessor.HttpContext, _generalSettings.RuntimeCookieName);
                 string accessToken = _accessTokenGenerator.GenerateAccessToken("platform", "authorization");
 
-                HttpResponseMessage response = await _client.GetAsync(token, endpointUrl, accessToken);
+                HttpResponseMessage response = await _client.GetAsync(endpointUrl, token, accessToken);
 
                 if (response.StatusCode == HttpStatusCode.OK)
                 {
