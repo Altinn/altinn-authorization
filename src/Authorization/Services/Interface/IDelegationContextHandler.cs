@@ -48,6 +48,13 @@ namespace Altinn.Platform.Authorization.Services.Interface
         public XacmlResourceAttributes GetResourceAttributes(XacmlContextRequest request);
 
         /// <summary>
+        /// Gets a the Action string from the XacmlContextRequest
+        /// </summary>
+        /// <param name="request">The Xacml Context Request</param>
+        /// <returns>Action attribute string value</returns>
+        public string GetActionString(XacmlContextRequest request);
+
+        /// <summary>
         /// Gets the list of mainunits for a subunit
         /// </summary>
         /// <param name="subUnitPartyId">The subunit partyId to check and retrieve mainunits for</param>
