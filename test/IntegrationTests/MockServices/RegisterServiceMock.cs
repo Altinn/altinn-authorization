@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using Altinn.Platform.Authorization.Exceptions;
 using Altinn.Platform.Authorization.Services.Interfaces;
 using Altinn.Platform.Register.Models;
-
+using Microsoft.Extensions.Caching.Memory;
 using Newtonsoft.Json;
 
 namespace Altinn.Platform.Events.Tests.Mocks
@@ -15,6 +15,7 @@ namespace Altinn.Platform.Events.Tests.Mocks
     public class RegisterServiceMock : IRegisterService
     {
         private readonly int _partiesCollection;
+        private IMemoryCache _memoryCache = new MemoryCache(new MemoryCacheOptions());
 
         public RegisterServiceMock(int partiesCollection = 1)
         {
@@ -23,39 +24,72 @@ namespace Altinn.Platform.Events.Tests.Mocks
 
         public async Task<Party> GetParty(int partyId)
         {
-            Party party = null;
-            string partyPath = GetPartyPath(partyId);
-            if (File.Exists(partyPath))
+            string cacheKey = $"p:{partyId}";
+            if (!_memoryCache.TryGetValue(cacheKey, out Party party))
             {
-                string content = File.ReadAllText(partyPath);
-                party = JsonConvert.DeserializeObject<Party>(content);
+                string partyPath = GetPartyPath(partyId);
+                if (File.Exists(partyPath))
+                {
+                    string content = File.ReadAllText(partyPath);
+                    party = JsonConvert.DeserializeObject<Party>(content);
+                }
+
+                if (party != null)
+                {
+                    PutInCache(cacheKey, 10, party);
+                }
             }
 
             return await Task.FromResult(party);
         }
 
-        public async Task<int> PartyLookup(string orgNo, string person)
+        public async Task<Party> PartyLookup(string orgNo, string person)
         {
-            string eventsPath = Path.Combine(GetPartiesPath(), $@"{_partiesCollection}.json");
-            int partyId = 0;
+            string cacheKey;
+            PartyLookup partyLookup;
 
-            if (File.Exists(eventsPath))
+            if (!string.IsNullOrWhiteSpace(orgNo))
             {
-                string content = File.ReadAllText(eventsPath);
-                List<Party> parties = JsonConvert.DeserializeObject<List<Party>>(content);
+                cacheKey = $"org:{orgNo}";
+                partyLookup = new PartyLookup { OrgNo = orgNo };
+            }
+            else if (!string.IsNullOrWhiteSpace(person))
+            {
+                cacheKey = $"fnr:{person}";
+                partyLookup = new PartyLookup { Ssn = person };
+            }
+            else
+            {
+                return null;
+            }
 
-                if (!string.IsNullOrEmpty(orgNo))
+            if (!_memoryCache.TryGetValue(cacheKey, out Party party))
+            {
+                string eventsPath = Path.Combine(GetPartiesPath(), $@"{_partiesCollection}.json");
+
+                if (File.Exists(eventsPath))
                 {
-                    partyId = parties.Where(p => p.OrgNumber != null && p.OrgNumber.Equals(orgNo)).Select(p => p.PartyId).FirstOrDefault();
+                    string content = File.ReadAllText(eventsPath);
+                    List<Party> parties = JsonConvert.DeserializeObject<List<Party>>(content);
+
+                    if (!string.IsNullOrEmpty(orgNo))
+                    {
+                        party = parties.Where(p => p.OrgNumber != null && p.OrgNumber.Equals(orgNo)).FirstOrDefault();
+                    }
+                    else
+                    {
+                        party = parties.Where(p => p.SSN != null && p.SSN.Equals(person)).FirstOrDefault();
+                    }
                 }
-                else
+
+                if (party != null)
                 {
-                    partyId = parties.Where(p => p.SSN != null && p.SSN.Equals(person)).Select(p => p.PartyId).FirstOrDefault();
+                    PutInCache(cacheKey, 10, party);
                 }
             }
 
-            return partyId > 0
-                ? partyId
+            return party != null
+                ? await Task.FromResult(party)
                 : throw await PlatformHttpException.CreateAsync(new HttpResponseMessage
                 { Content = new StringContent(string.Empty), StatusCode = System.Net.HttpStatusCode.NotFound });
         }
@@ -70,6 +104,15 @@ namespace Altinn.Platform.Events.Tests.Mocks
         {
             string unitTestFolder = Path.GetDirectoryName(new Uri(typeof(RegisterServiceMock).Assembly.Location).LocalPath);
             return Path.Combine(unitTestFolder, "..", "..", "..", "Data", "Register", partyId.ToString() + ".json");
+        }
+
+        private void PutInCache(string cachekey, int cacheTimeout, object cacheObject)
+        {
+            var cacheEntryOptions = new MemoryCacheEntryOptions()
+               .SetPriority(CacheItemPriority.High)
+               .SetAbsoluteExpiration(new TimeSpan(0, cacheTimeout, 0));
+
+            _memoryCache.Set(cachekey, cacheObject, cacheEntryOptions);
         }
     }
 }
