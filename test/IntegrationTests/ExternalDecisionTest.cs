@@ -258,6 +258,26 @@ namespace Altinn.Platform.Authorization.IntegrationTests
             AssertionUtil.AssertEqual(expected, contextResponse);
         }
 
+        /// <summary>
+        /// Scenario where systemuser has received delegation from the resource party for two resources. Multirequest should give Permit result for both.
+        /// </summary>
+        [Fact]
+        public async Task PDPExternal_Decision_SystemUserWithDelegations_MultiRequest_Permit()
+        {
+            string token = PrincipalUtil.GetOrgToken("skd", "974761076", "altinn:authorization/authorize");
+            string testCase = "ResourceRegistry_SystemUserWithDelegations_MultiRequest_Permit";
+            HttpClient client = GetTestClient();
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("bearer", token);
+            HttpRequestMessage httpRequestMessage = TestSetupUtil.CreateXacmlRequestExternal(testCase);
+            XacmlJsonResponse expected = TestSetupUtil.ReadExpectedJsonProfileResponse(testCase);
+
+            // Act
+            XacmlJsonResponse contextResponse = await TestSetupUtil.GetXacmlJsonProfileContextResponseAsync(client, httpRequestMessage);
+
+            // Assert
+            AssertionUtil.AssertEqual(expected, contextResponse);
+        }
+
         private HttpClient GetTestClient()
         {
             HttpClient client = _factory.WithWebHostBuilder(builder =>
