@@ -469,8 +469,8 @@ namespace Altinn.Platform.Authorization.Controllers
             var cacheKey = CreateCacheKey(
                 $"s:{delegation.Subject.Id}:{delegation.Subject.Value}",
                 $"p:{delegation.Party.Value}",
-                $"a:{delegation.Resource.FirstOrDefault(r => r.Id == AltinnXacmlConstants.MatchAttributeIdentifiers.OrgAttribute)}/{delegation.Resource.FirstOrDefault(r => r.Id == AltinnXacmlConstants.MatchAttributeIdentifiers.AppAttribute)}",
-                $"r:{delegation.Resource.FirstOrDefault(r => r.Id == AltinnXacmlConstants.MatchAttributeIdentifiers.ResourceRegistry)}");
+                $"a:{delegation.Resource.FirstOrDefault(r => r.Id == AltinnXacmlConstants.MatchAttributeIdentifiers.OrgAttribute)?.Value}/{delegation.Resource.FirstOrDefault(r => r.Id == AltinnXacmlConstants.MatchAttributeIdentifiers.AppAttribute)?.Value}",
+                $"r:{delegation.Resource.FirstOrDefault(r => r.Id == AltinnXacmlConstants.MatchAttributeIdentifiers.ResourceRegistry)?.Value}");
 
             if (!_memoryCache.TryGetValue(cacheKey, out IEnumerable<DelegationChangeExternal> result))
             {
