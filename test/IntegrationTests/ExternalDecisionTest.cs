@@ -244,7 +244,7 @@ namespace Altinn.Platform.Authorization.IntegrationTests
         [Fact]
         public async Task PDPExternal_Decision_AltinnResourceRegistryMulti0012()
         {
-            string token = PrincipalUtil.GetOrgToken("skd", "974761076", "altinn:authorization:pdp");
+            string token = PrincipalUtil.GetOrgToken("skd", "974761076", "altinn:authorization/authorize");
             string testCase = "AltinnResourceRegistryMulti0012";
             HttpClient client = GetTestClient();
             client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("bearer", token);
