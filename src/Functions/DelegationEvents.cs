@@ -37,8 +37,10 @@ public class DelegationEvents
     [FunctionName(nameof(DelegationEvents))]
     public async Task RunAsync([QueueTrigger("delegationevents", Connection = "QueueStorage")] string queueItem)
     {
-        DelegationChangeEventList delegationChangeEventList =
-            System.Text.Json.JsonSerializer.Deserialize<DelegationChangeEventList>(queueItem);
+        DelegationChangeEventList delegationChangeEventList = System.Text.Json.JsonSerializer.Deserialize<DelegationChangeEventList>(queueItem);
+        
+        // Remove delegations where covered by is SystemUser where both partyId and userId is not defined and Altinn II has no use of this delegation
+        delegationChangeEventList.DelegationChangeEvents = delegationChangeEventList.DelegationChangeEvents.FindAll(dce => dce.DelegationChange.CoveredByPartyId != null || dce.DelegationChange.CoveredByUserId != null);
         await _eventPusherService.PushEvents(delegationChangeEventList);
     }
 }

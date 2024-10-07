@@ -183,11 +183,11 @@ namespace Altinn.Platform.Authorization.Services.Implementation
         {
             if (string.IsNullOrEmpty(resourceAttributes.ResourcePartyValue) && !string.IsNullOrEmpty(resourceAttributes.OrganizationNumber))
             {
-                int partyId = await _registerService.PartyLookup(resourceAttributes.OrganizationNumber, null);
-                if (partyId != 0)
+                Party party = await _registerService.PartyLookup(resourceAttributes.OrganizationNumber, null);
+                if (party != null)
                 {
-                    resourceAttributes.ResourcePartyValue = partyId.ToString();
-                    requestResourceAttributes.Attributes.Add(GetPartyIdsAttribute(new List<int> { partyId }));
+                    resourceAttributes.ResourcePartyValue = party.PartyId.ToString();
+                    requestResourceAttributes.Attributes.Add(GetPartyIdsAttribute(new List<int> { party.PartyId }));
                 }
             }
             else if (string.IsNullOrEmpty(resourceAttributes.ResourcePartyValue) && !string.IsNullOrEmpty(resourceAttributes.PersonId))
@@ -197,11 +197,11 @@ namespace Altinn.Platform.Authorization.Services.Implementation
                     throw new ArgumentException("Not allowed to use ssn for internal API");
                 }
 
-                int partyId = await _registerService.PartyLookup(null, resourceAttributes.PersonId);
-                if (partyId != 0)
+                Party party = await _registerService.PartyLookup(null, resourceAttributes.PersonId);
+                if (party != null)
                 {
-                    resourceAttributes.ResourcePartyValue = partyId.ToString();
-                    requestResourceAttributes.Attributes.Add(GetPartyIdsAttribute(new List<int> { partyId }));
+                    resourceAttributes.ResourcePartyValue = party.PartyId.ToString();
+                    requestResourceAttributes.Attributes.Add(GetPartyIdsAttribute(new List<int> { party.PartyId }));
                 }
             }
         }
@@ -331,6 +331,11 @@ namespace Altinn.Platform.Authorization.Services.Implementation
             string subjectOrgnNo = string.Empty;
             bool foundLegacyOrgNoAttribute = false;
 
+            if (subjectContextAttributes.Attributes.Any(a => a.AttributeId.OriginalString.Equals(XacmlRequestAttribute.SystemUserIdAttribute)) && subjectContextAttributes.Attributes.Count > 1)
+            {
+                throw new ArgumentException($"Subject attribute {XacmlRequestAttribute.SystemUserIdAttribute} can only be used by itself and not in combination with other subject identifiers.");
+            }
+
             foreach (XacmlAttribute xacmlAttribute in subjectContextAttributes.Attributes)
             {
                 if (xacmlAttribute.AttributeId.OriginalString.Equals(XacmlRequestAttribute.UserAttribute))
@@ -392,8 +397,8 @@ namespace Altinn.Platform.Authorization.Services.Implementation
 
             if (isExternalRequest && !string.IsNullOrEmpty(subjectOrgnNo))
             {
-                int partyId = await _registerService.PartyLookup(subjectOrgnNo, null);
-                subjectContextAttributes.Attributes.Add(GetPartyIdsAttribute(new List<int> { partyId }));
+                Party party = await _registerService.PartyLookup(subjectOrgnNo, null);
+                subjectContextAttributes.Attributes.Add(GetPartyIdsAttribute(new List<int> { party.PartyId }));
             }
 
             // No need for further enrichment of roles of no user subject exists
