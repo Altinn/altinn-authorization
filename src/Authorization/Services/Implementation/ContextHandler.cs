@@ -32,15 +32,19 @@ namespace Altinn.Platform.Authorization.Services.Implementation
     /// </summary>
     public class ContextHandler : IContextHandler
     {
-        private readonly IInstanceMetadataRepository _policyInformationRepository;
-        private readonly IRoles _rolesWrapper;
-        private readonly IOedRoleAssignmentWrapper _oedRolesWrapper;
-        private readonly IParties _partiesWrapper;
-        private readonly IProfile _profileWrapper;
-        private readonly IMemoryCache _memoryCache;
-        private readonly GeneralSettings _generalSettings;
-        private readonly IRegisterService _registerService;
-        private readonly IPolicyRetrievalPoint _prp;
+#pragma warning disable SA1401 // Fields should be private
+#pragma warning disable SA1600 // Elements should be documented
+        protected readonly IInstanceMetadataRepository _policyInformationRepository;
+        protected readonly IRoles _rolesWrapper;
+        protected readonly IOedRoleAssignmentWrapper _oedRolesWrapper;
+        protected readonly IParties _partiesWrapper;
+        protected readonly IProfile _profileWrapper;
+        protected readonly IMemoryCache _memoryCache;
+        protected readonly GeneralSettings _generalSettings;
+        protected readonly IRegisterService _registerService;
+        protected readonly IPolicyRetrievalPoint _prp;
+#pragma warning restore SA1401 // Fields should be private
+#pragma warning restore SA1600 // Elements should be documented
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ContextHandler"/> class
@@ -230,6 +234,14 @@ namespace Altinn.Platform.Authorization.Services.Implementation
                 if (attribute.AttributeId.OriginalString.Equals(XacmlRequestAttribute.InstanceAttribute))
                 {
                     resourceAttributes.InstanceValue = attribute.AttributeValues.First().Value;
+                    string[] instanceValues = resourceAttributes.InstanceValue.Split('/');
+                    resourceAttributes.ResourcePartyValue = instanceValues[0];
+                    resourceAttributes.ResourceInstanceValue = instanceValues[1];
+                }
+
+                if (attribute.AttributeId.OriginalString.Equals(XacmlRequestAttribute.ResourceRegistryInstanceAttribute))
+                {
+                    resourceAttributes.ResourceInstanceValue = attribute.AttributeValues.First().Value;
                 }
 
                 if (attribute.AttributeId.OriginalString.Equals(XacmlRequestAttribute.PartyAttribute))
@@ -249,7 +261,17 @@ namespace Altinn.Platform.Authorization.Services.Implementation
 
                 if (attribute.AttributeId.OriginalString.Equals(XacmlRequestAttribute.ResourceRegistryAttribute))
                 {
-                    resourceAttributes.ResourceRegistryId = attribute.AttributeValues.First().Value;
+                    string resourceValue = attribute.AttributeValues.First().Value;
+                    if (resourceValue.StartsWith("app_"))
+                    {
+                        string[] orgAppValues = resourceValue.Split('_');
+                        resourceAttributes.OrgValue = orgAppValues[1];
+                        resourceAttributes.AppValue = orgAppValues[2];
+                    }
+                    else
+                    {
+                        resourceAttributes.ResourceRegistryId = resourceValue;
+                    }
                 }
 
                 if (attribute.AttributeId.OriginalString.Equals(XacmlRequestAttribute.OrganizationNumberAttribute))
@@ -382,7 +404,7 @@ namespace Altinn.Platform.Authorization.Services.Implementation
 
             if (!string.IsNullOrEmpty(subjectSsn))
             {
-                UserProfile subjectProfile = await _profileWrapper.GetUserProfileBySSN(subjectSsn);
+                UserProfile subjectProfile = await _profileWrapper.GetUserProfileByPersonId(subjectSsn);
 
                 if (subjectProfile != null)
                 {
@@ -441,6 +463,38 @@ namespace Altinn.Platform.Authorization.Services.Implementation
                     subjectContextAttributes.Attributes.Add(GetRoleAttribute(roleList));
                 }
             }
+        }
+
+        /// <summary>
+        /// Gets a XacmlAttribute model for a list of party ids
+        /// </summary>
+        /// <param name="attributeId">The attribute id for the type of value(s)</param>
+        /// <param name="values">The collection of values</param>
+        /// <param name="dataType">Optional: specify datatype. Default: XMLString</param>
+        /// <returns>XacmlAttribute</returns>
+        protected XacmlAttribute GetStringAttribute(string attributeId, IEnumerable<string> values, string dataType = XacmlConstants.DataTypes.XMLString)
+        {
+            XacmlAttribute attribute = new XacmlAttribute(new Uri(attributeId), false);
+            foreach (string value in values)
+            {
+                attribute.AttributeValues.Add(new XacmlAttributeValue(new Uri(dataType), value));
+            }
+
+            return attribute;
+        }
+
+        /// <summary>
+        /// Gets a XacmlAttribute model for a list of party ids
+        /// </summary>
+        /// <param name="attributeId">The attribute id for the type of value(s)</param>
+        /// <param name="value">The value</param>
+        /// <param name="dataType">Optional: specify datatype. Default: XMLString</param>
+        /// <returns>XacmlAttribute</returns>
+        protected XacmlAttribute GetStringAttribute(string attributeId, string value, string dataType = XacmlConstants.DataTypes.XMLString)
+        {
+            XacmlAttribute attribute = new XacmlAttribute(new Uri(attributeId), false);
+            attribute.AttributeValues.Add(new XacmlAttributeValue(new Uri(dataType), value));
+            return attribute;
         }
 
         /// <summary>

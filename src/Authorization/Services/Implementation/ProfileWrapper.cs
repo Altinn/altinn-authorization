@@ -1,9 +1,9 @@
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Net;
-using System.Net.Http;
 using System.Net.Http.Json;
 using System.Text.Json;
+using System.Threading;
 using System.Threading.Tasks;
 using Altinn.Platform.Authorization.Clients;
 using Altinn.Platform.Authorization.Services.Interface;
@@ -34,7 +34,7 @@ namespace Altinn.Platform.Authorization.Services.Implementation
         }
 
         /// <inheritdoc/>
-        public async Task<UserProfile> GetUserProfile(int userId)
+        public async Task<UserProfile> GetUserProfile(int userId, CancellationToken cancellationToken = default)
         {
             try
             {
@@ -59,14 +59,14 @@ namespace Altinn.Platform.Authorization.Services.Implementation
         }
 
         /// <inheritdoc/>
-        public async Task<UserProfile> GetUserProfileBySSN(string ssn)
+        public async Task<UserProfile> GetUserProfileByPersonId(string personId, CancellationToken cancellationToken = default)
         {
             try
             {
                 string endpointUrl = $"internal/user";
 
-                var response = await _profileClient.Client.PostAsJsonAsync(endpointUrl, new { Ssn = ssn });
-                string responseContent = await response.Content.ReadAsStringAsync();
+                var response = await _profileClient.Client.PostAsJsonAsync(endpointUrl, new { Ssn = personId }, cancellationToken);
+                string responseContent = await response.Content.ReadAsStringAsync(cancellationToken);
 
                 if (response.StatusCode == HttpStatusCode.OK)
                 {

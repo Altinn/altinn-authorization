@@ -1,3 +1,4 @@
+#nullable enable
 using System;
 using System.Text.Json.Serialization;
 using Altinn.Authorization.Enums;
@@ -38,6 +39,12 @@ namespace Altinn.Platform.Authorization.Models
         /// </summary>
         [JsonPropertyName("resourcetype")]
         public string ResourceType { get; set; } = string.Empty;
+
+        /// <summary>
+        /// Gets or sets the resource instance id.
+        /// </summary>
+        [JsonPropertyName("instanceid")]
+        public string InstanceId { get; set; } = string.Empty;
 
         /// <summary>
         /// Gets or sets the offeredbypartyid, refering to the party id of the user or organization offering the delegation.
@@ -97,7 +104,7 @@ namespace Altinn.Platform.Authorization.Models
         /// The uuid of the party that performed the delegation
         /// </summary>
         [JsonPropertyName("performedbyuuid")]
-        public Guid? PerformedByUuid { get; set; }
+        public string? PerformedByUuid { get; set; }
 
         /// <summary>
         /// The type of the party that performed the delegation

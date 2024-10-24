@@ -43,15 +43,13 @@ namespace Altinn.Platform.Authorization.Services.Implementation
         /// <inheritdoc/>
         public async Task<XacmlPolicy> GetPolicyAsync(XacmlContextRequest request)
         {
-            string policyId = null;
-            PolicyResourceType policyResourceType = PolicyHelper.GetPolicyResourceType(request, out policyId);
+            PolicyResourceType policyResourceType = PolicyHelper.GetPolicyResourceType(request, out string resourceId, out string org, out string app);
             if (policyResourceType.Equals(PolicyResourceType.ResourceRegistry))
             {
-                return await _resourceRegistry.GetResourcePolicyAsync(policyId);
+                return await _resourceRegistry.GetResourcePolicyAsync(resourceId);
             }
 
-            string policyPath = PolicyHelper.GetPolicyPath(request);
-            return await GetPolicyInternalAsync(policyPath);
+            return await GetPolicyAsync(org, app);
         }
 
         /// <inheritdoc/>

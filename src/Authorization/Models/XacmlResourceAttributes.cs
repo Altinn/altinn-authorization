@@ -21,6 +21,11 @@ namespace Altinn.Platform.Authorization.Models
         public string InstanceValue { get; set; }
 
         /// <summary>
+        /// Gets or sets the value for a resource instance attribute
+        /// </summary>
+        public string ResourceInstanceValue { get; set; }
+
+        /// <summary>
         /// Gets or sets the value for resource party id attribute
         /// </summary>
         public string ResourcePartyValue { get; set; }

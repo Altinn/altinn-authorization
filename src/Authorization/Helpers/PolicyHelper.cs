@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -84,13 +83,15 @@ namespace Altinn.Platform.Authorization.Helpers
         /// Returens the policy resource type based on XacmlContextRequest
         /// </summary>
         /// <param name="request">The requestId</param>
-        /// <param name="policyId">The policy Id</param>
+        /// <param name="resourceId">The resource Id</param>
+        /// <param name="org">Org code</param>
+        /// <param name="app">App name</param>
         /// <returns></returns>
-        public static PolicyResourceType GetPolicyResourceType(XacmlContextRequest request, out string policyId)
+        public static PolicyResourceType GetPolicyResourceType(XacmlContextRequest request, out string resourceId, out string org, out string app)
         {
-            string org = string.Empty;
-            string app = string.Empty;
-            string resourceid = string.Empty;
+            org = string.Empty;
+            app = string.Empty;
+            resourceId = string.Empty;
 
             foreach (XacmlContextAttributes attr in request.Attributes.Where(attr => attr.Category.OriginalString.Equals(XacmlConstants.MatchAttributeCategory.Resource)))
             {
@@ -108,24 +109,31 @@ namespace Altinn.Platform.Authorization.Helpers
 
                     if (xacmlAtr.AttributeId.OriginalString.Equals(AltinnXacmlConstants.MatchAttributeIdentifiers.ResourceRegistry))
                     {
-                        resourceid = xacmlAtr.AttributeValues.First().Value;
+                        string resourceValue = xacmlAtr.AttributeValues.First().Value;
+                        if (resourceValue.StartsWith("app_"))
+                        {
+                            string[] orgAppValues = resourceValue.Split('_');
+                            org = orgAppValues[1];
+                            app = orgAppValues[2];
+                        }
+                        else
+                        {
+                            resourceId = resourceValue;
+                        }
                     }
                 }
             }
 
             if (!string.IsNullOrEmpty(org) && !string.IsNullOrEmpty(app))
             {
-                policyId = org + "/" + app;
                 return PolicyResourceType.AltinnApps;
             }
-            else if (!string.IsNullOrEmpty(resourceid))
+            else if (!string.IsNullOrEmpty(resourceId))
             {
-                policyId = resourceid;
                 return PolicyResourceType.ResourceRegistry;
             }
             else
             {
-                policyId = null;
                 return PolicyResourceType.Undefined;
             }
         }
