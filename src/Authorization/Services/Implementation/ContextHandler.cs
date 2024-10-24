@@ -235,7 +235,6 @@ namespace Altinn.Platform.Authorization.Services.Implementation
                 {
                     resourceAttributes.InstanceValue = attribute.AttributeValues.First().Value;
                     string[] instanceValues = resourceAttributes.InstanceValue.Split('/');
-                    resourceAttributes.ResourcePartyValue = instanceValues[0];
                     resourceAttributes.ResourceInstanceValue = instanceValues[1];
                 }
 

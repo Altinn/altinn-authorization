@@ -44,7 +44,7 @@ public class DelegationChangeExternal
     /// Gets or sets the resource instance id.
     /// </summary>
     [JsonPropertyName("instanceid")]
-    public string InstanceId { get; set; } = string.Empty;
+    public string? InstanceId { get; set; }
 
     /// <summary>
     /// Gets or sets the offeredbypartyid, refering to the party id of the user or organization offering the delegation.
