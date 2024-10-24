@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using Altinn.Platform.Register.Models;
 
@@ -14,6 +16,15 @@ namespace Altinn.Platform.Authorization.Services.Interfaces
         /// <param name="partyId">The partyId</param>
         /// <returns>The party for the given partyId</returns>
         Task<Party> GetParty(int partyId);
+
+        /// <summary>
+        /// Gets a list of parties by their party ids
+        /// </summary>
+        /// <param name="partyIds">List of partyIds to lookup</param>
+        /// <param name="includeSubunits">(Optional) Whether subunits should be included as ChildParties, if any of the lookup party IDs are for a main unit</param>
+        /// <param name="cancellationToken">The <see cref="CancellationToken"/></param>
+        /// <returns>List of parties</returns>
+        Task<List<Party>> GetPartiesAsync(List<int> partyIds, bool includeSubunits = false, CancellationToken cancellationToken = default);
 
         /// <summary>
         /// Party lookup

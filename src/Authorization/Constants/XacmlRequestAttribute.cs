@@ -46,9 +46,14 @@ namespace Altinn.Platform.Authorization.Constants
         public const string OrganizationNumberAttribute = "urn:altinn:organization:identifier-no";
 
         /// <summary>
-        /// Legacu xacml string that represents organization number. Can be removed when all peps are updated
+        /// Legacy xacml string that represents organization number. Can be removed when all peps are updated
         /// </summary>
         public const string LegacyOrganizationNumberAttribute = "urn:altinn:organizationnumber";
+
+        /// <summary>
+        /// xacml string that represents organization universally unique identifier
+        /// </summary>
+        public const string OrganizationUuidAttribute = "urn:altinn:organization:uuid";
 
         /// <summary>
         /// xacml string that represents user
@@ -71,9 +76,19 @@ namespace Altinn.Platform.Authorization.Constants
         public const string ResourceRegistryAttribute = "urn:altinn:resource";
 
         /// <summary>
+        /// xacml string that represents a resource instance
+        /// </summary>
+        public const string ResourceRegistryInstanceAttribute = "urn:altinn:resource:instance-id";
+
+        /// <summary>
         /// xacml string that represents person identifier
         /// </summary>
         public const string PersonIdAttribute = "urn:altinn:person:identifier-no";
+
+        /// <summary>
+        /// xacml string that represents person universally unique identifier
+        /// </summary>
+        public const string PersonUuidAttribute = "urn:altinn:person:uuid";
 
         /// <summary>
         /// xacml attribute urn prefix that represents system user id

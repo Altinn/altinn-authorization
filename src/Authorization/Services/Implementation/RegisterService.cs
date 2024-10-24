@@ -1,9 +1,13 @@
 using System;
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Text;
 using System.Text.Json;
+using System.Threading;
 using System.Threading.Tasks;
 using Altinn.Common.AccessTokenClient.Services;
 using Altinn.Platform.Authorization.Configuration;
@@ -80,6 +84,58 @@ namespace Altinn.Platform.Authorization.Services
             }
 
             return party;
+        }
+
+        /// <inheritdoc/>
+        public async Task<List<Party>> GetPartiesAsync(List<int> partyIds, bool includeSubunits = false, CancellationToken cancellationToken = default)
+        {
+            List<Party> parties = new List<Party>();
+            List<int> partyIdsNotInCache = new List<int>();
+
+            foreach (int partyId in partyIds.Distinct())
+            {
+                if (_memoryCache.TryGetValue($"p:{partyId}|inclSubunits:{includeSubunits}", out Party party))
+                {
+                    parties.Add(party);
+                }
+                else
+                {
+                    partyIdsNotInCache.Add(partyId);
+                }
+            }
+
+            if (partyIdsNotInCache.Count == 0)
+            {
+                return parties;
+            }
+            
+            string endpointUrl = $"parties/partylist?fetchSubUnits={includeSubunits}";
+            string token = JwtTokenUtil.GetTokenFromContext(_httpContextAccessor.HttpContext, _generalSettings.RuntimeCookieName);
+            string accessToken = _accessTokenGenerator.GenerateAccessToken("platform", "authorization");
+            StringContent requestBody = new StringContent(JsonSerializer.Serialize(partyIds), Encoding.UTF8, "application/json");
+
+            HttpResponseMessage response = await _client.PostAsync(endpointUrl, requestBody, token, accessToken, cancellationToken);
+            string responseContent = await response.Content.ReadAsStringAsync(cancellationToken);
+
+            List<Party> remainingParties = new();
+            if (response.StatusCode == HttpStatusCode.OK)
+            {
+                remainingParties = JsonSerializer.Deserialize<List<Party>>(responseContent, _serializerOptions);
+            }
+
+            if (remainingParties.Count > 0)
+            {
+                foreach (Party party in remainingParties)
+                {
+                    if (party?.PartyId != null)
+                    {
+                        parties.Add(party);
+                        PutInCache($"p:{party.PartyId}|inclSubunits:{includeSubunits}", 10, party);
+                    }
+                }
+            }
+
+            return parties;
         }
 
         /// <inheritdoc/>

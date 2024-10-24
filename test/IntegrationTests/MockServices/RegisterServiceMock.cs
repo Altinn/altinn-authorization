@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
+using System.Threading;
 using System.Threading.Tasks;
 using Altinn.Platform.Authorization.Exceptions;
 using Altinn.Platform.Authorization.Services.Interfaces;
@@ -41,6 +42,11 @@ namespace Altinn.Platform.Events.Tests.Mocks
             }
 
             return await Task.FromResult(party);
+        }
+
+        public Task<List<Party>> GetPartiesAsync(List<int> partyIds, bool includeSubunits = false, CancellationToken cancellationToken = default)
+        {
+            throw new NotImplementedException();
         }
 
         public async Task<Party> PartyLookup(string orgNo, string person)
