@@ -93,10 +93,10 @@ namespace Altinn.Platform.Authorization.Services.Implementation
                 XacmlAttribute resourceInstanceAttribute = requestResourceAttributes.Attributes.FirstOrDefault(a => a.AttributeId.OriginalString.Equals(XacmlRequestAttribute.ResourceRegistryInstanceAttribute));
                 XacmlAttribute orgAttribute = requestResourceAttributes.Attributes.FirstOrDefault(a => a.AttributeId.OriginalString.Equals(XacmlRequestAttribute.OrgAttribute));
                 XacmlAttribute appAttribute = requestResourceAttributes.Attributes.FirstOrDefault(a => a.AttributeId.OriginalString.Equals(XacmlRequestAttribute.AppAttribute));
-                if (resourceAttribute != null && orgAttribute == null && orgAttribute == null)
+                if (resourceAttribute != null && orgAttribute == null && appAttribute == null)
                 {
-                    string resourceId = resourceAttribute.AttributeValues.FirstOrDefault().Value;
-                    if (resourceId.StartsWith("app_"))
+                    string resourceId = resourceAttribute.AttributeValues.FirstOrDefault()?.Value;
+                    if (resourceId != null && resourceId.StartsWith("app_"))
                     {
                         // Missing resource attribute for Altinn App
                         requestResourceAttributes.Attributes.Add(GetStringAttribute(XacmlRequestAttribute.OrgAttribute, resourceAttributes.OrgValue));

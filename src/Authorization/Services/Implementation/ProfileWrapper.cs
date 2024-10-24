@@ -40,8 +40,8 @@ namespace Altinn.Platform.Authorization.Services.Implementation
             {
                 string endpointUrl = $"internal/user";
 
-                var response = await _profileClient.Client.PostAsJsonAsync(endpointUrl, new { UserId = userId });
-                string responseContent = await response.Content.ReadAsStringAsync();
+                var response = await _profileClient.Client.PostAsJsonAsync(endpointUrl, new { UserId = userId }, cancellationToken);
+                string responseContent = await response.Content.ReadAsStringAsync(cancellationToken);
 
                 if (response.StatusCode == HttpStatusCode.OK)
                 {

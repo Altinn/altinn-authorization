@@ -472,7 +472,7 @@ namespace Altinn.Platform.Authorization.Services.Implementation
         /// <param name="values">The collection of values</param>
         /// <param name="dataType">Optional: specify datatype. Default: XMLString</param>
         /// <returns>XacmlAttribute</returns>
-        protected XacmlAttribute GetStringAttribute(string attributeId, IEnumerable<string> values, string dataType = XacmlConstants.DataTypes.XMLString)
+        protected static XacmlAttribute GetStringAttribute(string attributeId, IEnumerable<string> values, string dataType = XacmlConstants.DataTypes.XMLString)
         {
             XacmlAttribute attribute = new XacmlAttribute(new Uri(attributeId), false);
             foreach (string value in values)
@@ -490,7 +490,7 @@ namespace Altinn.Platform.Authorization.Services.Implementation
         /// <param name="value">The value</param>
         /// <param name="dataType">Optional: specify datatype. Default: XMLString</param>
         /// <returns>XacmlAttribute</returns>
-        protected XacmlAttribute GetStringAttribute(string attributeId, string value, string dataType = XacmlConstants.DataTypes.XMLString)
+        protected static XacmlAttribute GetStringAttribute(string attributeId, string value, string dataType = XacmlConstants.DataTypes.XMLString)
         {
             XacmlAttribute attribute = new XacmlAttribute(new Uri(attributeId), false);
             attribute.AttributeValues.Add(new XacmlAttributeValue(new Uri(dataType), value));
