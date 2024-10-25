@@ -350,7 +350,7 @@ namespace Altinn.Platform.Authorization.Controllers
             {
                 var resourceAttributes = _delegationContextHandler.GetResourceAttributes(decisionRequest);
 
-                Party party = await _registerService.GetParty(int.Parse(resourceAttributes.ResourcePartyValue));
+                Party party = await _registerService.GetParty(int.Parse(resourceAttributes.ResourcePartyValue), cancellationToken);
                 if (party?.PartyTypeName != Register.Enums.PartyType.Organisation)
                 {
                     // Currently only Organization support in AccessLists

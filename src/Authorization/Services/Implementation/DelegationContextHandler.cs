@@ -79,21 +79,18 @@ namespace Altinn.Platform.Authorization.Services.Implementation
             }
 
             int subjectPartyId = GetSubjectPartyId(requestSubjectAttributes);
-            if (subjectPartyId > 0)
+            if (subjectPartyId > 0 && isInstanceAccessRequest)
             {
-                if (isInstanceAccessRequest)
+                // Instance delegation policies use uuid as subject, meaning the request needs to be enriched with the party uuid
+                Party subjectParty = await _registerService.GetParty(subjectPartyId, cancellationToken);
+                if (subjectParty != null &&
+                    subjectParty.PartyTypeName == PartyType.Person && subjectParty.PartyUuid.HasValue)
                 {
-                    // Instance delegation policies use uuid as subject, meaning the request needs to be enriched with the party uuid
-                    Party subjectParty = await _registerService.GetParty(subjectPartyId, cancellationToken);
-                    if (subjectParty != null &&
-                        subjectParty.PartyTypeName == PartyType.Person && subjectParty.PartyUuid.HasValue)
-                    {
-                        requestSubjectAttributes.Attributes.Add(GetStringAttribute(XacmlRequestAttribute.PersonUuidAttribute, subjectParty.PartyUuid.Value.ToString()));
-                    }
-                    else if (subjectParty != null && subjectParty.PartyTypeName == PartyType.Organisation && subjectParty.PartyUuid.HasValue)
-                    {
-                        requestSubjectAttributes.Attributes.Add(GetStringAttribute(XacmlRequestAttribute.OrganizationUuidAttribute, subjectParty.PartyUuid.Value.ToString()));
-                    }
+                    requestSubjectAttributes.Attributes.Add(GetStringAttribute(XacmlRequestAttribute.PersonUuidAttribute, subjectParty.PartyUuid.Value.ToString()));
+                }
+                else if (subjectParty != null && subjectParty.PartyTypeName == PartyType.Organisation && subjectParty.PartyUuid.HasValue)
+                {
+                    requestSubjectAttributes.Attributes.Add(GetStringAttribute(XacmlRequestAttribute.OrganizationUuidAttribute, subjectParty.PartyUuid.Value.ToString()));
                 }
             }
         }
