@@ -1,13 +1,10 @@
 using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 using Altinn.Platform.Authorization.Models;
 using Altinn.Platform.Authorization.Services.Interface;
 using Altinn.Platform.Register.Models;
-using Authorization.Platform.Authorization.Models;
 
 namespace Altinn.Platform.Authorization.IntegrationTests.MockServices
 {
@@ -20,6 +17,9 @@ namespace Altinn.Platform.Authorization.IntegrationTests.MockServices
             {
                 case 20001336:
                     result.Add(50001336);
+                    break;
+                case 20000095:
+                    result.Add(50004222);
                     break;
                 default:
                     break;

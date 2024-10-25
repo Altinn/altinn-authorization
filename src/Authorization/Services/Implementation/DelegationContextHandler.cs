@@ -77,6 +77,25 @@ namespace Altinn.Platform.Authorization.Services.Implementation
                     }
                 }
             }
+
+            int subjectPartyId = GetSubjectPartyId(requestSubjectAttributes);
+            if (subjectPartyId > 0)
+            {
+                if (isInstanceAccessRequest)
+                {
+                    // Instance delegation policies use uuid as subject, meaning the request needs to be enriched with the party uuid
+                    Party subjectParty = await _registerService.GetParty(subjectPartyId, cancellationToken);
+                    if (subjectParty != null &&
+                        subjectParty.PartyTypeName == PartyType.Person && subjectParty.PartyUuid.HasValue)
+                    {
+                        requestSubjectAttributes.Attributes.Add(GetStringAttribute(XacmlRequestAttribute.PersonUuidAttribute, subjectParty.PartyUuid.Value.ToString()));
+                    }
+                    else if (subjectParty != null && subjectParty.PartyTypeName == PartyType.Organisation && subjectParty.PartyUuid.HasValue)
+                    {
+                        requestSubjectAttributes.Attributes.Add(GetStringAttribute(XacmlRequestAttribute.OrganizationUuidAttribute, subjectParty.PartyUuid.Value.ToString()));
+                    }
+                }
+            }
         }
 
         /// <summary>
@@ -132,12 +151,11 @@ namespace Altinn.Platform.Authorization.Services.Implementation
         /// <summary>
         /// Gets the party id from the XacmlContextRequest subject attribute
         /// </summary>
-        /// <param name="request">The Xacml Context Request</param>
+        /// <param name="subjectAttributes">The Xacml Context Request subject attributes</param>
         /// <returns>The party id of the subject</returns>
-        public int GetSubjectPartyId(XacmlContextRequest request)
+        public int GetSubjectPartyId(XacmlContextAttributes subjectAttributes)
         {
-            XacmlContextAttributes subjectContextAttributes = request.GetSubjectAttributes();
-            XacmlAttribute subjectAttribute = subjectContextAttributes.Attributes.FirstOrDefault(a => a.AttributeId.OriginalString.Equals(XacmlRequestAttribute.PartyAttribute));
+            XacmlAttribute subjectAttribute = subjectAttributes.Attributes.FirstOrDefault(a => a.AttributeId.OriginalString.Equals(XacmlRequestAttribute.PartyAttribute));
             return Convert.ToInt32(subjectAttribute?.AttributeValues.FirstOrDefault()?.Value);
         }
 

@@ -45,9 +45,9 @@ namespace Altinn.Platform.Authorization.Services.Interface
         /// <summary>
         /// Gets the party id from the XacmlContextRequest subject attribute
         /// </summary>
-        /// <param name="request">The Xacml Context Request</param>
+        /// <param name="subjectAttributes">The Xacml Context Request subject attributes</param>
         /// <returns>The party id of the subject</returns>
-        public int GetSubjectPartyId(XacmlContextRequest request);
+        public int GetSubjectPartyId(XacmlContextAttributes subjectAttributes);
 
         /// <summary>
         /// Gets a XacmlResourceAttributes model from the XacmlContextRequest

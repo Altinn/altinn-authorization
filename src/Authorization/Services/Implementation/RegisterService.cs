@@ -60,7 +60,7 @@ namespace Altinn.Platform.Authorization.Services
         }
 
         /// <inheritdoc/>
-        public async Task<Party> GetParty(int partyId)
+        public async Task<Party> GetParty(int partyId, CancellationToken cancellationToken = default)
         {
             string cacheKey = $"p:{partyId}";
             if (!_memoryCache.TryGetValue(cacheKey, out Party party))
@@ -69,11 +69,11 @@ namespace Altinn.Platform.Authorization.Services
                 string token = JwtTokenUtil.GetTokenFromContext(_httpContextAccessor.HttpContext, _generalSettings.RuntimeCookieName);
                 string accessToken = _accessTokenGenerator.GenerateAccessToken("platform", "authorization");
 
-                HttpResponseMessage response = await _client.GetAsync(endpointUrl, token, accessToken);
+                HttpResponseMessage response = await _client.GetAsync(endpointUrl, token, accessToken, cancellationToken);
 
                 if (response.StatusCode == HttpStatusCode.OK)
                 {
-                    string responseContent = await response.Content.ReadAsStringAsync();
+                    string responseContent = await response.Content.ReadAsStringAsync(cancellationToken);
                     party = JsonSerializer.Deserialize<Party>(responseContent, _serializerOptions);
                     PutInCache(cacheKey, 10, party);
                 }
@@ -139,7 +139,7 @@ namespace Altinn.Platform.Authorization.Services
         }
 
         /// <inheritdoc/>
-        public async Task<Party> PartyLookup(string orgNo, string person)
+        public async Task<Party> PartyLookup(string orgNo, string person, CancellationToken cancellationToken = default)
         {
             string cacheKey;
             PartyLookup partyLookup;
@@ -169,11 +169,11 @@ namespace Altinn.Platform.Authorization.Services
                 StringContent content = new StringContent(JsonSerializer.Serialize(partyLookup));
                 content.Headers.ContentType = MediaTypeHeaderValue.Parse("application/json");
 
-                HttpResponseMessage response = await _client.PostAsync(endpointUrl, content, bearerToken, accessToken);
+                HttpResponseMessage response = await _client.PostAsync(endpointUrl, content, bearerToken, accessToken, cancellationToken);
 
                 if (response.StatusCode == HttpStatusCode.OK)
                 {
-                    string responseContent = await response.Content.ReadAsStringAsync();
+                    string responseContent = await response.Content.ReadAsStringAsync(cancellationToken);
                     party = JsonSerializer.Deserialize<Party>(responseContent, _serializerOptions);
                     PutInCache(cacheKey, 10, party);
                 }

@@ -23,7 +23,7 @@ namespace Altinn.Platform.Events.Tests.Mocks
             _partiesCollection = partiesCollection;
         }
 
-        public async Task<Party> GetParty(int partyId)
+        public async Task<Party> GetParty(int partyId, CancellationToken cancellationToken = default)
         {
             string cacheKey = $"p:{partyId}";
             if (!_memoryCache.TryGetValue(cacheKey, out Party party))
@@ -31,7 +31,7 @@ namespace Altinn.Platform.Events.Tests.Mocks
                 string partyPath = GetPartyPath(partyId);
                 if (File.Exists(partyPath))
                 {
-                    string content = File.ReadAllText(partyPath);
+                    string content = await File.ReadAllTextAsync(partyPath, cancellationToken);
                     party = JsonConvert.DeserializeObject<Party>(content);
                 }
 
@@ -46,10 +46,52 @@ namespace Altinn.Platform.Events.Tests.Mocks
 
         public Task<List<Party>> GetPartiesAsync(List<int> partyIds, bool includeSubunits = false, CancellationToken cancellationToken = default)
         {
-            throw new NotImplementedException();
+            List<Party> parties = new List<Party>();
+            List<int> partyIdsNotInCache = new List<int>();
+
+            foreach (int partyId in partyIds.Distinct())
+            {
+                if (_memoryCache.TryGetValue($"p:{partyId}|inclSubunits:{includeSubunits}", out Party party))
+                {
+                    parties.Add(party);
+                }
+                else
+                {
+                    partyIdsNotInCache.Add(partyId);
+                }
+            }
+
+            if (partyIdsNotInCache.Count == 0)
+            {
+                return Task.FromResult(parties);
+            }
+
+            List<Party> remainingParties = new();
+            foreach (int partyId in partyIdsNotInCache)
+            {
+                Party party = GetParty(partyId, cancellationToken).Result;
+                if (party != null)
+                {
+                    remainingParties.Add(party);
+                }
+            }
+
+            if (remainingParties.Count > 0)
+            {
+                foreach (Party party in remainingParties)
+                {
+                    if (party?.PartyId != null)
+                    {
+                        parties.Add(party);
+                        PutInCache($"p:{party.PartyId}|inclSubunits:{includeSubunits}", 10, party);
+                    }
+                }
+            }
+
+            return Task.FromResult(parties);
         }
 
-        public async Task<Party> PartyLookup(string orgNo, string person)
+        public async Task<Party> PartyLookup(string orgNo, string person, CancellationToken cancellationToken = default)
         {
             string cacheKey;
             PartyLookup partyLookup;
@@ -75,7 +117,7 @@ namespace Altinn.Platform.Events.Tests.Mocks
 
                 if (File.Exists(eventsPath))
                 {
-                    string content = File.ReadAllText(eventsPath);
+                    string content = await File.ReadAllTextAsync(eventsPath, cancellationToken);
                     List<Party> parties = JsonConvert.DeserializeObject<List<Party>>(content);
 
                     if (!string.IsNullOrEmpty(orgNo))
