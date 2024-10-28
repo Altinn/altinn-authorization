@@ -10,11 +10,11 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" Version="8.0.6" />
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.10.0" />
-    <PackageReference Include="Moq" Version="4.20.70" />
-    <PackageReference Include="MSTest.TestFramework" Version="3.4.3" />
-    <PackageReference Include="xunit" Version="2.9.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" Version="8.0.8" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.11.1" />
+    <PackageReference Include="Moq" Version="4.20.72" />
+    <PackageReference Include="MSTest.TestFramework" Version="3.6.0" />
+    <PackageReference Include="xunit" Version="2.9.2" />
     <PackageReference Include="xunit.runner.visualstudio" Version="2.8.2">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
@@ -48,6 +48,12 @@
     <None Update="appsettings.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="platform-org.pem">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="platform-org.pfx">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="selfSignedTestCertificate.pfx">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
@@ -61,194 +67,4 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
-
-  <ItemGroup>
-    <None Remove="Data\blobs\input\error\delegationeventfail\50001337\u20001336\delegationpolicy.xml" />
-    <None Remove="Data\blobs\input\error\delegationeventfail\policy.xml" />
-    <None Remove="Data\blobs\input\skd\taxreport\1000\u20001337\delegationpolicy.xml" />
-    <None Remove="Data\Json\AddRules\DelegationEventError.json" />
-    <None Remove="Data\Json\DelegationChanges\delegationchanges_replay.json" />
-    <None Remove="Data\Json\GetResourcePolicies\Org2App1Request.json" />
-    <None Remove="Data\Json\GetResourcePolicies\Org2App2Request.json" />
-    <None Remove="Data\Register\500000.json" />
-    <None Remove="Data\Register\500001.json" />
-    <None Remove="Data\Register\500002.json" />
-    <None Remove="Data\Register\500003.json" />
-    <None Remove="Data\Register\500600.json" />
-    <None Remove="Data\Register\500700.json" />
-    <None Remove="Data\Register\500800.json" />
-    <None Remove="Data\Register\500801.json" />
-    <None Remove="Data\Register\500802.json" />
-    <None Remove="Data\Register\501337.json" />
-    <None Remove="Data\Register\510001.json" />
-    <None Remove="Data\Register\510002.json" />
-    <None Remove="Data\Register\510003.json" />
-    <None Remove="Data\Register\512345.json" />
-    <None Remove="Data\Register\Org\897069631.json" />
-    <None Remove="Data\Register\Org\897069650.json" />
-    <None Remove="Data\Register\Org\897069651.json" />
-    <None Remove="Data\Register\Org\897069652.json" />
-    <None Remove="Data\Register\Org\897069653.json" />
-    <None Remove="Data\Register\Org\900000001.json" />
-    <None Remove="Data\Register\Org\910423185.json" />
-    <None Remove="Data\Register\Org\910423495.json" />
-    <None Remove="Data\Register\Org\910457292.json" />
-    <None Remove="Data\Register\Org\910471120.json" />
-    <None Remove="Data\Register\Org\950474084.json" />
-    <None Remove="Data\Xacml\3.0\AltinnApps\AltinnApps0001DelegationRequest.xml" />
-    <None Remove="Data\Xacml\3.0\AltinnApps\AltinnApps0001DelegationResponse.xml" />
-    <None Remove="Data\Xacml\3.0\AltinnApps\AltinnApps0021Policy.xml" />
-    <None Remove="Data\Xacml\3.0\AltinnApps\AltinnApps0024Policy.xml" />
-    <None Remove="Data\Xacml\3.0\AltinnApps\AltinnApps0025Policy.xml" />
-    <None Remove="Data\Xacml\3.0\AltinnApps\AltinnApps_OedFormuesfullmakt_Json_PermitPolicy.xml" />
-    <None Remove="Data\Xacml\3.0\AltinnApps\AltinnApps_OedFormuesfullmakt_Json_PermitRequest.json" />
-    <None Remove="Data\Xacml\3.0\AltinnApps\AltinnApps_OedFormuesfullmakt_Json_PermitResponse.json" />
-    <None Remove="Data\Xacml\3.0\AltinnApps\AltinnApps_OedFormuesfullmakt_Xml_PermitPolicy.xml" />
-    <None Remove="Data\Xacml\3.0\AltinnApps\AltinnApps_OedFormuesfullmakt_Xml_PermitRequest.xml" />
-    <None Remove="Data\Xacml\3.0\AltinnApps\AltinnApps_OedFormuesfullmakt_Xml_PermitResponse.xml" />
-    <None Remove="Data\Xacml\3.0\AltinnApps\error\delegationeventfail\policy.xml" />
-    <None Remove="Data\Xacml\3.0\AltinnApps\eventlog\AltinnApps0001Event.json" />
-    <None Remove="Data\Xacml\3.0\AltinnApps\eventlog\AltinnApps0004Event.json" />
-    <None Remove="Data\Xacml\3.0\AltinnApps\eventlog\AltinnApps0007Event.json" />
-    <None Remove="Data\Xacml\3.0\AltinnApps\eventlog\AltinnResourceRegistry0001Event.json" />
-    <None Remove="Data\Xacml\3.0\ResourceRegistry\AltinnResourceRegistry0001Request.xml" />
-    <None Remove="Data\Xacml\3.0\ResourceRegistry\AltinnResourceRegistry0001Response.xml" />
-    <None Remove="Data\Xacml\3.0\ResourceRegistry\AltinnResourceRegistry0002Request.json" />
-    <None Remove="Data\Xacml\3.0\ResourceRegistry\AltinnResourceRegistry0002Response.json" />
-    <None Remove="Data\Xacml\3.0\ResourceRegistry\AltinnResourceRegistry0003Request.json" />
-    <None Remove="Data\Xacml\3.0\ResourceRegistry\AltinnResourceRegistry0003Response.json" />
-    <None Remove="Data\Xacml\3.0\ResourceRegistry\AltinnResourceRegistry0004Request.json" />
-    <None Remove="Data\Xacml\3.0\ResourceRegistry\AltinnResourceRegistry0004Response.json" />
-    <None Remove="Data\Xacml\3.0\ResourceRegistry\AltinnResourceRegistry0005Request.json" />
-    <None Remove="Data\Xacml\3.0\ResourceRegistry\AltinnResourceRegistry0005Response.json" />
-    <None Remove="Data\Xacml\3.0\ResourceRegistry\AltinnResourceRegistry0006Request.json" />
-    <None Remove="Data\Xacml\3.0\ResourceRegistry\AltinnResourceRegistry0006Response.json" />
-    <None Remove="Data\Xacml\3.0\ResourceRegistry\AltinnResourceRegistry0007Request.json" />
-    <None Remove="Data\Xacml\3.0\ResourceRegistry\AltinnResourceRegistry0007Response.json" />
-    <None Remove="Data\Xacml\3.0\ResourceRegistry\AltinnResourceRegistry0008Request.json" />
-    <None Remove="Data\Xacml\3.0\ResourceRegistry\AltinnResourceRegistry0008Response.json" />
-    <None Remove="Data\Xacml\3.0\ResourceRegistry\AltinnResourceRegistry0009Request.json" />
-    <None Remove="Data\Xacml\3.0\ResourceRegistry\AltinnResourceRegistry0009Response.json" />
-    <None Remove="Data\Xacml\3.0\ResourceRegistry\AltinnResourceRegistry0010Request.json" />
-    <None Remove="Data\Xacml\3.0\ResourceRegistry\AltinnResourceRegistry0010Response.json" />
-    <None Remove="Data\Xacml\3.0\ResourceRegistry\AltinnResourceRegistry0011Request.json" />
-    <None Remove="Data\Xacml\3.0\ResourceRegistry\AltinnResourceRegistry0011Response.json" />
-    <None Remove="Data\Xacml\3.0\ResourceRegistry\oed-role-formuesfullmakt\policy.xml" />
-    <None Remove="Data\Xacml\3.0\ResourceRegistry\apidelegation\policy.xml" />
-    <None Remove="Data\Xacml\3.0\ResourceRegistry\ResourceRegistry_OedFormuesfullmakt_Json_IndeterminateRequest.json" />
-    <None Remove="Data\Xacml\3.0\ResourceRegistry\ResourceRegistry_OedFormuesfullmakt_Json_IndeterminateResponse.json" />
-    <None Remove="Data\Xacml\3.0\ResourceRegistry\ResourceRegistry_OedFormuesfullmakt_Json_PermitRequest.json" />
-    <None Remove="Data\Xacml\3.0\ResourceRegistry\ResourceRegistry_OedFormuesfullmakt_Json_PermitResponse.json" />
-    <None Remove="Data\Xacml\3.0\ResourceRegistry\ResourceRegistry_OedFormuesfullmakt_Xml_IndeterminateRequest.xml" />
-    <None Remove="Data\Xacml\3.0\ResourceRegistry\ResourceRegistry_OedFormuesfullmakt_Xml_IndeterminateResponse.xml" />
-    <None Remove="Data\Xacml\3.0\ResourceRegistry\ResourceRegistry_OedFormuesfullmakt_Xml_PermitRequest.xml" />
-    <None Remove="Data\Xacml\3.0\ResourceRegistry\ResourceRegistry_OedFormuesfullmakt_Xml_PermitResponse.xml" />
-    <None Remove="Data\Xacml\3.0\ResourceRegistry\eventlog\AltinnResourceRegistry0004Event.json" />
-    <None Remove="Data\Xacml\3.0\ResourceRegistry\ttd-externalpdp-resource2\policy.xml" />
-    <None Remove="Data\Xacml\3.0\ResourceRegistry\ttd-externalpdp-resource1\policy.xml" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Content Update="Data\Xacml\3.0\ResourceRegistry\AltinnResourceRegistry0008Response.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Update="Data\Xacml\3.0\ResourceRegistry\AltinnResourceRegistry0011Request.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Update="Data\Xacml\3.0\ResourceRegistry\AltinnResourceRegistry0010Request.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Update="Data\Xacml\3.0\ResourceRegistry\AltinnResourceRegistry0010Response.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Update="Data\Xacml\3.0\ResourceRegistry\AltinnResourceRegistry0009Response.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Update="Data\Xacml\3.0\ResourceRegistry\AltinnResourceRegistry0009Request.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Update="Data\Xacml\3.0\ResourceRegistry\AltinnResourceRegistry0011Response.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Update="Data\Xacml\3.0\ResourceRegistry\AltinnResourceRegistry0008Request.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Update="Data\Xacml\3.0\ResourceRegistry\AltinnResourceRegistry0007Response.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Update="Data\Xacml\3.0\ResourceRegistry\AltinnResourceRegistry0007Request.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Update="Data\Xacml\3.0\ResourceRegistry\AltinnResourceRegistry0006Response.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Update="Data\Xacml\3.0\ResourceRegistry\AltinnResourceRegistry0006Request.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Update="Data\Xacml\3.0\ResourceRegistry\AltinnResourceRegistry0005Response.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Update="Data\Xacml\3.0\ResourceRegistry\AltinnResourceRegistry0005Request.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Update="Data\Xacml\3.0\ResourceRegistry\oed-role-formuesfullmakt\policy.xml">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Update="Data\Xacml\3.0\ResourceRegistry\ResourceRegistry_OedFormuesfullmakt_Json_IndeterminateRequest.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Update="Data\Xacml\3.0\ResourceRegistry\ResourceRegistry_OedFormuesfullmakt_Json_PermitRequest.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Update="Data\Xacml\3.0\ResourceRegistry\ResourceRegistry_OedFormuesfullmakt_Json_IndeterminateResponse.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Update="Data\Xacml\3.0\ResourceRegistry\ResourceRegistry_OedFormuesfullmakt_Json_PermitResponse.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Update="Data\Xacml\3.0\ResourceRegistry\ResourceRegistry_OedFormuesfullmakt_Xml_IndeterminateRequest.xml">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Update="Data\Xacml\3.0\ResourceRegistry\ResourceRegistry_OedFormuesfullmakt_Xml_PermitRequest.xml">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Update="Data\Xacml\3.0\ResourceRegistry\AltinnResourceRegistry0001Request.xml">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Update="Data\Xacml\3.0\ResourceRegistry\ResourceRegistry_OedFormuesfullmakt_Xml_IndeterminateResponse.xml">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Update="Data\Xacml\3.0\ResourceRegistry\ResourceRegistry_OedFormuesfullmakt_Xml_PermitResponse.xml">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Update="Data\Xacml\3.0\ResourceRegistry\AltinnResourceRegistry0001Response.xml">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Update="Data\Xacml\3.0\ResourceRegistry\AltinnResourceRegistry0002Request.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Update="Data\Xacml\3.0\ResourceRegistry\AltinnResourceRegistry0002Response.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Update="Data\Xacml\3.0\ResourceRegistry\AltinnResourceRegistry0004Response.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Update="Data\Xacml\3.0\ResourceRegistry\AltinnResourceRegistry0004Request.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Update="Data\Xacml\3.0\ResourceRegistry\AltinnResourceRegistry0003Request.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Update="Data\Xacml\3.0\ResourceRegistry\AltinnResourceRegistry0003Response.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Update="Data\Xacml\3.0\ResourceRegistry\apidelegation\policy.xml">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Data\Xacml\3.0\ResourceRegistry\ttd-altinn-events-automated-tests\" />
-  </ItemGroup>
-
 </Project>

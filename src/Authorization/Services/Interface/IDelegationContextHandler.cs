@@ -19,6 +19,14 @@ namespace Altinn.Platform.Authorization.Services.Interface
         public void Enrich(XacmlContextRequest request, List<int> subjects);
 
         /// <summary>
+        /// Gets the value of the first found attribute matching the prioritized order of xacmlRequestAttributes provided, from the XacmlContextRequest subjects.
+        /// </summary>
+        /// <param name="request">The Xacml Context Request</param>
+        /// <param name="xacmlRequestAttributeIds">Array of xacml request urn attribute identifiers to look for, in prioritized order. First found matching attribute is returned.</param>
+        /// <returns>The value of the first found matching subject attribute if any exists</returns>
+        public AttributeMatch GetSubjectAttributeMatch(XacmlContextRequest request, string[] xacmlRequestAttributeIds);
+
+        /// <summary>
         /// Gets the user id from the XacmlContextRequest subject attribute
         /// </summary>
         /// <param name="request">The Xacml Context Request</param>
@@ -38,6 +46,13 @@ namespace Altinn.Platform.Authorization.Services.Interface
         /// <param name="request">The Xacml Context Request</param>
         /// <returns>XacmlResourceAttributes model</returns>
         public XacmlResourceAttributes GetResourceAttributes(XacmlContextRequest request);
+
+        /// <summary>
+        /// Gets a the Action string from the XacmlContextRequest
+        /// </summary>
+        /// <param name="request">The Xacml Context Request</param>
+        /// <returns>Action attribute string value</returns>
+        public string GetActionString(XacmlContextRequest request);
 
         /// <summary>
         /// Gets the list of mainunits for a subunit

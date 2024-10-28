@@ -36,7 +36,7 @@ namespace Altinn.Platform.Authorization.Services.Implementation
         /// Endpoint to find all delegation changes for a given user, reportee and app/resource context
         /// </summary>
         /// <returns>Input parameter to the request</returns>
-        public async Task<IEnumerable<DelegationChange>> GetAllDelegationChanges(DelegationChangeInput input)
+        public async Task<IEnumerable<DelegationChangeExternal>> GetAllDelegationChanges(DelegationChangeInput input)
         {
             try
             {
@@ -47,7 +47,7 @@ namespace Altinn.Platform.Authorization.Services.Implementation
 
                 if (response.IsSuccessStatusCode)
                 {
-                    return await response.Content.ReadFromJsonAsync<IEnumerable<DelegationChange>>();
+                    return await response.Content.ReadFromJsonAsync<IEnumerable<DelegationChangeExternal>>();
                 }
 
                 var content = await response.Content.ReadAsStringAsync();
@@ -70,7 +70,7 @@ namespace Altinn.Platform.Authorization.Services.Implementation
         /// </summary>
         /// <param name="actions">optional funvation pattern for modifying the request sent to Access Management API</param>
         /// <returns></returns>
-        public async Task<IEnumerable<DelegationChange>> GetAllDelegationChanges(params Action<DelegationChangeInput>[] actions)
+        public async Task<IEnumerable<DelegationChangeExternal>> GetAllDelegationChanges(params Action<DelegationChangeInput>[] actions)
         {
             var input = new DelegationChangeInput()
             {

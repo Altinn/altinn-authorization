@@ -11,7 +11,7 @@ labels: 'kind/deploy_patch, team/tilgangsstyring'
   - [ ] Deploy [Authorization] to production.
   - [ ] Deploy [Delegation Events] to production.
   - [ ] Deploy [Access Management] to production.
-  - [ ] Verify [new pods startup](https://portal.azure.com/#@ai-dev.no/resource/subscriptions/1ab2d164-1861-4ff8-be8c-069c3ee3b70a/resourceGroups/altinnplatform-prod-rg/providers/Microsoft.ContainerService/managedClusters/platform-prod-01-aks/workloads) without errors.
+  - [ ] Verify [cluster 01 new pods](https://portal.azure.com/#@ai-dev.no/resource/subscriptions/1ab2d164-1861-4ff8-be8c-069c3ee3b70a/resourceGroups/altinnplatform-prod-rg/providers/Microsoft.ContainerService/managedClusters/platform-prod-01-aks/workloads) or [cluster 02 new pods](https://portal.azure.com/#@ai-dev.no/resource/subscriptions/1ab2d164-1861-4ff8-be8c-069c3ee3b70a/resourceGroups/altinnplatform-prod-rg/providers/Microsoft.ContainerService/managedClusters/platform-prod-02-aks/workloads) startup without errors.
   - [ ] Verify [function app deployment](https://portal.azure.com/#@ai-dev.no/resource/subscriptions/1ab2d164-1861-4ff8-be8c-069c3ee3b70a/resourceGroups/altinnplatform-prod-rg/providers/Microsoft.Web/sites/altinn-prod-delegation-func/appServices).
   - [ ] Grab a coffee.
   - [ ] Verify no errors reported for the components in Slack channels [#alerts-prod](https://altinndevops.slack.com/archives/C014H7WPSUB) or [#alerts-prod-critical](https://altinndevops.slack.com/archives/C012108PYBV).
@@ -32,7 +32,7 @@ labels: 'kind/deploy_patch, team/tilgangsstyring'
   - [ ] Deploy [Authorization] to TT02.
   - [ ] Deploy [Delegation Events] to TT02.
   - [ ] Deploy [Access Management] to TT02.
-  - [ ] Verify [new pods startup](https://portal.azure.com/#@ai-dev.no/resource/subscriptions/dd6d3e08-a70f-4f71-8847-781ddc5d8468/resourceGroups/altinnplatform-tt02-rg/providers/Microsoft.ContainerService/managedClusters/platform-tt02-02-aks/workloads) without errors.
+  - [ ] Verify [cluster 01 new pods](https://portal.azure.com/#@ai-dev.no/resource/subscriptions/dd6d3e08-a70f-4f71-8847-781ddc5d8468/resourceGroups/altinnplatform-tt02-rg/providers/Microsoft.ContainerService/managedClusters/platform-tt02-01-aks/workloads) or [cluster 02 new pods](https://portal.azure.com/#@ai-dev.no/resource/subscriptions/dd6d3e08-a70f-4f71-8847-781ddc5d8468/resourceGroups/altinnplatform-tt02-rg/providers/Microsoft.ContainerService/managedClusters/platform-tt02-02-aks/workloads) startup without errors.
   - [ ] Verify [function app deployment](https://portal.azure.com/#@ai-dev.no/resource/subscriptions/dd6d3e08-a70f-4f71-8847-781ddc5d8468/resourceGroups/altinnplatform-tt02-rg/providers/Microsoft.Web/sites/altinn-tt02-delegation-func/appServices).
   - [ ] Grab a coffee.
   - [ ] Verify [Authorization K6 automated test](https://dev.azure.com/brreg/altinn-studio/_build?definitionId=414) results.

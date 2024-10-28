@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Altinn.Authorization.ABAC.Interface;
 using Altinn.Authorization.ABAC.Xacml;
 using Altinn.Authorization.ABAC.Xacml.JsonProfile;
+using Altinn.Common.AccessToken.Services;
 using Altinn.Common.Authentication.Configuration;
 using Altinn.Platform.Authorization.Controllers;
 using Altinn.Platform.Authorization.IntegrationTests.MockServices;
@@ -36,7 +37,7 @@ namespace Altinn.Platform.Authorization.IntegrationTests
         [Fact]
         public async Task PDPExternal_Decision_AltinnApps0008()
         {
-            string token = PrincipalUtil.GetOrgToken("skd", "974761076", "altinn:authorization:pdp");
+            string token = PrincipalUtil.GetOrgToken("skd", "974761076", "altinn:authorization/authorize");
             string testCase = "AltinnApps0008";
             HttpClient client = GetTestClient();
             client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("bearer", token);
@@ -53,7 +54,7 @@ namespace Altinn.Platform.Authorization.IntegrationTests
         [Fact]
         public async Task PDPExternal_Decision_AltinnApps0010()
         {
-            string token = PrincipalUtil.GetOrgToken("skd", "974761076", "altinn:authorization:pdp");
+            string token = PrincipalUtil.GetOrgToken("skd", "974761076", "altinn:authorization/authorize");
             string testCase = "AltinnApps0010";
             HttpClient client = GetTestClient();
             client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("bearer", token);
@@ -70,7 +71,7 @@ namespace Altinn.Platform.Authorization.IntegrationTests
         [Fact]
         public async Task PDPExternal_Decision_AltinnResourceRegistry0005()
         {
-            string token = PrincipalUtil.GetOrgToken("skd", "974761076", "altinn:authorization:pdp");
+            string token = PrincipalUtil.GetOrgToken("skd", "974761076", "altinn:authorization/authorize");
             string testCase = "AltinnResourceRegistry0005";
             HttpClient client = GetTestClient();
             client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("bearer", token);
@@ -87,7 +88,7 @@ namespace Altinn.Platform.Authorization.IntegrationTests
         [Fact]
         public async Task PDPExternal_Decision_AltinnResourceRegistry0006()
         {
-            string token = PrincipalUtil.GetOrgToken("skd", "974761076", "altinn:authorization:pdp");
+            string token = PrincipalUtil.GetOrgToken("skd", "974761076", "altinn:authorization/authorize");
 
             string testCase = "AltinnResourceRegistry0006";
             HttpClient client = GetTestClient();
@@ -106,7 +107,7 @@ namespace Altinn.Platform.Authorization.IntegrationTests
         [Fact]
         public async Task PDPExternal_Decision_AltinnResourceRegistry0007()
         {
-            string token = PrincipalUtil.GetOrgToken("skd", "974761076", "altinn:authorization:pdp");
+            string token = PrincipalUtil.GetOrgToken("skd", "974761076", "altinn:authorization/authorize");
             string testCase = "AltinnResourceRegistry0007";
             HttpClient client = GetTestClient();
             client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("bearer", token);
@@ -123,7 +124,7 @@ namespace Altinn.Platform.Authorization.IntegrationTests
         [Fact]
         public async Task PDPExternal_Decision_AltinnResourceRegistry0008()
         {
-            string token = PrincipalUtil.GetOrgToken("skd", "974761076", "altinn:authorization:pdp");
+            string token = PrincipalUtil.GetOrgToken("skd", "974761076", "altinn:authorization/authorize");
             string testCase = "AltinnResourceRegistry0008";
             HttpClient client = GetTestClient();
             client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("bearer", token);
@@ -143,7 +144,7 @@ namespace Altinn.Platform.Authorization.IntegrationTests
         [Fact]
         public async Task PDPExternal_Decision_AltinnResourceRegistry0009()
         {
-            string token = PrincipalUtil.GetOrgToken("skd", "974761076", "altinn:authorization:pdp");
+            string token = PrincipalUtil.GetOrgToken("skd", "974761076", "altinn:authorization/authorize");
             string testCase = "AltinnResourceRegistry0009";
             HttpClient client = GetTestClient();
             client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("bearer", token);
@@ -163,7 +164,7 @@ namespace Altinn.Platform.Authorization.IntegrationTests
         [Fact]
         public async Task PDPExternal_Decision_AltinnResourceRegistry0010()
         {
-            string token = PrincipalUtil.GetOrgToken("skd", "974761076", "altinn:authorization:pdp");
+            string token = PrincipalUtil.GetOrgToken("skd", "974761076", "altinn:authorization/authorize");
             string testCase = "AltinnResourceRegistry0010";
             HttpClient client = GetTestClient();
             client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("bearer", token);
@@ -183,8 +184,108 @@ namespace Altinn.Platform.Authorization.IntegrationTests
         [Fact]
         public async Task PDPExternal_Decision_AltinnResourceRegistry0011()
         {
-            string token = PrincipalUtil.GetOrgToken("skd", "974761076", "altinn:authorization:pdp");
+            string token = PrincipalUtil.GetOrgToken("skd", "974761076", "altinn:authorization/authorize");
             string testCase = "AltinnResourceRegistry0011";
+            HttpClient client = GetTestClient();
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("bearer", token);
+            HttpRequestMessage httpRequestMessage = TestSetupUtil.CreateXacmlRequestExternal(testCase);
+            XacmlJsonResponse expected = TestSetupUtil.ReadExpectedJsonProfileResponse(testCase);
+
+            // Act
+            XacmlJsonResponse contextResponse = await TestSetupUtil.GetXacmlJsonProfileContextResponseAsync(client, httpRequestMessage);
+
+            // Assert
+            AssertionUtil.AssertEqual(expected, contextResponse);
+        }
+
+        /// <summary>
+        /// Scenario where systemuser has received delegation from the resource party for the resource. Should give Permit result.
+        /// </summary>
+        [Fact]
+        public async Task PDPExternal_Decision_SystemUserWithResourceDelegation_Permit()
+        {
+            string token = PrincipalUtil.GetOrgToken("skd", "974761076", "altinn:authorization/authorize");
+            string testCase = "ResourceRegistry_SystemUserWithDelegation_Permit";
+            HttpClient client = GetTestClient();
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("bearer", token);
+            HttpRequestMessage httpRequestMessage = TestSetupUtil.CreateXacmlRequestExternal(testCase);
+            XacmlJsonResponse expected = TestSetupUtil.ReadExpectedJsonProfileResponse(testCase);
+
+            // Act
+            XacmlJsonResponse contextResponse = await TestSetupUtil.GetXacmlJsonProfileContextResponseAsync(client, httpRequestMessage);
+
+            // Assert
+            AssertionUtil.AssertEqual(expected, contextResponse);
+        }
+
+        /// <summary>
+        /// Scenario where systemuser has received delegation from the resource party for the resource. Should give Permit result.
+        /// </summary>
+        [Fact]
+        public async Task PDPExternal_Decision_SystemUserWithAppDelegation_Permit()
+        {
+            string token = PrincipalUtil.GetOrgToken("skd", "974761076", "altinn:authorization/authorize");
+            string testCase = "AltinnApps_SystemUserWithDelegation_Permit";
+            HttpClient client = GetTestClient();
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("bearer", token);
+            HttpRequestMessage httpRequestMessage = TestSetupUtil.CreateXacmlRequestExternal(testCase);
+            XacmlJsonResponse expected = TestSetupUtil.ReadExpectedJsonProfileResponse(testCase);
+
+            // Act
+            XacmlJsonResponse contextResponse = await TestSetupUtil.GetXacmlJsonProfileContextResponseAsync(client, httpRequestMessage);
+
+            // Assert
+            AssertionUtil.AssertEqual(expected, contextResponse);
+        }
+
+        /// <summary>
+        /// Multi request scenario for 3 authorization checks in one request
+        /// </summary>
+        [Fact]
+        public async Task PDPExternal_Decision_AltinnResourceRegistryMulti0012()
+        {
+            string token = PrincipalUtil.GetOrgToken("skd", "974761076", "altinn:authorization/authorize");
+            string testCase = "AltinnResourceRegistryMulti0012";
+            HttpClient client = GetTestClient();
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("bearer", token);
+            HttpRequestMessage httpRequestMessage = TestSetupUtil.CreateXacmlRequestExternal(testCase);
+            XacmlJsonResponse expected = TestSetupUtil.ReadExpectedJsonProfileResponse(testCase);
+
+            // Act
+            XacmlJsonResponse contextResponse = await TestSetupUtil.GetXacmlJsonProfileContextResponseAsync(client, httpRequestMessage);
+
+            // Assert
+            AssertionUtil.AssertEqual(expected, contextResponse);
+        }
+
+        /// <summary>
+        /// Scenario where systemuser has received delegation, but request includes multiple subjects as org and orgnumber. Should NOT give Permit. 
+        /// </summary>
+        [Fact]
+        public async Task PDPExternal_Decision_SystemUserWithDelegation_TooManyRequestSubjects_Indeterminate()
+        {
+            string token = PrincipalUtil.GetOrgToken("skd", "974761076", "altinn:authorization/authorize");
+            string testCase = "ResourceRegistry_SystemUserWithDelegation_TooManyRequestSubjects_Indeterminate";
+            HttpClient client = GetTestClient();
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("bearer", token);
+            HttpRequestMessage httpRequestMessage = TestSetupUtil.CreateXacmlRequestExternal(testCase);
+            XacmlJsonResponse expected = TestSetupUtil.ReadExpectedJsonProfileResponse(testCase);
+
+            // Act
+            XacmlJsonResponse contextResponse = await TestSetupUtil.GetXacmlJsonProfileContextResponseAsync(client, httpRequestMessage);
+
+            // Assert
+            AssertionUtil.AssertEqual(expected, contextResponse);
+        }
+
+        /// <summary>
+        /// Scenario where systemuser has received delegation from the resource party for two resources. Multirequest should give Permit result for both.
+        /// </summary>
+        [Fact]
+        public async Task PDPExternal_Decision_SystemUserWithDelegations_MultiRequest_Permit()
+        {
+            string token = PrincipalUtil.GetOrgToken("skd", "974761076", "altinn:authorization/authorize");
+            string testCase = "ResourceRegistry_SystemUserWithDelegations_MultiRequest_Permit";
             HttpClient client = GetTestClient();
             client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("bearer", token);
             HttpRequestMessage httpRequestMessage = TestSetupUtil.CreateXacmlRequestExternal(testCase);
@@ -215,6 +316,9 @@ namespace Altinn.Platform.Authorization.IntegrationTests
                     services.AddSingleton<IPostConfigureOptions<JwtCookieOptions>, JwtCookiePostConfigureOptionsStub>();
                     services.AddSingleton<IPostConfigureOptions<OidcProviderSettings>, OidcProviderPostConfigureSettingsStub>();
                     services.AddSingleton<IRegisterService, RegisterServiceMock>();
+                    services.AddSingleton<IResourceRegistry, ResourceRegistryMock>();
+                    services.AddSingleton<IAccessManagementWrapper, AccessManagementWrapperMock>();
+                    services.AddSingleton<IPublicSigningKeyProvider, PublicSigningKeyProviderMock>();
                 });
             }).CreateClient(new WebApplicationFactoryClientOptions { AllowAutoRedirect = false });
 

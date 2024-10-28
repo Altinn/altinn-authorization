@@ -391,6 +391,21 @@ namespace Altinn.Platform.Authorization.IntegrationTests
         }
 
         [Fact]
+        public async Task PDP_Decision_DelegationPolicy_AltinnAppsOrg1App1_SystemUserDelegation_Permit()
+        {
+            string testCase = "AltinnApps_SystemUserWithDelegation_Permit";
+            HttpClient client = GetTestClient();
+            HttpRequestMessage httpRequestMessage = TestSetupUtil.CreateJsonProfileXacmlRequest(testCase);
+            XacmlJsonResponse expected = TestSetupUtil.ReadExpectedJsonProfileResponse(testCase);
+
+            // Act
+            XacmlJsonResponse contextResponse = await TestSetupUtil.GetXacmlJsonProfileContextResponseAsync(client, httpRequestMessage);
+
+            // Assert
+            AssertionUtil.AssertEqual(expected, contextResponse);
+        }
+
+        [Fact]
         public async Task PDP_Decision_AltinnApps_OedFormuesfullmakt_Xml_Permit()
         {
             string testCase = "AltinnApps_OedFormuesfullmakt_Xml_Permit";
@@ -409,6 +424,26 @@ namespace Altinn.Platform.Authorization.IntegrationTests
         public async Task PDP_Decision_AltinnApps_OedFormuesfullmakt_Json_Permit()
         {
             string testCase = "AltinnApps_OedFormuesfullmakt_Json_Permit";
+            HttpClient client = GetTestClient();
+            HttpRequestMessage httpRequestMessage = TestSetupUtil.CreateJsonProfileXacmlRequest(testCase);
+            XacmlJsonResponse expected = TestSetupUtil.ReadExpectedJsonProfileResponse(testCase);
+
+            // Act
+            XacmlJsonResponse contextResponse = await TestSetupUtil.GetXacmlJsonProfileContextResponseAsync(client, httpRequestMessage);
+
+            // Assert
+            AssertionUtil.AssertEqual(expected, contextResponse);
+        }
+
+        /// <summary>
+        /// Tests a multirequest with two requests, one for Altinn App Org1/App1 and one for Org1/App2.
+        /// Both Apps are delegated from the party 50001337 to the user 20001336.
+        /// Expected: Both requests should be permitted.
+        /// </summary>
+        [Fact]
+        public async Task PDP_Decision_DelegationPolicyMultiRequest_AltinnAppsOrg1App1AndApp2_UserDelegation_Permit()
+        {
+            string testCase = "DelegationPolicyMultiRequest_AltinnAppsOrg1App1AndApp2_UserDelegation";
             HttpClient client = GetTestClient();
             HttpRequestMessage httpRequestMessage = TestSetupUtil.CreateJsonProfileXacmlRequest(testCase);
             XacmlJsonResponse expected = TestSetupUtil.ReadExpectedJsonProfileResponse(testCase);
