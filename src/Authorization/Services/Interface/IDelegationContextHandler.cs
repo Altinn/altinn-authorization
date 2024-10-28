@@ -14,9 +14,18 @@ namespace Altinn.Platform.Authorization.Services.Interface
         /// <summary>
         /// Updates needed subject information for the Context Request for a specific delegation
         /// </summary>
-        /// <param name="request">The original Xacml Context Request</param>
-        /// <param name="subjects">The list of PartyIds to be added as subject attributes</param>
-        public void Enrich(XacmlContextRequest request, List<int> subjects);
+        /// <param name="requestSubjectAttributes">The current collection of subject attributes on the request to be enriched</param>
+        /// <param name="isInstanceAccessRequest">Whether the request is for a specific instance, which needs additional uuid information</param>
+        /// <param name="cancellationToken">The <see cref="CancellationToken"/></param>
+        public Task EnrichRequestSubjectAttributes(XacmlContextAttributes requestSubjectAttributes, bool isInstanceAccessRequest, CancellationToken cancellationToken);
+
+        /// <summary>
+        /// Updates needed resource information for the Context Request for a specific delegation
+        /// </summary>
+        /// <param name="requestResourceAttributes">The current collection of resource attributes on the request to be enriched</param>
+        /// <param name="resourceAttributes">Preprocessed collection of resource attributes from the requests</param>
+        /// <param name="isInstanceAccessRequest">Whether the request is for a specific instance, which needs additional uuid information</param>
+        public void EnrichRequestResourceAttributes(XacmlContextAttributes requestResourceAttributes, XacmlResourceAttributes resourceAttributes, bool isInstanceAccessRequest);
 
         /// <summary>
         /// Gets the value of the first found attribute matching the prioritized order of xacmlRequestAttributes provided, from the XacmlContextRequest subjects.
@@ -29,16 +38,16 @@ namespace Altinn.Platform.Authorization.Services.Interface
         /// <summary>
         /// Gets the user id from the XacmlContextRequest subject attribute
         /// </summary>
-        /// <param name="request">The Xacml Context Request</param>
+        /// <param name="subjectAttributes">The Xacml Context Request subject attributes</param>
         /// <returns>The user id of the subject</returns>
-        public int GetSubjectUserId(XacmlContextRequest request);
+        public int GetSubjectUserId(XacmlContextAttributes subjectAttributes);
 
         /// <summary>
         /// Gets the party id from the XacmlContextRequest subject attribute
         /// </summary>
-        /// <param name="request">The Xacml Context Request</param>
+        /// <param name="subjectAttributes">The Xacml Context Request subject attributes</param>
         /// <returns>The party id of the subject</returns>
-        public int GetSubjectPartyId(XacmlContextRequest request);
+        public int GetSubjectPartyId(XacmlContextAttributes subjectAttributes);
 
         /// <summary>
         /// Gets a XacmlResourceAttributes model from the XacmlContextRequest

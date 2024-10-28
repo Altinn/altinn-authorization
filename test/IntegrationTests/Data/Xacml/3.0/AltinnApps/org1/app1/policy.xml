@@ -95,6 +95,45 @@
       </xacml:AnyOf>
     </xacml:Target>
   </xacml:Rule>
+  <xacml:Rule RuleId="urn:altinn:org1:app1:ruleid:3" Effect="Permit">
+    <xacml:Description>A rule defining all instance delegation rights the App itself is allowed to perform for instances of the app org1/app1. In this example the app can delegate the Read and Sign actions for the Task; instanceSpecificTask1</xacml:Description>
+    <xacml:Target>
+      <xacml:AnyOf>
+        <xacml:AllOf>
+          <xacml:Match MatchId="urn:oasis:names:tc:xacml:3.0:function:string-equal-ignore-case">
+            <xacml:AttributeValue DataType="http://www.w3.org/2001/XMLSchema#string">app_org1_app1</xacml:AttributeValue>
+            <xacml:AttributeDesignator AttributeId="urn:altinn:resource:delegation" Category="urn:oasis:names:tc:xacml:1.0:subject-category:access-subject" DataType="http://www.w3.org/2001/XMLSchema#string" MustBePresent="false" />
+          </xacml:Match>
+        </xacml:AllOf>
+      </xacml:AnyOf>
+      <xacml:AnyOf>
+        <xacml:AllOf>
+          <xacml:Match MatchId="urn:oasis:names:tc:xacml:1.0:function:string-equal">
+            <xacml:AttributeValue DataType="http://www.w3.org/2001/XMLSchema#string">app_org1_app1</xacml:AttributeValue>
+            <xacml:AttributeDesignator AttributeId="urn:altinn:resource" Category="urn:oasis:names:tc:xacml:3.0:attribute-category:resource" DataType="http://www.w3.org/2001/XMLSchema#string" MustBePresent="false" />
+          </xacml:Match>
+          <xacml:Match MatchId="urn:oasis:names:tc:xacml:1.0:function:string-equal">
+            <xacml:AttributeValue DataType="http://www.w3.org/2001/XMLSchema#string">instanceSpecificTask1</xacml:AttributeValue>
+            <xacml:AttributeDesignator AttributeId="urn:altinn:task" Category="urn:oasis:names:tc:xacml:3.0:attribute-category:resource" DataType="http://www.w3.org/2001/XMLSchema#string" MustBePresent="false" />
+          </xacml:Match>
+        </xacml:AllOf>
+      </xacml:AnyOf>
+      <xacml:AnyOf>
+        <xacml:AllOf>
+          <xacml:Match MatchId="urn:oasis:names:tc:xacml:3.0:function:string-equal-ignore-case">
+            <xacml:AttributeValue DataType="http://www.w3.org/2001/XMLSchema#string">read</xacml:AttributeValue>
+            <xacml:AttributeDesignator AttributeId="urn:oasis:names:tc:xacml:1.0:action:action-id" Category="urn:oasis:names:tc:xacml:3.0:attribute-category:action" DataType="http://www.w3.org/2001/XMLSchema#string" MustBePresent="false" />
+          </xacml:Match>
+        </xacml:AllOf>
+        <xacml:AllOf>
+          <xacml:Match MatchId="urn:oasis:names:tc:xacml:3.0:function:string-equal-ignore-case">
+            <xacml:AttributeValue DataType="http://www.w3.org/2001/XMLSchema#string">sign</xacml:AttributeValue>
+            <xacml:AttributeDesignator AttributeId="urn:oasis:names:tc:xacml:1.0:action:action-id" Category="urn:oasis:names:tc:xacml:3.0:attribute-category:action" DataType="http://www.w3.org/2001/XMLSchema#string" MustBePresent="false" />
+          </xacml:Match>
+        </xacml:AllOf>
+      </xacml:AnyOf>
+    </xacml:Target>
+  </xacml:Rule>
   <xacml:ObligationExpressions>
     <xacml:ObligationExpression FulfillOn="Permit" ObligationId="urn:altinn:obligation:1">
       <xacml:AttributeAssignmentExpression AttributeId="urn:altinn:obligation-assignment:1" Category="urn:altinn:minimum-authenticationlevel">
