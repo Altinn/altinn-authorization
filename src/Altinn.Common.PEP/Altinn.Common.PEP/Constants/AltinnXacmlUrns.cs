@@ -84,5 +84,20 @@ namespace Altinn.Common.PEP.Constants
         /// SystemUserUuid urn
         /// </summary>
         public const string SystemUserUuid = "urn:altinn:systemuser:uuid";
+
+        /// <summary>
+        /// xacml string that represents user
+        /// </summary>
+        public const string UserAttribute = "urn:altinn:userid";
+
+        /// <summary>
+        /// xacml string that represents person universally unique identifier
+        /// </summary>
+        public const string PersonUuidAttribute = "urn:altinn:person:uuid";
+
+        /// <summary>
+        /// xacml string that represents party
+        /// </summary>
+        public const string PartyAttribute = "urn:altinn:partyid";
     }
 }

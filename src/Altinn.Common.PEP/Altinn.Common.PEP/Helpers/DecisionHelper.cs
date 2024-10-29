@@ -174,6 +174,10 @@ namespace Altinn.Common.PEP.Helpers
         {
             List<XacmlJsonAttribute> attributes = new List<XacmlJsonAttribute>();
 
+            XacmlJsonAttribute userIdAttribute = null;
+            XacmlJsonAttribute personUuidAttribute = null;
+            XacmlJsonAttribute partyIdAttribute = null;
+
             // Mapping all claims on user to attributes
             foreach (Claim claim in claims)
             {
@@ -193,10 +197,36 @@ namespace Altinn.Common.PEP.Helpers
                 {
                     attributes.Add(CreateXacmlJsonAttribute(AltinnXacmlUrns.SystemUserUuid, userClaim.Systemuser_id[0], DefaultType, claim.Issuer));
                 }
+                else if (IsUserIdClaim(claim.Type))
+                {
+                    userIdAttribute = CreateXacmlJsonAttribute(AltinnXacmlUrns.UserAttribute, claim.Value, DefaultType, claim.Issuer);
+                }
+                else if (IsPersonUuidClaim(claim.Type))
+                {
+                    personUuidAttribute = CreateXacmlJsonAttribute(AltinnXacmlUrns.PersonUuidAttribute, claim.Value, DefaultType, claim.Issuer);
+                }
+                else if (IsPartyIdClaim(claim.Type))
+                {
+                    partyIdAttribute = CreateXacmlJsonAttribute(AltinnXacmlUrns.PartyAttribute, claim.Value, DefaultType, claim.Issuer);
+                }
                 else if (IsValidUrn(claim.Type))
                 {
                     attributes.Add(CreateXacmlJsonAttribute(claim.Type, claim.Value, DefaultType, claim.Issuer));
                 }
+            }
+
+            // Adding only one of the subject attributes to make sure we dont have mismatching duplicates
+            if (personUuidAttribute != null)
+            {
+                attributes.Add(personUuidAttribute);
+            }
+            else if (userIdAttribute != null)
+            {
+                attributes.Add(userIdAttribute);
+            }
+            else if (partyIdAttribute != null)
+            {
+                attributes.Add(partyIdAttribute);
             }
 
             return attributes;
@@ -299,6 +329,21 @@ namespace Altinn.Common.PEP.Helpers
             return value.Equals("scope");
         }
 
+        private static bool IsUserIdClaim(string value)
+        {
+            return value.Equals(AltinnXacmlUrns.UserAttribute);
+        }
+
+        private static bool IsPersonUuidClaim(string value)
+        {
+            return value.Equals(AltinnXacmlUrns.PersonUuidAttribute);
+        }
+
+        private static bool IsPartyIdClaim(string value)
+        {
+            return value.Equals(AltinnXacmlUrns.PartyAttribute);
+        }
+
         private static bool IsJtiClaim(string value)
         {
             return value.Equals("jti");
@@ -309,7 +354,12 @@ namespace Altinn.Common.PEP.Helpers
             if (claim.Type.Equals("authorization_details"))
             {
                 userClaim = JsonSerializer.Deserialize<SystemUserClaim>(claim.Value);
-                return true;
+                if (userClaim?.Systemuser_id != null && userClaim.Systemuser_id.Count > 0)
+                {
+                    return true;
+                }
+
+                return false;
             }
             else
             {
