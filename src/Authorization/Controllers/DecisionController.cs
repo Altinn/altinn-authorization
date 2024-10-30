@@ -439,7 +439,7 @@ namespace Altinn.Platform.Authorization.Controllers
             else
             {
                 // If request does not have an instance id, only non-instance delegations should be considered
-                delegations = delegations.Where(d => d.InstanceId == null);
+                delegations = delegations.Where(d => string.IsNullOrWhiteSpace(d.InstanceId));
             }
 
             if (!delegations.Any())
