@@ -177,6 +177,7 @@ namespace Altinn.Common.PEP.Helpers
             XacmlJsonAttribute userIdAttribute = null;
             XacmlJsonAttribute personUuidAttribute = null;
             XacmlJsonAttribute partyIdAttribute = null;
+            XacmlJsonAttribute resourceIdAttribute = null;
 
             // Mapping all claims on user to attributes
             foreach (Claim claim in claims)
@@ -209,6 +210,10 @@ namespace Altinn.Common.PEP.Helpers
                 {
                     partyIdAttribute = CreateXacmlJsonAttribute(AltinnXacmlUrns.PartyAttribute, claim.Value, DefaultType, claim.Issuer);
                 }
+                else if (IsResourceClaim(claim.Type))
+                {
+                    partyIdAttribute = CreateXacmlJsonAttribute(AltinnXacmlUrns.ResourceId, claim.Value, DefaultType, claim.Issuer);
+                }
                 else if (IsValidUrn(claim.Type))
                 {
                     attributes.Add(CreateXacmlJsonAttribute(claim.Type, claim.Value, DefaultType, claim.Issuer));
@@ -227,6 +232,10 @@ namespace Altinn.Common.PEP.Helpers
             else if (partyIdAttribute != null)
             {
                 attributes.Add(partyIdAttribute);
+            }
+            else if (resourceIdAttribute != null)
+            {
+                attributes.Add(resourceIdAttribute);
             }
 
             return attributes;
@@ -342,6 +351,11 @@ namespace Altinn.Common.PEP.Helpers
         private static bool IsPartyIdClaim(string value)
         {
             return value.Equals(AltinnXacmlUrns.PartyAttribute);
+        }
+
+        private static bool IsResourceClaim(string value)
+        {
+            return value.Equals(AltinnXacmlUrns.ResourceId);
         }
 
         private static bool IsJtiClaim(string value)
