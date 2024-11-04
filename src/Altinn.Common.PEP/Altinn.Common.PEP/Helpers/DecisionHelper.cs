@@ -324,43 +324,42 @@ namespace Altinn.Common.PEP.Helpers
 
         private static bool IsValidUrn(string value)
         {
-            Regex regex = new Regex("^urn*");
-            return regex.Match(value).Success;
+            return value.StartsWith("urn:", StringComparison.Ordinal);
         }
 
-        private static bool IsCamelCaseOrgnumberClaim(string value)
+        private static bool IsCamelCaseOrgnumberClaim(string name)
         {
-            return value.Equals("urn:altinn:orgNumber");
+            return name.Equals("urn:altinn:orgNumber");
         }
 
-        private static bool IsScopeClaim(string value)
+        private static bool IsScopeClaim(string name)
         {
-            return value.Equals("scope");
+            return name.Equals("scope");
         }
 
-        private static bool IsUserIdClaim(string value)
+        private static bool IsUserIdClaim(string name)
         {
-            return value.Equals(AltinnXacmlUrns.UserAttribute);
+            return name.Equals(AltinnXacmlUrns.UserAttribute);
         }
 
-        private static bool IsPersonUuidClaim(string value)
+        private static bool IsPersonUuidClaim(string name)
         {
-            return value.Equals(AltinnXacmlUrns.PersonUuidAttribute);
+            return name.Equals(AltinnXacmlUrns.PersonUuidAttribute);
         }
 
-        private static bool IsPartyIdClaim(string value)
+        private static bool IsPartyIdClaim(string name)
         {
-            return value.Equals(AltinnXacmlUrns.PartyAttribute);
+            return name.Equals(AltinnXacmlUrns.PartyAttribute);
         }
 
-        private static bool IsResourceClaim(string value)
+        private static bool IsResourceClaim(string name)
         {
-            return value.Equals(AltinnXacmlUrns.ResourceId);
+            return name.Equals(AltinnXacmlUrns.ResourceId);
         }
 
-        private static bool IsJtiClaim(string value)
+        private static bool IsJtiClaim(string name)
         {
-            return value.Equals("jti");
+            return name.Equals("jti");
         }
 
         private static bool IsSystemUserClaim(Claim claim, out SystemUserClaim userClaim)
