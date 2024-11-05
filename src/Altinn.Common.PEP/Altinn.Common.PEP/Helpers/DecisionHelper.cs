@@ -178,13 +178,18 @@ namespace Altinn.Common.PEP.Helpers
             XacmlJsonAttribute personUuidAttribute = null;
             XacmlJsonAttribute partyIdAttribute = null;
             XacmlJsonAttribute resourceIdAttribute = null;
+            XacmlJsonAttribute orgLegacy = null;
+            XacmlJsonAttribute orgAttribute = null;
+            XacmlJsonAttribute systemUserAttribute = null;
 
             // Mapping all claims on user to attributes
             foreach (Claim claim in claims)
             {
                 if (IsCamelCaseOrgnumberClaim(claim.Type))
                 {
-                    attributes.Add(CreateXacmlJsonAttribute(AltinnXacmlUrns.OrganizationNumber, claim.Value, DefaultType, claim.Issuer));
+                    // Set by Altinn authentication this format
+                    orgLegacy = CreateXacmlJsonAttribute(AltinnXacmlUrns.OrganizationNumber, claim.Value, DefaultType, claim.Issuer);
+                    orgAttribute = CreateXacmlJsonAttribute(AltinnXacmlUrns.OrganizationNumberAttribute, claim.Value, DefaultType, claim.Issuer);
                 }
                 else if (IsScopeClaim(claim.Type))
                 {
@@ -196,7 +201,7 @@ namespace Altinn.Common.PEP.Helpers
                 }
                 else if (IsSystemUserClaim(claim, out SystemUserClaim userClaim))
                 {
-                    attributes.Add(CreateXacmlJsonAttribute(AltinnXacmlUrns.SystemUserUuid, userClaim.Systemuser_id[0], DefaultType, claim.Issuer));
+                    systemUserAttribute = CreateXacmlJsonAttribute(AltinnXacmlUrns.SystemUserUuid, userClaim.Systemuser_id[0], DefaultType, claim.Issuer);
                 }
                 else if (IsUserIdClaim(claim.Type))
                 {
@@ -214,13 +219,19 @@ namespace Altinn.Common.PEP.Helpers
                 {
                     partyIdAttribute = CreateXacmlJsonAttribute(AltinnXacmlUrns.ResourceId, claim.Value, DefaultType, claim.Issuer);
                 }
+                else if (IsOrgAttributeClaim(claim.Type))
+                {
+                    // If claimlist contains new format of orgnumber reset any old. To ensure there is not a mismatch
+                    orgAttribute = CreateXacmlJsonAttribute(AltinnXacmlUrns.OrganizationNumberAttribute, claim.Value, DefaultType, claim.Issuer);
+                    orgLegacy = null;
+                }
                 else if (IsValidUrn(claim.Type))
                 {
                     attributes.Add(CreateXacmlJsonAttribute(claim.Type, claim.Value, DefaultType, claim.Issuer));
                 }
             }
 
-            // Adding only one of the subject attributes to make sure we dont have mismatching duplicates
+            // Adding only one of the subject attributes to make sure we dont have mismatching duplicates for PDP request that potentially could cause issues
             if (personUuidAttribute != null)
             {
                 attributes.Add(personUuidAttribute);
@@ -236,6 +247,20 @@ namespace Altinn.Common.PEP.Helpers
             else if (resourceIdAttribute != null)
             {
                 attributes.Add(resourceIdAttribute);
+            }
+            else if (systemUserAttribute != null)
+            {
+                attributes.Add(systemUserAttribute);
+            }
+            else if (orgLegacy != null)
+            {
+                // For legeacy we set both
+                attributes.Add(orgLegacy);
+                attributes.Add(orgAttribute);
+            }
+            else if (orgAttribute != null)
+            {
+                attributes.Add(orgAttribute);
             }
 
             return attributes;
@@ -355,6 +380,12 @@ namespace Altinn.Common.PEP.Helpers
         private static bool IsResourceClaim(string name)
         {
             return name.Equals(AltinnXacmlUrns.ResourceId);
+        }
+
+        private static bool IsOrgAttributeClaim(string name)
+        {
+            // The new format of orgnumber
+            return name.Equals(AltinnXacmlUrns.OrganizationNumberAttribute);
         }
 
         private static bool IsJtiClaim(string name)

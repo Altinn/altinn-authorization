@@ -16,9 +16,14 @@ namespace Altinn.Common.PEP.Constants
         public const string Ssn = "urn:altinn:ssn";
 
         /// <summary>
-        /// Get the URN value for 
+        /// Get the URN value for organization number. This is the legacy version 
         /// </summary>
         public const string OrganizationNumber = "urn:altinn:organizationnumber";
+
+        /// <summary>
+        /// xacml string that represents organization number 
+        /// </summary>
+        public const string OrganizationNumberAttribute = "urn:altinn:organization:identifier-no";
 
         /// <summary>
         /// Get the URN value for instance id
