@@ -178,8 +178,8 @@ namespace Altinn.Common.PEP.Helpers
             XacmlJsonAttribute personUuidAttribute = null;
             XacmlJsonAttribute partyIdAttribute = null;
             XacmlJsonAttribute resourceIdAttribute = null;
-            XacmlJsonAttribute orgLegacy = null;
-            XacmlJsonAttribute orgAttribute = null;
+            XacmlJsonAttribute legacyOrganizationNumberAttibute = null;
+            XacmlJsonAttribute organizationNumberAttribute = null;
             XacmlJsonAttribute systemUserAttribute = null;
 
             // Mapping all claims on user to attributes
@@ -188,8 +188,8 @@ namespace Altinn.Common.PEP.Helpers
                 if (IsCamelCaseOrgnumberClaim(claim.Type))
                 {
                     // Set by Altinn authentication this format
-                    orgLegacy = CreateXacmlJsonAttribute(AltinnXacmlUrns.OrganizationNumber, claim.Value, DefaultType, claim.Issuer);
-                    orgAttribute = CreateXacmlJsonAttribute(AltinnXacmlUrns.OrganizationNumberAttribute, claim.Value, DefaultType, claim.Issuer);
+                    legacyOrganizationNumberAttibute = CreateXacmlJsonAttribute(AltinnXacmlUrns.OrganizationNumber, claim.Value, DefaultType, claim.Issuer);
+                    organizationNumberAttribute = CreateXacmlJsonAttribute(AltinnXacmlUrns.OrganizationNumberAttribute, claim.Value, DefaultType, claim.Issuer);
                 }
                 else if (IsScopeClaim(claim.Type))
                 {
@@ -222,8 +222,8 @@ namespace Altinn.Common.PEP.Helpers
                 else if (IsOrganizationNumberAttributeClaim(claim.Type))
                 {
                     // If claimlist contains new format of orgnumber reset any old. To ensure there is not a mismatch
-                    orgAttribute = CreateXacmlJsonAttribute(AltinnXacmlUrns.OrganizationNumberAttribute, claim.Value, DefaultType, claim.Issuer);
-                    orgLegacy = null;
+                    organizationNumberAttribute = CreateXacmlJsonAttribute(AltinnXacmlUrns.OrganizationNumberAttribute, claim.Value, DefaultType, claim.Issuer);
+                    legacyOrganizationNumberAttibute = null;
                 }
                 else if (IsValidUrn(claim.Type))
                 {
@@ -252,15 +252,15 @@ namespace Altinn.Common.PEP.Helpers
             {
                 attributes.Add(systemUserAttribute);
             }
-            else if (orgLegacy != null)
+            else if (legacyOrganizationNumberAttibute != null)
             {
                 // For legeacy we set both
-                attributes.Add(orgLegacy);
-                attributes.Add(orgAttribute);
+                attributes.Add(legacyOrganizationNumberAttibute);
+                attributes.Add(organizationNumberAttribute);
             }
-            else if (orgAttribute != null)
+            else if (organizationNumberAttribute != null)
             {
-                attributes.Add(orgAttribute);
+                attributes.Add(organizationNumberAttribute);
             }
 
             return attributes;
