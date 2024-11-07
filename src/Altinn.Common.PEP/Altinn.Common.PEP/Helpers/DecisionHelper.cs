@@ -219,7 +219,7 @@ namespace Altinn.Common.PEP.Helpers
                 {
                     partyIdAttribute = CreateXacmlJsonAttribute(AltinnXacmlUrns.ResourceId, claim.Value, DefaultType, claim.Issuer);
                 }
-                else if (IsOrgAttributeClaim(claim.Type))
+                else if (IsOrganizationNumberAttributeClaim(claim.Type))
                 {
                     // If claimlist contains new format of orgnumber reset any old. To ensure there is not a mismatch
                     orgAttribute = CreateXacmlJsonAttribute(AltinnXacmlUrns.OrganizationNumberAttribute, claim.Value, DefaultType, claim.Issuer);
@@ -382,7 +382,7 @@ namespace Altinn.Common.PEP.Helpers
             return name.Equals(AltinnXacmlUrns.ResourceId);
         }
 
-        private static bool IsOrgAttributeClaim(string name)
+        private static bool IsOrganizationNumberAttributeClaim(string name)
         {
             // The new format of orgnumber
             return name.Equals(AltinnXacmlUrns.OrganizationNumberAttribute);
