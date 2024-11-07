@@ -433,7 +433,7 @@ namespace Altinn.Platform.Authorization.Controllers
 
             if (IsTypeApp(resourceAttributes))
             {
-                var delegations = await GetAllCachedDelegationChanges(WithDefaultGetAllDelegationChangesInput(resourceAttributes, decisionRequest), input => input.Resource = new List<AttributeMatch>()
+                var delegations = await GetAllCachedDelegationChanges(cancellationToken, WithDefaultGetAllDelegationChangesInput(resourceAttributes, decisionRequest), input => input.Resource = new List<AttributeMatch>()
                     {
                         new(AltinnXacmlConstants.MatchAttributeIdentifiers.OrgAttribute, resourceAttributes.OrgValue),
                         new(AltinnXacmlConstants.MatchAttributeIdentifiers.AppAttribute, resourceAttributes.AppValue),
@@ -444,7 +444,7 @@ namespace Altinn.Platform.Authorization.Controllers
 
             if (IsTypeResource(resourceAttributes))
             {
-                var delegations = await GetAllCachedDelegationChanges(WithDefaultGetAllDelegationChangesInput(resourceAttributes, decisionRequest), input => input.Resource = new List<AttributeMatch>()
+                var delegations = await GetAllCachedDelegationChanges(cancellationToken, WithDefaultGetAllDelegationChangesInput(resourceAttributes, decisionRequest), input => input.Resource = new List<AttributeMatch>()
                 {
                     new(AltinnXacmlConstants.MatchAttributeIdentifiers.ResourceRegistry, resourceAttributes.ResourceRegistryId)
                 });
@@ -458,7 +458,7 @@ namespace Altinn.Platform.Authorization.Controllers
             });
         }
 
-        private async Task<IEnumerable<DelegationChangeExternal>> GetAllCachedDelegationChanges(params Action<DelegationChangeInput>[] actions)
+        private async Task<IEnumerable<DelegationChangeExternal>> GetAllCachedDelegationChanges(CancellationToken cancellationToken = default, params Action<DelegationChangeInput>[] actions)
         {
             var delegation = new DelegationChangeInput();
             foreach (var action in actions)
@@ -474,7 +474,7 @@ namespace Altinn.Platform.Authorization.Controllers
 
             if (!_memoryCache.TryGetValue(cacheKey, out IEnumerable<DelegationChangeExternal> result))
             {
-                result = await _accessManagement.GetAllDelegationChanges(actions);
+                result = await _accessManagement.GetAllDelegationChanges(cancellationToken, actions);
                 var cacheEntryOptions = new MemoryCacheEntryOptions()
                     .SetPriority(CacheItemPriority.High)
                     .SetAbsoluteExpiration(new TimeSpan(0, 0, 5, 0));

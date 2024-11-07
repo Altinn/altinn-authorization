@@ -6,12 +6,17 @@ using System.Net.Http.Json;
 using System.Net.Mime;
 using System.Text;
 using System.Text.Json;
+using System.Threading;
 using System.Threading.Tasks;
 using Altinn.Platform.Authorization.Clients;
+using Altinn.Platform.Authorization.Configuration;
 using Altinn.Platform.Authorization.Models;
 using Altinn.Platform.Authorization.Models.AccessManagement;
 using Altinn.Platform.Authorization.Services.Interface;
+using AltinnCore.Authentication.Utils;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 
 namespace Altinn.Platform.Authorization.Services.Implementation
 {
@@ -20,23 +25,25 @@ namespace Altinn.Platform.Authorization.Services.Implementation
     /// </summary>
     public class AccessManagementWrapper : IAccessManagementWrapper
     {
+        private readonly GeneralSettings _generalSettings;
         private readonly AccessManagementClient _client;
         private readonly ILogger<AccessManagementWrapper> _logger;
+        private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly JsonSerializerOptions _serializerOptions = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
 
         /// <summary>
         /// Initializes a new instance of the <see cref="AccessManagementWrapper"/> class.
         /// </summary>
-        public AccessManagementWrapper(ILogger<AccessManagementWrapper> logger, AccessManagementClient client)
+        public AccessManagementWrapper(ILogger<AccessManagementWrapper> logger, IOptions<GeneralSettings> generalSettings, AccessManagementClient client, IHttpContextAccessor httpContextAccessor)
         {
             _logger = logger;
             _client = client;
+            _generalSettings = generalSettings.Value;
+            _httpContextAccessor = httpContextAccessor;
         }
 
-        /// <summary>
-        /// Endpoint to find all delegation changes for a given user, reportee and app/resource context
-        /// </summary>
-        /// <returns>Input parameter to the request</returns>
-        public async Task<IEnumerable<DelegationChangeExternal>> GetAllDelegationChanges(DelegationChangeInput input)
+        /// <inheritdoc/>
+        public async Task<IEnumerable<DelegationChangeExternal>> GetAllDelegationChanges(DelegationChangeInput input, CancellationToken cancellationToken = default)
         {
             try
             {
@@ -47,7 +54,7 @@ namespace Altinn.Platform.Authorization.Services.Implementation
 
                 if (response.IsSuccessStatusCode)
                 {
-                    return await response.Content.ReadFromJsonAsync<IEnumerable<DelegationChangeExternal>>();
+                    return await response.Content.ReadFromJsonAsync<IEnumerable<DelegationChangeExternal>>(_serializerOptions, cancellationToken);
                 }
 
                 var content = await response.Content.ReadAsStringAsync();
@@ -65,12 +72,8 @@ namespace Altinn.Platform.Authorization.Services.Implementation
             }
         }
 
-        /// <summary>
-        /// Endpoint to find all delegation changes for a given user, reportee and app/resource context
-        /// </summary>
-        /// <param name="actions">optional funvation pattern for modifying the request sent to Access Management API</param>
-        /// <returns></returns>
-        public async Task<IEnumerable<DelegationChangeExternal>> GetAllDelegationChanges(params Action<DelegationChangeInput>[] actions)
+        /// <inheritdoc/>
+        public async Task<IEnumerable<DelegationChangeExternal>> GetAllDelegationChanges(CancellationToken cancellationToken = default, params Action<DelegationChangeInput>[] actions)
         {
             var input = new DelegationChangeInput()
             {
@@ -79,6 +82,24 @@ namespace Altinn.Platform.Authorization.Services.Implementation
 
             actions.ToList().ForEach(action => action(input));
             return await GetAllDelegationChanges(input);
+        }
+
+        /// <inheritdoc/>
+        public async Task<IEnumerable<AuthorizedPartyDto>> GetAuthorizedParties(CancellationToken cancellationToken = default)
+        {
+            HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Get, new Uri(new Uri(_client.Settings.Value.ApiAccessManagementEndpoint), "authorizedparties?includeAltinn2=true"));
+            request.Headers.Add("Authorization", "Bearer " + JwtTokenUtil.GetTokenFromContext(_httpContextAccessor.HttpContext, _generalSettings.RuntimeCookieName));
+
+            var response = await _client.Client.SendAsync(request, cancellationToken);
+
+            string responseContent = await response.Content.ReadAsStringAsync(cancellationToken);
+            if (response.IsSuccessStatusCode)
+            {
+                return await response.Content.ReadFromJsonAsync<IEnumerable<AuthorizedPartyDto>>(_serializerOptions, cancellationToken);
+            }
+
+            var content = await response.Content.ReadAsStringAsync();
+            throw new HttpRequestException(content == string.Empty ? $"AuthorizedParties received status code {response.StatusCode}" : content);
         }
     }
 }

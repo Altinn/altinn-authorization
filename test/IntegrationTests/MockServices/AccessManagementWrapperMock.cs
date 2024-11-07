@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Altinn.Authorization.Enums;
 using Altinn.Platform.Authorization.Constants;
@@ -14,7 +15,7 @@ namespace Altinn.Platform.Authorization.IntegrationTests.MockServices;
 
 public class AccessManagementWrapperMock : IAccessManagementWrapper
 {
-    public Task<IEnumerable<DelegationChangeExternal>> GetAllDelegationChanges(DelegationChangeInput input)
+    public Task<IEnumerable<DelegationChangeExternal>> GetAllDelegationChanges(DelegationChangeInput input, CancellationToken cancellationToken = default)
     {
         var data = new List<Action<DelegationChangeInput, List<DelegationChangeExternal>>>()
         {
@@ -95,7 +96,7 @@ public class AccessManagementWrapperMock : IAccessManagementWrapper
         };
     }
 
-    public async Task<IEnumerable<DelegationChangeExternal>> GetAllDelegationChanges(params Action<DelegationChangeInput>[] actions)
+    public async Task<IEnumerable<DelegationChangeExternal>> GetAllDelegationChanges(CancellationToken cancellationToken, params Action<DelegationChangeInput>[] actions)
     {
         var result = new DelegationChangeInput();
         foreach (var action in actions)
@@ -104,5 +105,10 @@ public class AccessManagementWrapperMock : IAccessManagementWrapper
         }
 
         return await GetAllDelegationChanges(result);
+    }
+
+    public Task<IEnumerable<AuthorizedPartyDto>> GetAuthorizedParties(CancellationToken cancellationToken = default)
+    {
+        throw new NotImplementedException();
     }
 }
