@@ -455,6 +455,106 @@ namespace Altinn.Platform.Authorization.IntegrationTests
             AssertionUtil.AssertEqual(expected, contextResponse);
         }
 
+        /// <summary>
+        /// Tests a negative decision request for an instance delegation specific task of Altinn App Org1/App1.
+        /// Sign action for the specific task is not covered by Dagl role access for the instance. The user 20000490 is DAGL for party 50005545.
+        /// Expected: Dagl is not permitted to access the instance.
+        /// </summary>
+        [Fact]
+        public async Task PDP_Decision_AppPolicy_AltinnAppsOrg1App1_DAGL_NotApplicable()
+        {
+            string testCase = "AppPolicy_AltinnAppsOrg1App1_DAGL_NotApplicable";
+            HttpClient client = GetTestClient();
+            HttpRequestMessage httpRequestMessage = TestSetupUtil.CreateJsonProfileXacmlRequest(testCase);
+            XacmlJsonResponse expected = TestSetupUtil.ReadExpectedJsonProfileResponse(testCase);
+
+            // Act
+            XacmlJsonResponse contextResponse = await TestSetupUtil.GetXacmlJsonProfileContextResponseAsync(client, httpRequestMessage);
+
+            // Assert
+            AssertionUtil.AssertEqual(expected, contextResponse);
+        }
+
+        /// <summary>
+        /// Tests a decision request for an instance of Altinn App Org1/App1.
+        /// Sign action for a specific task (not covered by role access) for the instance has been delegated from the party 50005545 to the user 20000095.
+        /// Expected: User i permitted to access the instance.
+        /// </summary>
+        [Fact]
+        public async Task PDP_Decision_InstanceDelegationPolicy_AltinnAppsOrg1App1_Permit()
+        {
+            string testCase = "InstanceDelegationPolicy_AltinnAppsOrg1App1_Permit";
+            HttpClient client = GetTestClient();
+            HttpRequestMessage httpRequestMessage = TestSetupUtil.CreateJsonProfileXacmlRequest(testCase);
+            XacmlJsonResponse expected = TestSetupUtil.ReadExpectedJsonProfileResponse(testCase);
+
+            // Act
+            XacmlJsonResponse contextResponse = await TestSetupUtil.GetXacmlJsonProfileContextResponseAsync(client, httpRequestMessage);
+
+            // Assert
+            AssertionUtil.AssertEqual(expected, contextResponse);
+        }
+
+        /// <summary>
+        /// Tests a decision request for an instance of Altinn App Org1/App1.
+        /// Sign action for a specific task (not covered by role access) for the instance has been delegated from the party 50005545 to the user 20000095.
+        /// Expected: User i permitted to access the instance.
+        /// </summary>
+        [Fact]
+        public async Task PDP_Decision_InstanceDelegationPolicy_AltinnAppsInstanceOrg1App1_Permit()
+        {
+            string testCase = "InstanceDelegationPolicy_AltinnAppsInstanceOrg1App1_Permit";
+            HttpClient client = GetTestClient();
+            HttpRequestMessage httpRequestMessage = TestSetupUtil.CreateJsonProfileXacmlRequest(testCase);
+            XacmlJsonResponse expected = TestSetupUtil.ReadExpectedJsonProfileResponse(testCase);
+
+            // Act
+            XacmlJsonResponse contextResponse = await TestSetupUtil.GetXacmlJsonProfileContextResponseAsync(client, httpRequestMessage);
+
+            // Assert
+            AssertionUtil.AssertEqual(expected, contextResponse);
+        }
+
+        /// <summary>
+        /// Tests a decision request for an instance of Altinn App Org1/App1.
+        /// Sign action for a specific task (not covered by role access) for the instance has been delegated from the party 50005545 to the user 20000095.
+        /// Expected: User i permitted to access the instance.
+        /// </summary>
+        [Fact]
+        public async Task PDP_Decision_InstanceDelegationPolicy_AltinnAppsResourceOrg1App1_DAGLOfOrgDelegation_Permit()
+        {
+            string testCase = "InstanceDelegationPolicy_AltinnAppsResourceOrg1App1_DAGLOfOrgDelegation_Permit";
+            HttpClient client = GetTestClient();
+            HttpRequestMessage httpRequestMessage = TestSetupUtil.CreateJsonProfileXacmlRequest(testCase);
+            XacmlJsonResponse expected = TestSetupUtil.ReadExpectedJsonProfileResponse(testCase);
+
+            // Act
+            XacmlJsonResponse contextResponse = await TestSetupUtil.GetXacmlJsonProfileContextResponseAsync(client, httpRequestMessage);
+
+            // Assert
+            AssertionUtil.AssertEqual(expected, contextResponse);
+        }
+
+        /// <summary>
+        /// Tests a decision request for an instance of Altinn App Org1/App1.
+        /// Sign action for a specific task (not covered by role access) for the instance has been delegated from the party 50005545 to the user 20000095.
+        /// Expected: User i permitted to access the instance.
+        /// </summary>
+        [Fact]
+        public async Task PDP_Decision_InstanceDelegationPolicy_AltinnAppsResourceOrg1App1_OrgSubject_Permit()
+        {
+            string testCase = "InstanceDelegationPolicy_AltinnAppsResourceOrg1App1_OrgSubject_Permit";
+            HttpClient client = GetTestClient();
+            HttpRequestMessage httpRequestMessage = TestSetupUtil.CreateJsonProfileXacmlRequest(testCase);
+            XacmlJsonResponse expected = TestSetupUtil.ReadExpectedJsonProfileResponse(testCase);
+
+            // Act
+            XacmlJsonResponse contextResponse = await TestSetupUtil.GetXacmlJsonProfileContextResponseAsync(client, httpRequestMessage);
+
+            // Assert
+            AssertionUtil.AssertEqual(expected, contextResponse);
+        }
+
         private HttpClient GetTestClient(IEventsQueueClient eventLog = null, IFeatureManager featureManager = null, TimeProvider timeProviderMock = null)
         {
             HttpClient client = _factory.WithWebHostBuilder(builder =>

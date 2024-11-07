@@ -1,9 +1,13 @@
 using System;
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Text;
 using System.Text.Json;
+using System.Threading;
 using System.Threading.Tasks;
 using Altinn.Common.AccessTokenClient.Services;
 using Altinn.Platform.Authorization.Configuration;
@@ -56,7 +60,7 @@ namespace Altinn.Platform.Authorization.Services
         }
 
         /// <inheritdoc/>
-        public async Task<Party> GetParty(int partyId)
+        public async Task<Party> GetParty(int partyId, CancellationToken cancellationToken = default)
         {
             string cacheKey = $"p:{partyId}";
             if (!_memoryCache.TryGetValue(cacheKey, out Party party))
@@ -65,11 +69,11 @@ namespace Altinn.Platform.Authorization.Services
                 string token = JwtTokenUtil.GetTokenFromContext(_httpContextAccessor.HttpContext, _generalSettings.RuntimeCookieName);
                 string accessToken = _accessTokenGenerator.GenerateAccessToken("platform", "authorization");
 
-                HttpResponseMessage response = await _client.GetAsync(endpointUrl, token, accessToken);
+                HttpResponseMessage response = await _client.GetAsync(endpointUrl, token, accessToken, cancellationToken);
 
                 if (response.StatusCode == HttpStatusCode.OK)
                 {
-                    string responseContent = await response.Content.ReadAsStringAsync();
+                    string responseContent = await response.Content.ReadAsStringAsync(cancellationToken);
                     party = JsonSerializer.Deserialize<Party>(responseContent, _serializerOptions);
                     PutInCache(cacheKey, 10, party);
                 }
@@ -83,7 +87,59 @@ namespace Altinn.Platform.Authorization.Services
         }
 
         /// <inheritdoc/>
-        public async Task<Party> PartyLookup(string orgNo, string person)
+        public async Task<List<Party>> GetPartiesAsync(List<int> partyIds, bool includeSubunits = false, CancellationToken cancellationToken = default)
+        {
+            List<Party> parties = new List<Party>();
+            List<int> partyIdsNotInCache = new List<int>();
+
+            foreach (int partyId in partyIds.Distinct())
+            {
+                if (_memoryCache.TryGetValue($"p:{partyId}|inclSubunits:{includeSubunits}", out Party party))
+                {
+                    parties.Add(party);
+                }
+                else
+                {
+                    partyIdsNotInCache.Add(partyId);
+                }
+            }
+
+            if (partyIdsNotInCache.Count == 0)
+            {
+                return parties;
+            }
+            
+            string endpointUrl = $"parties/partylist?fetchSubUnits={includeSubunits}";
+            string token = JwtTokenUtil.GetTokenFromContext(_httpContextAccessor.HttpContext, _generalSettings.RuntimeCookieName);
+            string accessToken = _accessTokenGenerator.GenerateAccessToken("platform", "authorization");
+            StringContent requestBody = new StringContent(JsonSerializer.Serialize(partyIds), Encoding.UTF8, "application/json");
+
+            HttpResponseMessage response = await _client.PostAsync(endpointUrl, requestBody, token, accessToken, cancellationToken);
+            string responseContent = await response.Content.ReadAsStringAsync(cancellationToken);
+
+            List<Party> remainingParties = new();
+            if (response.StatusCode == HttpStatusCode.OK)
+            {
+                remainingParties = JsonSerializer.Deserialize<List<Party>>(responseContent, _serializerOptions);
+            }
+
+            if (remainingParties.Count > 0)
+            {
+                foreach (Party party in remainingParties)
+                {
+                    if (party?.PartyId != null)
+                    {
+                        parties.Add(party);
+                        PutInCache($"p:{party.PartyId}|inclSubunits:{includeSubunits}", 10, party);
+                    }
+                }
+            }
+
+            return parties;
+        }
+
+        /// <inheritdoc/>
+        public async Task<Party> PartyLookup(string orgNo, string person, CancellationToken cancellationToken = default)
         {
             string cacheKey;
             PartyLookup partyLookup;
@@ -113,17 +169,17 @@ namespace Altinn.Platform.Authorization.Services
                 StringContent content = new StringContent(JsonSerializer.Serialize(partyLookup));
                 content.Headers.ContentType = MediaTypeHeaderValue.Parse("application/json");
 
-                HttpResponseMessage response = await _client.PostAsync(endpointUrl, content, bearerToken, accessToken);
+                HttpResponseMessage response = await _client.PostAsync(endpointUrl, content, bearerToken, accessToken, cancellationToken);
 
                 if (response.StatusCode == HttpStatusCode.OK)
                 {
-                    string responseContent = await response.Content.ReadAsStringAsync();
+                    string responseContent = await response.Content.ReadAsStringAsync(cancellationToken);
                     party = JsonSerializer.Deserialize<Party>(responseContent, _serializerOptions);
                     PutInCache(cacheKey, 10, party);
                 }
                 else
                 {
-                    string reason = await response.Content.ReadAsStringAsync();
+                    string reason = await response.Content.ReadAsStringAsync(cancellationToken);
                     _logger.LogError("// RegisterService // PartyLookup // Failed to lookup party in platform register. Response {response}. \n Reason {reason}.", response, reason);
 
                     throw await PlatformHttpException.CreateAsync(response);

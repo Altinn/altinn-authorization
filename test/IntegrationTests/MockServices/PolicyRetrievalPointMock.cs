@@ -115,6 +115,14 @@ namespace Altinn.Platform.Authorization.IntegrationTests.MockServices
                         {
                             foreach (var asff in asd.AttributeValues)
                             {
+                                if (asff.Value.StartsWith("app_"))
+                                {
+                                    var orgApp = asff.Value.Split("_");
+                                    org = orgApp[1];
+                                    app = orgApp[2];
+                                    break;
+                                }
+
                                 resourceregistry = asff.Value;
                                 break;
                             }
