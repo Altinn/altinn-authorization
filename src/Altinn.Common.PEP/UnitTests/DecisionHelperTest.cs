@@ -65,7 +65,7 @@ namespace UnitTests
             XacmlJsonRequest request = requestRoot.Request;
 
             // Assert
-            Assert.Equal(3, request.AccessSubject[0].Attribute.Count);
+            Assert.Equal(4, request.AccessSubject[0].Attribute.Count);
             Assert.Single(request.Action[0].Attribute);
             Assert.Equal(3, request.Resource[0].Attribute.Count);
         }

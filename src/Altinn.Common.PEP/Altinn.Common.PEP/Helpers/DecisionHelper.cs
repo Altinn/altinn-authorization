@@ -2,7 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
+using System.Text.Json;
 using System.Text.RegularExpressions;
+using Altinn.AccessManagement.Core.Models;
 using Altinn.Authorization.ABAC.Xacml;
 using Altinn.Authorization.ABAC.Xacml.JsonProfile;
 using Altinn.Common.PEP.Authorization;
@@ -172,12 +174,22 @@ namespace Altinn.Common.PEP.Helpers
         {
             List<XacmlJsonAttribute> attributes = new List<XacmlJsonAttribute>();
 
+            XacmlJsonAttribute userIdAttribute = null;
+            XacmlJsonAttribute personUuidAttribute = null;
+            XacmlJsonAttribute partyIdAttribute = null;
+            XacmlJsonAttribute resourceIdAttribute = null;
+            XacmlJsonAttribute legacyOrganizationNumberAttibute = null;
+            XacmlJsonAttribute organizationNumberAttribute = null;
+            XacmlJsonAttribute systemUserAttribute = null;
+
             // Mapping all claims on user to attributes
             foreach (Claim claim in claims)
             {
                 if (IsCamelCaseOrgnumberClaim(claim.Type))
                 {
-                    attributes.Add(CreateXacmlJsonAttribute(AltinnXacmlUrns.OrganizationNumber, claim.Value, DefaultType, claim.Issuer));
+                    // Set by Altinn authentication this format
+                    legacyOrganizationNumberAttibute = CreateXacmlJsonAttribute(AltinnXacmlUrns.OrganizationNumber, claim.Value, DefaultType, claim.Issuer);
+                    organizationNumberAttribute = CreateXacmlJsonAttribute(AltinnXacmlUrns.OrganizationNumberAttribute, claim.Value, DefaultType, claim.Issuer);
                 }
                 else if (IsScopeClaim(claim.Type))
                 {
@@ -187,10 +199,68 @@ namespace Altinn.Common.PEP.Helpers
                 {
                     attributes.Add(CreateXacmlJsonAttribute(AltinnXacmlUrns.SessionId, claim.Value, DefaultType, claim.Issuer));
                 }
+                else if (IsSystemUserClaim(claim, out SystemUserClaim userClaim))
+                {
+                    systemUserAttribute = CreateXacmlJsonAttribute(AltinnXacmlUrns.SystemUserUuid, userClaim.Systemuser_id[0], DefaultType, claim.Issuer);
+                }
+                else if (IsUserIdClaim(claim.Type))
+                {
+                    userIdAttribute = CreateXacmlJsonAttribute(AltinnXacmlUrns.UserAttribute, claim.Value, DefaultType, claim.Issuer);
+                }
+                else if (IsPersonUuidClaim(claim.Type))
+                {
+                    personUuidAttribute = CreateXacmlJsonAttribute(AltinnXacmlUrns.PersonUuidAttribute, claim.Value, DefaultType, claim.Issuer);
+                }
+                else if (IsPartyIdClaim(claim.Type))
+                {
+                    partyIdAttribute = CreateXacmlJsonAttribute(AltinnXacmlUrns.PartyAttribute, claim.Value, DefaultType, claim.Issuer);
+                }
+                else if (IsResourceClaim(claim.Type))
+                {
+                    partyIdAttribute = CreateXacmlJsonAttribute(AltinnXacmlUrns.ResourceId, claim.Value, DefaultType, claim.Issuer);
+                }
+                else if (IsOrganizationNumberAttributeClaim(claim.Type))
+                {
+                    // If claimlist contains new format of orgnumber reset any old. To ensure there is not a mismatch
+                    organizationNumberAttribute = CreateXacmlJsonAttribute(AltinnXacmlUrns.OrganizationNumberAttribute, claim.Value, DefaultType, claim.Issuer);
+                    legacyOrganizationNumberAttibute = null;
+                }
                 else if (IsValidUrn(claim.Type))
                 {
                     attributes.Add(CreateXacmlJsonAttribute(claim.Type, claim.Value, DefaultType, claim.Issuer));
                 }
+            }
+
+            // Adding only one of the subject attributes to make sure we dont have mismatching duplicates for PDP request that potentially could cause issues
+            if (personUuidAttribute != null)
+            {
+                attributes.Add(personUuidAttribute);
+            }
+            else if (userIdAttribute != null)
+            {
+                attributes.Add(userIdAttribute);
+            }
+            else if (partyIdAttribute != null)
+            {
+                attributes.Add(partyIdAttribute);
+            }
+            else if (resourceIdAttribute != null)
+            {
+                attributes.Add(resourceIdAttribute);
+            }
+            else if (systemUserAttribute != null)
+            {
+                attributes.Add(systemUserAttribute);
+            }
+            else if (legacyOrganizationNumberAttibute != null)
+            {
+                // For legeacy we set both
+                attributes.Add(legacyOrganizationNumberAttibute);
+                attributes.Add(organizationNumberAttribute);
+            }
+            else if (organizationNumberAttribute != null)
+            {
+                attributes.Add(organizationNumberAttribute);
             }
 
             return attributes;
@@ -279,23 +349,67 @@ namespace Altinn.Common.PEP.Helpers
 
         private static bool IsValidUrn(string value)
         {
-            Regex regex = new Regex("^urn*");
-            return regex.Match(value).Success;
+            return value.StartsWith("urn:", StringComparison.Ordinal);
         }
 
-        private static bool IsCamelCaseOrgnumberClaim(string value)
+        private static bool IsCamelCaseOrgnumberClaim(string name)
         {
-            return value.Equals("urn:altinn:orgNumber");
+            return name.Equals("urn:altinn:orgNumber");
         }
 
-        private static bool IsScopeClaim(string value)
+        private static bool IsScopeClaim(string name)
         {
-            return value.Equals("scope");
+            return name.Equals("scope");
         }
 
-        private static bool IsJtiClaim(string value)
+        private static bool IsUserIdClaim(string name)
         {
-            return value.Equals("jti");
+            return name.Equals(AltinnXacmlUrns.UserAttribute);
+        }
+
+        private static bool IsPersonUuidClaim(string name)
+        {
+            return name.Equals(AltinnXacmlUrns.PersonUuidAttribute);
+        }
+
+        private static bool IsPartyIdClaim(string name)
+        {
+            return name.Equals(AltinnXacmlUrns.PartyAttribute);
+        }
+
+        private static bool IsResourceClaim(string name)
+        {
+            return name.Equals(AltinnXacmlUrns.ResourceId);
+        }
+
+        private static bool IsOrganizationNumberAttributeClaim(string name)
+        {
+            // The new format of orgnumber
+            return name.Equals(AltinnXacmlUrns.OrganizationNumberAttribute);
+        }
+
+        private static bool IsJtiClaim(string name)
+        {
+            return name.Equals("jti");
+        }
+
+        private static bool IsSystemUserClaim(Claim claim, out SystemUserClaim userClaim)
+        {
+            if (claim.Type.Equals("authorization_details"))
+            {
+                userClaim = JsonSerializer.Deserialize<SystemUserClaim>(claim.Value);
+                if (userClaim?.Systemuser_id != null && userClaim.Systemuser_id.Count > 0)
+                {
+                    return true;
+                }
+
+                return false;
+            }
+            else
+            {
+                userClaim = null;
+                return false;
+            }
         }
 
         /// <summary>
