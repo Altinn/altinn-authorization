@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
@@ -9,6 +10,7 @@ using Altinn.Platform.Authorization.IntegrationTests.MockServices;
 using Altinn.Platform.Authorization.IntegrationTests.Util;
 using Altinn.Platform.Authorization.IntegrationTests.Webfactory;
 using Altinn.Platform.Authorization.Services.Interface;
+using Altinn.Platform.Register.Models;
 using AltinnCore.Authentication.JwtCookie;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.TestHost;
@@ -20,7 +22,6 @@ using Xunit;
 
 namespace Altinn.Platform.Authorization.IntegrationTests
 {
-    [Collection("Our Test Collection #1")]
     public class PartiesControllerTest : IClassFixture<CustomWebApplicationFactory<PartiesController>>
     {
         private readonly Mock<IFeatureManager> _featureManageMock = new Mock<IFeatureManager>();
@@ -48,10 +49,39 @@ namespace Altinn.Platform.Authorization.IntegrationTests
             _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
             // Act
-            HttpResponseMessage response = await _client.GetAsync("authorization/api/v1/parties?userid=20000490");
+            HttpResponseMessage newResponse = await _client.GetAsync("authorization/api/v1/parties?userid=20000490");
+
+            _featureManageMock
+                .Setup(m => m.IsEnabledAsync("AccessManagementAuthorizedParties"))
+                .Returns(Task.FromResult(false));
+
+            HttpResponseMessage originalResponse = await _client.GetAsync("authorization/api/v1/parties?userid=20000490");
 
             // Assert
-            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+            Assert.Equal(HttpStatusCode.OK, newResponse.StatusCode);
+            Assert.Equal(HttpStatusCode.OK, originalResponse.StatusCode);
+
+            var originalPartiesList = await originalResponse.Content.ReadFromJsonAsync<List<Party>>();
+            var newPartiesList = await newResponse.Content.ReadFromJsonAsync<List<Party>>();
+            AssertionUtil.AssertCollections(originalPartiesList, newPartiesList, AssertionUtil.AssertParty);
+        }
+
+        /// <summary>
+        /// Test case: Get the party list without specifying user id
+        /// Expected: Should return 404 NotFound.
+        /// </summary>
+        [Fact]
+        public async Task GetPartyList_WithoutUserQuery_NotFound()
+        {
+            // Arrange
+            string token = PrincipalUtil.GetToken(20000490, 4);
+            _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
+            // Act
+            HttpResponseMessage response = await _client.GetAsync("authorization/api/v1/parties");
+
+            // Assert
+            Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
         }
 
         /// <summary>
@@ -145,6 +175,24 @@ namespace Altinn.Platform.Authorization.IntegrationTests
 
             // Assert
             Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
+        }
+
+        /// <summary>
+        /// Test case: Validate a party without specifying user id query param
+        /// Expected: Should return status code 404 NotFound
+        /// </summary>
+        [Fact]
+        public async Task ValidateParty_WithoutUserQuery_NotFound()
+        {
+            // Arrange
+            string token = PrincipalUtil.GetToken(20000490, 4);
+            _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
+            // Act
+            HttpResponseMessage response = await _client.GetAsync("authorization/api/v1/parties/50002598/validate");
+
+            // Assert
+            Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
         }
 
         private HttpClient GetTestClient()

@@ -106,11 +106,11 @@ public class AuthorizedPartyDto
             PartyTypeName = (PartyType)Type,
             Name = Name,
             SSN = PersonId,
-            OrgNumber = OrganizationNumber,
+            OrgNumber = OrganizationNumber ?? string.Empty,
             UnitType = UnitType,
             IsDeleted = IsDeleted,
             OnlyHierarchyElementWithNoAccess = OnlyHierarchyElementWithNoAccess,
-            ChildParties = Subunits.ConvertAll(subunit => subunit.GetAsParty())
+            ChildParties = Subunits.Count > 0 ? Subunits.ConvertAll(subunit => subunit.GetAsParty()) : null
         };
     }
 }

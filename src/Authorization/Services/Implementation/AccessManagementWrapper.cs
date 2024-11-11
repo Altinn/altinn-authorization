@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Json;
@@ -23,6 +24,7 @@ namespace Altinn.Platform.Authorization.Services.Implementation
     /// <summary>
     /// Wrapper for the Altinn Access Management API
     /// </summary>
+    [ExcludeFromCodeCoverage]
     public class AccessManagementWrapper : IAccessManagementWrapper
     {
         private readonly GeneralSettings _generalSettings;

@@ -333,41 +333,5 @@
     ],
     "authorizedInstances": [],
     "subunits": []
-  },
-  {
-    "partyUuid": "88bc3eff-bed2-46fe-8dd8-64dce1f94691",
-    "name": "OSTEKAKE OPPRETT",
-    "organizationNumber": null,
-    "personId": "15923648388",
-    "partyId": 51221245,
-    "type": "Person",
-    "unitType": null,
-    "isDeleted": false,
-    "onlyHierarchyElementWithNoAccess": false,
-    "authorizedResources": [
-      "resource_enkeltrettighet",
-      "okernportal",
-      "superressurs"
-    ],
-    "authorizedRoles": [],
-    "authorizedInstances": [],
-    "subunits": []
-  },
-  {
-    "partyUuid": "b230f8f6-8cc5-4267-aa51-bcad38146402",
-    "name": "ELEGANT USEDVANLIG KATT JOBB",
-    "organizationNumber": "313707970",
-    "personId": null,
-    "partyId": 51650907,
-    "type": "Organization",
-    "unitType": "ENK",
-    "isDeleted": false,
-    "onlyHierarchyElementWithNoAccess": false,
-    "authorizedResources": [
-      "1337"
-    ],
-    "authorizedRoles": [],
-    "authorizedInstances": [],
-    "subunits": []
   }
 ]
