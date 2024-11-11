@@ -13,6 +13,7 @@ using Altinn.Platform.Authorization.Models;
 using Altinn.Platform.Authorization.Models.DelegationChangeEvent;
 using Altinn.Platform.Authorization.Models.EventLog;
 using Altinn.Platform.Authorization.Services.Interfaces;
+using Altinn.Platform.Register.Models;
 using Moq;
 using Xunit;
 
@@ -32,6 +33,12 @@ namespace Altinn.Platform.Authorization.IntegrationTests.Util
         /// <param name="assertMethod">The assertion method to be used</param>
         public static void AssertCollections<T>(ICollection<T> expected, ICollection<T> actual, Action<T, T> assertMethod)
         {
+            if (expected == null)
+            {
+                Assert.Null(actual);
+                return;
+            }
+
             Assert.Equal(expected.Count, actual.Count);
 
             Dictionary<int, T> expectedDict = new Dictionary<int, T>();
@@ -300,6 +307,28 @@ namespace Altinn.Platform.Authorization.IntegrationTests.Util
             Assert.Equal(expected.Subject.ToString(), actual.Subject.ToString());
             Assert.Equal(expected.Resource.ToString(), actual.Resource.ToString());
             Assert.Equal(expected.Action.ToString(), actual.Action.ToString());
+        }
+
+        public static void AssertParty(Party expected, Party actual)
+        {
+            if (expected == null)
+            {
+                Assert.Null(actual);
+                return;
+            }
+
+            Assert.Equal(expected.PartyId, actual.PartyId);
+            Assert.Equal(expected.PartyUuid, actual.PartyUuid);
+            Assert.Equal(expected.PartyTypeName, actual.PartyTypeName);
+            Assert.Equal(expected.OrgNumber, actual.OrgNumber);
+            Assert.Equal(expected.SSN, actual.SSN);
+            Assert.Equal(expected.UnitType, actual.UnitType);
+            Assert.Equal(expected.Name, actual.Name);
+            Assert.Equal(expected.IsDeleted, actual.IsDeleted);
+            Assert.Equal(expected.OnlyHierarchyElementWithNoAccess, actual.OnlyHierarchyElementWithNoAccess);
+            Assert.Equal(expected.Organization, actual.Organization);
+            Assert.Equal(expected.Person, actual.Person);
+            AssertCollections(expected.ChildParties, actual.ChildParties, AssertParty);
         }
 
         private static void AssertEqual(List<AttributeMatch> expected, List<AttributeMatch> actual)

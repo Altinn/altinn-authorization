@@ -1,20 +1,38 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Security.Claims;
+using System.Text.Json;
+using System.Threading;
 using System.Threading.Tasks;
 using Altinn.Authorization.Enums;
+using Altinn.Platform.Authenticaiton.Extensions;
 using Altinn.Platform.Authorization.Constants;
 using Altinn.Platform.Authorization.IntegrationTests.Data;
 using Altinn.Platform.Authorization.Models;
 using Altinn.Platform.Authorization.Models.AccessManagement;
 using Altinn.Platform.Authorization.Services.Interface;
+using Microsoft.AspNetCore.Http;
 using Microsoft.VisualBasic;
 
 namespace Altinn.Platform.Authorization.IntegrationTests.MockServices;
 
 public class AccessManagementWrapperMock : IAccessManagementWrapper
 {
-    public Task<IEnumerable<DelegationChangeExternal>> GetAllDelegationChanges(DelegationChangeInput input)
+    private static readonly JsonSerializerOptions _jsonOptions = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+    private readonly IHttpContextAccessor _httpContextAccessor;
+
+    /// <summary>
+    /// Constructor setting up dependencies
+    /// </summary>
+    /// <param name="httpContextAccessor">httpContextAccessor</param>
+    public AccessManagementWrapperMock(IHttpContextAccessor httpContextAccessor)
+    {
+        _httpContextAccessor = httpContextAccessor;
+    }
+
+    public Task<IEnumerable<DelegationChangeExternal>> GetAllDelegationChanges(DelegationChangeInput input, CancellationToken cancellationToken = default)
     {
         var data = new List<Action<DelegationChangeInput, List<DelegationChangeExternal>>>()
         {
@@ -102,7 +120,7 @@ public class AccessManagementWrapperMock : IAccessManagementWrapper
         };
     }
 
-    public async Task<IEnumerable<DelegationChangeExternal>> GetAllDelegationChanges(params Action<DelegationChangeInput>[] actions)
+    public async Task<IEnumerable<DelegationChangeExternal>> GetAllDelegationChanges(CancellationToken cancellationToken, params Action<DelegationChangeInput>[] actions)
     {
         var result = new DelegationChangeInput();
         foreach (var action in actions)
@@ -111,5 +129,23 @@ public class AccessManagementWrapperMock : IAccessManagementWrapper
         }
 
         return await GetAllDelegationChanges(result);
+    }
+
+    public Task<IEnumerable<AuthorizedPartyDto>> GetAuthorizedParties(CancellationToken cancellationToken = default)
+    {
+        int? userId = _httpContextAccessor.HttpContext.User.GetUserIdAsInt();
+        string authorizedPartiesPath = GetAuthorizedPartiesPath(userId.Value);
+        if (File.Exists(authorizedPartiesPath))
+        {
+            string content = File.ReadAllText(authorizedPartiesPath);
+            return Task.FromResult((IEnumerable<AuthorizedPartyDto>)JsonSerializer.Deserialize(content, typeof(IEnumerable<AuthorizedPartyDto>), _jsonOptions));
+        }
+
+        return Task.FromResult<IEnumerable<AuthorizedPartyDto>>([]);
+    }
+
+    private static string GetAuthorizedPartiesPath(int userId)
+    {
+        return Path.Combine("Data", "AccessManagement", "AuthorizedParties", $"{userId}.json");
     }
 }
