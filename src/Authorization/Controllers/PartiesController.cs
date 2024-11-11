@@ -114,7 +114,7 @@ namespace Altinn.Platform.Authorization.Controllers
         private async Task<bool> ValidateSelectedAuthorizedParty(int partyId, CancellationToken cancellationToken)
         {
             IEnumerable<AuthorizedPartyDto> authorizedParties = await _accessMgmt.GetAuthorizedParties(cancellationToken);
-            return authorizedParties.Any(p => p.PartyId == partyId) || authorizedParties.Any(p => p.Subunits != null && p.Subunits.Count > 0 && p.Subunits.Any(su => su.PartyId == partyId));
+            return authorizedParties.Any(p => p.PartyId == partyId) || authorizedParties.Any(p => p.Subunits != null && p.Subunits.Count > 0 && p.Subunits.Exists(su => su.PartyId == partyId));
         }
     }
 }
