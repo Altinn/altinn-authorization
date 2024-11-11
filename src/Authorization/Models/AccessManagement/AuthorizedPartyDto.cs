@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using Altinn.Platform.Register.Enums;
 using Altinn.Platform.Register.Models;
 
@@ -9,6 +10,7 @@ namespace Altinn.Platform.Authorization.Models.AccessManagement;
 /// Model representing an authorized party, meaning a party for which the subject which has been authorized, has received one or more rights (either directly or through role(s), rightspackages).
 /// Used in new implementation of what has previously been named ReporteeList in Altinn 2.
 /// </summary>
+[ExcludeFromCodeCoverage]
 public class AuthorizedPartyDto
 {
     /// <summary>

@@ -46,11 +46,6 @@ namespace Altinn.Platform.Authorization.IntegrationTests.MockServices
             return Task.FromResult(result);
         }
 
-        public Task<List<Party>> GetParties(int userId, CancellationToken cancellationToken = default)
-        {
-            throw new NotImplementedException();
-        }
-
         public Task<Party> GetParty(int partyId, CancellationToken cancellationToken = default)
         {
             Party party = null;
@@ -60,6 +55,11 @@ namespace Altinn.Platform.Authorization.IntegrationTests.MockServices
             }
 
             return Task.FromResult(party);
+        }
+
+        public Task<List<Party>> GetParties(int userId, CancellationToken cancellationToken = default)
+        {
+            throw new NotImplementedException();
         }
 
         public Task<bool> ValidateSelectedParty(int userId, int partyId, CancellationToken cancellationToken = default)
