@@ -101,7 +101,7 @@ namespace Altinn.Platform.Authorization.Controllers
             }
             else
             {
-                return Ok(await _partiesWrapper.ValidateSelectedParty(userId, partyId));
+                return Ok(await _partiesWrapper.ValidateSelectedParty(userId, partyId, cancellationToken));
             }
         }
 
@@ -114,12 +114,7 @@ namespace Altinn.Platform.Authorization.Controllers
         private async Task<bool> ValidateSelectedAuthorizedParty(int partyId, CancellationToken cancellationToken)
         {
             IEnumerable<AuthorizedPartyDto> authorizedParties = await _accessMgmt.GetAuthorizedParties(cancellationToken);
-            if (authorizedParties.Count() > 0)
-            {
-                return authorizedParties.Any(p => p.PartyId == partyId) || authorizedParties.Any(p => p.Subunits != null && p.Subunits.Count > 0 && p.Subunits.Any(su => su.PartyId == partyId));
-            }
-
-            return false;
+            return authorizedParties.Any(p => p.PartyId == partyId) || authorizedParties.Any(p => p.Subunits != null && p.Subunits.Count > 0 && p.Subunits.Any(su => su.PartyId == partyId));
         }
     }
 }

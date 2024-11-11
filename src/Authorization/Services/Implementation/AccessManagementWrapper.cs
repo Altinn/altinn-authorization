@@ -49,17 +49,19 @@ namespace Altinn.Platform.Authorization.Services.Implementation
         {
             try
             {
-                var response = await _client.Client.SendAsync(new(HttpMethod.Post, new Uri(new Uri(_client.Settings.Value.ApiAccessManagementEndpoint), "policyinformation/getdelegationchanges"))
-                {
-                    Content = new StringContent(JsonSerializer.Serialize(input), Encoding.UTF8, MediaTypeNames.Application.Json)
-                });
+                var response = await _client.Client.SendAsync(
+                    new(HttpMethod.Post, new Uri(new Uri(_client.Settings.Value.ApiAccessManagementEndpoint), "policyinformation/getdelegationchanges"))
+                    {
+                        Content = new StringContent(JsonSerializer.Serialize(input), Encoding.UTF8, MediaTypeNames.Application.Json)
+                    },
+                    cancellationToken);
 
                 if (response.IsSuccessStatusCode)
                 {
                     return await response.Content.ReadFromJsonAsync<IEnumerable<DelegationChangeExternal>>(_serializerOptions, cancellationToken);
                 }
 
-                var content = await response.Content.ReadAsStringAsync();
+                var content = await response.Content.ReadAsStringAsync(cancellationToken);
                 throw new HttpRequestException(content == string.Empty ? $"received status code {response.StatusCode}" : content);
             }
             catch (HttpRequestException ex)
@@ -94,13 +96,12 @@ namespace Altinn.Platform.Authorization.Services.Implementation
 
             var response = await _client.Client.SendAsync(request, cancellationToken);
 
-            string responseContent = await response.Content.ReadAsStringAsync(cancellationToken);
             if (response.IsSuccessStatusCode)
             {
                 return await response.Content.ReadFromJsonAsync<IEnumerable<AuthorizedPartyDto>>(_serializerOptions, cancellationToken);
             }
 
-            var content = await response.Content.ReadAsStringAsync();
+            var content = await response.Content.ReadAsStringAsync(cancellationToken);
             throw new HttpRequestException(content == string.Empty ? $"AuthorizedParties received status code {response.StatusCode}" : content);
         }
     }
