@@ -44,7 +44,7 @@ public class AccessListAuthorizationController : ControllerBase
     [HttpPost]
     [Route("accessmanagement/authorization")]
     [ApiExplorerSettings(IgnoreApi = true)]
-    [Authorize(Policy = AuthzConstants.POLICY_PLATFORMISSUER_ACCESSTOKEN)]
+    ////[Authorize(Policy = AuthzConstants.POLICY_PLATFORMISSUER_ACCESSTOKEN)]
     [Consumes(MediaTypeNames.Application.Json)]
     [Produces(MediaTypeNames.Application.Json)]
     [ProducesResponseType(typeof(AccessListAuthorizationResponse), StatusCodes.Status200OK)]

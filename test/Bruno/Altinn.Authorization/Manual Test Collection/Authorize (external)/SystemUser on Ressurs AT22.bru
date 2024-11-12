@@ -1,7 +1,7 @@
 meta {
-  name: Renate ResourceAppInstance for Ørsta
+  name: SystemUser on Ressurs AT22
   type: http
-  seq: 1
+  seq: 14
 }
 
 post {
@@ -23,8 +23,8 @@ body:json {
               {
                   "Attribute": [
                       {
-                          "AttributeId": "urn:altinn:person:identifier-no",
-                          "Value": "08069402071",
+                          "AttributeId": "urn:altinn:systemuser:uuid",
+                          "Value": "fffcc075-ff2d-495a-95b3-ba373f5f590b",
                           "DataType": "http://www.w3.org/2001/XMLSchema#string"
                       }
                   ]
@@ -46,22 +46,12 @@ body:json {
                   "Attribute": [
                       {
                           "AttributeId": "urn:altinn:resource",
-                          "Value": "app_ttd_instansdelegering-test-app",
+                          "Value": "kravogbetaling",
                           "DataType": "http://www.w3.org/2001/XMLSchema#string"
                       },
                       {
-                          "AttributeId": "urn:altinn:task",
-                          "Value": "task_1",
-                          "DataType": "http://www.w3.org/2001/XMLSchema#string"
-                      },
-                      {
-                          "AttributeId": "urn:altinn:resource:instance-id",
-                          "Value": "e8225d8e-d664-452a-ae76-259fa0cab0f9",
-                          "DataType": "http://www.w3.org/2001/XMLSchema#string"
-                      },
-                      {
-                          "AttributeId": "urn:altinn:organization:identifier-no",
-                          "Value": "910459880",
+                          "AttributeId": "urn:altinn:partyid",
+                          "Value": "51381464",
                           "DataType": "http://www.w3.org/2001/XMLSchema#string"
                       }
                   ]
@@ -97,6 +87,7 @@ script:pre-request {
   const token = await testTokenGenerator.getToken(getTokenParameters);
   
   bru.setVar("bearerToken",  token);
+  
 }
 
 tests {

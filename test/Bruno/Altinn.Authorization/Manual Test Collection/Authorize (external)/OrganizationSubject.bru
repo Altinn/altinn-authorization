@@ -1,7 +1,7 @@
 meta {
-  name: AccessList_AC1_Permit
+  name: OrganizationSubject
   type: http
-  seq: 1
+  seq: 21
 }
 
 post {
@@ -16,18 +16,22 @@ headers {
 }
 
 body:json {
-  /*
-  See Docs tab for test case description
-  */
   {
       "Request": {
           "ReturnPolicyIdList": false,
           "AccessSubject": [
               {
                   "Attribute": [
+                      /*{
+                          "AttributeId": "urn:altinn:organizationnumber",
+                          "Value": "971526920",
+                          "DataType": "http://www.w3.org/2001/XMLSchema#string"
+                      }
+                      ,*/
                       {
-                          "AttributeId": "urn:altinn:person:identifier-no",
-                          "Value": "12819498464"
+                          "AttributeId": "urn:altinn:organization:identifier-no",
+                          "Value": "971526920",
+                          "DataType": "http://www.w3.org/2001/XMLSchema#string"
                       }
                   ]
               }
@@ -37,7 +41,7 @@ body:json {
                   "Attribute": [
                       {
                           "AttributeId": "urn:oasis:names:tc:xacml:1.0:action:action-id",
-                          "Value": "write",
+                          "Value": "read",
                           "DataType": "http://www.w3.org/2001/XMLSchema#string"
                       }
                   ]
@@ -48,11 +52,7 @@ body:json {
                   "Attribute": [
                       {
                           "AttributeId": "urn:altinn:resource",
-                          "Value": "devtest_gar_bruno_accesslist"
-                      },
-                      {
-                          "AttributeId": "urn:altinn:organization:identifier-no",
-                          "Value": "313776735",
+                          "Value": "brokeroppsettssb",
                           "DataType": "http://www.w3.org/2001/XMLSchema#string"
                       }
                   ]
@@ -83,13 +83,9 @@ script:pre-request {
   bru.setVar("bearerToken",  token);
 }
 
-script:post-response {
-  //console.log("request url (after): " + req.getUrl());
-}
-
 tests {
   
-  test("POST Authorize AccessList_AC1_Permit result", function() {
+  test("3 POST Decision result on read is permit", function() {
     const testdata = require(`./Testdata/Authorization/${bru.getEnvVar("tokenEnv")}testdata.json`);
     const data = res.getBody();  
     expect(res.status).to.equal(200);
@@ -98,18 +94,11 @@ tests {
 }
 
 docs {
-  Issue:
-  https://github.com/Altinn/altinn-access-management/issues/748
+  Get a decision from PDP with appOwner details and validate response to have Permit.
   
-  Acceptance Criteria:
-  AC1 - Avgiver med Tilgangssliste tilgang uten action filter - Permit
+  AccessSubject: ['urn:altinn:org']
   
-  GITT en bruker med tilgang til ressurs for avgiver gjennom rolle eller enkeltdelegering
-  NÅR ressursen krever tilgangsliste autorisasjon
-  OG avgiver er medlem av minst en tilgangsliste som er knytt til ressursen
-  OG tilgangslisten for ressursen ikke har noe action filter begrensning for gitte actions
-  SÅ skal bruker få Permit
+  Action: ['read']
   
-  Scenario/Testdata setup:
-  The user is DAGL for the party. The party have access list membership for the resource without action filter.
+  Resource: ['urn:altinn:app', 'urn:altinn:org']
 }

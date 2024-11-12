@@ -1,7 +1,7 @@
 meta {
-  name: Renate ResourceAppInstance for Ørsta
+  name: SystemUser on Ressurs TT02
   type: http
-  seq: 1
+  seq: 15
 }
 
 post {
@@ -23,8 +23,8 @@ body:json {
               {
                   "Attribute": [
                       {
-                          "AttributeId": "urn:altinn:person:identifier-no",
-                          "Value": "08069402071",
+                          "AttributeId": "urn:altinn:systemuser:uuid",
+                          "Value": "1a235736-9cea-4987-888e-4d888a198bf7",
                           "DataType": "http://www.w3.org/2001/XMLSchema#string"
                       }
                   ]
@@ -44,24 +44,16 @@ body:json {
           "Resource": [
               {
                   "Attribute": [
+                      
                       {
                           "AttributeId": "urn:altinn:resource",
-                          "Value": "app_ttd_instansdelegering-test-app",
+                          "value": "ske-krav-og-betalinger",
                           "DataType": "http://www.w3.org/2001/XMLSchema#string"
                       },
-                      {
-                          "AttributeId": "urn:altinn:task",
-                          "Value": "task_1",
-                          "DataType": "http://www.w3.org/2001/XMLSchema#string"
-                      },
-                      {
-                          "AttributeId": "urn:altinn:resource:instance-id",
-                          "Value": "e8225d8e-d664-452a-ae76-259fa0cab0f9",
-                          "DataType": "http://www.w3.org/2001/XMLSchema#string"
-                      },
+                      
                       {
                           "AttributeId": "urn:altinn:organization:identifier-no",
-                          "Value": "910459880",
+                          "Value": "312818434",
                           "DataType": "http://www.w3.org/2001/XMLSchema#string"
                       }
                   ]
@@ -69,13 +61,6 @@ body:json {
           ]
       }
   }
-}
-
-vars:pre-request {
-  auth_tokenType: Enterprise
-  auth_scopes: altinn:authorization/authorize
-  auth_org: digdir
-  auth_orgNo: 991825827
 }
 
 assert {
@@ -97,6 +82,7 @@ script:pre-request {
   const token = await testTokenGenerator.getToken(getTokenParameters);
   
   bru.setVar("bearerToken",  token);
+  
 }
 
 tests {

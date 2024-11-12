@@ -1,18 +1,18 @@
 meta {
-  name: Renate ResourceAppInstance for Ørsta
+  name: JK PROD
   type: http
-  seq: 1
+  seq: 11
 }
 
 post {
   url: {{baseUrl}}/authorization/api/v1/authorize
   body: json
-  auth: inherit
+  auth: none
 }
 
 headers {
   Content-Type: application/json
-  Ocp-Apim-Subscription-Key: {{apimSubscriptionKey}}
+  Ocp-Apim-Subscription-Key: {{appsAccessKey}}
 }
 
 body:json {
@@ -24,7 +24,7 @@ body:json {
                   "Attribute": [
                       {
                           "AttributeId": "urn:altinn:person:identifier-no",
-                          "Value": "08069402071",
+                          "Value": "",
                           "DataType": "http://www.w3.org/2001/XMLSchema#string"
                       }
                   ]
@@ -46,22 +46,12 @@ body:json {
                   "Attribute": [
                       {
                           "AttributeId": "urn:altinn:resource",
-                          "Value": "app_ttd_instansdelegering-test-app",
-                          "DataType": "http://www.w3.org/2001/XMLSchema#string"
-                      },
-                      {
-                          "AttributeId": "urn:altinn:task",
-                          "Value": "task_1",
-                          "DataType": "http://www.w3.org/2001/XMLSchema#string"
-                      },
-                      {
-                          "AttributeId": "urn:altinn:resource:instance-id",
-                          "Value": "e8225d8e-d664-452a-ae76-259fa0cab0f9",
+                          "Value": "test-ressurs-rf-1086-altinn-autorisasjon",
                           "DataType": "http://www.w3.org/2001/XMLSchema#string"
                       },
                       {
                           "AttributeId": "urn:altinn:organization:identifier-no",
-                          "Value": "910459880",
+                          "Value": "312824450",
                           "DataType": "http://www.w3.org/2001/XMLSchema#string"
                       }
                   ]
@@ -84,19 +74,7 @@ assert {
 }
 
 script:pre-request {
-  const testdata = require(`./Testdata/Authorization/${bru.getEnvVar("tokenEnv")}testdata.json`);
-  const sharedtestdata = require(`./Testdata/Authorization/sharedtestdata.json`);
-  
-  var getTokenParameters = {
-    auth_tokenType: sharedtestdata.authTokenType.enterprise,
-    auth_scopes: sharedtestdata.auth_scopes.authorize,
-    auth_org: "digdir",
-    auth_orgNo: "991825827"
-  }
-  
-  const token = await testTokenGenerator.getToken(getTokenParameters);
-  
-  bru.setVar("bearerToken",  token);
+  await testTokenGenerator.getToken();
 }
 
 tests {

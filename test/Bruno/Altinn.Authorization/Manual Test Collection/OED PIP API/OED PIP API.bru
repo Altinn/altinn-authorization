@@ -1,0 +1,67 @@
+meta {
+  name: OED PIP API
+  type: http
+  seq: 1
+}
+
+post {
+  url: https://oed-test-authz-app.azurewebsites.net/api/v1/pip
+  body: json
+  auth: bearer
+}
+
+headers {
+  Content-Type: application/json
+}
+
+auth:bearer {
+  token: eyJraWQiOiJiZFhMRVduRGpMSGpwRThPZnl5TUp4UlJLbVo3MUxCOHUxeUREbVBpdVQwIiwiYWxnIjoiUlMyNTYifQ.eyJzY29wZSI6ImFsdGlubjpkZDppbnRlcm5hbCIsImlzcyI6Imh0dHBzOi8vdGVzdC5tYXNraW5wb3J0ZW4ubm8vIiwiY2xpZW50X2FtciI6InByaXZhdGVfa2V5X2p3dCIsInRva2VuX3R5cGUiOiJCZWFyZXIiLCJleHAiOjE3MzA4OTQ3MTMsImlhdCI6MTczMDg5MTExMywiY2xpZW50X2lkIjoiMzJlMzFlMWItNTYzYy00NDUxLTllYmMtYjlkMjBjZDczMGRlIiwianRpIjoiX3R3dG42OTVmUm01V2toQlZoajR4T2xsWlQ4UkcxNHVUeFZoQU5rSDFCWSIsImNvbnN1bWVyIjp7ImF1dGhvcml0eSI6ImlzbzY1MjMtYWN0b3JpZC11cGlzIiwiSUQiOiIwMTkyOjk5MTgyNTgyNyJ9fQ.iqRAPwUEeXEmJfMXDfRuFTBclSTqaMiTZjWjADCkpKkW9CKm3Z6fswMbzIUQdG7r-pEvKCKUlkA1H-SBOxYj1i_2NqkzTkk8Laf3rIG-aDJJoH4P3n8MxtfKJCkbIZrsAUzOu8HWFHcYmI6BntNj_4-rpH6bByiZ7vl9PvUzKP5EdF6KNez5O20jhk-HZZG3qTF8951a7b320v1FyOwUk_v8JdMgbtnedbhtnxq4FirAc7snACL2L99THDgA5_OzQC55JGoJsPJ7iRjGj-xpJmSIOga6zap_jHrjkV_Sg1piO8Mz_0UzfHYEW5GdXciGMfRpgdAdKBCJ8G5nzK7g_zwsT3uwMXQr1GYdexl8jswY3C80J2kdobhrm5AbrzpAGDNaUYVkwXcbm7mv_KM2wGGyCpRS19c7uRIkU2bW3IlPtTxywepIJnl1BQDxP6EAcx1D7HdmAxJFvVMaekd1tkE8egFD-rIWSGsV9u9B_eFLpkB6BYXtB3v74K8ClBIG
+}
+
+body:json {
+  {
+    "From": "24817296595",
+    "To": "13837297278"
+  }
+}
+
+assert {
+  ~res.status: eq 200
+  ~res.body: contains created
+}
+
+script:pre-request {
+  const testdata = require(`./Testdata/Authorization/${bru.getEnvVar("tokenEnv")}testdata.json`);
+  const sharedtestdata = require(`./Testdata/Authorization/sharedtestdata.json`);
+  
+  var getTokenParameters = {
+    auth_tokenType: sharedtestdata.authTokenType.enterprise,
+    auth_scopes: sharedtestdata.auth_scopes.authorize,
+    auth_org: "digdir",
+    auth_orgNo: "991825827"
+  }
+  
+  const token = await testTokenGenerator.getToken(getTokenParameters);
+  
+  bru.setVar("bearerToken",  token);
+}
+
+tests {
+  
+  test("3 POST Decision result on read is permit", function() {
+    const testdata = require(`./Testdata/Authorization/${bru.getEnvVar("tokenEnv")}testdata.json`);
+    const data = res.getBody();  
+    expect(res.status).to.equal(200);
+    expect(data.response[0]).to.have.property('decision', "Permit");
+  });
+}
+
+docs {
+  Get a decision from PDP with appOwner details and validate response to have Permit.
+  
+  AccessSubject: ['urn:altinn:org']
+  
+  Action: ['read']
+  
+  Resource: ['urn:altinn:app', 'urn:altinn:org']
+}

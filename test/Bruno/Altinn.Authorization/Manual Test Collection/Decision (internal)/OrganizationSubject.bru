@@ -1,11 +1,11 @@
 meta {
-  name: Renate ResourceAppInstance for Ørsta
+  name: OrganizationSubject
   type: http
-  seq: 1
+  seq: 6
 }
 
 post {
-  url: {{baseUrl}}/authorization/api/v1/authorize
+  url: {{baseUrl}}/authorization/api/v1/decision
   body: json
   auth: inherit
 }
@@ -23,8 +23,8 @@ body:json {
               {
                   "Attribute": [
                       {
-                          "AttributeId": "urn:altinn:person:identifier-no",
-                          "Value": "08069402071",
+                          "AttributeId": "urn:altinn:organizationnumber",
+                          "Value": "971526920",
                           "DataType": "http://www.w3.org/2001/XMLSchema#string"
                       }
                   ]
@@ -46,22 +46,7 @@ body:json {
                   "Attribute": [
                       {
                           "AttributeId": "urn:altinn:resource",
-                          "Value": "app_ttd_instansdelegering-test-app",
-                          "DataType": "http://www.w3.org/2001/XMLSchema#string"
-                      },
-                      {
-                          "AttributeId": "urn:altinn:task",
-                          "Value": "task_1",
-                          "DataType": "http://www.w3.org/2001/XMLSchema#string"
-                      },
-                      {
-                          "AttributeId": "urn:altinn:resource:instance-id",
-                          "Value": "e8225d8e-d664-452a-ae76-259fa0cab0f9",
-                          "DataType": "http://www.w3.org/2001/XMLSchema#string"
-                      },
-                      {
-                          "AttributeId": "urn:altinn:organization:identifier-no",
-                          "Value": "910459880",
+                          "Value": "generic-access-resource",
                           "DataType": "http://www.w3.org/2001/XMLSchema#string"
                       }
                   ]
@@ -69,13 +54,6 @@ body:json {
           ]
       }
   }
-}
-
-vars:pre-request {
-  auth_tokenType: Enterprise
-  auth_scopes: altinn:authorization/authorize
-  auth_org: digdir
-  auth_orgNo: 991825827
 }
 
 assert {

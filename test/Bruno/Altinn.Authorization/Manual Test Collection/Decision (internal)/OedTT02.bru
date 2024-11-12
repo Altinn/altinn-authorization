@@ -1,7 +1,7 @@
 meta {
-  name: Renate ResourceAppInstance for Ørsta
+  name: OedTT02
   type: http
-  seq: 1
+  seq: 7
 }
 
 post {
@@ -22,9 +22,14 @@ body:json {
           "AccessSubject": [
               {
                   "Attribute": [
+                      /*{
+                          "AttributeId": "urn:altinn:userid",
+                          "Value": "158184",
+                          "DataType": "http://www.w3.org/2001/XMLSchema#string"
+                      }*/
                       {
                           "AttributeId": "urn:altinn:person:identifier-no",
-                          "Value": "08069402071",
+                          "Value": "13837297278",
                           "DataType": "http://www.w3.org/2001/XMLSchema#string"
                       }
                   ]
@@ -45,37 +50,30 @@ body:json {
               {
                   "Attribute": [
                       {
-                          "AttributeId": "urn:altinn:resource",
-                          "Value": "app_ttd_instansdelegering-test-app",
+                          "AttributeId": "urn:altinn:org",
+                          "Value": "digdir",
                           "DataType": "http://www.w3.org/2001/XMLSchema#string"
                       },
                       {
-                          "AttributeId": "urn:altinn:task",
-                          "Value": "task_1",
+                          "AttributeId": "urn:altinn:app",
+                          "Value": "oed",
                           "DataType": "http://www.w3.org/2001/XMLSchema#string"
                       },
                       {
-                          "AttributeId": "urn:altinn:resource:instance-id",
-                          "Value": "e8225d8e-d664-452a-ae76-259fa0cab0f9",
-                          "DataType": "http://www.w3.org/2001/XMLSchema#string"
-                      },
-                      {
-                          "AttributeId": "urn:altinn:organization:identifier-no",
-                          "Value": "910459880",
+                          "AttributeId": "urn:altinn:person:identifier-no",
+                          "Value": "24817296595",
                           "DataType": "http://www.w3.org/2001/XMLSchema#string"
                       }
+                      /*{
+                        "AttributeId": "urn:altinn:instance-id",
+                        "Value": "50807378/e97077cf-d2ec-4e86-8cae-5c5892f74250",
+                        "DataType": "http://www.w3.org/2001/XMLSchema#string"
+                      }*/
                   ]
               }
           ]
       }
   }
-}
-
-vars:pre-request {
-  auth_tokenType: Enterprise
-  auth_scopes: altinn:authorization/authorize
-  auth_org: digdir
-  auth_orgNo: 991825827
 }
 
 assert {

@@ -1,7 +1,7 @@
 meta {
-  name: Renate ResourceAppInstance for Ørsta
+  name: AccessList_AC4_Delegation_Deny
   type: http
-  seq: 1
+  seq: 9
 }
 
 post {
@@ -16,6 +16,9 @@ headers {
 }
 
 body:json {
+  /*
+  See Docs tab for test case description
+  */
   {
       "Request": {
           "ReturnPolicyIdList": false,
@@ -24,8 +27,7 @@ body:json {
                   "Attribute": [
                       {
                           "AttributeId": "urn:altinn:person:identifier-no",
-                          "Value": "08069402071",
-                          "DataType": "http://www.w3.org/2001/XMLSchema#string"
+                          "Value": "08827798585"
                       }
                   ]
               }
@@ -35,7 +37,7 @@ body:json {
                   "Attribute": [
                       {
                           "AttributeId": "urn:oasis:names:tc:xacml:1.0:action:action-id",
-                          "Value": "read",
+                          "Value": "write",
                           "DataType": "http://www.w3.org/2001/XMLSchema#string"
                       }
                   ]
@@ -46,22 +48,11 @@ body:json {
                   "Attribute": [
                       {
                           "AttributeId": "urn:altinn:resource",
-                          "Value": "app_ttd_instansdelegering-test-app",
-                          "DataType": "http://www.w3.org/2001/XMLSchema#string"
-                      },
-                      {
-                          "AttributeId": "urn:altinn:task",
-                          "Value": "task_1",
-                          "DataType": "http://www.w3.org/2001/XMLSchema#string"
-                      },
-                      {
-                          "AttributeId": "urn:altinn:resource:instance-id",
-                          "Value": "e8225d8e-d664-452a-ae76-259fa0cab0f9",
-                          "DataType": "http://www.w3.org/2001/XMLSchema#string"
+                          "Value": "devtest_gar_bruno_accesslist_actionfilter"
                       },
                       {
                           "AttributeId": "urn:altinn:organization:identifier-no",
-                          "Value": "910459880",
+                          "Value": "313776735",
                           "DataType": "http://www.w3.org/2001/XMLSchema#string"
                       }
                   ]
@@ -69,13 +60,6 @@ body:json {
           ]
       }
   }
-}
-
-vars:pre-request {
-  auth_tokenType: Enterprise
-  auth_scopes: altinn:authorization/authorize
-  auth_org: digdir
-  auth_orgNo: 991825827
 }
 
 assert {
@@ -99,22 +83,34 @@ script:pre-request {
   bru.setVar("bearerToken",  token);
 }
 
+script:post-response {
+  //console.log("request url (after): " + req.getUrl());
+}
+
 tests {
   
-  test("3 POST Decision result on read is permit", function() {
+  test("POST Authorize AccessList_AC4_Deny result", function() {
     const testdata = require(`./Testdata/Authorization/${bru.getEnvVar("tokenEnv")}testdata.json`);
     const data = res.getBody();  
     expect(res.status).to.equal(200);
-    expect(data.response[0]).to.have.property('decision', "Permit");
+    expect(data.response[0]).to.have.property('decision', "Deny");
   });
 }
 
 docs {
-  Get a decision from PDP with appOwner details and validate response to have Permit.
+  Issue:
+  https://github.com/Altinn/altinn-access-management/issues/748
   
-  AccessSubject: ['urn:altinn:org']
+  Acceptance Criteria:
+  AC4 - Avgiver med Tilgangssliste tilgang med action filter - Deny
   
-  Action: ['read']
+  GITT en bruker med tilgang til ressurs for avgiver gjennom rolle eller enkeltdelegering
+  NÅR ressursen krever tilgangsliste autorisasjon
+  OG avgiver er medlem av minst en tilgangsliste som er knytt til ressursen
+  OG tilgangslisten for ressursen har action filter begrensning som IKKE matcher action brukeren skal autoriseres for
+  SÅ skal bruker få Deny
   
-  Resource: ['urn:altinn:app', 'urn:altinn:org']
+  Scenario/Testdata setup:
+  The user has received delegation of both read and write action for the resource from the party.
+  The party have access list membership for the resource with action filter for the action: read.
 }

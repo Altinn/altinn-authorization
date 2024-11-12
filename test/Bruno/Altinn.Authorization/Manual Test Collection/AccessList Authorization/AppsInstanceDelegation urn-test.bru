@@ -1,0 +1,65 @@
+meta {
+  name: AppsInstanceDelegation urn-test
+  type: http
+  seq: 5
+}
+
+post {
+  url: {{baseUrl}}/authorization/api/v1/accesslist/authorize
+  body: json
+  auth: none
+}
+
+headers {
+  Content-Type: application/json
+  Ocp-Apim-Subscription-Key: {{appsAccessKey}}
+}
+
+body:json {
+  {
+    "From": "urn:altinn:organization:identifier-no:910459880",
+    "To": "urn:altinn:party:uuid:01915aa8-cdad-70f6-96ad-3ec031e2dce0",
+    "Resource": "urn:altinn:resource:example-resourceid",
+    "Instance": "urn:altinn:resource:instance-id:fbec1d6c-82de-4d91-9c11-417a6d3195f4",
+    "Rights": [
+      //TODO
+    ],
+    "Instance": "urn:altinn:resource:example-resourceid:instance-id:fbec1d6c-82de-4d91-9c11-417a6d3195f4"
+  }
+}
+
+vars:pre-request {
+  auth_tokenType: Enterprise
+  auth_scopes: altinn:authorization/authorize
+  auth_org: digdir
+  auth_orgNo: 991825827
+}
+
+assert {
+  ~res.status: eq 200
+  ~res.body: contains created
+}
+
+script:pre-request {
+  await testTokenGenerator.getToken();
+}
+
+tests {
+  
+  test("3 POST Decision result on read is permit", function() {
+    const testdata = require(`./Testdata/Authorization/${bru.getEnvVar("tokenEnv")}testdata.json`);
+    const data = res.getBody();  
+    expect(res.status).to.equal(200);
+    expect(data.response[0]).to.have.property('decision', "Permit");
+  });
+}
+
+docs {
+  Get a decision from PDP with appOwner details and validate response to have Permit.
+  
+  AccessSubject: ['urn:altinn:org']
+  
+  Action: ['read']
+  
+  Resource: ['urn:altinn:app', 'urn:altinn:org']
+}

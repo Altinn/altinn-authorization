@@ -1,0 +1,70 @@
+meta {
+  name: Internal Ørsta for devtest_gar_rrr_accesslist
+  type: http
+  seq: 7
+}
+
+post {
+  url: {{baseUrl}}/authorization/api/v1/accesslist/accessmanagement/authorization
+  body: json
+  auth: none
+}
+
+headers {
+  Content-Type: application/json
+  Ocp-Apim-Subscription-Key: {{appsAccessKey}}
+  PlatformAccessToken: eyJhbGciOiJSUzI1NiIsImtpZCI6IkJCQjA2MkM5ODI4NEZBRTYxOUNCMjlGRkYyQ0FBMDFGNUE3QzU2RjIiLCJ0eXAiOiJKV1QiLCJ4NWMiOiJCQkIwNjJDOTgyODRGQUU2MTlDQjI5RkZGMkNBQTAxRjVBN0M1NkYyIn0.eyJ1cm46YWx0aW5uOmFwcCI6InN0dWRpby5kZXNpZ25lciIsImV4cCI6MTcyNjA4NTYyNiwiaWF0IjoxNzI2MDQ5NjI2LCJpc3MiOiJwbGF0Zm9ybSIsImFjdHVhbF9pc3MiOiJhbHRpbm4tdGVzdC10b29scyIsIm5iZiI6MTcyNjA0OTYyNn0.l-W3elbV9EyajrJNa1ImW0bG5G4Uqo-5UnYdEHMo-O1RwM6Tx0njohXezkovVTKfUVr4yZ7LPW1ujjq6ppmWhvrRPCLSvy_JPgxQX4ijC3OOynvBaLzMhkWZQRXPOGRkHITR02v_AY-Vj3qb1ga0M16Xt9G-stWPl_OJMZK3wgVAkzJbUjZ3IyLN2qU3BIR65ISSv38g1kycB65nefVUjeda1N2e6_jNpCXoTG0hM-tIFgRa_A7YNglB4rrioSr1yo9EAcpWozAkT7lGdRONtoqBl_pe8Hq6yFvPY1lC0RCArIUmwNiwQsX7CPdIqcdlTedeYMwn3gEZOP4fOP7m4A
+}
+
+body:json {
+  {
+    "subject": {
+      "type": "urn:altinn:asdf:identifier-no",
+      "value": "910459880"
+    },
+    "resource": {
+      "type": "urn:altinn:resource",
+      "value": "devtest_gar_rrr_accesslist"
+    },
+    "action": {
+      "type": "urn:oasis:names:tc:xacml:1.0:action:action-id",
+      "value": "read"
+    }
+  }
+}
+
+vars:pre-request {
+  auth_tokenType: Enterprise
+  auth_scopes: altinn:authorization/authorize
+  auth_org: ttd
+  auth_orgNo: 991825827
+}
+
+assert {
+  ~res.status: eq 200
+  ~res.body: contains created
+}
+
+script:pre-request {
+  //await testTokenGenerator.getToken();
+}
+
+tests {
+  
+  test("3 POST Decision result on read is permit", function() {
+    const testdata = require(`./Testdata/Authorization/${bru.getEnvVar("tokenEnv")}testdata.json`);
+    const data = res.getBody();  
+    expect(res.status).to.equal(200);
+    expect(data.response[0]).to.have.property('decision', "Permit");
+  });
+}
+
+docs {
+  Get a decision from PDP with appOwner details and validate response to have Permit.
+  
+  AccessSubject: ['urn:altinn:org']
+  
+  Action: ['read']
+  
+  Resource: ['urn:altinn:app', 'urn:altinn:org']
+}

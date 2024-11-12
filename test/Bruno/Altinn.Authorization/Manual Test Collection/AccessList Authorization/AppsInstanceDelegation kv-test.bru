@@ -1,0 +1,100 @@
+meta {
+  name: AppsInstanceDelegation kv-test
+  type: http
+  seq: 6
+}
+
+post {
+  url: {{baseUrl}}/authorization/api/v1/accesslist/authorize
+  body: json
+  auth: none
+}
+
+headers {
+  Content-Type: application/json
+  Ocp-Apim-Subscription-Key: {{appsAccessKey}}
+}
+
+body:json {
+  {
+    "from": 
+    {
+      "type": "urn:altinn:party:uuid",
+      "value": "049d6f78-f087-41c3-a4ec-c98f5451e387"
+    },
+    "to":
+    {
+      "type": "urn:altinn:party:uuid",
+      "value": "049d6f78-f087-41c3-a4ec-c98f5451e388"
+    },
+    "resource":
+    {
+      "type": "urn:altinn:resource",
+      "value": "app_ttd_apps-test"
+    },
+    "instance":
+    {
+      "type": "urn:altinn:resource:instance-id",
+      "value": "0191579e-72bc-7977-af5d-f9e92af4393b"
+    },
+    "rights": [
+      {
+        "resource": [
+          {
+            "type": "urn:altinn:resource",
+            "value": "app_ttd_apps-test"
+          },
+          {
+            "type": "urn:altinn:resource:instance-id",
+            "value": "0191579e-72bc-7977-af5d-f9e92af4393b"
+          },
+          {
+            "type": "urn:altinn:resource:instance-id",
+            "value": "0191579e-72bc-7977-af5d-f9e92af4393b"
+          }
+        ],
+        "action":
+        {
+          "type": "urn:oasis:names:tc:xacml:1.0:action:action-id",
+          "value": "read"
+        }
+      }
+    ]
+  }
+}
+
+vars:pre-request {
+  auth_tokenType: Enterprise
+  auth_scopes: altinn:authorization/authorize
+  auth_org: digdir
+  auth_orgNo: 991825827
+}
+
+assert {
+  ~res.status: eq 200
+  ~res.body: contains created
+}
+
+script:pre-request {
+  await testTokenGenerator.getToken();
+}
+
+tests {
+  
+  test("3 POST Decision result on read is permit", function() {
+    const testdata = require(`./Testdata/Authorization/${bru.getEnvVar("tokenEnv")}testdata.json`);
+    const data = res.getBody();  
+    expect(res.status).to.equal(200);
+    expect(data.response[0]).to.have.property('decision', "Permit");
+  });
+}
+
+docs {
+  Get a decision from PDP with appOwner details and validate response to have Permit.
+  
+  AccessSubject: ['urn:altinn:org']
+  
+  Action: ['read']
+  
+  Resource: ['urn:altinn:app', 'urn:altinn:org']
+}

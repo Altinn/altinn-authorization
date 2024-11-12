@@ -1,5 +1,5 @@
 meta {
-  name: Renate ResourceAppInstance for Ørsta
+  name: Kasper for AccessList Ressurs for Ørsta
   type: http
   seq: 1
 }
@@ -7,12 +7,16 @@ meta {
 post {
   url: {{baseUrl}}/authorization/api/v1/authorize
   body: json
-  auth: inherit
+  auth: bearer
 }
 
 headers {
   Content-Type: application/json
   Ocp-Apim-Subscription-Key: {{apimSubscriptionKey}}
+}
+
+auth:bearer {
+  token: eyJhbGciOiJSUzI1NiIsImtpZCI6IjM4OTJENDgyRTYyMDI2NzI1MTJBRTBDMkQ5REJBQzBERTRBNEVDMzciLCJ0eXAiOiJKV1QiLCJ4NWMiOiIzODkyRDQ4MkU2MjAyNjcyNTEyQUUwQzJEOURCQUMwREU0QTRFQzM3In0.eyJzY29wZSI6ImFsdGlubjphdXRob3JpemF0aW9uL2F1dGhvcml6ZS5hZG1pbiIsInRva2VuX3R5cGUiOiJCZWFyZXIiLCJleHAiOjE3MjU1Nzc5MjIsImlhdCI6MTcyNTU0MTkyMiwiY2xpZW50X2lkIjoiNTc5ZTUxZjItMWYzYi00NmY2LWE1ZjMtNWFmNDE1ZGVkZmM2IiwianRpIjoid3BTTmo5T0dYMUFaWUJKR2oyclBCeVUzeWc1UGROTnBKd3ctczViUXQwRCIsImNvbnN1bWVyIjp7ImF1dGhvcml0eSI6ImlzbzY1MjMtYWN0b3JpZC11cGlzIiwiSUQiOiIwMTkyOjk5MTgyNTgyNyJ9LCJ1cm46YWx0aW5uOm9yZ051bWJlciI6Ijk5MTgyNTgyNyIsInVybjphbHRpbm46YXV0aGVudGljYXRlbWV0aG9kIjoibWFza2lucG9ydGVuIiwidXJuOmFsdGlubjphdXRobGV2ZWwiOjMsImlzcyI6Imh0dHBzOi8vcGxhdGZvcm0uYXQyMi5hbHRpbm4uY2xvdWQvYXV0aGVudGljYXRpb24vYXBpL3YxL29wZW5pZC8iLCJhY3R1YWxfaXNzIjoiYWx0aW5uLXRlc3QtdG9vbHMiLCJuYmYiOjE3MjU1NDE5MjIsInVybjphbHRpbm46b3JnIjoiZGlnZGlyIn0.Ed6WRPqCftvRizBSePX-I_8KIbq2BAK3YRDIJb-W8tzgkxp3EqDzvluSwOHxYq0WGbUnt-MmGN0MFReOEQnW0j-rLRg0tEeUbLQ1bs2IW9_tMRrfnIIqGs28QgoGj-tXXUr9WMCNk9AZnTjCvn4w2aIYeG1wftqOy5pb7Ew6toH7pNsfcxaMF5nJNpQdP-7snuHr3KupDcgrFaPnVWynd9dPncdgDlHnmPGhc49sElEbwjHtExiqFlPTOIRV5waDrm-NeIpLI48ps1ylEDXEr34-qoEpKvdfVx84H1SBu-3UcYjewha7uBFQjW1UioPk6ZNh_5VUhfGn7263Gj9aVg
 }
 
 body:json {
@@ -24,7 +28,7 @@ body:json {
                   "Attribute": [
                       {
                           "AttributeId": "urn:altinn:person:identifier-no",
-                          "Value": "08069402071",
+                          "Value": "07124912037",
                           "DataType": "http://www.w3.org/2001/XMLSchema#string"
                       }
                   ]
@@ -46,17 +50,7 @@ body:json {
                   "Attribute": [
                       {
                           "AttributeId": "urn:altinn:resource",
-                          "Value": "app_ttd_instansdelegering-test-app",
-                          "DataType": "http://www.w3.org/2001/XMLSchema#string"
-                      },
-                      {
-                          "AttributeId": "urn:altinn:task",
-                          "Value": "task_1",
-                          "DataType": "http://www.w3.org/2001/XMLSchema#string"
-                      },
-                      {
-                          "AttributeId": "urn:altinn:resource:instance-id",
-                          "Value": "e8225d8e-d664-452a-ae76-259fa0cab0f9",
+                          "Value": "devtest_gar_rrr_accesslist",
                           "DataType": "http://www.w3.org/2001/XMLSchema#string"
                       },
                       {
@@ -84,19 +78,7 @@ assert {
 }
 
 script:pre-request {
-  const testdata = require(`./Testdata/Authorization/${bru.getEnvVar("tokenEnv")}testdata.json`);
-  const sharedtestdata = require(`./Testdata/Authorization/sharedtestdata.json`);
-  
-  var getTokenParameters = {
-    auth_tokenType: sharedtestdata.authTokenType.enterprise,
-    auth_scopes: sharedtestdata.auth_scopes.authorize,
-    auth_org: "digdir",
-    auth_orgNo: "991825827"
-  }
-  
-  const token = await testTokenGenerator.getToken(getTokenParameters);
-  
-  bru.setVar("bearerToken",  token);
+  //await testTokenGenerator.getToken();
 }
 
 tests {

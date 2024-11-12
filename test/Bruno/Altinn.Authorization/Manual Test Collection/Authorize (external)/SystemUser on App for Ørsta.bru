@@ -1,7 +1,7 @@
 meta {
-  name: AccessList_AC4_Delegation_Deny
+  name: SystemUser on App for Ørsta
   type: http
-  seq: 8
+  seq: 13
 }
 
 post {
@@ -16,9 +16,6 @@ headers {
 }
 
 body:json {
-  /*
-  See Docs tab for test case description
-  */
   {
       "Request": {
           "ReturnPolicyIdList": false,
@@ -26,8 +23,9 @@ body:json {
               {
                   "Attribute": [
                       {
-                          "AttributeId": "urn:altinn:person:identifier-no",
-                          "Value": "08827798585"
+                          "AttributeId": "urn:altinn:systemuser:uuid",
+                          "Value": "a6355a68-86b8-4344-8a81-0248cb461468",
+                          "DataType": "http://www.w3.org/2001/XMLSchema#string"
                       }
                   ]
               }
@@ -37,7 +35,7 @@ body:json {
                   "Attribute": [
                       {
                           "AttributeId": "urn:oasis:names:tc:xacml:1.0:action:action-id",
-                          "Value": "write",
+                          "Value": "read",
                           "DataType": "http://www.w3.org/2001/XMLSchema#string"
                       }
                   ]
@@ -47,12 +45,18 @@ body:json {
               {
                   "Attribute": [
                       {
-                          "AttributeId": "urn:altinn:resource",
-                          "Value": "devtest_gar_bruno_accesslist_actionfilter"
+                          "AttributeId": "urn:altinn:org",
+                          "Value": "ttd",
+                          "DataType": "http://www.w3.org/2001/XMLSchema#string"
+                      },
+                      {
+                          "AttributeId": "urn:altinn:app",
+                          "Value": "apps-test",
+                          "DataType": "http://www.w3.org/2001/XMLSchema#string"
                       },
                       {
                           "AttributeId": "urn:altinn:organization:identifier-no",
-                          "Value": "313776735",
+                          "Value": "910459880",
                           "DataType": "http://www.w3.org/2001/XMLSchema#string"
                       }
                   ]
@@ -81,36 +85,25 @@ script:pre-request {
   const token = await testTokenGenerator.getToken(getTokenParameters);
   
   bru.setVar("bearerToken",  token);
-}
-
-script:post-response {
-  //console.log("request url (after): " + req.getUrl());
+  
 }
 
 tests {
   
-  test("POST Authorize AccessList_AC4_Deny result", function() {
+  test("3 POST Decision result on read is permit", function() {
     const testdata = require(`./Testdata/Authorization/${bru.getEnvVar("tokenEnv")}testdata.json`);
     const data = res.getBody();  
     expect(res.status).to.equal(200);
-    expect(data.response[0]).to.have.property('decision', "Deny");
+    expect(data.response[0]).to.have.property('decision', "Permit");
   });
 }
 
 docs {
-  Issue:
-  https://github.com/Altinn/altinn-access-management/issues/748
+  Get a decision from PDP with appOwner details and validate response to have Permit.
   
-  Acceptance Criteria:
-  AC4 - Avgiver med Tilgangssliste tilgang med action filter - Deny
+  AccessSubject: ['urn:altinn:org']
   
-  GITT en bruker med tilgang til ressurs for avgiver gjennom rolle eller enkeltdelegering
-  NÅR ressursen krever tilgangsliste autorisasjon
-  OG avgiver er medlem av minst en tilgangsliste som er knytt til ressursen
-  OG tilgangslisten for ressursen har action filter begrensning som IKKE matcher action brukeren skal autoriseres for
-  SÅ skal bruker få Deny
+  Action: ['read']
   
-  Scenario/Testdata setup:
-  The user has received delegation of both read and write action for the resource from the party.
-  The party have access list membership for the resource with action filter for the action: read.
+  Resource: ['urn:altinn:app', 'urn:altinn:org']
 }
