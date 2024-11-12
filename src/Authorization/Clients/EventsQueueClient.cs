@@ -44,7 +44,8 @@ namespace Altinn.Platform.Authorization.Clients
             try
             {
                 QueueClient client = await GetAuthorizationEventQueueClient();
-                await client.SendMessageAsync(Convert.ToBase64String(Encoding.UTF8.GetBytes(content)), cancellationToken);      
+                TimeSpan timeToLive = TimeSpan.FromDays(_settings.TimeToLive);
+                await client.SendMessageAsync(Convert.ToBase64String(Encoding.UTF8.GetBytes(content)), null, timeToLive, cancellationToken);      
             }
             catch (OperationCanceledException ex)
             {
