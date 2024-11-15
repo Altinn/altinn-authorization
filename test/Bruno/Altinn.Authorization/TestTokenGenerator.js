@@ -19,7 +19,7 @@ exports.getToken = async function (getTokenParameters) {
     const tokenParty = getTokenParameters.auth_partyId;
     const tokenPid = getTokenParameters.auth_ssn;
 
-    tokenUrl = `${tokenBaseUrl}/api/Get${tokenType}Token?env=${tokenEnv}&scopes=${tokenScopes}&pid=${tokenPid}&userid=${tokenUser}&partyid=${tokenParty}&authLvl=3&ttl=3000`;
+    tokenUrl = `${tokenBaseUrl}/api/Get${tokenType}Token?env=${tokenEnv}&scopes=${tokenScopes}&pid=${tokenPid}&userid=${tokenUser}&partyid=${tokenParty}&authLvl=3&ttl=30`;
   }
 
   else if (tokenType == "Enterprise") {
@@ -38,6 +38,19 @@ exports.getToken = async function (getTokenParameters) {
     tokenUrl = `${tokenBaseUrl}/api/Get${tokenType}Token?env=${tokenEnv}&scopes=${tokenScopes}&orgNo=${tokenOrgNo}&userId=${tokenUser}&partyId=${tokenParty}&userName=${tokenUserName}&ttl=30`;
   }
 
+  else if (tokenType == "PlatformAccessToken") {
+    const tokenOrg = getTokenParameters.auth_org;
+    const tokenApp = getTokenParameters.auth_app;
+
+    tokenUrl = `${tokenBaseUrl}/api/Get${tokenType}Token?env=${tokenEnv}&org=${tokenOrg}&app=${tokenApp}&ttl=30`;
+  }
+
+  else if (tokenType == "PlatformToken") {
+    const tokenApp = getTokenParameters.auth_app;
+
+    tokenUrl = `${tokenBaseUrl}/api/Get${tokenType}?env=${tokenEnv}&app=${tokenApp}&ttl=30`;
+  }
+  
   const response = await axios.get(tokenUrl, {
     headers: { Authorization }
   });
