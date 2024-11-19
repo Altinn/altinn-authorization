@@ -9,56 +9,38 @@
     },
     "instances": {
         "p2p": {
-            "resourceId": "app_ttd_authz-bruno-instancedelegation",
-            "instanceId": "93994414-07dc-4df3-b2c6-047722169b6c"
-        },
-        "sub2p": {
-            "resourceId": "app_ttd_authz-bruno-instancedelegation",
-            "instanceId": ""
+            "instanceId": "16e679bc-9bb9-46f9-86e1-3657b267af26",
+            "from": "f9b2750f-f2aa-442c-91b7-418e2f627a8b",
+            "to": "07336d43-1f0e-40a8-a02b-2c6019013cc7"
         },
         "main2p": {
-            "resourceId": "app_ttd_authz-bruno-instancedelegation",
-            "instanceId": ""
+            "instanceId": "e0c55fe6-442b-4442-aabc-aeafda8d94fe",
+            "from": "58c0acd2-793e-48f1-a19f-169c171066f4",
+            "to": "07336d43-1f0e-40a8-a02b-2c6019013cc7"
+        },
+        "sub2p": {
+            "instanceId": "3e8b4812-c26c-4bfa-82f5-5c99c9ad90e3",
+            "from": "65018cec-9bd4-45ad-998d-357ac181eaf3",
+            "to": "07336d43-1f0e-40a8-a02b-2c6019013cc7"
         },
         "o2o": {
-            "resourceId": "app_ttd_authz-bruno-instancedelegation",
-            "instanceId": ""
+            "instanceId": "1f80ab14-ef45-48ab-8fef-7c5562683706",
+            "from": "9d263473-4f08-459e-bf27-1de535c40607",
+            "to": "58c0acd2-793e-48f1-a19f-169c171066f4"
         }
     },
     "organizations": {
         "mobilBeskjedenTiger": {
-            "partyUuid": "f7e2eb77-6b5e-4aeb-9fe9-f261013401c9",
+            "partyUuid": "9d263473-4f08-459e-bf27-1de535c40607",
             "name": "MOBIL BESKJEDEN TIGER AS",
             "organizationNumber": "310705071",
-            "partyId": 51373625,
+            "partyId": 51587157,
             "subunits": {
                 "mobilBeskjedenTiger": {
-                    "partyUuid": "2177ee69-fd11-4b38-904a-e0e2f1958f86",
+                    "partyUuid": "4f849f61-c36f-470a-b0b5-924568e3e10a",
                     "name": "MOBIL BESKJEDEN TIGER AS",
                     "organizationNumber": "314410343",
-                    "partyId": 51690212,
-                    "dagl": null
-                }
-            },
-            "dagl": {
-                "name": "ØVELSE EMPIRISK",
-                "personId": "25884699358",
-                "userId": 1424054,
-                "partyUuid": "F9B2750F-F2AA-442C-91B7-418E2F627A8B",
-                "partyId": 51443447
-            }
-        },
-        "legitimJusterbarTiger": {
-            "partyUuid": "01712d4f-cfb2-4d12-8aac-2eb7ad0d9c86",
-            "name": "LEGITIM JUSTERBAR TIGER AS",
-            "organizationNumber": "311041371",
-            "partyId": 51403263,
-            "subunits": {
-                "legitimJusterbarTiger": {
-                    "partyUuid": "e21a640b-9558-4d59-b47f-7b87d2cd9ee0",
-                    "name": "LEGITIM JUSTERBAR TIGER AS",
-                    "organizationNumber": "315684617",
-                    "partyId": 51806076,
+                    "partyId": 51903584,
                     "dagl": null
                 }
             },
@@ -66,8 +48,30 @@
                 "name": "HAKKE DYR",
                 "personId": "29917997339",
                 "userId": 1424053,
-                "partyUuid": "07336D43-1F0E-40A8-A02B-2C6019013CC7",
+                "partyUuid": "07336d43-1f0e-40a8-a02b-2c6019013cc7",
                 "partyId": 51015472
+            }
+        },
+        "legitimJusterbarTiger": {
+            "partyUuid": "58c0acd2-793e-48f1-a19f-169c171066f4",
+            "name": "LEGITIM JUSTERBAR TIGER AS",
+            "organizationNumber": "311041371",
+            "partyId": 51616797,
+            "subunits": {
+                "legitimJusterbarTiger": {
+                    "partyUuid": "65018cec-9bd4-45ad-998d-357ac181eaf3",
+                    "name": "LEGITIM JUSTERBAR TIGER AS",
+                    "organizationNumber": "315684617",
+                    "partyId": 52019430,
+                    "dagl": null
+                }
+            },
+            "dagl": {
+                "name": "ØVELSE EMPIRISK",
+                "personId": "25884699358",
+                "userId": 1424054,
+                "partyUuid": "f9b2750f-f2aa-442c-91b7-418e2f627a8b",
+                "partyId": 51443447
             }
         }
     },
@@ -76,14 +80,14 @@
             "name": "ØVELSE EMPIRISK",
             "personId": "25884699358",
             "userId": 1424054,
-            "partyUuid": "F9B2750F-F2AA-442C-91B7-418E2F627A8B",
+            "partyUuid": "f9b2750f-f2aa-442c-91b7-418e2f627a8b",
             "partyId": 51443447
         },
         "hakkeDyr": {
             "name": "HAKKE DYR",
             "personId": "29917997339",
             "userId": 1424053,
-            "partyUuid": "07336D43-1F0E-40A8-A02B-2C6019013CC7",
+            "partyUuid": "07336d43-1f0e-40a8-a02b-2c6019013cc7",
             "partyId": 51015472
         }
     }

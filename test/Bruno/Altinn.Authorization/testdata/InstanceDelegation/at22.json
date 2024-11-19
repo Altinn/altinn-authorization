@@ -9,20 +9,24 @@
     },
     "instances": {
         "p2p": {
-            "resourceId": "app_ttd_authz-bruno-instancedelegation",
-            "instanceId": "16e679bc-9bb9-46f9-86e1-3657b267af26"
-        },
-        "sub2p": {
-            "resourceId": "app_ttd_authz-bruno-instancedelegation",
-            "instanceId": ""
+            "instanceId": "93994414-07dc-4df3-b2c6-047722169b6c",
+            "from": "5daf2382-adee-4cd6-9995-3c5f3fc058af",
+            "to": "bd90e954-efe5-4b65-be8a-f9fccbb36342"
         },
         "main2p": {
-            "resourceId": "app_ttd_authz-bruno-instancedelegation",
-            "instanceId": ""
+            "instanceId": "df333e75-5896-4254-a69f-146736eaf668",
+            "from": "01712d4f-cfb2-4d12-8aac-2eb7ad0d9c86",
+            "to": "bd90e954-efe5-4b65-be8a-f9fccbb36342"
+        },
+        "sub2p": {
+            "instanceId": "49513daa-beb1-4a83-a07e-83da1378c8a9",
+            "from": "e21a640b-9558-4d59-b47f-7b87d2cd9ee0",
+            "to": "bd90e954-efe5-4b65-be8a-f9fccbb36342"
         },
         "o2o": {
-            "resourceId": "app_ttd_authz-bruno-instancedelegation",
-            "instanceId": ""
+            "instanceId": "0d55d70c-6e81-4728-b0e6-7ff1ede1a4fe",
+            "from": "f7e2eb77-6b5e-4aeb-9fe9-f261013401c9",
+            "to": "01712d4f-cfb2-4d12-8aac-2eb7ad0d9c86"
         }
     },
     "organizations": {
@@ -41,11 +45,11 @@
                 }
             },
             "dagl": {
-                "name": "ØVELSE EMPIRISK",
-                "personId": "25884699358",
-                "userId": 20012882,
-                "partyUuid": "5daf2382-adee-4cd6-9995-3c5f3fc058af",
-                "partyId": 51195601
+                "name": "HAKKE DYR",
+                "personId": "29917997339",
+                "userId": 20012883,
+                "partyUuid": "bd90e954-efe5-4b65-be8a-f9fccbb36342",
+                "partyId": 50127680
             }
         },
         "legitimJusterbarTiger": {
@@ -63,11 +67,11 @@
                 }
             },
             "dagl": {
-                "name": "HAKKE DYR",
-                "personId": "29917997339",
-                "userId": 20012883,
-                "partyUuid": "bd90e954-efe5-4b65-be8a-f9fccbb36342",
-                "partyId": 50127680
+                "name": "ØVELSE EMPIRISK",
+                "personId": "25884699358",
+                "userId": 20012882,
+                "partyUuid": "5daf2382-adee-4cd6-9995-3c5f3fc058af",
+                "partyId": 51195601
             }
         }
     },
