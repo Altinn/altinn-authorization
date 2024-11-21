@@ -71,7 +71,7 @@ assert {
 }
 
 script:pre-request {
-  const testdata = require(`./Testdata/InstanceDelegation/${bru.getEnvVar("tokenEnv")}.json`);
+  const testdata = require(`./testdata/InstanceDelegation/${bru.getEnvVar("tokenEnv")}.json`);
   
   // Should be the same as the .bru request file. Used as Test-name Tests tab and shows in test result.
   bru.setVar("requestName", "Instance_O2O_AC7_ResId_InstId_Permit");
