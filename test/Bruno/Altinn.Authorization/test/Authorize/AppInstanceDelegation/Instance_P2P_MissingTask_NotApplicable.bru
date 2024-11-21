@@ -67,7 +67,6 @@ assert {
 }
 
 script:pre-request {
-  const sharedtestdata = require(`./Testdata/shared.json`);
   const testdata = require(`./Testdata/InstanceDelegation/${bru.getEnvVar("tokenEnv")}.json`);
   
   // Should be the same as the .bru request file. Used as Test-name Tests tab and shows in test result.
