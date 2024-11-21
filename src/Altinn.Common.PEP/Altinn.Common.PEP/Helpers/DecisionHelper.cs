@@ -250,6 +250,8 @@ namespace Altinn.Common.PEP.Helpers
             }
             else if (systemUserAttribute != null)
             {
+                // If we have a system user we only add that. No other attributes allowed by PDP
+                attributes.Clear();
                 attributes.Add(systemUserAttribute);
             }
             else if (legacyOrganizationNumberAttibute != null)
