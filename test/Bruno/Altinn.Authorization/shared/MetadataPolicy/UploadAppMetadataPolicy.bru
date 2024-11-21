@@ -240,8 +240,6 @@ body:xml {
 }
 
 script:pre-request {
-  const sharedtestdata = require(`./Testdata/shared.json`);
-  
   bru.setVar("org", sharedtestdata.serviceOwners.ttd.org);
   bru.setVar("app", "jkstestapp");
   

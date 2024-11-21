@@ -8,6 +8,7 @@ auth:bearer {
 
 script:pre-request {
   const testTokenGenerator = require("./TestTokenGenerator.js");
+  const sharedtestdata = require(`./testdata/shared.json`);
 }
 
 script:post-response {

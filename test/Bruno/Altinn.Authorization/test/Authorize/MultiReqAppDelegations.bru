@@ -120,8 +120,6 @@ assert {
 }
 
 script:pre-request {
-  const sharedtestdata = require(`./Testdata/shared.json`);
-  
   var getTokenParameters = {
     auth_tokenType: sharedtestdata.authTokenType.enterprise,
     auth_scopes: sharedtestdata.auth_scopes.authorize,
