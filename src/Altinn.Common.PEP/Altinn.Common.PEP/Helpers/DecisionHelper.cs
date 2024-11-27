@@ -67,6 +67,30 @@ namespace Altinn.Common.PEP.Helpers
         }
 
         /// <summary>
+        /// Create decision request based for policy decision point.
+        /// </summary>
+        /// <param name="org">Unique identifier of the organisation responsible for the app.</param>
+        /// <param name="app">Application identifier which is unique within an organisation.</param>
+        /// <param name="user">Claims principal user.</param>
+        /// <param name="actionType">Policy action type i.e. read, write, delete, instantiate.</param>
+        /// <returns>The decision request.</returns>
+        public static XacmlJsonRequestRoot CreateDecisionRequest(string org, string app, ClaimsPrincipal user, string actionType)
+        {
+            XacmlJsonRequest request = new XacmlJsonRequest();
+            request.AccessSubject = new List<XacmlJsonCategory>();
+            request.Action = new List<XacmlJsonCategory>();
+            request.Resource = new List<XacmlJsonCategory>();
+
+            request.AccessSubject.Add(CreateSubjectCategory(user.Claims));
+            request.Action.Add(CreateActionCategory(actionType));
+            request.Resource.Add(CreateResourceCategory(org, app, null, null, null));
+
+            XacmlJsonRequestRoot jsonRequest = new XacmlJsonRequestRoot() { Request = request };
+
+            return jsonRequest;
+        }
+
+        /// <summary>
         /// Create a new <see cref="XacmlJsonRequestRoot"/> to represent a decision request.
         /// </summary>
         /// <param name="context">The current <see cref="AuthorizationHandlerContext"/></param>

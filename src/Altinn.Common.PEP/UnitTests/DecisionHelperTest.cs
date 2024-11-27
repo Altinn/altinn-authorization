@@ -61,6 +61,57 @@ namespace UnitTests
         public void CreateXacmlJsonRequest_TC03()
         {
             // Arrange & Act
+            XacmlJsonRequestRoot requestRoot = DecisionHelper.CreateDecisionRequest(Org, App, CreateMaskinportenClaims("12313", "altinn.master"), ActionType);
+            XacmlJsonRequest request = requestRoot.Request;
+
+            // Assert
+            Assert.Equal(4, request.AccessSubject[0].Attribute.Count);
+            Assert.Single(request.Action[0].Attribute);
+            Assert.Equal(2, request.Resource[0].Attribute.Count);
+        }
+        
+        /// <summary>
+        /// Test case: Send attributes and creates request out of it 
+        /// Expected: All values sent in will be created to attributes
+        /// </summary>
+        [Fact]
+        public void CreateXacmlJsonRequest_TC04()
+        {
+            // Arrange & Act
+            XacmlJsonRequestRoot requestRoot = DecisionHelper.CreateDecisionRequest(Org, App, CreateUserClaims(false), ActionType);
+            XacmlJsonRequest request = requestRoot.Request;
+
+            // Assert
+            Assert.Equal(2, request.AccessSubject[0].Attribute.Count);
+            Assert.Single(request.Action[0].Attribute);
+            Assert.Equal(2, request.Resource[0].Attribute.Count);
+        }
+
+        /// <summary>
+        /// Test case: Send attributes and creates request out of it 
+        /// Expected: Only valid urn values sent in will be created to attributes
+        /// </summary>
+        [Fact]
+        public void CreateXacmlJsonRequest_TC05()
+        {
+            // Arrange & Act
+            XacmlJsonRequestRoot requestRoot = DecisionHelper.CreateDecisionRequest(Org, App, CreateUserClaims(true), ActionType);
+            XacmlJsonRequest request = requestRoot.Request;
+
+            // Assert
+            Assert.Equal(2, request.AccessSubject[0].Attribute.Count);
+            Assert.Single(request.Action[0].Attribute);
+            Assert.Equal(2, request.Resource[0].Attribute.Count);
+        }
+
+        /// <summary>
+        /// Test case: Send attributes and creates request out of it 
+        /// Expected: Only valid urn, scope and orgnumber with correct values sent in will be created to attributes
+        /// </summary>
+        [Fact]
+        public void CreateXacmlJsonRequest_TC06()
+        {
+            // Arrange & Act
             XacmlJsonRequestRoot requestRoot = DecisionHelper.CreateDecisionRequest(Org, App, CreateMaskinportenClaims("12313", "altinn.master"), ActionType, PartyId, null, null);
             XacmlJsonRequest request = requestRoot.Request;
 
