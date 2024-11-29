@@ -56,7 +56,7 @@ namespace Altinn.Platform.Authorization.Services.Implementation
                 if (isInstanceAccessRequest)
                 {
                     // Instance delegation policies use uuid as subject, meaning the request needs to be enriched with the users uuid
-                    UserProfile userProfile = await _profileWrapper.GetUserProfile(subjectUserId, cancellationToken);
+                    UserProfile userProfile = await GetUserProfileByUserId(subjectUserId, cancellationToken);
                     if (userProfile != null && userProfile.Party != null &&
                         userProfile.Party.PartyTypeName == PartyType.Person && userProfile.Party.PartyUuid.HasValue)
                     {

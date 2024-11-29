@@ -70,6 +70,9 @@ public class AccessManagementWrapperMock : IAccessManagementWrapper
                 DelegationChangesTestData.Default(DelegationChangesTestData.WithResourceID("app_org1_app1"), DelegationChangesTestData.WithResourceInstanceId("f8d3526c-596b-4322-a041-38a8925c2a82"), DelegationChangesTestData.WithFromUuid(UuidType.Organization, Guid.Parse("00000000-0000-0000-0005-000000005545")), DelegationChangesTestData.WithToUuid(UuidType.Organization, Guid.Parse("00000000-0000-0000-0005-000000004222"))),
                 WithDefaultCondition("org1/app1", new AttributeMatch { Id = XacmlRequestAttribute.PartyAttribute, Value = "50005545" }, new AttributeMatch { Id = XacmlRequestAttribute.PartyAttribute, Value = "50004222" }),
                 WithDefaultCondition("org1/app1", new AttributeMatch { Id = XacmlRequestAttribute.PartyAttribute, Value = "50005545" }, new AttributeMatch { Id = XacmlRequestAttribute.UserAttribute, Value = "20000095" })),
+            ConditionalAdd(
+                DelegationChangesTestData.Default(DelegationChangesTestData.WithResourceID("ttd-externalpdp-resource3"), DelegationChangesTestData.WithResourceInstanceId("4c1b880e-f425-4050-9a46-cd1b3e56bf94"), DelegationChangesTestData.WithOfferedByPartyID(50005545), DelegationChangesTestData.WithCoveredByUserID(1337)),
+                WithDefaultCondition("ttd-externalpdp-resource3", new AttributeMatch { Id = XacmlRequestAttribute.PartyAttribute, Value = "50005545" }, new AttributeMatch { Id = XacmlRequestAttribute.UserAttribute, Value = "1337" })),
         };
 
         var result = new List<DelegationChangeExternal>();

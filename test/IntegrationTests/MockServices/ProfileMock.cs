@@ -16,9 +16,13 @@ namespace Altinn.Platform.Authorization.IntegrationTests.MockServices
             {
                 userProfile = new UserProfile { Party = new Party { SSN = "13923949741" } };
             }
+            else if (userId == 13371337)
+            {
+                userProfile = new UserProfile { UserId = userId, Party = new Party { SSN = "13371337133" } };
+            }
             else if (userId == 1337)
             {
-                userProfile = new UserProfile { Party = new Party { SSN = "13371337133" } };
+                userProfile = new UserProfile { UserId = userId, Party = new Party { SSN = "01039012345", PartyId = 1337, PartyUuid = Guid.Parse("00000000-0000-0000-0005-000000001337"), PartyTypeName = Register.Enums.PartyType.Person } };
             }
             else if (userId == 20000517)
             {
@@ -41,7 +45,7 @@ namespace Altinn.Platform.Authorization.IntegrationTests.MockServices
             }
             else if (personId == "13371337133")
             {
-                userProfile = new UserProfile { Party = new Party { SSN = personId } };
+                userProfile = new UserProfile { UserId = 13371337, Party = new Party { SSN = personId } };
             }
             else if (personId == "01039012345")
             {

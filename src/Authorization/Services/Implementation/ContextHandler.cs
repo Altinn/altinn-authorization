@@ -32,6 +32,9 @@ namespace Altinn.Platform.Authorization.Services.Implementation
     /// </summary>
     public class ContextHandler : IContextHandler
     {
+        private readonly string _uidUserProfileCacheKeyPrefix = "profile:uid:";
+        private readonly string _pidUserProfileCacheKeyPrefix = "profile:pid:";
+
 #pragma warning disable SA1401 // Fields should be private
 #pragma warning disable SA1600 // Elements should be documented
         protected readonly IInstanceMetadataRepository _policyInformationRepository;
@@ -403,8 +406,7 @@ namespace Altinn.Platform.Authorization.Services.Implementation
 
             if (!string.IsNullOrEmpty(subjectSsn))
             {
-                UserProfile subjectProfile = await _profileWrapper.GetUserProfileByPersonId(subjectSsn);
-
+                UserProfile subjectProfile = await GetUserProfileByPersonId(subjectSsn);
                 if (subjectProfile != null)
                 {
                     subjectUserId = subjectProfile.UserId;
@@ -439,7 +441,7 @@ namespace Altinn.Platform.Authorization.Services.Implementation
             {
                 if (string.IsNullOrEmpty(subjectSsn))
                 {
-                    subjectSsn = await GetSsnForUser(subjectUserId);
+                    subjectSsn = await GetPersonIdForUser(subjectUserId);
                 }
                 
                 string resourceSsn = await GetSSnForParty(resourcePartyId);
@@ -667,6 +669,64 @@ namespace Altinn.Platform.Authorization.Services.Implementation
             return oedRoles;
         }
 
+        /// <summary>
+        /// Method that fetches the user profile for a given user id
+        /// </summary>
+        /// <param name="userId">The user id</param>
+        /// <param name="cancellationToken">The <see cref="CancellationToken"/></param>
+        /// <returns>The user profile</returns>
+        protected async Task<UserProfile> GetUserProfileByUserId(int userId, CancellationToken cancellationToken = default)
+        {
+            string uidCacheKey = $"{_uidUserProfileCacheKeyPrefix}{userId}";
+
+            if (!_memoryCache.TryGetValue(uidCacheKey, out UserProfile userProfile))
+            {
+                userProfile = await _profileWrapper.GetUserProfile(userId, cancellationToken);
+
+                var cacheEntryOptions = new MemoryCacheEntryOptions()
+               .SetPriority(CacheItemPriority.High)
+               .SetAbsoluteExpiration(new TimeSpan(0, _generalSettings.RoleCacheTimeout, 0));
+
+                _memoryCache.Set(uidCacheKey, userProfile, cacheEntryOptions);
+
+                if (!string.IsNullOrWhiteSpace(userProfile?.Party?.SSN))
+                {
+                    _memoryCache.Set($"{_pidUserProfileCacheKeyPrefix}{userProfile.Party.SSN}", userProfile, cacheEntryOptions);
+                }
+            }
+
+            return userProfile;
+        }
+
+        /// <summary>
+        /// Method that fetches the user profile for a given person id (aka national identity number or ssn)
+        /// </summary>
+        /// <param name="personId">The person id</param>
+        /// <param name="cancellationToken">The <see cref="CancellationToken"/></param>
+        /// <returns>The user profile</returns>
+        protected async Task<UserProfile> GetUserProfileByPersonId(string personId, CancellationToken cancellationToken = default)
+        {
+            string pidCacheKey = $"{_pidUserProfileCacheKeyPrefix}{personId}";
+
+            if (!_memoryCache.TryGetValue(pidCacheKey, out UserProfile userProfile))
+            {
+                userProfile = await _profileWrapper.GetUserProfileByPersonId(personId, cancellationToken);
+
+                var cacheEntryOptions = new MemoryCacheEntryOptions()
+               .SetPriority(CacheItemPriority.High)
+               .SetAbsoluteExpiration(new TimeSpan(0, _generalSettings.RoleCacheTimeout, 0));
+
+                _memoryCache.Set(pidCacheKey, userProfile, cacheEntryOptions);
+
+                if (userProfile?.UserId > 0)
+                {
+                    _memoryCache.Set($"{_uidUserProfileCacheKeyPrefix}{userProfile.UserId}", userProfile, cacheEntryOptions);
+                }
+            }
+
+            return userProfile;
+        }
+
         private string GetCacheKey(int userId, int partyId)
         {
             return "rolelist_" + userId + "_" + partyId;
@@ -677,21 +737,9 @@ namespace Altinn.Platform.Authorization.Services.Implementation
             return $"oed{from}_{to}";
         }
 
-        private async Task<string> GetSsnForUser(int userId)
+        private async Task<string> GetPersonIdForUser(int userId, CancellationToken cancellationToken = default)
         {
-            string cacheKey = $"uid:{userId}";
-
-            if (!_memoryCache.TryGetValue(cacheKey, out UserProfile userProfile))
-            {
-                userProfile = await _profileWrapper.GetUserProfile(userId);
-
-                var cacheEntryOptions = new MemoryCacheEntryOptions()
-               .SetPriority(CacheItemPriority.High)
-               .SetAbsoluteExpiration(new TimeSpan(0, _generalSettings.RoleCacheTimeout, 0));
-
-                _memoryCache.Set(cacheKey, userProfile, cacheEntryOptions);
-            }
-
+            UserProfile userProfile = await GetUserProfileByUserId(userId, cancellationToken);
             return userProfile?.Party?.SSN;
         }
 
