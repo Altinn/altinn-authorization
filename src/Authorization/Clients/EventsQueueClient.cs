@@ -41,22 +41,22 @@ namespace Altinn.Platform.Authorization.Clients
         /// <inheritdoc/>
         public async Task<QueuePostReceipt> EnqueueAuthorizationEvent(string content, CancellationToken cancellationToken = default)
         {
-            try
-            {
-                QueueClient client = await GetAuthorizationEventQueueClient();
-                TimeSpan timeToLive = TimeSpan.FromDays(_settings.TimeToLive);
-                await client.SendMessageAsync(Convert.ToBase64String(Encoding.UTF8.GetBytes(content)), null, timeToLive, cancellationToken);      
-            }
-            catch (OperationCanceledException ex)
-            {
-                _logger.LogError(ex, ex.Message);
-                throw;
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, ex.Message);
-                return new QueuePostReceipt { Success = false, Exception = ex };
-            }
+            ////try
+            ////{
+            ////    QueueClient client = await GetAuthorizationEventQueueClient();
+            ////    TimeSpan timeToLive = TimeSpan.FromDays(_settings.TimeToLive);
+            ////    await client.SendMessageAsync(Convert.ToBase64String(Encoding.UTF8.GetBytes(content)), null, timeToLive, cancellationToken);      
+            ////}
+            ////catch (OperationCanceledException ex)
+            ////{
+            ////    _logger.LogError(ex, ex.Message);
+            ////    throw;
+            ////}
+            ////catch (Exception ex)
+            ////{
+            ////    _logger.LogError(ex, ex.Message);
+            ////    return new QueuePostReceipt { Success = false, Exception = ex };
+            ////}
 
             return new QueuePostReceipt { Success = true };
         }
