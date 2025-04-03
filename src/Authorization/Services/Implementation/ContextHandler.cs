@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 using Altinn.Authorization.ABAC.Constants;
@@ -17,6 +18,7 @@ using Altinn.Platform.Register.Models;
 using Altinn.Platform.Storage.Interface.Models;
 using Authorization.Platform.Authorization.Models;
 using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
 namespace Altinn.Platform.Authorization.Services.Implementation
@@ -34,6 +36,7 @@ namespace Altinn.Platform.Authorization.Services.Implementation
     {
         private readonly string _uidUserProfileCacheKeyPrefix = "profile:uid:";
         private readonly string _pidUserProfileCacheKeyPrefix = "profile:pid:";
+        private ILogger<ContextHandler> _logger;
 
 #pragma warning disable SA1401 // Fields should be private
 #pragma warning disable SA1600 // Elements should be documented
@@ -61,8 +64,9 @@ namespace Altinn.Platform.Authorization.Services.Implementation
         /// <param name="settings">The app settings</param>
         /// <param name="registerService">Register service</param>
         /// <param name="prp">service handling policy retireval</param>
+        /// <param name="logger">the logger</param>
         public ContextHandler(
-            IInstanceMetadataRepository policyInformationRepository, IRoles rolesWrapper, IOedRoleAssignmentWrapper oedRolesWrapper, IParties partiesWrapper, IProfile profileWrapper, IMemoryCache memoryCache, IOptions<GeneralSettings> settings, IRegisterService registerService, IPolicyRetrievalPoint prp)
+            IInstanceMetadataRepository policyInformationRepository, IRoles rolesWrapper, IOedRoleAssignmentWrapper oedRolesWrapper, IParties partiesWrapper, IProfile profileWrapper, IMemoryCache memoryCache, IOptions<GeneralSettings> settings, IRegisterService registerService, IPolicyRetrievalPoint prp, ILogger<ContextHandler> logger)
         {
             _policyInformationRepository = policyInformationRepository;
             _rolesWrapper = rolesWrapper;
@@ -73,6 +77,7 @@ namespace Altinn.Platform.Authorization.Services.Implementation
             _generalSettings = settings.Value;
             _registerService = registerService;
             _prp = prp;
+            _logger = logger;
         }
 
         /// <inheritdoc/>
@@ -98,6 +103,11 @@ namespace Altinn.Platform.Authorization.Services.Implementation
 
             if (!resourceAttributeComplete && !string.IsNullOrEmpty(resourceAttributes.InstanceValue))
             {
+                if (_logger != null)
+                {
+                    _logger.LogError("Authinfo debug {ResAttr}", JsonSerializer.Serialize(resourceAttributes.InstanceValue));
+                }
+
                 Instance instanceData = null;
                 if (!_generalSettings.UseStorageApiForInstanceAuthInfo)
                 {
