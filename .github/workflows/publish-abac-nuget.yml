@@ -31,7 +31,7 @@ jobs:
           dotnet pack --configuration Release --no-build
 
       - name: Create artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: nuget package
           path: src/Altinn.Authorization.ABAC/bin/Release/*.nupkg
